@@ -31,3 +31,12 @@ export function enquireHref(pathname: string): string {
     ? "#enquire"
     : "/contact/#enquire";
 }
+
+// Canonical URLs for content entities. Kept here so pages and cards never
+// hand-build paths. Some targets (room/venue detail pages) are built in later
+// steps; linking to them now is expected to 404 until then.
+export const roomHref = (slug: string): string => `/rooms/${slug}/`;
+export const venueHref = (slug: string): string => `/events/venues/${slug}/`;
+// Outlets are sections on the dining hub (see Footer), not standalone pages yet.
+export const outletHref = (slug: string): string => `/dining/#${slug}`;
+export const offerHref = (slug: string): string => `/offers/${slug}/`;

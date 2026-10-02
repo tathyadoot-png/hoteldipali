@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-02
-Current step: 4b — Content components (Picture, Botanical, SectionHeading, Breadcrumbs, cards)
+Current step: 5 — EnquiryForm + /thank-you/
 
 ## Status legend
 
@@ -16,7 +16,7 @@ Current step: 4b — Content components (Picture, Botanical, SectionHeading, Bre
 - [x] 3. Content schemas, loaders, sample data, check:content, docs/data-needed.md
 - [x] 4a. Site shell (Header, MobileMenu, StickyCtaBar, Footer, Call/WhatsApp links,
       booking + analytics helpers, logo, favicon)
-- [ ] 4b. Content components (Picture + image pipeline, Botanical, SectionHeading,
+- [x] 4b. Content components (Picture + image pipeline, Botanical, SectionHeading,
       Breadcrumbs, Room/Venue/Outlet/Offer cards)
 - [ ] 5. EnquiryForm + /thank-you/
 
@@ -135,3 +135,16 @@ See CLAUDE.md section M:
   several real bugs along the way: `preview`'s old `serve -s` masking 404s, an inverted
   `rootMargin` sign, the header needing its own `text-ink` to re-resolve `color` inside
   `data-theme="dusk"`, and the brand-band contrast gaps described in the decisions log.
+- 2026-10-02: Step 4b completed: content components — `Picture` (static-export <img>,
+  optional aspect-crop via `object-cover`, width/height to prevent CLS), `Botanical`
+  (decorative inline-SVG sprig/flower/vine, `currentColor`, `aria-hidden`), `SectionHeading`
+  (eyebrow/title/description/action, semantic `h1`–`h3`), `Breadcrumbs` (semantic
+  `nav` > `ol`, `aria-current="page"`, wraps at 360px), and `RoomCard`/`VenueCard`/
+  `OutletCard`/`OfferCard` built from the existing schemas. Added entity route helpers
+  (`roomHref`/`venueHref`/`outletHref`/`offerHref`) and `src/lib/format.ts`
+  (`formatMoney`/`formatIsoDate`). Cards respect trust conventions: RoomCard shows a
+  price only when `priceFrom.showOnSite`, and OutletCard omits diet policy/timings
+  (unverified; CLAUDE.md §G). All components are showcased in `/styleguide/` Section 08
+  (Light + Dusk); `tests/components.spec.ts` covers Picture, breadcrumb semantics/current
+  state, card rendering + route-helper hrefs, and price-gating; axe-core on `/styleguide/`
+  (both widths) now also covers the new components. No new dependencies.

@@ -2,7 +2,16 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Metadata } from "next";
 
+import { Breadcrumbs } from "@/components/content/Breadcrumbs";
+import { SectionHeading } from "@/components/content/SectionHeading";
+import { Botanical } from "@/components/decor/Botanical";
+import { OfferCard } from "@/components/cards/OfferCard";
+import { OutletCard } from "@/components/cards/OutletCard";
+import { RoomCard } from "@/components/cards/RoomCard";
+import { VenueCard } from "@/components/cards/VenueCard";
+import { Picture } from "@/components/media/Picture";
 import { ThemePreviewToggle } from "@/components/styleguide/ThemePreviewToggle";
+import { getOutlets, getRooms, getVenues, type Offer, type Outlet, type Room, type Venue } from "@/content";
 import {
   contrastRatio,
   pairsForVariant,
@@ -10,6 +19,13 @@ import {
   type ThemeTokens,
   type Variant,
 } from "@/lib/contrast";
+
+type SampleContent = {
+  room: Room;
+  venue: Venue;
+  outlet: Outlet;
+  offer: Offer;
+};
 
 export const metadata: Metadata = {
   title: "Hotel Dipali — Design system",
@@ -125,7 +141,15 @@ function ContrastTable({ variant, tokens }: { variant: Variant; tokens: ThemeTok
   );
 }
 
-function Sections({ variant, tokens }: { variant: Variant; tokens: ThemeTokens }) {
+function Sections({
+  variant,
+  tokens,
+  content,
+}: {
+  variant: Variant;
+  tokens: ThemeTokens;
+  content: SampleContent;
+}) {
   return (
     <div className="container-site section flex flex-col gap-16">
       {/* 1. Colour swatches + contrast */}
@@ -312,13 +336,109 @@ function Sections({ variant, tokens }: { variant: Variant; tokens: ThemeTokens }
           </div>
         </div>
       </section>
+
+      {/* 8. Content components (Step 4b) */}
+      <section aria-labelledby={`${variant}-components`}>
+        <p className="eyebrow">Section 08</p>
+        <h2 id={`${variant}-components`} className="heading-2">
+          Content components
+        </h2>
+
+        <div className="mt-8 flex flex-col gap-4">
+          <p className="eyebrow">Botanical (sprig · flower · vine)</p>
+          <div className="flex items-end gap-8 text-highlight">
+            <Botanical variant="sprig" className="h-16 w-auto" />
+            <Botanical variant="flower" className="h-16 w-auto" />
+            <Botanical variant="vine" className="h-8 w-40" />
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col gap-4">
+          <p className="eyebrow">SectionHeading</p>
+          <SectionHeading
+            eyebrow="Entry no. 02 — The rooms"
+            title={
+              <>
+                Rooms with a <em>garden</em> view
+              </>
+            }
+            description="A supporting line of lead copy, set in body-lg, introducing the section below."
+            action={{ label: "View all rooms", href: "/rooms/" }}
+          />
+        </div>
+
+        <div className="mt-10 flex flex-col gap-4">
+          <p className="eyebrow">Breadcrumbs</p>
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Rooms", href: "/rooms/" },
+              { label: content.room.name },
+            ]}
+          />
+        </div>
+
+        <div className="mt-10 flex flex-col gap-4">
+          <p className="eyebrow">Picture (natural ratio + caption)</p>
+          <figure className="max-w-md">
+            <Picture image={content.room.images[0]!} />
+            <figcaption className="caption mt-2">
+              {content.room.images[0]!.caption ?? content.room.images[0]!.shot}
+            </figcaption>
+          </figure>
+        </div>
+
+        <div className="mt-10 flex flex-col gap-4">
+          <p className="eyebrow">RoomCard · VenueCard · OutletCard</p>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <RoomCard room={content.room} />
+            <VenueCard venue={content.venue} />
+            <OutletCard outlet={content.outlet} />
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col gap-4">
+          <p className="eyebrow">OfferCard (styleguide demo fixture)</p>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <OfferCard offer={content.offer} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
 
-export default function StyleguidePage() {
+export default async function StyleguidePage() {
   const css = readFileSync(join(process.cwd(), "src", "styles", "theme.css"), "utf8");
   const tokens = parseThemeTokens(css);
+
+  const [rooms, venues, outlets] = await Promise.all([
+    getRooms(),
+    getVenues(),
+    getOutlets(),
+  ]);
+  const room = rooms[0]!;
+  const venue = venues[0]!;
+  const outlet = outlets[0]!;
+
+  // offers.json is intentionally empty (Phase 1B); this clearly-labelled fixture
+  // only exists to render OfferCard in the styleguide — it is not real content
+  // and fabricates no discount or price.
+  const offer: Offer = {
+    slug: "styleguide-demo-offer",
+    title: "Garden staycation",
+    summary:
+      "A restful two-night stay with breakfast and a poolside evening. Styleguide demo — not a live offer.",
+    validFrom: "2026-01-01",
+    validTo: "2026-12-31",
+    terms: ["Styleguide demonstration only."],
+    cta: { label: "Enquire", href: "/contact/#enquire" },
+    image: venue.images[0]!,
+    status: "sample",
+    note: "styleguide demo fixture — offers.json is intentionally empty",
+  };
+
+  const content: SampleContent = { room, venue, outlet, offer };
 
   return (
     <>
@@ -327,8 +447,8 @@ export default function StyleguidePage() {
         <h1 className="heading-1 mt-2">Hotel Dipali — Design system</h1>
       </div>
       <ThemePreviewToggle
-        light={<Sections variant="light" tokens={tokens.light} />}
-        dusk={<Sections variant="dusk" tokens={tokens.dusk} />}
+        light={<Sections variant="light" tokens={tokens.light} content={content} />}
+        dusk={<Sections variant="dusk" tokens={tokens.dusk} content={content} />}
       />
     </>
   );
