@@ -312,6 +312,23 @@
     color: var(--color-brand-ink);
   }
 
+  /*
+   * .link/.eyebrow/.caption hardcode ink/ink-muted, which are only validated
+   * against surface/surface-alt (and, via [data-theme] re-scoping, Dusk's own
+   * surface pair). The brand band is a third, separate pairing (brand/
+   * brand-ink) those tokens were never checked against — so inside
+   * .band-brand, repoint them at brand-ink to stay AA-compliant.
+   */
+  .band-brand .link,
+  .band-brand .eyebrow,
+  .band-brand .caption {
+    color: var(--color-brand-ink);
+  }
+
+  .band-brand .link:hover {
+    text-decoration-color: var(--color-brand-ink);
+  }
+
   /* Skip link: hidden until focused, then pinned top-left. */
   .skip-link {
     position: fixed;
@@ -340,5 +357,39 @@
     height: 2px;
     border: 0;
     background-color: var(--color-highlight);
+  }
+
+  /* Header: colour/background only transition between overlay and solid. */
+  .header-shell {
+    transition:
+      background-color var(--duration-base) var(--ease-out-soft),
+      color var(--duration-base) var(--ease-out-soft);
+  }
+
+  /* MobileMenu: entrance animation for the native <dialog>. */
+  .menu-dialog {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity var(--duration-base) var(--ease-out-soft),
+      transform var(--duration-base) var(--ease-out-soft),
+      display var(--duration-base) allow-discrete,
+      overlay var(--duration-base) allow-discrete;
+  }
+
+  .menu-dialog[open] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @starting-style {
+    .menu-dialog[open] {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  .menu-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
   }
 }

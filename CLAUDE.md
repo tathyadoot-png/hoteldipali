@@ -35,6 +35,11 @@ CMS, database, auth, localStorage features.
 - Pages/components NEVER import JSON/MDX directly. All data goes through typed async
   loaders in `src/content/` (`getSite()`, `getRooms()`, `getRoom(slug)`, …) so the
   source can later become a CMS or database without touching pages.
+- Client components never call loaders; server components fetch (via the loaders) and
+  pass the result down — either as plain props, or, for data many client leaves need
+  (e.g. site/outlets in the shell), via a client context provider that the server
+  layout instantiates with the already-fetched data. See
+  `src/components/providers/SiteDataProvider.tsx`.
 - All form submissions go through ONE function: `src/lib/submit-enquiry.ts`.
 - Any code that only works because of static export gets a `// STATIC-ONLY:` comment
   saying what changes when dynamic.
@@ -66,7 +71,11 @@ availability" link. Never embed a booking widget or third-party script without a
   hex, never raw Tailwind palette colours (`bg-amber-700`), never font names in
   components.
 - Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Dusk"
-  variant for weddings and the bar).
+  variant for weddings and the bar). Every element that sets `data-theme="dusk"`
+  MUST also carry an explicit `text-ink` (or other colour utility) on that same
+  element — `color` inherits the ancestor's already-resolved value, it does not
+  re-evaluate `var(--color-ink)` per scope, so without this the dusk subtree
+  silently renders in the parent's (light) ink colour.
 - Every text/background pair passes WCAG AA (4.5:1 body, 3:1 large text and UI).
   Gold-like colours are never body text on light backgrounds.
 - Palette: "Ivory & Gold" (Light, default) with a dark "Dusk" variant. Fonts: display
@@ -127,6 +136,8 @@ Google-Extended; `llms.txt`; remove the temporary `noindex` in `layout.tsx`.
 GA4, Meta Pixel, Google Ads conversions on `call_click`, `whatsapp_click`,
 `enquiry_submit`, `booking_click`, plus `directions_click`, `menu_view`,
 `gallery_open`; loaded only after consent; IDs from env vars.
+All analytics events go through ONE function: `track()` in `src/lib/analytics.ts`.
+Never call `window.dataLayer.push` or a vendor SDK directly from a component.
 
 ## K. Quality bars
 

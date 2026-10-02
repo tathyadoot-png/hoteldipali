@@ -1,0 +1,93 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { Logo } from "@/components/brand/Logo";
+import { CallLink } from "@/components/links/CallLink";
+import { NavDesktop } from "@/components/layout/NavDesktop";
+import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
+import { useSiteData } from "@/components/providers/SiteDataProvider";
+import { enquireHref, overlayHeaderRoutes } from "@/lib/routes";
+
+function MenuIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M3 6h18M3 12h18M3 18h18" />
+    </svg>
+  );
+}
+
+// Scrolling past this many px of the 1px sentinel's shrunk viewport flips the
+// header from overlay to solid. Detected via IntersectionObserver rootMargin,
+// never a scroll listener.
+const SCROLL_THRESHOLD_PX = 80;
+
+export function Header() {
+  const { site } = useSiteData();
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const { open: menuOpen, setOpen: setMenuOpen, triggerRef } = useMobileMenu();
+
+  useEffect(() => {
+    const sentinel = document.getElementById("scroll-sentinel");
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setScrolled(!(entry?.isIntersecting ?? true)),
+      // Grows the root 80px upward so the sentinel (pinned at document y=0)
+      // keeps intersecting until the page has scrolled past that threshold.
+      { rootMargin: `${SCROLL_THRESHOLD_PX}px 0px 0px 0px`, threshold: 0 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
+  const isOverlay = overlayHeaderRoutes.includes(pathname) && !scrolled;
+
+  return (
+    <header
+      data-theme={isOverlay ? "dusk" : undefined}
+      className={
+        // text-ink re-declares `color` on this element so it re-resolves
+        // against the (possibly dusk-scoped) --color-ink custom property —
+        // inherited `color` only carries the already-resolved parent value.
+        "header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22 " +
+        (isOverlay ? "bg-transparent" : "bg-surface shadow-hairline")
+      }
+    >
+      <div className="container-site flex items-center justify-between">
+        <Logo variant={isOverlay ? "reverse" : "default"} />
+
+        <div className="hidden items-center gap-8 xl:flex">
+          <NavDesktop links={site.navigation.main} pathname={pathname} />
+          <CallLink className="body font-medium" />
+          <a href={enquireHref(pathname)} className="btn-primary">
+            Enquire
+          </a>
+        </div>
+
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label="Menu"
+          className="flex min-h-11 min-w-11 items-center justify-center xl:hidden"
+          onClick={() => setMenuOpen(true)}
+        >
+          <MenuIcon />
+        </button>
+      </div>
+    </header>
+  );
+}

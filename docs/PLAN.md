@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-02
-Current step: 4 — Global components (Header, MobileMenu, StickyCtaBar, Footer, …)
+Current step: 4b — Content components (Picture, Botanical, SectionHeading, Breadcrumbs, cards)
 
 ## Status legend
 
@@ -14,8 +14,10 @@ Current step: 4 — Global components (Header, MobileMenu, StickyCtaBar, Footer,
 - [x] 1. Scaffold, CLAUDE.md, PLAN.md, public data notes
 - [x] 2. Design tokens, fonts, component classes, /styleguide
 - [x] 3. Content schemas, loaders, sample data, check:content, docs/data-needed.md
-- [ ] 4. Global components (Header, MobileMenu, StickyCtaBar, Footer, WhatsAppLink,
-      CallLink, Picture, Botanical, SectionHeading, Breadcrumbs, cards)
+- [x] 4a. Site shell (Header, MobileMenu, StickyCtaBar, Footer, Call/WhatsApp links,
+      booking + analytics helpers, logo, favicon)
+- [ ] 4b. Content components (Picture + image pipeline, Botanical, SectionHeading,
+      Breadcrumbs, Room/Venue/Outlet/Offer cards)
 - [ ] 5. EnquiryForm + /thank-you/
 
 ### Phase 1A — Core pages
@@ -69,6 +71,23 @@ Current step: 4 — Global components (Header, MobileMenu, StickyCtaBar, Footer,
 | 2026-10-02 | TypeScript pinned to 6.0.x and ESLint to 9.x for typescript-eslint / eslint-plugin-react compatibility — revisit later. | typescript-eslint 8.71.0 only supports typescript `<6.1.0`, and eslint-config-next's eslint-plugin-react 7.37.5 crashes under ESLint 10's flat-config API. |
 | 2026-10-02 | Palette "Ivory & Gold" (Palette A) is the final brand master palette, with a dark "Dusk" variant for weddings, Infinity Bar and dark bands. | Warm editorial identity matching the "Garden Journal by day, Dusk by night" direction; one palette re-themes the whole site. |
 | 2026-10-02 | Language: English only. No Hindi version, no Hindi font, no Devanagari in the UI. | Simpler build and content pipeline; the only permitted Devanagari is schema.org `alternateName` "होटल दीपाली" (SEO only). |
+| 2026-10-02 | Desktop nav (all 7 links + phone + Enquire) shows from the `xl` (1280px) breakpoint; `lg` (1024px) was tested and is too tight. | Avoids wrapping/cramming; `lg` and below get the MobileMenu instead. |
+| 2026-10-02 | Header overlay uses the logo's typographic wordmark fallback (no `logo-reverse.png` yet), not the primary PNG. | The only supplied logo file is gold-on-transparent, sized for a light/ivory ground; the wordmark (token-coloured) reads correctly on both the dark overlay header and the Dusk footer. |
+| 2026-10-02 | Component classes that hardcode a token colour (`.link`, `.eyebrow`, `.caption` → `ink`/`ink-muted`) need an explicit override wherever they render on a surface those tokens weren't validated against (e.g. `.band-brand`). | `color` inherits the ancestor's already-resolved value rather than re-reading custom properties per scope; discovered via axe-core catching ~1.7:1 contrast in the footer. Fixed with a scoped `.band-brand .link/.eyebrow/.caption` rule in theme.css. |
+
+## Brand assets
+
+- `public/brand/logo-primary.png` (renamed from "Hotel dipali logo.png"): 1080×1080 PNG,
+  RGBA with a genuinely transparent background (corners and ~85% of sampled pixels have
+  alpha 0). Artwork is a bright/mid-tone gold-bronze lockup (sampled centre pixel
+  `#E4A936`) — an "HD" monogram with a small diamond above, and a serif "HOTEL DIPALI"
+  wordmark below, stacked in a square canvas.
+- Since the artwork is gold (not dark) on a transparent ground, it is usable as the
+  `default` logo on the light/ivory surface. There is no `logo-reverse.png` yet, so the
+  `reverse` variant (used on the dark overlay header and in the Dusk footer) falls back
+  to the typographic wordmark, coloured via tokens, as designed.
+- `src/app/icon.svg`: a flat bronze "D" monogram placeholder favicon — replace with a
+  real logo mark when available.
 
 ## Open questions
 
@@ -81,10 +100,13 @@ See CLAUDE.md section M:
 - Which number is WhatsApp-enabled? (reservations number assumed for now).
 - Is the food veg-only? (listed as vegetarian on OTAs — confirm before claiming).
 - Original photos needed before step 6 (Home) — see docs/data-needed.md.
+- Need `logo-reverse.png` (a light/gold mark legible on dark backgrounds) and a proper
+  logo mark (square monogram) for the favicon — see "Brand assets" above.
 
 ### Pre-launch cleanup (step 18)
 
 - Remove or block the dev-only inspection page `/dev/content/` before launch.
+- Swap in `logo-reverse.png` and a real favicon mark once supplied (see "Brand assets").
 
 ## Change log
 
@@ -101,3 +123,15 @@ See CLAUDE.md section M:
   `content:report` → `docs/data-needed.md`, a `/dev/content/` inspector, and an ESLint
   rule enforcing `@/content`-only imports. Added zod. Status counts: 113 sample,
   13 public-unverified, 0 verified.
+- 2026-10-02: Step 4a completed: site shell — Header (overlay/solid via a 1px
+  IntersectionObserver sentinel, not a scroll listener), NavDesktop, MobileMenu (native
+  `<dialog>`, native focus trap, `@starting-style` entrance animation), StickyCtaBar,
+  Footer (4 columns, fully content-driven), Logo (+ `icon.svg` favicon), CallLink/
+  WhatsAppLink, and `src/lib/{analytics,whatsapp,booking,routes}.ts`. Added a
+  `SiteDataProvider`/`MobileMenuProvider` context pair so client shell components never
+  call loaders directly. Added `@axe-core/playwright`; `tests/shell.spec.ts` covers
+  breakpoints, the header transition, focus trap, link formats, the footer, and axe
+  (zero serious/critical violations on `/` and `/styleguide/` at both widths). Fixed
+  several real bugs along the way: `preview`'s old `serve -s` masking 404s, an inverted
+  `rootMargin` sign, the header needing its own `text-ink` to re-resolve `color` inside
+  `data-theme="dusk"`, and the brand-band contrast gaps described in the decisions log.
