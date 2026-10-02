@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+next-env.d.ts
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Testing
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# Hosting / tooling caches
+.wrangler/
+.vercel/
+.cache/
+
+# Raw unoptimised source images
+/public/sample/_originals/
