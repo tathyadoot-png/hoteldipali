@@ -1,0 +1,201 @@
+{
+  "name": "Hotel Dipali",
+  "alternateNames": ["Hotel Deepali", "होटल दीपाली"],
+  "tagline": {
+    "status": "sample",
+    "note": "sample tagline — confirm the hotel's preferred line",
+    "value": "Gardens, gatherings and warm hospitality in the heart of Sagar"
+  },
+  "shortDescription": {
+    "status": "sample",
+    "note": "sample copy — rewrite with verified details",
+    "value": "A welcoming hotel in Sagar with comfortable rooms, lawns and banquet halls for weddings and events, a multi-cuisine restaurant, the Infinity Bar, Dipali Sweets, a swimming pool and a gym."
+  },
+  "address": {
+    "status": "public-unverified",
+    "source": "GST public record (see docs/public-data.md)",
+    "note": "address conflicts across platforms — hotel must confirm one; see docs/public-data.md",
+    "value": {
+      "line1": "10 Hotel Dipali Compound",
+      "line2": "Jabalpur Road",
+      "locality": "Rajakhedi",
+      "city": "Sagar",
+      "state": "Madhya Pradesh",
+      "postalCode": "470004",
+      "country": "IN"
+    }
+  },
+  "locationLine": {
+    "status": "public-unverified",
+    "source": "Hotel's own social posts",
+    "note": "confirm spelling Makroniya vs Makronia",
+    "value": "Near Makroniya Railway Crossing, Jabalpur Road, Sagar"
+  },
+  "geo": null,
+  "mapsUrl": {
+    "status": "sample",
+    "note": "generic Maps search link — replace with the hotel's verified Google Business profile URL",
+    "value": "https://www.google.com/maps/search/?api=1&query=Hotel+Dipali+Sagar"
+  },
+  "contacts": [
+    {
+      "department": "reservations",
+      "label": "Reservations",
+      "phone": {
+        "status": "public-unverified",
+        "source": "Hotel's own social posts, Jul 2026",
+        "value": "+91 92382 14266"
+      },
+      "whatsapp": {
+        "status": "public-unverified",
+        "source": "Hotel's own social posts, Jul 2026",
+        "note": "assumed WhatsApp, confirm",
+        "value": "+91 92382 14266"
+      }
+    },
+    {
+      "department": "weddings-events",
+      "label": "Weddings & Events",
+      "phone": {
+        "status": "public-unverified",
+        "source": "Hotel's own social posts, Jul 2026",
+        "value": "+91 93401 85201"
+      }
+    },
+    {
+      "department": "restaurant",
+      "label": "Restaurant",
+      "phone": {
+        "status": "sample",
+        "note": "no public number — confirm restaurant line",
+        "value": "+91 00000 00000"
+      }
+    },
+    {
+      "department": "bakery-sweets",
+      "label": "Bakery & Sweets",
+      "phone": {
+        "status": "sample",
+        "note": "no public number — confirm bakery/sweets line",
+        "value": "+91 00000 00000"
+      }
+    },
+    {
+      "department": "bar",
+      "label": "Infinity Bar",
+      "phone": {
+        "status": "sample",
+        "note": "no public number — confirm bar line",
+        "value": "+91 00000 00000"
+      }
+    },
+    {
+      "department": "pool-gym",
+      "label": "Pool & Gym",
+      "phone": {
+        "status": "sample",
+        "note": "no public number — confirm pool/gym line",
+        "value": "+91 00000 00000"
+      }
+    },
+    {
+      "department": "general",
+      "label": "Reception",
+      "phone": {
+        "status": "sample",
+        "note": "no public number — confirm reception line",
+        "value": "+91 00000 00000"
+      },
+      "email": {
+        "status": "sample",
+        "note": "sample email — confirm the hotel's address",
+        "value": "reception@hoteldipali.example"
+      }
+    }
+  ],
+  "primaryPhone": "reservations",
+  "primaryWhatsapp": "reservations",
+  "socials": [
+    {
+      "platform": "facebook",
+      "url": {
+        "status": "public-unverified",
+        "source": "Public profile",
+        "value": "https://facebook.com/hoteldeepalisagar"
+      }
+    }
+  ],
+  "bookingEngineUrl": null,
+  "checkInTime": {
+    "status": "sample",
+    "note": "sample check-in time — confirm",
+    "value": "14:00"
+  },
+  "checkOutTime": {
+    "status": "sample",
+    "note": "sample check-out time — confirm",
+    "value": "11:00"
+  },
+  "legal": {
+    "legalName": {
+      "status": "public-unverified",
+      "source": "GST public record",
+      "value": "HOTEL DIPALI"
+    },
+    "gstin": {
+      "status": "public-unverified",
+      "source": "GST public record",
+      "value": "23AAQFH9964C1Z2"
+    },
+    "entityType": {
+      "status": "public-unverified",
+      "source": "GST public record",
+      "value": "Partnership"
+    }
+  },
+  "brandFamily": [
+    { "slug": "dipali-sweets", "name": "Dipali Sweets", "kind": "sub-brand", "confirmed": false },
+    { "slug": "dipali-bakery", "name": "Dipali Bakery", "kind": "sub-brand", "confirmed": false },
+    { "slug": "infinity-bar", "name": "Infinity Bar", "kind": "outlet", "confirmed": false }
+  ],
+  "navigation": {
+    "main": [
+      { "label": "Rooms", "href": "/rooms/" },
+      { "label": "Weddings", "href": "/weddings/" },
+      { "label": "Events", "href": "/events/" },
+      { "label": "Dining", "href": "/dining/" },
+      { "label": "Pool & Gym", "href": "/pool-and-gym/" },
+      { "label": "Gallery", "href": "/gallery/" },
+      { "label": "Contact", "href": "/contact/" }
+    ],
+    "footer": [
+      {
+        "title": "Explore",
+        "links": [
+          { "label": "Rooms", "href": "/rooms/" },
+          { "label": "Weddings", "href": "/weddings/" },
+          { "label": "Events", "href": "/events/" },
+          { "label": "Dining", "href": "/dining/" },
+          { "label": "Pool & Gym", "href": "/pool-and-gym/" },
+          { "label": "Gallery", "href": "/gallery/" }
+        ]
+      },
+      {
+        "title": "Hotel",
+        "links": [
+          { "label": "About", "href": "/about/" },
+          { "label": "Contact", "href": "/contact/" },
+          { "label": "FAQ", "href": "/faq/" }
+        ]
+      },
+      {
+        "title": "Policies",
+        "links": [
+          { "label": "Privacy Policy", "href": "/privacy-policy/" },
+          { "label": "Terms", "href": "/terms/" },
+          { "label": "Booking & Cancellation", "href": "/booking-cancellation-policy/" }
+        ]
+      }
+    ]
+  }
+}

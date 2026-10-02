@@ -1,0 +1,29 @@
+[
+  {
+    "id": "sample-1",
+    "status": "sample",
+    "note": "placeholder wording — replace with a real review only with the guest's permission",
+    "text": "A calm, comfortable stay with warm service and lovely garden views. Placeholder text — not a real guest quote.",
+    "authorLabel": "Sample guest",
+    "context": "Stayed in a Garden Deluxe Room",
+    "permissionToPublish": false
+  },
+  {
+    "id": "sample-2",
+    "status": "sample",
+    "note": "placeholder wording — replace with a real review only with the guest's permission",
+    "text": "The lawn looked beautiful for our evening function and the team was helpful throughout. Placeholder text — not a real guest quote.",
+    "authorLabel": "Sample guest",
+    "context": "Wedding guest",
+    "permissionToPublish": false
+  },
+  {
+    "id": "sample-3",
+    "status": "sample",
+    "note": "placeholder wording — replace with a real review only with the guest's permission",
+    "text": "Good food and a relaxing poolside evening. Placeholder text — not a real guest quote.",
+    "authorLabel": "Sample guest",
+    "context": "Dined at the restaurant",
+    "permissionToPublish": false
+  }
+]

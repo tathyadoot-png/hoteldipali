@@ -1,0 +1,136 @@
+[
+  {
+    "slug": "restaurant",
+    "name": "Dipali Restaurant",
+    "kind": "restaurant",
+    "status": "sample",
+    "note": "outlet name is sample; the restaurant's existence is from OTA listings. Confirm the official name.",
+    "summary": "The hotel's main multi-cuisine restaurant, serving guests through the day.",
+    "cuisine": ["North Indian", "Chinese", "Continental"],
+    "timings": {
+      "status": "sample",
+      "note": "sample timings — confirm opening hours",
+      "value": [{ "days": "Mon–Sun", "open": "07:00", "close": "23:00" }]
+    },
+    "dietPolicy": {
+      "status": "public-unverified",
+      "source": "District / Zomato (see docs/public-data.md)",
+      "note": "listed as vegetarian only — confirm before claiming 'pure veg'",
+      "value": "veg-only"
+    },
+    "hasMenu": true,
+    "orderChannels": ["dine-in", "takeaway"],
+    "images": [
+      { "id": "outlet-restaurant-1", "src": "/sample/outlet-restaurant-1.svg", "alt": "Dining room of the restaurant set for service", "shot": "Restaurant interior, wide shot set for service", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "outlet-restaurant-2", "src": "/sample/outlet-restaurant-2.svg", "alt": "A plated North Indian thali on the table", "shot": "Restaurant, signature dish / thali close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "poolside-restaurant",
+    "name": "Poolside Restaurant",
+    "kind": "restaurant",
+    "status": "public-unverified",
+    "source": "Hotel's own social posts",
+    "note": "confirm menu, timings and seating",
+    "summary": "Relaxed dining beside the pool for snacks, grills and drinks.",
+    "cuisine": ["Snacks", "Grills", "Beverages"],
+    "timings": {
+      "status": "sample",
+      "note": "sample timings — confirm opening hours",
+      "value": [{ "days": "Mon–Sun", "open": "11:00", "close": "22:00" }]
+    },
+    "dietPolicy": {
+      "status": "sample",
+      "note": "diet policy unconfirmed",
+      "value": "unknown"
+    },
+    "hasMenu": false,
+    "orderChannels": ["dine-in"],
+    "images": [
+      { "id": "outlet-poolside-restaurant-1", "src": "/sample/outlet-poolside-restaurant-1.svg", "alt": "Tables set beside the pool at dusk", "shot": "Poolside Restaurant, seating by the water at dusk", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "outlet-poolside-restaurant-2", "src": "/sample/outlet-poolside-restaurant-2.svg", "alt": "Grilled snacks and a cold drink on a poolside table", "shot": "Poolside Restaurant, food and drink close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "infinity-bar",
+    "name": "Infinity Bar",
+    "kind": "bar",
+    "status": "public-unverified",
+    "source": "Hotel's own social posts",
+    "note": "appears as 'Infinity Bar & Restaurant' in posts — confirm the exact name",
+    "summary": "A warm, low-lit bar for evening drinks and small bites.",
+    "cuisine": ["Bar bites", "Beverages"],
+    "timings": {
+      "status": "sample",
+      "note": "sample timings — confirm opening hours",
+      "value": [{ "days": "Mon–Sun", "open": "18:00", "close": "23:30" }]
+    },
+    "dietPolicy": {
+      "status": "sample",
+      "note": "diet policy unconfirmed",
+      "value": "unknown"
+    },
+    "ageRestriction": {
+      "status": "sample",
+      "note": "sample — confirm the hotel's policy",
+      "value": "21+ as per state rules — confirm"
+    },
+    "hasMenu": false,
+    "orderChannels": ["dine-in"],
+    "images": [
+      { "id": "outlet-infinity-bar-1", "src": "/sample/outlet-infinity-bar-1.svg", "alt": "Low-lit bar counter with seating", "shot": "Infinity Bar, counter and seating in warm light", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "outlet-infinity-bar-2", "src": "/sample/outlet-infinity-bar-2.svg", "alt": "A cocktail served on the bar counter", "shot": "Infinity Bar, signature drink close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "bakery",
+    "name": "Dipali Bakery",
+    "kind": "bakery",
+    "status": "sample",
+    "note": "bakery as a named outlet is unconfirmed — confirm existence and name",
+    "summary": "Fresh breads, cakes and bakes for takeaway and celebrations.",
+    "cuisine": ["Bakery", "Desserts"],
+    "timings": {
+      "status": "sample",
+      "note": "sample timings — confirm opening hours",
+      "value": [{ "days": "Mon–Sun", "open": "09:00", "close": "21:00" }]
+    },
+    "dietPolicy": {
+      "status": "sample",
+      "note": "diet policy unconfirmed",
+      "value": "unknown"
+    },
+    "hasMenu": false,
+    "orderChannels": ["takeaway", "dine-in"],
+    "images": [
+      { "id": "outlet-bakery-1", "src": "/sample/outlet-bakery-1.svg", "alt": "Display counter with cakes and breads", "shot": "Bakery display counter, wide shot", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "outlet-bakery-2", "src": "/sample/outlet-bakery-2.svg", "alt": "A decorated celebration cake", "shot": "Bakery, celebration cake close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "sweets",
+    "name": "Dipali Sweets",
+    "kind": "sweets",
+    "status": "public-unverified",
+    "source": "Hotel's own social posts",
+    "note": "confirm product range and timings",
+    "summary": "Traditional Indian sweets and namkeen for every occasion.",
+    "cuisine": ["Indian sweets", "Namkeen"],
+    "timings": {
+      "status": "sample",
+      "note": "sample timings — confirm opening hours",
+      "value": [{ "days": "Mon–Sun", "open": "08:00", "close": "22:00" }]
+    },
+    "dietPolicy": {
+      "status": "sample",
+      "note": "diet policy unconfirmed",
+      "value": "unknown"
+    },
+    "hasMenu": false,
+    "orderChannels": ["takeaway"],
+    "images": [
+      { "id": "outlet-sweets-1", "src": "/sample/outlet-sweets-1.svg", "alt": "Trays of assorted Indian sweets", "shot": "Dipali Sweets, assorted mithai trays", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "outlet-sweets-2", "src": "/sample/outlet-sweets-2.svg", "alt": "A boxed assortment of sweets for gifting", "shot": "Dipali Sweets, gift box close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  }
+]

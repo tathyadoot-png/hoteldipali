@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "main-lawn",
+    "name": "Main Lawn",
+    "order": 1,
+    "status": "sample",
+    "note": "capacities are sample — confirm seated and floating numbers",
+    "kind": "lawn",
+    "indoor": false,
+    "capacitySeated": 350,
+    "capacityFloating": 800,
+    "areaSqft": 12000,
+    "suitableFor": ["weddings", "receptions", "sangeet", "corporate"],
+    "highlights": ["Open-air setting", "Space for large mandaps", "Evening lighting", "Easy catering access"],
+    "images": [
+      { "id": "venue-main-lawn-1", "src": "/sample/venue-main-lawn-1.svg", "alt": "Main Lawn set for an evening wedding with lighting", "shot": "Main Lawn at dusk, wide shot with decor and lighting", "aspect": "16:9", "width": 1600, "height": 900, "status": "sample" },
+      { "id": "venue-main-lawn-2", "src": "/sample/venue-main-lawn-2.svg", "alt": "Seating arranged on the Main Lawn for guests", "shot": "Main Lawn, guest seating arrangement detail", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "poolside-lawn",
+    "name": "Poolside Lawn",
+    "order": 2,
+    "status": "sample",
+    "note": "capacities are sample — confirm seated and floating numbers",
+    "kind": "poolside",
+    "indoor": false,
+    "capacitySeated": 150,
+    "capacityFloating": 300,
+    "areaSqft": 5000,
+    "suitableFor": ["cocktails", "sangeet", "birthdays", "receptions"],
+    "highlights": ["Poolside backdrop", "Great for cocktails", "Intimate evening setting", "Lounge seating"],
+    "images": [
+      { "id": "venue-poolside-lawn-1", "src": "/sample/venue-poolside-lawn-1.svg", "alt": "Poolside Lawn arranged for an evening cocktail event", "shot": "Poolside Lawn at night, cocktail setup by the water", "aspect": "16:9", "width": 1600, "height": 900, "status": "sample" },
+      { "id": "venue-poolside-lawn-2", "src": "/sample/venue-poolside-lawn-2.svg", "alt": "Lounge seating beside the pool", "shot": "Poolside Lawn, lounge seating detail", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "grand-banquet-hall",
+    "name": "Grand Banquet Hall",
+    "order": 3,
+    "status": "sample",
+    "note": "capacities are sample — confirm seated and floating numbers",
+    "kind": "hall",
+    "indoor": true,
+    "capacitySeated": 400,
+    "capacityFloating": 650,
+    "areaSqft": 8000,
+    "suitableFor": ["weddings", "receptions", "corporate", "conferences"],
+    "highlights": ["Fully air-conditioned", "Pillar-light layout", "Stage and AV ready", "All-weather option"],
+    "images": [
+      { "id": "venue-grand-banquet-hall-1", "src": "/sample/venue-grand-banquet-hall-1.svg", "alt": "Grand Banquet Hall set for a reception", "shot": "Grand Banquet Hall, wide shot set for a reception", "aspect": "16:9", "width": 1600, "height": 900, "status": "sample" },
+      { "id": "venue-grand-banquet-hall-2", "src": "/sample/venue-grand-banquet-hall-2.svg", "alt": "Stage and seating inside the Grand Banquet Hall", "shot": "Grand Banquet Hall, stage and seating detail", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "celebration-hall",
+    "name": "Celebration Hall",
+    "order": 4,
+    "status": "sample",
+    "note": "capacities are sample — confirm seated and floating numbers",
+    "kind": "hall",
+    "indoor": true,
+    "capacitySeated": 150,
+    "capacityFloating": 250,
+    "areaSqft": 3200,
+    "suitableFor": ["birthdays", "ring-ceremonies", "anniversaries", "corporate"],
+    "highlights": ["Right-sized for small events", "Air-conditioned", "Flexible layout", "Intimate setting"],
+    "images": [
+      { "id": "venue-celebration-hall-1", "src": "/sample/venue-celebration-hall-1.svg", "alt": "Celebration Hall arranged for a birthday party", "shot": "Celebration Hall, wide shot set for a small party", "aspect": "16:9", "width": 1600, "height": 900, "status": "sample" },
+      { "id": "venue-celebration-hall-2", "src": "/sample/venue-celebration-hall-2.svg", "alt": "Decorated corner inside the Celebration Hall", "shot": "Celebration Hall, decor detail", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+    ]
+  }
+]

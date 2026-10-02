@@ -74,17 +74,30 @@ availability" link. Never embed a booking widget or third-party script without a
 
 ## F. Content & data trust
 
-- All content lives in `/content` (JSON/MDX), validated by Zod.
+- All content lives in `/content` (JSON), validated by Zod schemas in
+  `src/content/schemas/`.
 - Every item has `status: "sample" | "public-unverified" | "verified"`;
   public-unverified items also have a `source`. sample = invented placeholder;
   public-unverified = from `docs/public-data.md`; verified = confirmed by the hotel.
+- Trust lives at two levels: collection items carry the trust fields directly
+  (`status`, `source?`, `note?`); individual facts inside `site.json` (phones,
+  address, timings…) are wrapped as `Tracked<T>` = `{ status, source?, note?, value }`
+  so each fact can have its own status. A `public-unverified` status always requires
+  a `source` (enforced by Zod).
 - Every image entry records status, intended shot description, aspect ratio and
   credit, so originals can replace files later.
-- `check:content` (built in Prompt 3) fails production builds if anything is not
-  `"verified"`.
+- Import rule: pages and components import content ONLY from the `@/content` barrel
+  (typed async loaders) — never raw JSON (`@content/*`) or loader/schema internals
+  (`@/content/*`). ESLint enforces this everywhere except `src/content/`, `scripts/`
+  and `tests/`.
+- `pnpm check:content` prints a trust report (exit 0). `pnpm check:content:strict`
+  fails if anything is not `verified`. `pnpm release` = `check:content:strict && build`
+  — production deploys run this. Plain `pnpm build` does NOT run the strict gate.
+  `pnpm content:report` regenerates `docs/data-needed.md`; `pnpm make:placeholders`
+  regenerates the labelled sample SVGs in `public/sample/`.
 - Never invent awards, star ratings or quotes attributed to real people. Never copy
   review text from Google/Tripadvisor/OTAs. Placeholder phone for sample data:
-  `+91 00000 00000`.
+  `+91 00000 00000` (allowed only when the fact's status is `sample`).
 
 ## G. Brand & scope
 

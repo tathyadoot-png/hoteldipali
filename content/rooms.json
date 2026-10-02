@@ -1,0 +1,94 @@
+[
+  {
+    "slug": "garden-deluxe-room",
+    "name": "Garden Deluxe Room",
+    "order": 1,
+    "status": "sample",
+    "note": "sample room details — confirm size, bed, occupancy and price",
+    "summary": "A calm room opening toward the lawns, with a warm, uncluttered feel.",
+    "description": "The Garden Deluxe Room is our everyday favourite — a bright, restful space finished in warm, paper-soft tones. Large windows look toward the garden, filling the room with daylight.\n\nIt is sized for couples and small families who want comfort without fuss, with a generous bed, a quiet work corner and all the essentials for an easy stay.",
+    "sizeSqft": 280,
+    "bed": "1 Queen bed",
+    "maxGuests": 3,
+    "maxChildren": 1,
+    "view": "Garden view",
+    "priceFrom": { "amount": 3500, "currency": "INR", "unit": "per night", "showOnSite": false },
+    "highlights": ["Garden view", "Daylight-filled", "Queen bed", "Work corner"],
+    "roomAmenities": ["Air conditioning", "Smart TV", "Free Wi-Fi", "Tea & coffee maker", "Wardrobe", "Daily housekeeping"],
+    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Toiletries", "Fresh towels"],
+    "images": [
+      { "id": "room-garden-deluxe-1", "src": "/sample/room-garden-deluxe-1.svg", "alt": "Garden Deluxe Room with a queen bed and garden-facing windows", "shot": "Garden Deluxe Room, wide shot showing the bed and window light", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
+      { "id": "room-garden-deluxe-2", "src": "/sample/room-garden-deluxe-2.svg", "alt": "Seating corner by the window in the Garden Deluxe Room", "shot": "Garden Deluxe Room, detail of the seating/work corner", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "room-garden-deluxe-3", "src": "/sample/room-garden-deluxe-3.svg", "alt": "Bathroom of the Garden Deluxe Room", "shot": "Garden Deluxe Room bathroom, showing the shower", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "premium-room",
+    "name": "Premium Room",
+    "order": 2,
+    "status": "sample",
+    "note": "sample room details — confirm size, bed, occupancy and price",
+    "summary": "A roomier stay with an upgraded bed and a lounge chair to unwind.",
+    "description": "The Premium Room gives you a little more space and a few more comforts. A plush king bed anchors the room, with a reading chair by the window and considered lighting for evenings in.\n\nIt suits travellers who want extra room to spread out, whether in Sagar for work or a relaxed weekend.",
+    "sizeSqft": 340,
+    "bed": "1 King bed",
+    "maxGuests": 3,
+    "maxChildren": 1,
+    "view": "City view",
+    "priceFrom": { "amount": 4500, "currency": "INR", "unit": "per night", "showOnSite": false },
+    "highlights": ["King bed", "Reading chair", "Extra space", "Warm lighting"],
+    "roomAmenities": ["Air conditioning", "Smart TV", "Free Wi-Fi", "Mini fridge", "Tea & coffee maker", "Work desk", "Daily housekeeping"],
+    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Premium toiletries", "Fresh towels", "Hairdryer"],
+    "images": [
+      { "id": "room-premium-1", "src": "/sample/room-premium-1.svg", "alt": "Premium Room with a king bed and warm lighting", "shot": "Premium Room, wide shot showing the king bed", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
+      { "id": "room-premium-2", "src": "/sample/room-premium-2.svg", "alt": "Reading chair beside the window in the Premium Room", "shot": "Premium Room, detail of the reading chair and lamp", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "room-premium-3", "src": "/sample/room-premium-3.svg", "alt": "Bathroom of the Premium Room", "shot": "Premium Room bathroom with vanity and shower", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "executive-suite",
+    "name": "Executive Suite",
+    "order": 3,
+    "status": "sample",
+    "note": "sample suite details — confirm size, layout, occupancy and price",
+    "summary": "A separate sitting area and bedroom for guests who want room to host.",
+    "description": "The Executive Suite separates living and sleeping into two distinct spaces, so you can take a call or welcome a guest without disturbing the bedroom.\n\nFinished with richer textures and a larger bathroom, it is our choice for longer stays and visiting families who value a little more privacy.",
+    "sizeSqft": 520,
+    "bed": "1 King bed",
+    "maxGuests": 4,
+    "maxChildren": 2,
+    "view": "Garden view",
+    "priceFrom": { "amount": 6500, "currency": "INR", "unit": "per night", "showOnSite": false },
+    "highlights": ["Separate sitting area", "King bed", "Larger bathroom", "Ideal for long stays"],
+    "roomAmenities": ["Air conditioning", "Two Smart TVs", "Free Wi-Fi", "Mini fridge", "Tea & coffee maker", "Work desk", "Sofa seating", "Daily housekeeping"],
+    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Premium toiletries", "Bathrobe", "Fresh towels", "Hairdryer"],
+    "images": [
+      { "id": "room-executive-suite-1", "src": "/sample/room-executive-suite-1.svg", "alt": "Executive Suite bedroom with a king bed", "shot": "Executive Suite, bedroom wide shot", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
+      { "id": "room-executive-suite-2", "src": "/sample/room-executive-suite-2.svg", "alt": "Sitting area of the Executive Suite with a sofa", "shot": "Executive Suite, separate sitting area", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "room-executive-suite-3", "src": "/sample/room-executive-suite-3.svg", "alt": "Bathroom of the Executive Suite", "shot": "Executive Suite bathroom, wide shot", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+    ]
+  },
+  {
+    "slug": "family-suite",
+    "name": "Family Suite",
+    "order": 4,
+    "status": "sample",
+    "note": "sample suite details — confirm size, bedding, occupancy and price",
+    "summary": "Two connected spaces and flexible bedding for families travelling together.",
+    "description": "The Family Suite is built for togetherness, with flexible bedding and enough room for parents and children to settle in comfortably.\n\nThoughtful touches — extra storage, blackout curtains and a roomy bathroom — make multi-day family stays easy and restful.",
+    "sizeSqft": 560,
+    "bed": "1 King bed + 2 single beds",
+    "maxGuests": 5,
+    "maxChildren": 3,
+    "view": "Garden view",
+    "priceFrom": { "amount": 7500, "currency": "INR", "unit": "per night", "showOnSite": false },
+    "highlights": ["Flexible bedding", "Room for the whole family", "Extra storage", "Blackout curtains"],
+    "roomAmenities": ["Air conditioning", "Two Smart TVs", "Free Wi-Fi", "Mini fridge", "Tea & coffee maker", "Extra storage", "Daily housekeeping"],
+    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Toiletries", "Fresh towels", "Hairdryer"],
+    "images": [
+      { "id": "room-family-suite-1", "src": "/sample/room-family-suite-1.svg", "alt": "Family Suite with a king bed and two single beds", "shot": "Family Suite, wide shot showing flexible bedding", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
+      { "id": "room-family-suite-2", "src": "/sample/room-family-suite-2.svg", "alt": "Children's beds and play corner in the Family Suite", "shot": "Family Suite, detail of the single beds / play corner", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
+      { "id": "room-family-suite-3", "src": "/sample/room-family-suite-3.svg", "alt": "Bathroom of the Family Suite", "shot": "Family Suite bathroom, wide shot", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+    ]
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "outletSlug": "restaurant",
+  "status": "sample",
+  "note": "sample menu — replace with the restaurant's verified menu and prices",
+  "sections": [
+    {
+      "name": "Soups",
+      "items": [
+        { "name": "Tomato Shorba", "description": "Slow-cooked tomato soup with herbs", "price": { "amount": 150, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1 },
+        { "name": "Sweet Corn Soup", "description": "Classic creamy sweet corn", "price": { "amount": 160, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 },
+        { "name": "Hot & Sour Soup", "description": "Tangy and peppery vegetable soup", "price": { "amount": 170, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 },
+        { "name": "Lemon Coriander Soup", "description": "Light broth with lemon and fresh coriander", "price": { "amount": 160, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1 }
+      ]
+    },
+    {
+      "name": "Starters",
+      "items": [
+        { "name": "Paneer Tikka", "description": "Char-grilled cottage cheese in spiced yoghurt", "price": { "amount": 280, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2, "signature": true },
+        { "name": "Hara Bhara Kebab", "description": "Spinach and green pea patties", "price": { "amount": 240, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1 },
+        { "name": "Crispy Chilli Potato", "description": "Tossed in a sweet-and-spicy glaze", "price": { "amount": 220, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 },
+        { "name": "Veg Spring Rolls", "description": "Crisp rolls with a tangy dip", "price": { "amount": 210, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1 },
+        { "name": "Mushroom Salt & Pepper", "description": "Wok-tossed mushrooms with peppers", "price": { "amount": 250, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 }
+      ]
+    },
+    {
+      "name": "From the Tandoor",
+      "items": [
+        { "name": "Tandoori Aloo", "description": "Stuffed potatoes roasted in the tandoor", "price": { "amount": 260, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 },
+        { "name": "Soya Chaap Tikka", "description": "Marinated soya chaap, char-grilled", "price": { "amount": 270, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 },
+        { "name": "Malai Paneer Tikka", "description": "Creamy, mildly spiced paneer skewers", "price": { "amount": 300, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1, "signature": true },
+        { "name": "Tandoori Mushroom", "description": "Smoky roasted mushrooms", "price": { "amount": 280, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 }
+      ]
+    },
+    {
+      "name": "Main Course",
+      "items": [
+        { "name": "Paneer Butter Masala", "description": "Cottage cheese in a rich tomato gravy", "price": { "amount": 320, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1, "signature": true },
+        { "name": "Dal Makhani", "description": "Slow-simmered black lentils", "price": { "amount": 280, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1 },
+        { "name": "Kadhai Veg", "description": "Mixed vegetables in a spiced kadhai masala", "price": { "amount": 290, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 },
+        { "name": "Shahi Paneer", "description": "Paneer in a mild cashew gravy", "price": { "amount": 320, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1 },
+        { "name": "Veg Kofta", "description": "Vegetable dumplings in a creamy gravy", "price": { "amount": 300, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 1 }
+      ]
+    },
+    {
+      "name": "Breads & Rice",
+      "items": [
+        { "name": "Butter Naan", "price": { "amount": 60, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 },
+        { "name": "Tandoori Roti", "price": { "amount": 40, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 },
+        { "name": "Laccha Paratha", "price": { "amount": 70, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 },
+        { "name": "Jeera Rice", "price": { "amount": 180, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 },
+        { "name": "Veg Biryani", "description": "Fragrant basmati with vegetables and spices", "price": { "amount": 260, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 2 }
+      ]
+    },
+    {
+      "name": "Desserts",
+      "items": [
+        { "name": "Gulab Jamun", "description": "Warm dumplings in saffron syrup", "price": { "amount": 120, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0, "signature": true },
+        { "name": "Moong Dal Halwa", "description": "Slow-cooked, ghee-rich halwa", "price": { "amount": 150, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 },
+        { "name": "Rasmalai", "description": "Soft cheese discs in sweet saffron milk", "price": { "amount": 140, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 },
+        { "name": "Ice Cream", "description": "Choice of seasonal flavours", "price": { "amount": 110, "currency": "INR", "showOnSite": false }, "diet": "veg", "spice": 0 }
+      ]
+    }
+  ]
+}

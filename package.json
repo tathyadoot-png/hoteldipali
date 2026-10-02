@@ -16,12 +16,17 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "check:content": "tsx scripts/check-content.ts"
+    "make:placeholders": "tsx scripts/make-placeholders.ts",
+    "check:content": "tsx scripts/check-content.ts",
+    "check:content:strict": "tsx scripts/check-content.ts --strict",
+    "content:report": "tsx scripts/content-report.ts",
+    "release": "pnpm check:content:strict && pnpm build"
   },
   "dependencies": {
     "next": "16.3.8",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "16.3.8",

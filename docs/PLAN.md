@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-02
-Current step: 3 — Content schemas, loaders, sample data, check:content
+Current step: 4 — Global components (Header, MobileMenu, StickyCtaBar, Footer, …)
 
 ## Status legend
 
@@ -13,7 +13,7 @@ Current step: 3 — Content schemas, loaders, sample data, check:content
 
 - [x] 1. Scaffold, CLAUDE.md, PLAN.md, public data notes
 - [x] 2. Design tokens, fonts, component classes, /styleguide
-- [ ] 3. Content schemas, loaders, sample data, check:content, docs/data-needed.md
+- [x] 3. Content schemas, loaders, sample data, check:content, docs/data-needed.md
 - [ ] 4. Global components (Header, MobileMenu, StickyCtaBar, Footer, WhatsAppLink,
       CallLink, Picture, Botanical, SectionHeading, Breadcrumbs, cards)
 - [ ] 5. EnquiryForm + /thank-you/
@@ -74,10 +74,17 @@ Current step: 3 — Content schemas, loaders, sample data, check:content
 
 See CLAUDE.md section M:
 
-- Official single address and pincode.
+- Official single address and pincode (platforms conflict — see docs/public-data.md).
 - Room count and categories.
 - Booking engine name and URL format.
 - Who publishes blogs and offers after launch.
+- Which number is WhatsApp-enabled? (reservations number assumed for now).
+- Is the food veg-only? (listed as vegetarian on OTAs — confirm before claiming).
+- Original photos needed before step 6 (Home) — see docs/data-needed.md.
+
+### Pre-launch cleanup (step 18)
+
+- Remove or block the dev-only inspection page `/dev/content/` before launch.
 
 ## Change log
 
@@ -87,3 +94,10 @@ See CLAUDE.md section M:
   (`check:contrast` wired to `prebuild`), and the `/styleguide` page. All contrast pairs
   pass WCAG AA with no hex adjustments. Fixed the `preview` script (dropped `serve -s`,
   which collapsed multi-page routes to the home page).
+- 2026-10-02: Step 3 completed: content layer — Zod schemas, typed async loaders
+  (`@/content` barrel + `@content/*` alias), sample data for all collections (4 rooms,
+  4 venues, 5 outlets, restaurant menu, pool/gym + 9 memberships, 15 FAQs, 3 reviews,
+  18 gallery items), 52 generated placeholder SVGs, `check:content` (report + `--strict`),
+  `content:report` → `docs/data-needed.md`, a `/dev/content/` inspector, and an ESLint
+  rule enforcing `@/content`-only imports. Added zod. Status counts: 113 sample,
+  13 public-unverified, 0 verified.
