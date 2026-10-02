@@ -1,0 +1,7 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - main [ref=e3]:
+    - heading "Hotel Dipali, Sagar" [level=1] [ref=e4]
+    - paragraph [ref=e5]: Website under construction.
+  - alert [ref=e6]
