@@ -8,8 +8,10 @@
   },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "tsx scripts/check-contrast.ts",
     "build": "next build",
-    "preview": "serve -s out -l 4173",
+    "check:contrast": "tsx scripts/check-contrast.ts",
+    "preview": "serve out -l 4173",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",

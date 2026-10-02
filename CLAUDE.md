@@ -52,9 +52,13 @@ availability" link. Never embed a booking widget or third-party script without a
 - ALL colours, fonts, font sizes, radii, shadows and spacing live ONLY in
   `src/styles/theme.css`. Changing that file must re-theme the whole site.
 - Tokens use Tailwind `@theme` (NOT `@theme inline`) with semantic names: `surface`,
-  `surface-alt`, `ink`, `ink-muted`, `brand`, `accent`, `accent-ink`, `highlight`,
-  `line`, `font-display`, `font-body`, `font-hindi` (more may be added in `theme.css`
-  only).
+  `surface-alt`, `ink`, `ink-muted`, `brand`, `brand-ink`, `accent`, `accent-ink`,
+  `pop`, `pop-ink`, `highlight`, `line`, `font-display`, `font-body` (more may be
+  added in `theme.css` only).
+- `src/app/fonts.ts` is the only file besides `theme.css` allowed to contain font
+  names.
+- Pop colour: max one element per section. `highlight` is never used for body text on
+  light surfaces.
 - Components use only semantic utilities (`bg-surface`, `text-ink`, `bg-accent`,
   `font-display`…) and component classes (`.heading-hero`, `.heading-1/2/3`,
   `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.btn-primary`, `.btn-secondary`,
@@ -65,7 +69,8 @@ availability" link. Never embed a booking widget or third-party script without a
   variant for weddings and the bar).
 - Every text/background pair passes WCAG AA (4.5:1 body, 3:1 large text and UI).
   Gold-like colours are never body text on light backgrounds.
-- Exact palette and fonts are decided in Prompt 2.
+- Palette: "Ivory & Gold" (Light, default) with a dark "Dusk" variant. Fonts: display
+  Instrument Serif, body Figtree. See `theme.css` and `src/app/fonts.ts`.
 
 ## F. Content & data trust
 
@@ -98,7 +103,9 @@ any third-party social widget (use a static curated photo strip linking to Insta
 
 Title pattern "{Page} | Hotel Dipali, Sagar"; unique descriptions; canonical URLs;
 trailing slashes. Never output `AggregateRating` or `Review` schema on our own pages.
-Omit schema fields that are not verified. Planned for the SEO step: `sitemap.xml`,
+Omit schema fields that are not verified. The site is English-only; the sole permitted
+Devanagari is the schema.org `alternateName` "होटल दीपाली" (plain text, SEO only, added
+in the SEO step — never rendered in the UI). Planned for the SEO step: `sitemap.xml`,
 `robots.txt` explicitly allowing GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot,
 Google-Extended; `llms.txt`; remove the temporary `noindex` in `layout.tsx`.
 
@@ -130,6 +137,5 @@ transform/opacity/clip-path only, no scroll-jacking, everything disabled under
 
 ## M. Open decisions (never guess)
 
-Hindi version yes/no; official single address and pincode; room count and categories;
-booking engine name and URL format; final palette and fonts (Prompt 2); who publishes
-blogs and offers after launch.
+Official single address and pincode; room count and categories; booking engine name and
+URL format; who publishes blogs and offers after launch.

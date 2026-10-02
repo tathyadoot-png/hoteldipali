@@ -1,3 +1,344 @@
 @import "tailwindcss";
 
-/* Design tokens and component classes are added in Prompt 2. Never put colours anywhere else. */
+/*
+ * Design tokens and component classes. Never put colours or font names anywhere else.
+ * Fonts are named here and in src/app/fonts.ts only.
+ * Light ("Ivory & Gold") is the default; Dusk is the dark variant for weddings,
+ * Infinity Bar and dark bands.
+ */
+
+@theme {
+  /* Reset default palette and breakpoints so only semantic tokens exist. */
+  --color-*: initial;
+  --breakpoint-*: initial;
+
+  /* Fonts */
+  --font-display: var(--font-instrument), "Times New Roman", Georgia, serif;
+  --font-body: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Colours — Light (default) */
+  --color-surface: #faf6ee;
+  --color-surface-alt: #f1e8d8;
+  --color-ink: #2a1f17;
+  --color-ink-muted: #5e4e40;
+  --color-brand: #3b2a1e;
+  --color-brand-ink: #faf6ee;
+  --color-accent: #8a5a14;
+  --color-accent-ink: #ffffff;
+  --color-pop: #1f5c5a;
+  --color-pop-ink: #ffffff;
+  --color-highlight: #c9a45c;
+  --color-line: rgba(42, 31, 23, 0.15);
+
+  /* Radius */
+  --radius-none: 0;
+  --radius-sm: 2px;
+
+  /* Shadows */
+  --shadow-hairline: 0 0 0 1px var(--color-line);
+  --shadow-lift: 0 8px 24px -12px rgba(0, 0, 0, 0.25);
+
+  /* Breakpoints */
+  --breakpoint-xs: 360px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Layout */
+  --container-site: 80rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --space-section: clamp(4rem, 3rem + 5vw, 8rem);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 180ms;
+  --duration-base: 320ms;
+}
+
+/* Colours — Dusk variant. Redefines the same tokens; utilities resolve per-element. */
+[data-theme="dusk"] {
+  color-scheme: dark;
+  --color-surface: #14110e;
+  --color-surface-alt: #1e1915;
+  --color-ink: #f3ebdd;
+  --color-ink-muted: #cbbfae;
+  --color-brand: #3b2a1e;
+  --color-brand-ink: #f3ebdd;
+  --color-accent: #c9a45c;
+  --color-accent-ink: #14110e;
+  --color-pop: #4fa39e;
+  --color-pop-ink: #14110e;
+  --color-highlight: #c9a45c;
+  --color-line: rgba(243, 235, 221, 0.15);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Typography */
+  .heading-hero {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 1.5rem + 6vw, 7.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  .heading-1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4.5rem);
+    line-height: 1;
+  }
+
+  .heading-2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
+    line-height: 1.05;
+  }
+
+  .heading-3 {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+    line-height: 1.25;
+  }
+
+  /* One emphasised word per heading: display italic in accent. */
+  .heading-hero em,
+  .heading-1 em,
+  .heading-2 em,
+  .heading-3 em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-accent);
+  }
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-ink-muted);
+  }
+
+  .body-lg {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  .body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .caption {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--color-ink-muted);
+  }
+
+  .big-number {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 2rem + 6vw, 7rem);
+    line-height: 0.9;
+    color: var(--color-accent);
+  }
+
+  /* Buttons */
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding-inline: 1.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    font-family: var(--font-body);
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    transition-property: color, background-color, border-color, transform;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-out-soft);
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-ghost:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active,
+  .btn-secondary:active,
+  .btn-ghost:active {
+    transform: translateY(0);
+  }
+
+  .btn-primary:disabled,
+  .btn-secondary:disabled,
+  .btn-ghost:disabled,
+  .btn-primary[aria-disabled="true"],
+  .btn-secondary[aria-disabled="true"],
+  .btn-ghost[aria-disabled="true"] {
+    opacity: 0.5;
+    transform: none;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-pop);
+    color: var(--color-pop-ink);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    border-color: var(--color-ink);
+    color: var(--color-ink);
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--color-surface-alt);
+  }
+
+  /* Chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-none);
+    background-color: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition-property: color, background-color, border-color;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-out-soft);
+  }
+
+  .chip:hover {
+    background-color: var(--color-surface-alt);
+  }
+
+  .chip[aria-pressed="true"] {
+    background-color: var(--color-pop);
+    border-color: var(--color-pop);
+    color: var(--color-pop-ink);
+  }
+
+  /* Surfaces */
+  .card {
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-hairline);
+    border-radius: var(--radius-none);
+  }
+
+  .link {
+    color: var(--color-ink);
+    text-decoration-line: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--color-line);
+    transition: text-decoration-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .link:hover {
+    text-decoration-color: var(--color-accent);
+  }
+
+  /* Layout helpers */
+  .section {
+    padding-block: var(--space-section);
+  }
+
+  .container-site {
+    max-width: var(--container-site);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .band-brand {
+    background-color: var(--color-brand);
+    color: var(--color-brand-ink);
+  }
+
+  /* Skip link: hidden until focused, then pinned top-left. */
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 9999;
+    background-color: var(--color-ink);
+    color: var(--color-surface);
+    padding: 0.75rem 1rem;
+    transform: translateY(-200%);
+    transition: transform var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* Rules and ornaments */
+  .rule {
+    border: 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .rule-ornament {
+    width: 3rem;
+    height: 2px;
+    border: 0;
+    background-color: var(--color-highlight);
+  }
+}

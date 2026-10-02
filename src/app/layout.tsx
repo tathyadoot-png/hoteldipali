@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { figtree, instrumentSerif } from "./fonts";
 import "@/styles/theme.css";
 
 export const metadata: Metadata = {
@@ -12,9 +13,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${instrumentSerif.variable} ${figtree.variable}`}>
       <body>
-        <a href="#main">Skip to main content</a>
+        <a href="#main" className="skip-link">
+          Skip to main content
+        </a>
         <main id="main">{children}</main>
       </body>
     </html>

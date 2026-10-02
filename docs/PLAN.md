@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-02
-Current step: 2 — Design tokens & styleguide
+Current step: 3 — Content schemas, loaders, sample data, check:content
 
 ## Status legend
 
@@ -12,7 +12,7 @@ Current step: 2 — Design tokens & styleguide
 ### Phase 0 — Foundation
 
 - [x] 1. Scaffold, CLAUDE.md, PLAN.md, public data notes
-- [ ] 2. Design tokens, fonts, component classes, /styleguide
+- [x] 2. Design tokens, fonts, component classes, /styleguide
 - [ ] 3. Content schemas, loaders, sample data, check:content, docs/data-needed.md
 - [ ] 4. Global components (Header, MobileMenu, StickyCtaBar, Footer, WhatsAppLink,
       CallLink, Picture, Botanical, SectionHeading, Breadcrumbs, cards)
@@ -54,7 +54,7 @@ Current step: 2 — Design tokens & styleguide
 - [ ] CMS or admin for blogs, offers, menus, gallery
 - [ ] Own API for enquiries + lead sheet for reception
 - [ ] Hosting move if server runtime needed
-- [ ] Hindi version (if approved)
+- [ ] Hindi version — declined (English only)
 
 ## Decisions log
 
@@ -66,19 +66,24 @@ Current step: 2 — Design tokens & styleguide
 | 2026-10-02 | No AggregateRating/Review schema on our own pages. | Cannot verify review authenticity; avoid search-engine penalties. |
 | 2026-10-02 | No live Instagram feed; static curated strip instead. | Avoid third-party script weight and uptime dependency. |
 | 2026-10-02 | docs/ (plural) is the canonical docs folder; existing doc/ was renamed to docs/. | Match CLAUDE.md and PLAN.md path conventions; keep brief.md and marketing-scope.md alongside the rest of the docs. |
-| 2026-10-02 | TypeScript pinned to 6.0.3 instead of the newly released 7.x line. | typescript-eslint 8.71.0 (latest) only supports typescript `<6.1.0`; using 7.x would break linting. Revisit once typescript-eslint adds TS 7 support. |
+| 2026-10-02 | TypeScript pinned to 6.0.x and ESLint to 9.x for typescript-eslint / eslint-plugin-react compatibility — revisit later. | typescript-eslint 8.71.0 only supports typescript `<6.1.0`, and eslint-config-next's eslint-plugin-react 7.37.5 crashes under ESLint 10's flat-config API. |
+| 2026-10-02 | Palette "Ivory & Gold" (Palette A) is the final brand master palette, with a dark "Dusk" variant for weddings, Infinity Bar and dark bands. | Warm editorial identity matching the "Garden Journal by day, Dusk by night" direction; one palette re-themes the whole site. |
+| 2026-10-02 | Language: English only. No Hindi version, no Hindi font, no Devanagari in the UI. | Simpler build and content pipeline; the only permitted Devanagari is schema.org `alternateName` "होटल दीपाली" (SEO only). |
 
 ## Open questions
 
 See CLAUDE.md section M:
 
-- Hindi version yes/no.
 - Official single address and pincode.
 - Room count and categories.
 - Booking engine name and URL format.
-- Final palette and fonts (Prompt 2).
 - Who publishes blogs and offers after launch.
 
 ## Change log
 
 - 2026-10-02: Step 1 completed: project scaffolded.
+- 2026-10-02: Step 2 completed: design system — "Ivory & Gold" tokens (Light + Dusk),
+  self-hosted fonts (Instrument Serif + Figtree), component classes, contrast gate
+  (`check:contrast` wired to `prebuild`), and the `/styleguide` page. All contrast pairs
+  pass WCAG AA with no hex adjustments. Fixed the `preview` script (dropped `serve -s`,
+  which collapsed multi-page routes to the home page).
