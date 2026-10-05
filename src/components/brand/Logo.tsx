@@ -2,11 +2,14 @@ import Link from "next/link";
 
 export type LogoVariant = "default" | "reverse";
 
-// Which logo image file exists for each variant today. Update this map when
-// logo-reverse.png (or any new variant) is added to public/brand/.
+// Which logo image file exists for each variant today. The supplied artwork is
+// gold on a transparent ground, so the one asset serves both variants: it reads
+// on the ivory surface and on the dark grounds "reverse" is used for (the hero
+// overlay header and the brand band footer). Point "reverse" at a dedicated
+// logo-reverse.png here if one is supplied later.
 const LOGO_FILES: Record<LogoVariant, { src: string; width: number; height: number } | null> = {
   default: { src: "/brand/logo-primary.png", width: 1080, height: 1080 },
-  reverse: null,
+  reverse: { src: "/brand/logo-primary.png", width: 1080, height: 1080 },
 };
 
 function Wordmark({ variant }: { variant: LogoVariant }) {
@@ -35,7 +38,9 @@ export function Logo({ variant = "default" }: { variant?: LogoVariant }) {
           alt="Hotel Dipali"
           width={file.width}
           height={file.height}
-          className="h-14 w-14 object-contain md:h-16 md:w-16"
+          // Square canvas with generous internal padding, so the box runs a
+          // little larger than the mark it renders. w-auto keeps the ratio.
+          className="h-14 w-auto object-contain md:h-18"
         />
       ) : (
         <Wordmark variant={variant} />
