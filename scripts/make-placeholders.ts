@@ -11,18 +11,62 @@ import {
 } from "@/content";
 
 /**
- * Generates a labelled placeholder SVG for every Image entry in the content,
- * plus public/sample/credits.json. Idempotent — safe to re-run. Hex colours
- * are allowed in these generated files (they are assets, not components).
+ * Generates a placeholder SVG for every Image entry in the content, plus
+ * public/sample/credits.json. Idempotent — safe to re-run. Hex colours are
+ * allowed in these generated files (they are assets, not components).
+ *
+ * These are deliberately NOT mock photographs: each is an abstract tonal panel
+ * in the Ivory & Gold family, so a page composed of them reads as "photography
+ * pending" rather than "broken". The shot description is carried in the SVG's
+ * aria-label (and in content/*.json, /dev/content/ and docs/data-needed.md) —
+ * never burned into the artwork, which visitors would read as site copy.
  */
 
 const OUT_DIR = join(process.cwd(), "public", "sample");
 
-// Warm-grey placeholder palette (asset only).
-const FILL = "#E7E0D2";
-const BORDER = "#B9AE99";
-const TEXT = "#6B6150";
-const SUBTEXT = "#8A7F6B";
+/** Tonal families, keyed by image-id prefix. Base + shade + hairline. */
+type Tone = { base: string; shade: string; line: string };
+
+/*
+ * Bases sit a clear step darker than the page surfaces (surface #faf6ee,
+ * surface-alt #f1e8d8) so an image slot reads as a distinct plane rather than
+ * a faint rectangle on the background.
+ */
+const TONES: Record<string, Tone> = {
+  // Exterior / property — warm stone.
+  property: { base: "#D2C4A9", shade: "#C2B294", line: "#A2906F" },
+  // Guest rooms — soft ivory linen.
+  stay: { base: "#DCCFB8", shade: "#CBBB9F", line: "#AE9C7C" },
+  // Dining, bakery, sweets — warm clay.
+  dining: { base: "#D8C6AB", shade: "#C6B191", line: "#A8906C" },
+  // Infinity Bar — dusk.
+  bar: { base: "#241F1B", shade: "#2F2823", line: "#6B5A3E" },
+  // Lawns and halls — garden green-gold.
+  venue: { base: "#CFC6A8", shade: "#BDB290", line: "#9C8F6D" },
+  // Pool and gym — cool sage.
+  leisure: { base: "#C6CEC4", shade: "#B2BCB0", line: "#93A08F" },
+};
+
+/** Map an image id onto a tonal family. */
+function toneFor(id: string): Tone {
+  if (id.startsWith("outlet-infinity-bar") || id.includes("infinity-bar")) return TONES.bar!;
+  if (id.startsWith("venue-") || id.includes("weddings") || id.includes("events"))
+    return TONES.venue!;
+  if (id.startsWith("leisure-") || id.includes("pool-gym")) return TONES.leisure!;
+  if (id.startsWith("outlet-") || id.includes("dining")) return TONES.dining!;
+  if (id.startsWith("room-") || id.includes("stay")) return TONES.stay!;
+  return TONES.property!;
+}
+
+/** Stable 32-bit hash so each id always gets the same composition. */
+function hash(value: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < value.length; i++) {
+    h ^= value.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
 
 function escapeXml(value: string): string {
   return value
@@ -33,56 +77,73 @@ function escapeXml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
-/** Wrap text into lines of at most `max` characters, up to `maxLines`. */
-function wrap(text: string, max: number, maxLines: number): string[] {
-  const words = text.split(/\s+/);
-  const lines: string[] = [];
-  let current = "";
-  for (const word of words) {
-    if ((current + " " + word).trim().length > max) {
-      if (current) lines.push(current);
-      current = word;
-    } else {
-      current = (current + " " + word).trim();
+/**
+ * One of four quiet compositions. Each is mostly flat tone with a single
+ * large soft shape, so it crops gracefully under object-cover at any ratio.
+ */
+function composition(variant: number, w: number, h: number, t: Tone): string {
+  const stroke = Math.max(1, Math.round(Math.min(w, h) / 420));
+  const parts: string[] = [];
+
+  if (variant === 0) {
+    // Low horizon with a rising arc — exterior / open-air feel.
+    const horizon = Math.round(h * 0.68);
+    const r = Math.round(Math.min(w, h) * 0.3);
+    parts.push(`<rect x="0" y="${horizon}" width="${w}" height="${h - horizon}" fill="${t.shade}"/>`);
+    parts.push(
+      `<circle cx="${Math.round(w * 0.74)}" cy="${Math.round(horizon - r * 0.55)}" r="${r}" fill="none" stroke="${t.line}" stroke-width="${stroke}" opacity="0.5"/>`,
+    );
+  } else if (variant === 1) {
+    // Tall arch — doorway / interior volume.
+    const aw = Math.round(w * 0.3);
+    const ax = Math.round(w * 0.16);
+    const ay = Math.round(h * 0.22);
+    const ah = h - ay;
+    parts.push(
+      `<path d="M${ax} ${ay + ah} V${ay + aw / 2} a${aw / 2} ${aw / 2} 0 0 1 ${aw} 0 V${ay + ah} Z" fill="${t.shade}"/>`,
+    );
+    parts.push(
+      `<path d="M${Math.round(w * 0.62)} ${h} V${Math.round(h * 0.42)}" stroke="${t.line}" stroke-width="${stroke}" opacity="0.45"/>`,
+    );
+  } else if (variant === 2) {
+    // Soft diagonal band — table / counter / surface.
+    parts.push(
+      `<path d="M0 ${Math.round(h * 0.78)} L${w} ${Math.round(h * 0.56)} L${w} ${h} L0 ${h} Z" fill="${t.shade}"/>`,
+    );
+    const cy = Math.round(h * 0.34);
+    parts.push(
+      `<path d="M${Math.round(w * 0.2)} ${cy} q${Math.round(w * 0.14)} ${-Math.round(h * 0.12)} ${Math.round(w * 0.28)} 0" fill="none" stroke="${t.line}" stroke-width="${stroke}" opacity="0.45"/>`,
+    );
+  } else {
+    // Vertical rhythm — colonnade / drapes / shelving.
+    const cols = 5;
+    const gap = w / (cols + 1);
+    for (let i = 1; i <= cols; i++) {
+      const x = Math.round(gap * i);
+      parts.push(
+        `<path d="M${x} ${Math.round(h * 0.18)} V${h}" stroke="${t.line}" stroke-width="${stroke}" opacity="${i % 2 === 0 ? 0.3 : 0.45}"/>`,
+      );
     }
+    parts.push(
+      `<rect x="0" y="${Math.round(h * 0.86)}" width="${w}" height="${Math.round(h * 0.14)}" fill="${t.shade}"/>`,
+    );
   }
-  if (current) lines.push(current);
-  if (lines.length > maxLines) {
-    const kept = lines.slice(0, maxLines);
-    const last = kept[maxLines - 1];
-    if (last !== undefined) kept[maxLines - 1] = last.replace(/.{1}$/, "…");
-    return kept;
-  }
-  return lines;
+
+  return parts.join("\n  ");
 }
 
 function svgFor(image: Image): string {
-  const { width, height, shot, aspect } = image;
-  const cx = width / 2;
-  const fontMain = Math.round(Math.min(width, height) / 22);
-  const fontSmall = Math.round(fontMain * 0.8);
-  const shotLines = wrap(shot, Math.round(width / (fontMain * 0.6)), 3);
-  const lineHeight = fontMain * 1.3;
-  const blockHeight = shotLines.length * lineHeight + fontSmall * 3;
-  let y = height / 2 - blockHeight / 2 + fontMain;
-
-  const shotTspans = shotLines
-    .map((line) => {
-      const t = `<text x="${cx}" y="${Math.round(y)}" font-size="${fontMain}" fill="${TEXT}" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-weight="600">${escapeXml(line)}</text>`;
-      y += lineHeight;
-      return t;
-    })
-    .join("");
-
-  const aspectY = Math.round(y + fontSmall * 0.6);
-  const labelY = Math.round(aspectY + fontSmall * 1.8);
+  const { width, height, shot, id } = image;
+  const t = toneFor(id);
+  const h = hash(id);
+  const variant = h % 4;
+  const inset = Math.max(8, Math.round(Math.min(width, height) / 90));
+  const frameStroke = Math.max(1, Math.round(Math.min(width, height) / 500));
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(shot)} (sample placeholder)">
-  <rect x="0" y="0" width="${width}" height="${height}" fill="${FILL}"/>
-  <rect x="6" y="6" width="${width - 12}" height="${height - 12}" fill="none" stroke="${BORDER}" stroke-width="3"/>
-  ${shotTspans}
-  <text x="${cx}" y="${aspectY}" font-size="${fontSmall}" fill="${SUBTEXT}" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">Aspect ${escapeXml(aspect)} · ${width}×${height}</text>
-  <text x="${cx}" y="${labelY}" font-size="${fontSmall}" fill="${SUBTEXT}" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-weight="600">SAMPLE — replace with original photo</text>
+  <rect x="0" y="0" width="${width}" height="${height}" fill="${t.base}"/>
+  ${composition(variant, width, height, t)}
+  <rect x="${inset}" y="${inset}" width="${width - inset * 2}" height="${height - inset * 2}" fill="none" stroke="${t.line}" stroke-width="${frameStroke}" opacity="0.35"/>
 </svg>
 `;
 }

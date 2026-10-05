@@ -203,3 +203,27 @@ See CLAUDE.md section M:
   covering structure, sections, dusk theming, links, form presence, room cards,
   scroll-reveal, aria-labelledby, axe-core, console errors, meta). All 120 e2e
   tests pass. No open questions changed; nothing marked verified.
+- 2026-10-05: Step 6 visual-polish pass finalised (no step change — Step 6 was
+  already complete). Re-art-directed the home page: hero recomposed as a
+  lower-left editorial cover with a top+bottom scrim (the top band is what keeps
+  the overlay header's ink legible over a light image), asymmetric intro, a
+  dominant featured room whose copy panel crosses the image edge, a
+  campaign-style dusk weddings block with a layered image pair, a dining
+  composition with one dominant outlet plus the brand family at alternating
+  proportions, and a portrait-crop Pool & Gym with an inset. Added one reusable
+  editorial texture (`.paper-grain`, a near-invisible archival grain) plus
+  `.hero-tint`, `.section-index`, `.frame-hairline` and `.img-hover` — all
+  token-driven, no raw hex. Rewrote `scripts/make-placeholders.ts` to emit calm
+  tonal panels per category instead of grey boxes with
+  "SAMPLE — replace with original photo" burned into the artwork, which was
+  rendering as visitor-facing copy in the hero and every image slot; the shot
+  description stays in the SVG `aria-label`, content JSON, `/dev/content/` and
+  `docs/data-needed.md`, so nothing claims the placeholders are real photos and
+  no trust status changed. Fixed two real bugs found while verifying in-browser:
+  (1) `.container-site` lacked `width: 100%`, so `margin-inline: auto` collapsed
+  it to fit-content inside any flex parent — this was centring the hero content
+  and causing the header wordmark to overlap the nav at 1280px; (2) the featured
+  room's image and copy panel never overlapped because grid auto-placement
+  avoided the explicitly-placed panel and dropped the image to row 2. Verified at
+  360/390/768/1024/1280 with no horizontal overflow, no broken images and no
+  console errors. All 120 e2e tests pass.

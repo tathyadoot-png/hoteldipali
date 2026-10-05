@@ -1,7 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500" role="img" aria-label="Guest room, styled bed with daylight (sample placeholder)">
-  <rect x="0" y="0" width="1200" height="1500" fill="#E7E0D2"/>
-  <rect x="6" y="6" width="1188" height="1488" fill="none" stroke="#B9AE99" stroke-width="3"/>
-  <text x="600" y="703" font-size="55" fill="#6B6150" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-weight="600">Guest room, styled bed with daylight</text>
-  <text x="600" y="801" font-size="44" fill="#8A7F6B" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">Aspect 4:5 · 1200×1500</text>
-  <text x="600" y="880" font-size="44" fill="#8A7F6B" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-weight="600">SAMPLE — replace with original photo</text>
+  <rect x="0" y="0" width="1200" height="1500" fill="#DCCFB8"/>
+  <path d="M200 270 V1500" stroke="#AE9C7C" stroke-width="3" opacity="0.45"/>
+  <path d="M400 270 V1500" stroke="#AE9C7C" stroke-width="3" opacity="0.3"/>
+  <path d="M600 270 V1500" stroke="#AE9C7C" stroke-width="3" opacity="0.45"/>
+  <path d="M800 270 V1500" stroke="#AE9C7C" stroke-width="3" opacity="0.3"/>
+  <path d="M1000 270 V1500" stroke="#AE9C7C" stroke-width="3" opacity="0.45"/>
+  <rect x="0" y="1290" width="1200" height="210" fill="#CBBB9F"/>
+  <rect x="13" y="13" width="1174" height="1474" fill="none" stroke="#AE9C7C" stroke-width="2" opacity="0.35"/>
 </svg>

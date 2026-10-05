@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Botanical } from "@/components/decor/Botanical";
-import { SectionHeading } from "@/components/content/SectionHeading";
 import { RoomCard } from "@/components/cards/RoomCard";
 import { Picture } from "@/components/media/Picture";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
@@ -17,7 +16,7 @@ import {
   getLeisure,
   getGallery,
 } from "@/content";
-import { outletHref, roomHref } from "@/lib/routes";
+import { outletHref, roomHref, venueHref } from "@/lib/routes";
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSite();
@@ -37,27 +36,31 @@ export default async function HomePage() {
     getGallery(),
   ]);
 
-  const heroImage = gallery.find(
-    (g) => g.image.id === "gallery-property-1",
-  )?.image;
+  // STATIC-ONLY: the hero still points at a labelled sample placeholder. The
+  // slot is sized and cropped for the real "hotel exterior, wide" photograph
+  // (docs/data-needed.md) so swapping the file needs no layout change.
+  const heroImage = gallery.find((g) => g.image.id === "gallery-property-1")?.image;
 
   const [featuredRoom, ...otherRooms] = rooms;
-  const weddingImage = venues[0]?.images[0];
+  const lawn = venues[0];
+  const lawnImage = lawn?.images[0];
+  const lawnInset = lawn?.images[1];
 
   const restaurant = outlets.find((o) => o.slug === "restaurant");
-  const otherDiningOutlets = outlets.filter((o) => o.slug !== "restaurant");
+  const familyOutlets = outlets.filter((o) => o.slug !== "restaurant");
 
-  const pool = leisure.pool;
-  const gym = leisure.gym;
+  const { pool, gym } = leisure;
+  const poolImage = pool.images[0];
+  const gymImage = gym.images[0];
 
   return (
     <>
-      {/* ═══════════════════════════════════════════════════════════
-          HERO — full-viewport editorial cover
-          ═══════════════════════════════════════════════════════════ */}
+      {/* ───────────────────────── HERO ─────────────────────────
+          Full-viewport editorial cover. Text is deliberately offset to the
+          lower-left; a quiet marker holds the upper-right. */}
       <section
         data-theme="dusk"
-        className="relative -mt-18 flex min-h-dvh flex-col justify-end overflow-hidden bg-surface text-ink md:-mt-22"
+        className="relative -mt-18 flex min-h-dvh flex-col overflow-hidden bg-surface text-ink md:-mt-22"
         aria-labelledby="home-hero"
       >
         {heroImage ? (
@@ -74,16 +77,31 @@ export default async function HomePage() {
               decoding="async"
               className="absolute inset-0 h-full w-full object-cover"
             />
+            <div aria-hidden="true" className="hero-tint absolute inset-0" />
             <div aria-hidden="true" className="hero-gradient absolute inset-0" />
           </>
         ) : null}
 
-        <div className="container-site relative z-10 pb-16 md:pb-24 lg:pb-28">
-          <div className="max-w-2xl">
+        {/* Upper-right editorial marker — desktop only, clear of the header. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-32 right-0 z-10 hidden lg:block"
+        >
+          <div className="flex items-start gap-5 pr-[var(--gutter)]">
+            <div className="pt-1 text-right">
+              <p className="eyebrow">Rooms · Lawns</p>
+              <p className="eyebrow mt-1">Banquets · Dining</p>
+            </div>
+            <Botanical variant="sprig" className="h-24 text-highlight" />
+          </div>
+        </div>
+
+        <div className="container-site relative z-10 mt-auto pb-20 md:pb-24 lg:pb-28">
+          <div className="max-w-xl lg:max-w-2xl">
             <p className="eyebrow">
               {site.address.value.city}, {site.address.value.state}
             </p>
-            <hr className="rule-ornament mt-4" aria-hidden="true" />
+            <hr className="rule-ornament mt-5" aria-hidden="true" />
 
             <h1 id="home-hero" className="heading-hero mt-6">
               Hotel
@@ -95,7 +113,7 @@ export default async function HomePage() {
               {site.locationLine.value}
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
               <a href="#enquire" className="btn-primary">
                 Enquire now
               </a>
@@ -104,149 +122,192 @@ export default async function HomePage() {
           </div>
         </div>
 
+        {/* Scroll cue, bottom-right. */}
         <div
-          className="absolute inset-x-0 bottom-4 flex justify-center md:bottom-8"
           aria-hidden="true"
+          className="absolute right-0 bottom-6 z-10 hidden items-center gap-3 pr-[var(--gutter)] md:flex"
         >
+          <span className="eyebrow">Scroll</span>
           <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
+            viewBox="0 0 24 48"
+            width="12"
+            height="24"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
             strokeLinecap="round"
-            strokeLinejoin="round"
-            className="scroll-cue text-ink-muted"
+            className="scroll-cue text-highlight"
           >
-            <path d="M12 5v14M5 12l7 7 7-7" />
+            <path d="M12 2v36M6 32l6 6 6-6" />
           </svg>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════
-          INTRO — quiet editorial introduction
-          ═══════════════════════════════════════════════════════════ */}
-      <section className="section bg-surface" aria-labelledby="home-intro">
-        <div className="container-site">
+      {/* ───────────────────────── 01 · INTRO ─────────────────────────
+          Tight, asymmetric, typographic. No images — a breath after the hero. */}
+      <section
+        className="paper-grain bg-surface py-20 md:py-24 lg:py-28"
+        aria-labelledby="home-intro"
+      >
+        <div className="container-site relative">
           <ScrollReveal>
-            <Botanical variant="sprig" className="h-16 text-highlight" />
-          </ScrollReveal>
-          <ScrollReveal delay={80}>
-            <div className="mt-10 grid gap-8 md:grid-cols-5 md:gap-12 lg:gap-20">
-              <div className="md:col-span-2">
+            <div className="grid gap-x-10 gap-y-8 lg:grid-cols-12">
+              <div className="flex items-start gap-5 lg:col-span-2 lg:flex-col lg:gap-3">
+                <span className="section-index">01</span>
+                <p className="eyebrow pt-3 lg:pt-0">The hotel</p>
+              </div>
+
+              <div className="lg:col-span-6">
                 <h2 id="home-intro" className="heading-2">
                   {site.tagline.value}
                 </h2>
+                <Botanical variant="vine" className="mt-7 w-36 text-highlight" />
               </div>
-              <div className="md:col-span-3">
-                <p className="body-lg text-ink-muted">
-                  {site.shortDescription.value}
-                </p>
-                <hr className="rule-ornament mt-8" aria-hidden="true" />
+
+              <div className="lg:col-span-4">
+                <p className="body-lg text-ink-muted">{site.shortDescription.value}</p>
+                <hr className="rule-ornament mt-7" aria-hidden="true" />
               </div>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════
-          ROOMS — featured room + card rail
-          ═══════════════════════════════════════════════════════════ */}
-      <section className="section bg-surface-alt" aria-labelledby="home-rooms">
-        <div className="container-site">
-          {featuredRoom ? (
-            <ScrollReveal>
-              <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-                {featuredRoom.images[0] ? (
-                  <div>
-                    <Picture
-                      image={featuredRoom.images[0]}
-                      ratio="4:3"
-                      sizes="(min-width: 768px) 50vw, 100vw"
-                    />
-                    <p className="caption mt-3">{featuredRoom.name}</p>
-                  </div>
-                ) : null}
-                <div className="flex flex-col justify-center">
+      {/* ───────────────────────── 02 · STAY ─────────────────────────
+          One dominant room, then the rest as a quieter supporting rhythm. */}
+      <section className="bg-surface-alt pb-20 md:pb-24 lg:pb-28" aria-labelledby="home-rooms">
+        <hr className="rule" aria-hidden="true" />
+        <div className="container-site pt-16 md:pt-20">
+          <ScrollReveal>
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-5">
+                  <span className="section-index">02</span>
                   <p className="eyebrow">Stay</p>
-                  <h2 id="home-rooms" className="heading-2 mt-3">
-                    A room for every <em>guest</em>
-                  </h2>
-                  <p className="body-lg mt-4 text-ink-muted">
-                    {featuredRoom.summary}
-                  </p>
-                  <Link
-                    href={roomHref(featuredRoom.slug)}
-                    prefetch={false}
-                    className="link mt-4"
-                  >
-                    View {featuredRoom.name}
-                  </Link>
+                </div>
+                <h2 id="home-rooms" className="heading-2 mt-4 max-w-lg">
+                  A room for every <em>guest</em>
+                </h2>
+              </div>
+              <Link href="/rooms/" prefetch={false} className="link pb-2">
+                Explore all rooms
+              </Link>
+            </div>
+          </ScrollReveal>
+
+          {/* Featured room: wide image with the copy panel crossing its edge. */}
+          {featuredRoom?.images[0] ? (
+            <ScrollReveal className="mt-12">
+              <div className="lg:grid lg:grid-cols-12">
+                {/* Both items need an explicit row: auto-placement would avoid
+                    the cells the copy panel occupies and drop to row 2. */}
+                <div className="img-hover lg:col-span-10 lg:col-start-3 lg:row-start-1">
+                  <Picture
+                    image={featuredRoom.images[0]}
+                    ratio="16:9"
+                    sizes="(min-width: 1024px) 83vw, 100vw"
+                  />
+                </div>
+                <div className="relative z-10 -mt-10 lg:col-span-6 lg:col-start-1 lg:row-start-1 lg:mt-0 lg:self-end">
+                  <div className="bg-surface p-7 md:p-9 lg:mb-10 lg:max-w-md">
+                    <p className="eyebrow">Featured</p>
+                    <h3 className="heading-2 mt-3">{featuredRoom.name}</h3>
+                    <p className="body mt-4 text-ink-muted">{featuredRoom.summary}</p>
+                    <p className="caption mt-4 not-italic text-ink-muted">
+                      {featuredRoom.bed} · Up to {featuredRoom.maxGuests} guests
+                    </p>
+                    <Link
+                      href={roomHref(featuredRoom.slug)}
+                      prefetch={false}
+                      className="link mt-5 inline-block"
+                    >
+                      View {featuredRoom.name}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>
           ) : null}
 
           {otherRooms.length > 0 ? (
-            <ScrollReveal className="mt-12">
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ScrollReveal className="mt-16">
+              <div className="flex items-center gap-5">
+                <p className="eyebrow shrink-0">More rooms</p>
+                <hr className="rule w-full" aria-hidden="true" />
+              </div>
+              <div className="mt-8 grid gap-6 xs:grid-cols-2 lg:grid-cols-3">
                 {otherRooms.map((room) => (
                   <RoomCard key={room.slug} room={room} />
                 ))}
               </div>
             </ScrollReveal>
           ) : null}
-
-          <ScrollReveal className="mt-8">
-            <Link href="/rooms/" prefetch={false} className="link">
-              Explore all rooms
-            </Link>
-          </ScrollReveal>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════
-          WEDDINGS & CELEBRATIONS — dusk, large imagery, strong type
-          ═══════════════════════════════════════════════════════════ */}
+      {/* ───────────────────────── 03 · WEDDINGS ─────────────────────────
+          The second wow moment: dusk, layered imagery, campaign typography. */}
       <section
         data-theme="dusk"
-        className="bg-surface text-ink"
+        className="paper-grain overflow-hidden bg-surface py-20 text-ink md:py-24 lg:py-28"
         aria-labelledby="home-weddings"
       >
-        {weddingImage ? (
+        <div className="container-site relative">
           <ScrollReveal>
-            <Picture
-              image={weddingImage}
-              ratio="16:9"
-              decorative
-              sizes="100vw"
-            />
-          </ScrollReveal>
-        ) : null}
+            <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+              {/* Layered image pair. */}
+              {lawnImage ? (
+                <div className="relative lg:col-span-7">
+                  <div className="img-hover">
+                    <Picture
+                      image={lawnImage}
+                      ratio="3:2"
+                      decorative
+                      sizes="(min-width: 1024px) 58vw, 100vw"
+                    />
+                  </div>
+                  {lawnInset ? (
+                    <div className="absolute -right-4 -bottom-10 hidden w-40 frame-hairline bg-surface p-2 lg:block xl:w-48">
+                      <Picture image={lawnInset} ratio="1:1" decorative sizes="12rem" />
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
 
-        <div className="section">
-          <div className="container-site">
-            <ScrollReveal>
-              <div className="mx-auto max-w-3xl text-center">
-                <Botanical
-                  variant="vine"
-                  className="mx-auto w-40 text-highlight"
-                />
-                <p className="eyebrow mt-8">Weddings &amp; Celebrations</p>
-                <h2 id="home-weddings" className="heading-1 mt-4">
+              <div className="lg:col-span-5">
+                <div className="flex items-center gap-5">
+                  <span className="section-index">03</span>
+                  <p className="eyebrow">Weddings &amp; Celebrations</p>
+                </div>
+
+                <h2 id="home-weddings" className="heading-1 mt-5">
                   Where celebrations <em>come alive</em>
                 </h2>
+
+                <Botanical variant="vine" className="mt-7 w-40 text-highlight" />
+
                 <p className="body-lg mt-6 text-ink-muted">
                   Lawns, banquet halls and dedicated event spaces for weddings,
                   receptions, ring ceremonies, birthdays and corporate events.
                 </p>
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                  <Link
-                    href="/weddings/"
-                    prefetch={false}
-                    className="btn-primary"
-                  >
+
+                {/* Venue names only — capacities stay on the venue pages. */}
+                <ul className="mt-7 divide-y divide-line border-y border-line">
+                  {venues.slice(0, 4).map((venue) => (
+                    <li key={venue.slug} className="py-3">
+                      <Link
+                        href={venueHref(venue.slug)}
+                        prefetch={false}
+                        className="link body"
+                      >
+                        {venue.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <Link href="/weddings/" prefetch={false} className="btn-primary">
                     Plan your wedding
                   </Link>
                   <Link href="/events/" prefetch={false} className="link">
@@ -254,48 +315,51 @@ export default async function HomePage() {
                   </Link>
                 </div>
               </div>
-            </ScrollReveal>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════
-          DINING — brand family, editorial list
-          ═══════════════════════════════════════════════════════════ */}
-      <section className="section bg-surface" aria-labelledby="home-dining">
+      {/* ───────────────────────── 04 · DINING ─────────────────────────
+          One dominant outlet, then the brand family at varying proportions. */}
+      <section className="bg-surface py-20 md:py-24 lg:py-28" aria-labelledby="home-dining">
         <div className="container-site">
           <ScrollReveal>
-            <SectionHeading
-              eyebrow="A family of tastes"
-              title={
-                <>
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-5">
+                  <span className="section-index">04</span>
+                  <p className="eyebrow">A family of tastes</p>
+                </div>
+                <h2 id="home-dining" className="heading-2 mt-4">
                   Dining at <em>Dipali</em>
-                </>
-              }
-              as="h2"
-              id="home-dining"
-            />
+                </h2>
+              </div>
+              <Link href="/dining/" prefetch={false} className="link pb-2">
+                Explore dining
+              </Link>
+            </div>
           </ScrollReveal>
 
           {restaurant ? (
-            <ScrollReveal className="mt-10">
-              <div className="grid gap-8 md:grid-cols-2 md:gap-12">
+            <ScrollReveal className="mt-12">
+              <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-12">
                 {restaurant.images[0] ? (
-                  <Picture
-                    image={restaurant.images[0]}
-                    ratio="3:2"
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                  />
+                  <div className="img-hover lg:col-span-8">
+                    <Picture
+                      image={restaurant.images[0]}
+                      ratio="16:9"
+                      sizes="(min-width: 1024px) 66vw, 100vw"
+                    />
+                  </div>
                 ) : null}
-                <div className="flex flex-col justify-center">
-                  <h3 className="heading-3">{restaurant.name}</h3>
-                  <p className="body mt-3 text-ink-muted">
-                    {restaurant.summary}
-                  </p>
+                <div className="lg:col-span-4 lg:pb-4">
+                  <h3 className="heading-2">{restaurant.name}</h3>
+                  <p className="body mt-4 text-ink-muted">{restaurant.summary}</p>
                   <Link
                     href={outletHref(restaurant.slug)}
                     prefetch={false}
-                    className="link mt-4"
+                    className="link mt-5 inline-block"
                   >
                     Explore {restaurant.name}
                   </Link>
@@ -304,122 +368,122 @@ export default async function HomePage() {
             </ScrollReveal>
           ) : null}
 
-          {otherDiningOutlets.length > 0 ? (
-            <ScrollReveal className="mt-10">
-              <hr className="rule" aria-hidden="true" />
-              <div className="divide-y divide-line">
-                {otherDiningOutlets.map((outlet) => {
-                  const thumb = outlet.images[0];
-                  return (
-                    <div
-                      key={outlet.slug}
-                      className="flex items-center gap-5 py-5"
-                    >
-                      {thumb ? (
-                        <Picture
-                          image={thumb}
-                          ratio="1:1"
-                          className="w-16 shrink-0 md:w-20"
-                        />
-                      ) : null}
-                      <div className="min-w-0 flex-1">
-                        <h3 className="heading-3">
-                          <Link
-                            href={outletHref(outlet.slug)}
-                            prefetch={false}
-                            className="link"
-                          >
-                            {outlet.name}
-                          </Link>
-                        </h3>
-                        <p className="body mt-1 text-ink-muted">
-                          {outlet.summary}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+          {/* The family: alternating portrait/square so the row has rhythm. */}
+          {familyOutlets.length > 0 ? (
+            <ScrollReveal className="mt-16">
+              <div className="flex items-center gap-5">
+                <p className="eyebrow shrink-0">The Dipali family</p>
+                <hr className="rule w-full" aria-hidden="true" />
               </div>
+              <ul className="mt-8 grid gap-x-6 gap-y-10 xs:grid-cols-2 lg:grid-cols-4">
+                {familyOutlets.map((outlet, i) => (
+                  <li key={outlet.slug} className={i % 2 === 1 ? "lg:pt-10" : undefined}>
+                    {outlet.images[0] ? (
+                      <div className="img-hover">
+                        <Picture
+                          image={outlet.images[0]}
+                          ratio={i % 2 === 1 ? "1:1" : "4:5"}
+                          sizes="(min-width: 1024px) 22vw, 50vw"
+                        />
+                      </div>
+                    ) : null}
+                    <h3 className="heading-3 mt-5">
+                      <Link href={outletHref(outlet.slug)} prefetch={false} className="link">
+                        {outlet.name}
+                      </Link>
+                    </h3>
+                    <p className="body mt-2 text-ink-muted">{outlet.summary}</p>
+                  </li>
+                ))}
+              </ul>
             </ScrollReveal>
           ) : null}
-
-          <ScrollReveal className="mt-8">
-            <Link href="/dining/" prefetch={false} className="link">
-              Explore dining
-            </Link>
-          </ScrollReveal>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════
-          POOL & GYM — compact lifestyle split
-          ═══════════════════════════════════════════════════════════ */}
-      <section className="section bg-surface-alt" aria-labelledby="home-leisure">
-        <div className="container-site">
+      {/* ───────────────────────── 05 · POOL & GYM ─────────────────────────
+          Copy-left / image-right, portrait crop, layered inset. */}
+      <section
+        className="paper-grain bg-surface-alt py-20 md:py-24 lg:py-28"
+        aria-labelledby="home-leisure"
+      >
+        <div className="container-site relative">
           <ScrollReveal>
-            <div className="grid gap-8 md:grid-cols-2 md:gap-12 lg:gap-16">
-              {pool.images[0] ? (
-                <Picture
-                  image={pool.images[0]}
-                  ratio="16:9"
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                />
-              ) : null}
-              <div className="flex flex-col justify-center">
-                <p className="eyebrow">Wellness</p>
-                <h2 id="home-leisure" className="heading-2 mt-3">
-                  Pool &amp; <em>Gym</em>
+            <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+              <div className="lg:col-span-5">
+                <div className="flex items-center gap-5">
+                  <span className="section-index">05</span>
+                  <p className="eyebrow">Pool &amp; Gym</p>
+                </div>
+                <h2 id="home-leisure" className="heading-1 mt-5">
+                  Space to <em>unwind</em>
                 </h2>
-                <p className="body-lg mt-4 text-ink-muted">{pool.summary}</p>
-                <p className="body mt-3 text-ink-muted">{gym.summary}</p>
-                <div className="mt-6">
-                  <Link
-                    href="/pool-and-gym/"
-                    prefetch={false}
-                    className="btn-ghost"
-                  >
+                <p className="body-lg mt-6 text-ink-muted">{pool.summary}</p>
+                <hr className="rule-ornament mt-7" aria-hidden="true" />
+                <p className="body mt-6 text-ink-muted">{gym.summary}</p>
+                <div className="mt-8">
+                  <Link href="/pool-and-gym/" prefetch={false} className="btn-ghost">
                     Explore pool &amp; gym
                   </Link>
                 </div>
               </div>
+
+              {poolImage ? (
+                <div className="relative lg:col-span-6 lg:col-start-7">
+                  <div className="img-hover">
+                    <Picture
+                      image={poolImage}
+                      ratio="4:5"
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                    />
+                  </div>
+                  {gymImage ? (
+                    <div className="absolute -bottom-8 -left-6 hidden w-40 frame-hairline bg-surface-alt p-2 lg:block xl:w-44">
+                      <Picture image={gymImage} ratio="1:1" decorative sizes="11rem" />
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════
-          ENQUIRY — dusk, conversion section
-          ═══════════════════════════════════════════════════════════ */}
+      {/* ───────────────────────── 06 · ENQUIRE ───────────────────────── */}
       <section
         id="enquire"
         data-theme="dusk"
-        className="section bg-surface text-ink"
+        className="paper-grain bg-surface py-20 text-ink md:py-24 lg:py-28"
         aria-labelledby="home-enquire"
       >
-        <div className="container-site">
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-            <ScrollReveal>
-              <div className="flex flex-col gap-4">
-                <Botanical
-                  variant="flower"
-                  className="h-12 w-12 text-highlight"
-                />
-                <p className="eyebrow mt-2">Get in touch</p>
-                <h2 id="home-enquire" className="heading-2 mt-1">
-                  Make an <em>enquiry</em>
-                </h2>
-                <p className="body-lg text-ink-muted">
-                  Reach out with your dates and requirements.
-                </p>
-                <div className="mt-2 flex items-center gap-4">
-                  <CallLink className="link" />
-                  <WhatsAppLink context="general" className="link">
-                    WhatsApp us
-                  </WhatsAppLink>
-                </div>
+        <div className="container-site relative">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <ScrollReveal className="lg:col-span-5">
+              <div className="flex items-center gap-5">
+                <span className="section-index">06</span>
+                <p className="eyebrow">Get in touch</p>
+              </div>
+
+              <h2 id="home-enquire" className="heading-1 mt-5">
+                Make an <em>enquiry</em>
+              </h2>
+
+              <p className="body-lg mt-6 text-ink-muted">
+                Send us your dates and requirements, or reach us directly — whichever
+                is quicker for you.
+              </p>
+
+              <Botanical variant="flower" className="mt-8 h-14 w-14 text-highlight" />
+
+              <div className="mt-8 flex flex-col items-start gap-3">
+                <CallLink className="link" />
+                <WhatsAppLink context="general" className="link">
+                  WhatsApp us
+                </WhatsAppLink>
               </div>
             </ScrollReveal>
-            <ScrollReveal delay={80}>
+
+            <ScrollReveal delay={80} className="lg:col-span-7">
               <EnquiryForm />
             </ScrollReveal>
           </div>

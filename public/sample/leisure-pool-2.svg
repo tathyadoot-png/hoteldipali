@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200" role="img" aria-label="Pool deck, loungers detail (sample placeholder)">
-  <rect x="0" y="0" width="1600" height="1200" fill="#E7E0D2"/>
-  <rect x="6" y="6" width="1588" height="1188" fill="none" stroke="#B9AE99" stroke-width="3"/>
-  <text x="800" y="553" font-size="55" fill="#6B6150" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-weight="600">Pool deck, loungers detail</text>
-  <text x="800" y="651" font-size="44" fill="#8A7F6B" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">Aspect 4:3 · 1600×1200</text>
-  <text x="800" y="730" font-size="44" fill="#8A7F6B" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-weight="600">SAMPLE — replace with original photo</text>
+  <rect x="0" y="0" width="1600" height="1200" fill="#C6CEC4"/>
+  <path d="M0 936 L1600 672 L1600 1200 L0 1200 Z" fill="#B2BCB0"/>
+  <path d="M320 408 q224 -144 448 0" fill="none" stroke="#93A08F" stroke-width="3" opacity="0.45"/>
+  <rect x="13" y="13" width="1574" height="1174" fill="none" stroke="#93A08F" stroke-width="2" opacity="0.35"/>
 </svg>
