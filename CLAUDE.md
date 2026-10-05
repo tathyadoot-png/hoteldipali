@@ -70,8 +70,9 @@ availability" link. Never embed a booking widget or third-party script without a
   `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.chip`, `.card`, `.link`,
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
   `.rule-ornament`, `.label`, `.input`, `.select`, `.textarea`, `.field-error`,
-  `.field-hint`, `.visually-hidden`). Never raw hex, never raw Tailwind palette
-  colours (`bg-amber-700`), never font names in components.
+  `.field-hint`, `.visually-hidden`, `.hero-gradient`, `[data-reveal]`,
+  `.scroll-cue`). Never raw hex, never raw Tailwind palette colours
+  (`bg-amber-700`), never font names in components.
 - Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Dusk"
   variant for weddings and the bar). Every element that sets `data-theme="dusk"`
   MUST also carry an explicit `text-ink` (or other colour utility) on that same

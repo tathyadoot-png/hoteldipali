@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-05
-Current step: 6 — Home
+Current step: 7 — Rooms + room detail
 
 ## Status legend
 
@@ -22,7 +22,7 @@ Current step: 6 — Home
 
 ### Phase 1A — Core pages
 
-- [ ] 6. Home
+- [x] 6. Home
 - [ ] 7. Rooms + room detail
 - [ ] 8. Weddings
 - [ ] 9. Events & Celebrations
@@ -183,3 +183,23 @@ See CLAUDE.md section M:
   `page.getByRole("alert")` collided with Next.js's own global route-announcer
   element, which also has `role="alert"`. All 88 e2e tests pass. No open
   questions changed; nothing marked verified.
+- 2026-10-05: Step 6 completed: editorial home page — 7 sections (Hero, Intro,
+  Rooms, Weddings & Celebrations, Dining, Pool & Gym, Enquiry) with deliberate
+  Light→Dusk visual rhythm. Hero: full-viewport dusk section with gallery-property-1
+  background, `hero-gradient` overlay using `color-mix()`, heading-hero H1,
+  location from `site.address`, Enquire/Call CTAs, scroll-cue animation. Intro:
+  asymmetric 2:3 grid, site tagline + shortDescription. Rooms: featured room
+  (image + text side-by-side) + remaining RoomCards in responsive grid. Weddings:
+  dusk full-width venue image, centred botanical vine, heading-1, Plan your wedding
+  CTA. Dining: SectionHeading + featured restaurant (image + text) + editorial list
+  of other outlets with 1:1 thumbnails. Pool & Gym: split grid with pool image and
+  combined pool/gym summaries. Enquiry: dusk #enquire anchor, 2-col grid with
+  Botanical/Call/WhatsApp left, EnquiryForm right. Added `ScrollReveal` client
+  component (IntersectionObserver + `data-reveal`/`data-revealed`, respects
+  `prefers-reduced-motion`). Added theme.css classes: `.hero-gradient`,
+  `[data-reveal]`/`[data-revealed]`, `@keyframes scroll-cue`/`.scroll-cue`.
+  Updated `routes.ts`: "/" added to `PAGES_WITH_OWN_ENQUIRE_ANCHOR`. Page metadata
+  from content via `generateMetadata()`. Added `tests/home.spec.ts` (14 tests
+  covering structure, sections, dusk theming, links, form presence, room cards,
+  scroll-reveal, aria-labelledby, axe-core, console errors, meta). All 120 e2e
+  tests pass. No open questions changed; nothing marked verified.
