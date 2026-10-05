@@ -29,5 +29,13 @@ export default defineConfig({
     url: "http://localhost:4173",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    env: {
+      // Reserved test-only domain (RFC 2606) — never a real endpoint. Lets
+      // tests/enquiry-form.spec.ts exercise the EnquiryForm's real submit
+      // path (actual fetch, actual response handling) via page.route()
+      // interception, without needing live form-provider credentials.
+      NEXT_PUBLIC_FORM_ENDPOINT: "https://form-endpoint.test/submit",
+      NEXT_PUBLIC_FORM_ACCESS_KEY: "test-only-access-key",
+    },
   },
 });

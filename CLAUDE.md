@@ -65,11 +65,13 @@ availability" link. Never embed a booking widget or third-party script without a
 - Pop colour: max one element per section. `highlight` is never used for body text on
   light surfaces.
 - Components use only semantic utilities (`bg-surface`, `text-ink`, `bg-accent`,
-  `font-display`…) and component classes (`.heading-hero`, `.heading-1/2/3`,
-  `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.btn-primary`, `.btn-secondary`,
-  `.btn-ghost`, `.chip`, `.card`, `.link`, `.section`, `.container-site`). Never raw
-  hex, never raw Tailwind palette colours (`bg-amber-700`), never font names in
-  components.
+  `font-display`…) and component classes defined in `theme.css` (`.heading-hero`,
+  `.heading-1/2/3`, `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.big-number`,
+  `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.chip`, `.card`, `.link`,
+  `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
+  `.rule-ornament`, `.label`, `.input`, `.select`, `.textarea`, `.field-error`,
+  `.field-hint`, `.visually-hidden`). Never raw hex, never raw Tailwind palette
+  colours (`bg-amber-700`), never font names in components.
 - Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Dusk"
   variant for weddings and the bar). Every element that sets `data-theme="dusk"`
   MUST also carry an explicit `text-ink` (or other colour utility) on that same

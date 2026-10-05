@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-02
-Current step: 5 — EnquiryForm + /thank-you/
+Last updated: 2026-10-05
+Current step: 6 — Home
 
 ## Status legend
 
@@ -18,7 +18,7 @@ Current step: 5 — EnquiryForm + /thank-you/
       booking + analytics helpers, logo, favicon)
 - [x] 4b. Content components (Picture + image pipeline, Botanical, SectionHeading,
       Breadcrumbs, Room/Venue/Outlet/Offer cards)
-- [ ] 5. EnquiryForm + /thank-you/
+- [x] 5. EnquiryForm + /thank-you/
 
 ### Phase 1A — Core pages
 
@@ -148,3 +148,38 @@ See CLAUDE.md section M:
   (Light + Dusk); `tests/components.spec.ts` covers Picture, breadcrumb semantics/current
   state, card rendering + route-helper hrefs, and price-gating; axe-core on `/styleguide/`
   (both widths) now also covers the new components. No new dependencies.
+- 2026-10-05: Step 5 completed: `src/lib/submit-enquiry.ts` (the one function all
+  form submissions go through — posts to `NEXT_PUBLIC_FORM_ENDPOINT`, Web3Forms/
+  Formspree-style JSON payload, no API route/server/DB), `src/lib/validation.ts`
+  (Indian-mobile + email checks for visitor-typed input, distinct from the stricter
+  stored-data `indianMobileSchema`), and the reusable `EnquiryForm` component (one
+  component for rooms/wedding/event/dining/pool-gym/general — configurable via
+  `enquiryTypes`/`defaultEnquiryType`, not duplicated per use case). Added new
+  token-driven form classes to `theme.css` (`.label`, `.input`, `.select`,
+  `.textarea`, `.field-error`, `.field-hint`, `.visually-hidden`); focus ring is
+  the existing global `:focus-visible` rule, not redefined. Native HTML semantics
+  throughout (labelled fields, `required`, correct input types) with `noValidate`
+  for full control over error copy/placement; invalid fields get `aria-invalid` +
+  `aria-describedby`, and focus moves to the first invalid field on a failed
+  validation attempt. Honeypot (`company`, visually hidden, `tabIndex=-1`,
+  `aria-hidden`) silently drops spam without a network call. When
+  `NEXT_PUBLIC_FORM_ENDPOINT` is unset (today's default — `.env.example` stays
+  empty, no credentials invented), the fieldset is disabled behind a calm notice
+  and Call/WhatsApp (existing `CallLink`/`WhatsAppLink`) are the working path;
+  on a real submission failure the error is shown inline, the form stays filled
+  for retry, and Call/WhatsApp remain visible throughout. Added
+  `src/app/thank-you/page.tsx` (noindex; confirms receipt without inventing a
+  response-time promise, Call/WhatsApp alternatives, link back to `/`). Showcased
+  as `/styleguide/` Section 09 (`idPrefix` prop added to `EnquiryForm` so the
+  simultaneously-rendered Light/Dusk panes don't collide on element ids — same
+  need `${variant}-*` ids already solved elsewhere in the styleguide). Added
+  `tests/enquiry-form.spec.ts` (labels/options, required + phone + email
+  validation with focus management, a genuine success/failure/retry round-trip
+  against a real `fetch()` intercepted via `page.route()` on a reserved
+  `*.test` domain — configured only in `playwright.config.ts`'s `webServer.env`,
+  never in a committed env file — honeypot drops the request entirely, thank-you
+  page content/links, and axe-core at 360/768/1024/1280 with zero serious/
+  critical violations). Fixed one real bug found during testing: an unscoped
+  `page.getByRole("alert")` collided with Next.js's own global route-announcer
+  element, which also has `role="alert"`. All 88 e2e tests pass. No open
+  questions changed; nothing marked verified.

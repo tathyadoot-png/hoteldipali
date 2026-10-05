@@ -9,6 +9,7 @@ import { OfferCard } from "@/components/cards/OfferCard";
 import { OutletCard } from "@/components/cards/OutletCard";
 import { RoomCard } from "@/components/cards/RoomCard";
 import { VenueCard } from "@/components/cards/VenueCard";
+import { EnquiryForm } from "@/components/forms/EnquiryForm";
 import { Picture } from "@/components/media/Picture";
 import { ThemePreviewToggle } from "@/components/styleguide/ThemePreviewToggle";
 import { getOutlets, getRooms, getVenues, type Offer, type Outlet, type Room, type Venue } from "@/content";
@@ -402,6 +403,22 @@ function Sections({
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <OfferCard offer={content.offer} />
           </div>
+        </div>
+      </section>
+
+      {/* 9. EnquiryForm (Step 5) */}
+      <section aria-labelledby={`${variant}-form`}>
+        <p className="eyebrow">Section 09</p>
+        <h2 id={`${variant}-form`} className="heading-2">
+          Enquiry form
+        </h2>
+        <p className="body-lg mt-3 max-w-prose">
+          One reusable form for rooms, wedding, event, dining, pool &amp; gym and
+          general enquiries. Submits to the hosted form endpoint configured via
+          env vars; falls back to a clear notice plus Call/WhatsApp when unset.
+        </p>
+        <div className="mt-6 max-w-xl">
+          <EnquiryForm idPrefix={`${variant}-ef`} />
         </div>
       </section>
     </div>
