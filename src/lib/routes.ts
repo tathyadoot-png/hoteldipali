@@ -25,11 +25,18 @@ export function stickyCtaConfig(pathname: string): { label: string } {
  */
 const PAGES_WITH_OWN_ENQUIRE_ANCHOR: string[] = ["/"];
 
+/**
+ * Route shapes whose every page renders its own #enquire section. Room detail
+ * pages do; the /rooms/ hub does not, so this must not match it.
+ */
+const ROUTES_WITH_OWN_ENQUIRE_ANCHOR: RegExp[] = [/^\/rooms\/[^/]+\/$/];
+
 /** Anchor the "Enquire" CTA should link to from the current pathname. */
 export function enquireHref(pathname: string): string {
-  return PAGES_WITH_OWN_ENQUIRE_ANCHOR.includes(pathname)
-    ? "#enquire"
-    : "/contact/#enquire";
+  const hasOwnAnchor =
+    PAGES_WITH_OWN_ENQUIRE_ANCHOR.includes(pathname) ||
+    ROUTES_WITH_OWN_ENQUIRE_ANCHOR.some((pattern) => pattern.test(pathname));
+  return hasOwnAnchor ? "#enquire" : "/contact/#enquire";
 }
 
 // Canonical URLs for content entities. Kept here so pages and cards never

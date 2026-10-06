@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-05
-Current step: 7 — Rooms + room detail
+Current step: 8 — Weddings
 
 ## Status legend
 
@@ -23,7 +23,7 @@ Current step: 7 — Rooms + room detail
 ### Phase 1A — Core pages
 
 - [x] 6. Home
-- [ ] 7. Rooms + room detail
+- [x] 7. Rooms + room detail
 - [ ] 8. Weddings
 - [ ] 9. Events & Celebrations
 - [ ] 10. Dining hub
@@ -227,3 +227,35 @@ See CLAUDE.md section M:
   avoided the explicitly-placed panel and dropped the image to row 2. Verified at
   360/390/768/1024/1280 with no horizontal overflow, no broken images and no
   console errors. All 120 e2e tests pass.
+- 2026-10-06: Step 7 completed: Rooms hub + room detail template. `/rooms/`
+  opens with breadcrumb/eyebrow/H1/lead, gives the first room a dominant
+  featured block, then lists the remaining rooms as a **comparison rail** —
+  hairline rows with the thumbnail, name, summary and size/sleeps/bed aligned
+  into columns. The rail is the page's one bold device and is data-led: rooms
+  differ along shared axes (280→560 sq ft, sleeps 3→5), so aligned columns carry
+  real information and match the job a guest is doing. At mobile the columns
+  collapse into labelled inline pairs rather than a squeezed table. Deliberately
+  no numbered section markers here — rooms are a set, not a sequence.
+  `src/app/rooms/[slug]/page.tsx` is ONE template for all four routes, emitted
+  via `generateStaticParams()` from `getRoomSlugs()` (first dynamic route in the
+  project; `● (SSG)` in the build output, no runtime dependency). Its hero offsets
+  a hairline fact list against a large framed image; DOM order is the mobile
+  order (title → image → facts → CTA) so the room is seen before it is specified.
+  Then description + highlights, amenities as plain semantic lists from
+  `roomAmenities`/`bathroomAmenities` (no icon wall, nothing invented — the
+  schema already carries them), an `#enquire` section using the existing
+  `EnquiryForm` locked to `enquiryTypes={["rooms"]}` with a per-room `idPrefix`,
+  and "Continue your stay" related rooms via `RoomCard` (a different device from
+  the hub's rail, and the current room is excluded). `WhatsAppLink` uses the
+  existing `context="room"` with `roomName`. Extended `enquireHref()` with a
+  route pattern so the sticky CTA targets the on-page `#enquire` on room detail
+  pages but not on the hub, which has no form. No booking, availability or
+  payment anywhere. Trust preserved: all four rooms stay `sample`, price stays
+  hidden behind the existing `priceFrom.showOnSite` gate (a test asserts no price
+  renders while that flag is false), and no placeholder developer text reaches
+  the page. Added `tests/rooms.spec.ts` (96 checks across both viewports: hub
+  structure/links/featured dominance/rail facts, and per-room title, facts,
+  amenities, enquiry CTA → form, breadcrumbs, related-room exclusion, absence of
+  booking UI and of price, overflow, and axe-core). All 216 e2e tests pass.
+  Verified at 360/390/768/1024/1280: no horizontal overflow, no broken images,
+  no console errors. No open questions resolved; nothing marked verified.
