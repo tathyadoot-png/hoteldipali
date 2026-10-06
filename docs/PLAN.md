@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-05
-Current step: 8 — Weddings
+Current step: 9 — Events & Celebrations
 
 ## Status legend
 
@@ -24,7 +24,7 @@ Current step: 8 — Weddings
 
 - [x] 6. Home
 - [x] 7. Rooms + room detail
-- [ ] 8. Weddings
+- [x] 8. Weddings
 - [ ] 9. Events & Celebrations
 - [ ] 10. Dining hub
 - [ ] 11. Pool & Gym, Gallery + Lightbox
@@ -259,3 +259,35 @@ See CLAUDE.md section M:
   booking UI and of price, overflow, and axe-core). All 216 e2e tests pass.
   Verified at 360/390/768/1024/1280: no horizontal overflow, no broken images,
   no console errors. No open questions resolved; nothing marked verified.
+- 2026-10-06: Step 8 completed: `/weddings/` — Weddings & Celebrations. Dusk
+  cinematic hero (Main Lawn image, scrim, bottom-left headline with gold italic
+  "celebrations", data-derived metadata line), then an Ivory intro, a Dusk
+  featured venue (Main Lawn, the flagship by capacity/area), an Ivory alternating
+  showcase for the other three (image side alternates for rhythm, not a grid), an
+  Ivory comparison of all four on type/seated/floating/size, an occasions section,
+  and a Dusk enquiry close. The page's signature device — distinct from Rooms'
+  comparison rail — is the `VenueFrame`: a dominant venue image with a smaller
+  `frame-hairline` inset crossing its lower edge, carried through the whole
+  showcase (inset is `hidden lg:block`, so mobile shows a single clean image).
+  The occasions section is fully derived from venue `suitableFor`: each gathering
+  type names the spaces that suit it (e.g. Weddings → Main Lawn · Grand Banquet
+  Hall), so it doubles as a finder — no invented occasion list. Comparison and
+  the per-venue scale readout collapse to labelled rows on mobile, never a
+  squeezed table. Enquiry reuses the existing `EnquiryForm` with
+  `enquiryTypes={["wedding", "event"]}` (the page covers weddings AND
+  birthdays/ring ceremonies/corporate, so both types are offered) defaulting to
+  wedding; `WhatsAppLink` uses the existing `context="wedding"`. Per-venue CTAs
+  point at the on-page `#enquire` rather than the not-yet-built
+  `/events/venues/<slug>/` detail routes, so the conversion page ships no 404
+  links; added `/weddings/` to `PAGES_WITH_OWN_ENQUIRE_ANCHOR` so the sticky
+  "Plan wedding" CTA targets the on-page form. Trust preserved: all four venues
+  stay `sample`, capacities/sizes shown only in context (not as hero
+  superlatives) and labelled "indicative", no price/booking/availability anywhere,
+  nothing marked verified, no placeholder developer text visitor-facing. Added
+  `tests/weddings.spec.ts` (24 checks per run: title/H1, hero CTA, every venue
+  present, comparison counts + capacities, per-venue enquire links, enquiry type
+  wiring, occasion derivation, absence of price/booking/SAMPLE text, overflow,
+  axe-core). All 240 e2e tests pass. Verified at 360/390/768/1024/1280: no
+  horizontal overflow, no broken images, no console errors. No open questions
+  resolved; nothing marked verified. Venue detail pages remain a later step, so
+  `venueHref()` is still unused on this page by design.

@@ -23,7 +23,7 @@ export function stickyCtaConfig(pathname: string): { label: string } {
  * Routes whose own page will render an #enquire section (added as each page is
  * built in later steps). Everywhere else falls back to the contact page's form.
  */
-const PAGES_WITH_OWN_ENQUIRE_ANCHOR: string[] = ["/"];
+const PAGES_WITH_OWN_ENQUIRE_ANCHOR: string[] = ["/", "/weddings/"];
 
 /**
  * Route shapes whose every page renders its own #enquire section. Room detail
