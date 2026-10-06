@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-05
-Current step: 9 — Events & Celebrations
+Current step: 10 — Dining hub
 
 ## Status legend
 
@@ -25,7 +25,7 @@ Current step: 9 — Events & Celebrations
 - [x] 6. Home
 - [x] 7. Rooms + room detail
 - [x] 8. Weddings
-- [ ] 9. Events & Celebrations
+- [x] 9. Events & Celebrations
 - [ ] 10. Dining hub
 - [ ] 11. Pool & Gym, Gallery + Lightbox
 - [ ] 12. About, Contact, FAQ
@@ -291,3 +291,34 @@ See CLAUDE.md section M:
   horizontal overflow, no broken images, no console errors. No open questions
   resolved; nothing marked verified. Venue detail pages remain a later step, so
   `venueHref()` is still unused on this page by design.
+- 2026-10-06: Step 9 completed: `/events/` — Events & Celebrations, built to be
+  a different experience from Weddings rather than a re-skin. Weddings is the
+  story-forward page (dark full-bleed cinematic hero, VenueFrame showcase);
+  Events is the utility-forward page. It opens with a deliberately lighter
+  **split hero** (text beside a plain venue image, no dusk, no framed inset —
+  H1 "Room for every occasion"), then its signature device: an interactive
+  **event-type finder** (`src/components/events/EventFinder.tsx`, a client
+  component). The finder is a group of `.chip` toggle buttons (aria-pressed,
+  44px targets, keyboard-operable, a polite live-region status) — "All spaces"
+  default plus one chip per event type actually present in venue `suitableFor`,
+  ordered event-first (the Weddings page leads with wedding occasions; this one
+  does not). Selecting a type filters to the venues that list it (e.g.
+  Conferences → Grand Banquet Hall only), each shown with image, type,
+  indicative capacity line and an on-page enquire link. All matches are computed
+  from `suitableFor`, so nothing is invented — the filter only hides/shows real
+  content. A restrained Light cross-link band ("Planning a wedding?" → Explore
+  Weddings) keeps wedding storytelling on its own page, and a Dusk enquiry close
+  ("Let's plan the occasion") reuses `EnquiryForm` with
+  `enquiryTypes={["event", "wedding"]}` defaulting to event. Added `/events/` to
+  `PAGES_WITH_OWN_ENQUIRE_ANCHOR` so the sticky CTA targets the on-page form.
+  Trust preserved: venues stay `sample`, capacities labelled indicative, no
+  price/booking/availability, no placeholder developer text visitor-facing,
+  nothing marked verified. The event-type label map is defined locally on this
+  page (display strings, not a content abstraction) rather than refactoring the
+  committed Weddings page. Added `tests/events.spec.ts` (26 checks per run:
+  title/H1, light hero, finder chip set derived from data, default All, correct
+  filtered matches, keyboard operation + pressed state, per-venue enquire links,
+  cross-link, enquiry type/default, absence of price/booking/SAMPLE text,
+  overflow, axe-core). All 266 e2e tests pass. Verified at 360/390/768/1024/1280:
+  no horizontal overflow, no broken images, no console errors. No open questions
+  resolved; nothing marked verified. `/weddings/` left untouched.
