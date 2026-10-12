@@ -1,7 +1,7 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-10-05
-Current step: 10 — Dining hub
+Current step: 11 — Pool & Gym, Gallery + Lightbox
 
 ## Status legend
 
@@ -26,7 +26,7 @@ Current step: 10 — Dining hub
 - [x] 7. Rooms + room detail
 - [x] 8. Weddings
 - [x] 9. Events & Celebrations
-- [ ] 10. Dining hub
+- [x] 10. Dining hub
 - [ ] 11. Pool & Gym, Gallery + Lightbox
 - [ ] 12. About, Contact, FAQ
 - [ ] 13. Wedding campaign LP, legal pages, 404
@@ -322,3 +322,35 @@ See CLAUDE.md section M:
   overflow, axe-core). All 266 e2e tests pass. Verified at 360/390/768/1024/1280:
   no horizontal overflow, no broken images, no console errors. No open questions
   resolved; nothing marked verified. `/weddings/` left untouched.
+- 2026-10-12: Step 10 completed: `/dining/` — the Dipali table, built as a warm
+  sensory dining family rather than a directory of outlet cards. A Light hero
+  ("The Dipali table") opens into the signature device — a "menu of places"
+  index: a menu-style contents list of all five outlets (name + cuisine), each
+  row an anchor to that outlet's section below. Then a day-to-evening themed
+  journey in which the page literally darkens: Dipali Restaurant (Light, the
+  primary experience, with a content-driven menu preview), the Dipali counters
+  (Bakery + Sweets, surface-alt pair), Poolside Restaurant (Light, by the
+  water), and the Infinity Bar (Dusk "after dark" moment), closing on a Dusk
+  dining enquiry. Each outlet is an anchor section with `id={slug}` and
+  `scroll-mt-24` (verified: an index/footer `/dining/#slug` jump lands the
+  heading at 96px, clear of the 88px sticky header), so the existing footer and
+  Home links resolve on-page. The restaurant menu preview is content-driven:
+  the six section names from `content/menus/restaurant.json` as an "on the menu"
+  index plus the four `signature` items with descriptions — and NO prices, since
+  every sample price carries `showOnSite:false`. Deliberately omitted all
+  unverified operational facts: no opening hours (sample), no diet/"pure veg"
+  claim (public-unverified; CLAUDE.md §G), no order channels, no age-policy
+  claim on the bar, no invented drinks/brands/menu items, no reservation or
+  ordering UI. Outlets stay at their existing `sample`/`public-unverified`
+  statuses; nothing marked verified. Reuses `EnquiryForm` locked to
+  `enquiryTypes={["dining"]}` and `WhatsAppLink context="dining"`. Added
+  `/dining/` to `PAGES_WITH_OWN_ENQUIRE_ANCHOR`. The index/counters show cuisine
+  only (dropping a redundant kind label that read "Bakery · Bakery · Desserts").
+  Added `tests/dining.spec.ts` (26 checks per run: title/H1, every outlet +
+  index anchors, scroll-margin, dusk bar, restaurant menu preview from content,
+  dining-only enquiry, absence of price/booking/ordering/reservation UI, no
+  menu-price leak, no unverified timings/diet text, no 404 detail routes,
+  overflow, axe-core). All 292 e2e tests pass. Verified at 360/390/768/1024/1280:
+  no horizontal overflow, no broken images, no console errors. Individual dining
+  outlet pages remain a later step, so `outletHref()` targets the on-page
+  anchors by design. No open questions resolved; nothing marked verified.
