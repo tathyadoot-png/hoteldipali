@@ -39,6 +39,23 @@ export function Header() {
   const { open: menuOpen, setOpen: setMenuOpen, triggerRef } = useMobileMenu();
 
   useEffect(() => {
+    // A page can name the element whose arrival should end the overlay — the
+    // home page uses the ivory arch that rises over its entrance film, so the
+    // header stays transparent for the whole pinned scene.
+    const solidFrom = document.querySelector<HTMLElement>("[data-header-solid-from]");
+    if (solidFrom) {
+      const observer = new IntersectionObserver(
+        ([entry]) => setScrolled(Boolean(entry?.isIntersecting)),
+        // Root = everything above a line 10% down the viewport (just below the
+        // header). The trigger intersects it from the moment its top crosses
+        // that line and stays intersecting however far past a jump scroll
+        // lands — a thin strip could be leapt over in one frame and missed.
+        { rootMargin: "1000000px 0px -90% 0px", threshold: 0 },
+      );
+      observer.observe(solidFrom);
+      return () => observer.disconnect();
+    }
+
     const sentinel = document.getElementById("scroll-sentinel");
     if (!sentinel) return;
 
@@ -50,7 +67,8 @@ export function Header() {
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, []);
+    // Re-run on navigation: the trigger element only exists on some pages.
+  }, [pathname]);
 
   const isOverlay = overlayHeaderRoutes.includes(pathname) && !scrolled;
 

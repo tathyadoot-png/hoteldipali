@@ -11,6 +11,16 @@
     "note": "sample copy — rewrite with verified details",
     "value": "A welcoming hotel in Sagar with comfortable rooms, lawns and banquet halls for weddings and events, a multi-cuisine restaurant, the Infinity Bar, Dipali Sweets, a swimming pool and a gym."
   },
+  "entranceVideo": {
+    "status": "sample",
+    "note": "prototype AI-generated walkthrough (gates, drive, porte-cochère, lobby) at 854×480 with a generator watermark — the architecture shown is NOT confirmed as Hotel Dipali. Replace with original footage (≥1920×1080, short keyframe interval for smooth scrubbing) and re-run pnpm make:video-frames before launch.",
+    "src": "/video/entry.mp4",
+    "poster": "/video/entry-poster.webp",
+    "still": "/video/entry-still.webp",
+    "shot": "Arrival sequence, one continuous move: closed gates open, drive up the avenue to the entrance, step into the lobby",
+    "width": 854,
+    "height": 480
+  },
   "address": {
     "status": "public-unverified",
     "source": "GST public record (see docs/public-data.md)",

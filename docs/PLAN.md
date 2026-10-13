@@ -1,6 +1,6 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-05
+Last updated: 2026-10-13
 Current step: 11 — Pool & Gym, Gallery + Lightbox
 
 ## Status legend
@@ -74,6 +74,12 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-02 | Desktop nav (all 7 links + phone + Enquire) shows from the `xl` (1280px) breakpoint; `lg` (1024px) was tested and is too tight. | Avoids wrapping/cramming; `lg` and below get the MobileMenu instead. |
 | 2026-10-02 | Header overlay uses the logo's typographic wordmark fallback (no `logo-reverse.png` yet), not the primary PNG. | The only supplied logo file is gold-on-transparent, sized for a light/ivory ground; the wordmark (token-coloured) reads correctly on both the dark overlay header and the Dusk footer. |
 | 2026-10-02 | Component classes that hardcode a token colour (`.link`, `.eyebrow`, `.caption` → `ink`/`ink-muted`) need an explicit override wherever they render on a surface those tokens weren't validated against (e.g. `.band-brand`). | `color` inherits the ancestor's already-resolved value rather than re-reading custom properties per scope; discovered via axe-core catching ~1.7:1 contrast in the footer. Fixed with a scoped `.band-brand .link/.eyebrow/.caption` rule in theme.css. |
+| 2026-10-13 | Supersedes the 2026-10-02 wordmark-fallback row: the `reverse` logo variant uses `logo-primary.png` (gold reads on dark grounds), since commit `ef0580e`. | Keep the log accurate; the fallback is still in `Logo.tsx` for a variant without an asset. |
+| 2026-10-13 | `pop` retuned from teal to a muted olive-sage (`#626c4b` light / `#9aa57e` dusk) — one contrast accent, not a third colour beside gold. | Creative-overhaul direction. The `#727D5B` reference fails AA with white text (4.38:1), so a slightly deeper value is used; the contrast gate now checks `pop` as *body text* on both surfaces, since sage is used for small labels. |
+| 2026-10-13 | Scroll-driven scenes are built natively — sticky runways plus scroll-mapped CSS custom properties (`useScrollProgress`) — with no GSAP or other animation library. | CLAUDE.md §B (no new dependencies without asking); the native approach is a small hook, keeps native scrolling, and animates only transform/opacity/clip-path. |
+| 2026-10-13 | Rich motion is gated (≥1024px, fine pointer, no reduced motion, no data-saver) by a pre-paint boot script that sets `html[data-motion="rich"]`; CSS lays scenes out from that attribute. | Switching layouts after hydration made the hero jump (CLS). Phones and reduced-motion visitors get complete static compositions and never download the film. |
+| 2026-10-13 | The entrance film is content (`site.entranceVideo`) with trust fields, status `sample`. | It is prototype AI footage of unconfirmed architecture; registering it means `check:content:strict` (and so `pnpm release`) blocks launch until original footage replaces it. |
+| 2026-10-13 | On `/` the overlay header ends when the ivory arch reaches it (`[data-header-solid-from]`), observed against a root extended far above the viewport. | Keeps the film immersive. A thin-strip version was tried first and failed: one-frame jump scrolls (anchors, End, flings) leapt over the strip and left the header transparent. |
 
 ## Brand assets
 
@@ -83,9 +89,15 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
   `#E4A936`) — an "HD" monogram with a small diamond above, and a serif "HOTEL DIPALI"
   wordmark below, stacked in a square canvas.
 - Since the artwork is gold (not dark) on a transparent ground, it is usable as the
-  `default` logo on the light/ivory surface. There is no `logo-reverse.png` yet, so the
-  `reverse` variant (used on the dark overlay header and in the Dusk footer) falls back
-  to the typographic wordmark, coloured via tokens, as designed.
+  `default` logo on the light/ivory surface and — since `ef0580e` — as the `reverse`
+  variant on the dark overlay header and the brand-band footer too. The typographic
+  wordmark remains only as the fallback for a variant without an asset.
+- The PNG is 506 KB and is loaded on every page (header, plus the home keystone marks,
+  which reuse the cached file). A resized derivative (e.g. a ~320px WebP) would help
+  the Lighthouse budget — see Open questions.
+- `public/video/entry.mp4` (prototype) and the frames `entry-poster.webp` (first frame,
+  desktop) / `entry-still.webp` (mobile & reduced motion), regenerated with
+  `pnpm make:video-frames`.
 - `src/app/icon.svg`: a flat bronze "D" monogram placeholder favicon — replace with a
   real logo mark when available.
 
@@ -102,6 +114,29 @@ See CLAUDE.md section M:
 - Original photos needed before step 6 (Home) — see docs/data-needed.md.
 - Need `logo-reverse.png` (a light/gold mark legible on dark backgrounds) and a proper
   logo mark (square monogram) for the favicon — see "Brand assets" above.
+- Optimise the 506 KB logo PNG into a small derivative for the header (not done in the
+  creative overhaul to avoid touching brand assets without sign-off).
+- Scroll-scrubbing was measured in Chromium only (~22–25 presented fps with real wheel
+  input). Test Safari (macOS + iOS iPad at ≥1024px) and Firefox on real devices once the
+  final footage is encoded; Firefox/WebKit engines are not installed locally.
+
+### Shoot brief for the home experience
+
+The layouts are built so originals drop in by replacing files — no redesign needed.
+
+- **Entrance film** (replaces `public/video/entry.mp4`): one continuous, stabilised move —
+  closed gate → gates open → drive up to the entrance → into the lobby; 15–25 s;
+  ≥1920×1080 (ideally 2560×1440), 24–30 fps, H.264 with a keyframe at least every
+  0.5 s (or all-intra) so scroll-scrubbing stays smooth; no audio needed. First frame
+  becomes the desktop poster, so start on a composed, still gate. Keep the top band
+  calm (sky/ceiling) for the transparent header and the left third quieter for the
+  title. Ending in the lobby's light, warm tones lets the ivory arch take over
+  seamlessly. Then run `pnpm make:video-frames` and mark `site.entranceVideo` verified.
+- **Stills**: every shot listed in `docs/data-needed.md` (rooms, venues, outlets, pool,
+  gym, gallery). Most impactful for the home page: the Main Lawn wide at dusk (the
+  Celebrate window opens to full-bleed), each room's wide shot (the room stage), the
+  restaurant, bakery and sweets counters, Poolside at dusk and Infinity Bar at night
+  (the dining walk runs day → evening), and the pool wide in portrait (the sage band).
 
 ### Pre-launch cleanup (step 18)
 
@@ -354,3 +389,53 @@ See CLAUDE.md section M:
   no horizontal overflow, no broken images, no console errors. Individual dining
   outlet pages remain a later step, so `outletHref()` targets the on-page
   anchors by design. No open questions resolved; nothing marked verified.
+- 2026-10-13: Home creative overhaul (not a numbered step; current step stays 11; it
+  is a down payment on step 16 for the home page only). The home page is rebuilt as
+  one narrative — Arrive → Welcome → Stay → Celebrate → Unwind → Dine → Close:
+  - **Entrance** (`EntranceHero`): the prototype film at `public/video/entry.mp4`
+    (20 s, 854×480, gates → drive → porte-cochère → lobby — note the real path is
+    `public/video/`, not `public/videos/`) is pinned in a 380vh runway and scrubbed
+    by scroll, forward and in reverse. Loaded whole into a Blob after `load`, so
+    seeks are served from memory; seeks are coalesced and progress eased. The title
+    lifts away as the gates part, the tagline arrives word by word down the avenue,
+    and clears for the lobby. Poster = the film's first frame (no flash at
+    hand-over); phones and reduced motion get a 41 KB still and no film at all.
+  - **Threshold**: an ivory arch (`.threshold`) rises over the lobby's last frame —
+    the lobby's cream/gold flows straight into the ivory surface — with the gold
+    logo as a keystone and an oversized index (Stay / Celebrate / Unwind / Dine)
+    whose words turn olive-sage italic on hover/focus while a journal-style photo
+    settles in.
+  - **Stay** (`RoomDiscovery`): rooms as an index; a stage follows hover or keyboard
+    focus with a clip-path wipe; phones get each image inline.
+  - **Celebrate**: a dusk scene whose venue window opens to full-bleed as it rises
+    (`ScrollSection` + `.celebrate-window`) beneath a giant gold "Celebrate".
+  - **Unwind**: the single full olive-sage band (`.band-pop`, with ink/focus-ring
+    overrides).
+  - **Dine** (`DayJourney`): a pinned horizontal walk, 1:1 with scroll, from the
+    daytime table to the Infinity Bar at dusk; stacks vertically elsewhere; keyboard
+    focus on an off-screen panel scrolls the page to it.
+  - **Close**: a dusk arch bookends the ivory one; "Every visit begins with a
+    conversation" with the full enquiry form.
+  Supporting changes: `pop` → olive-sage (decision log), contrast gate checks `pop`
+  as body text; `src/lib/motion.ts` + root-layout boot script (`html[data-motion]`,
+  `suppressHydrationWarning` on `<html>`); `useScrollProgress` / `useRichMotion` /
+  `ScrollSection`; `Picture` gains `fill`; Header honours `[data-header-solid-from]`;
+  `site.entranceVideo` schema + content (status `sample`); `scripts/
+  extract-video-frames.ts` (`pnpm make:video-frames` — Playwright decodes the film,
+  as there is no ffmpeg here); removed the now-unused `.section-index` and
+  `.scroll-cue` classes. Bugs found and fixed while verifying in the browser: the
+  hero eyebrow was illegible over the bright pillars (left scrim added); Chrome
+  never lazy-loads an image clipped to zero area, so first hovers flashed empty
+  frames (peek → opacity/scale; room stage keeps a hidden sliver); the header stayed
+  transparent after one-frame jump scrolls (extended IO root); between 1024–1279px
+  the sticky CTA bar covered pinned content (extra bottom padding); and a focused
+  off-screen link scrolled the journey frame sideways under load because
+  `overflow: hidden` is still a scroll container (now `overflow: clip`). Verified in
+  Chrome at 360/390/768/1024/1280/1536, reduced motion, film failure (request
+  blocked) and reverse scrubbing; production build clean on every route. Tests:
+  `tests/entrance.spec.ts` (new — rich scrub forward/back, threshold hand-over,
+  failure fallback, room discovery hover + focus, 1:1 pin + keyboard focus, phone
+  still with zero film requests, reduced-motion static + axe); home spec's `.card`
+  check replaced by "every room is listed and linked" plus a pillar-index check;
+  shell spec's "solid after 200px" replaced by the new contract incl. the
+  jump-scroll regression. All 316 e2e tests pass. Nothing marked verified.

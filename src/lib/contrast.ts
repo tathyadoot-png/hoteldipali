@@ -86,13 +86,16 @@ const BODY_PAIRS: ReadonlyArray<[string, string]> = [
   ["accent-ink", "accent"],
   ["pop-ink", "pop"],
   ["brand-ink", "brand"],
+  // Olive-sage is used for small labels, so it must read as body text on both
+  // surfaces — not merely as a UI colour.
+  ["pop", "surface"],
+  ["pop", "surface-alt"],
 ];
 
 // UI / large-text pairs (≥ 3:1) checked in both variants.
 const UI_PAIRS: ReadonlyArray<[string, string]> = [
   ["accent", "surface"],
   ["accent", "surface-alt"],
-  ["pop", "surface"],
 ];
 
 // UI pairs checked for Dusk only.

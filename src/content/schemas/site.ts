@@ -2,10 +2,30 @@ import { z } from "zod";
 
 import {
   slugSchema,
+  SOURCE_REQUIRED_MSG,
+  sourceRequiredForPublic,
   timeSchema,
   tracked,
   trackedMobile,
+  trustShape,
 } from "./common";
+
+// The home page's scroll-driven arrival film. Carries its own trust fields like
+// an image entry, so a prototype clip is reported by check:content and blocks
+// `pnpm release` until original footage replaces it.
+const entranceVideoSchema = z
+  .object({
+    src: z.string().regex(/^\/video\/.+\.mp4$/, "src must be an .mp4 under /video/"),
+    // First frame of the clip — shown before playback takes over, so no flash.
+    poster: z.string().regex(/^\/video\/.+\.(webp|jpg|png)$/),
+    // Static frame for mobile and reduced-motion visitors (no video download).
+    still: z.string().regex(/^\/video\/.+\.(webp|jpg|png)$/),
+    shot: z.string().min(1),
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+    ...trustShape,
+  })
+  .refine(sourceRequiredForPublic, SOURCE_REQUIRED_MSG);
 
 export const departmentSchema = z.enum([
   "reservations",
@@ -30,6 +50,7 @@ export const siteSchema = z.object({
 
   tagline: tracked(z.string().min(1)),
   shortDescription: tracked(z.string().min(1)),
+  entranceVideo: entranceVideoSchema,
 
   address: tracked(
     z.object({

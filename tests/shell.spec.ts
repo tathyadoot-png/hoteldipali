@@ -14,7 +14,9 @@ test.describe("Desktop (1280px)", () => {
     await expect(page.getByRole("link", { name: "Call" })).toBeHidden();
   });
 
-  test("header is transparent at top and solid after scrolling 200px", async ({
+  // On the home page the header stays transparent for the whole entrance film
+  // and turns solid when the ivory arch that follows it reaches the top.
+  test("home header is transparent over the entrance and solid once past it", async ({
     page,
   }) => {
     await page.goto("/");
@@ -26,11 +28,29 @@ test.describe("Desktop (1280px)", () => {
     );
     expect(transparentBg).toBe("rgba(0, 0, 0, 0)");
 
+    // Still inside the pinned film: still transparent.
     await page.evaluate(() => window.scrollTo(0, 200));
+    await expect(header).toHaveAttribute("data-theme", "dusk");
+
+    // One-frame jump well past the arch (anchor link, End key, fling): solid.
+    await page.evaluate(() => {
+      const arch = document.querySelector<HTMLElement>("[data-header-solid-from]");
+      if (!arch) throw new Error("missing [data-header-solid-from]");
+      window.scrollTo({ top: arch.getBoundingClientRect().top + window.scrollY + 600, behavior: "instant" });
+    });
     await expect(header).not.toHaveAttribute("data-theme", "dusk");
     await expect
       .poll(async () => header.evaluate((el) => getComputedStyle(el).backgroundColor))
       .not.toBe("rgba(0, 0, 0, 0)");
+
+    // One-frame jump back to the top: transparent again.
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await expect(header).toHaveAttribute("data-theme", "dusk");
+  });
+
+  test("header is solid on a page without an overlay hero", async ({ page }) => {
+    await page.goto("/rooms/");
+    await expect(page.locator("header")).not.toHaveAttribute("data-theme", "dusk");
   });
 });
 

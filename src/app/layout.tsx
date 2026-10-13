@@ -8,6 +8,7 @@ import { StickyCtaBar } from "@/components/layout/StickyCtaBar";
 import { MobileMenuProvider } from "@/components/providers/MobileMenuProvider";
 import { SiteDataProvider } from "@/components/providers/SiteDataProvider";
 import { getOutlets, getSite } from "@/content";
+import { RICH_MOTION_BOOT_SCRIPT } from "@/lib/motion";
 import { figtree, instrumentSerif } from "./fonts";
 import "@/styles/theme.css";
 
@@ -23,7 +24,18 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const [site, outlets] = await Promise.all([getSite(), getOutlets()]);
 
   return (
-    <html lang="en" className={`${instrumentSerif.variable} ${figtree.variable}`}>
+    // suppressHydrationWarning: the boot script below adds data-motion to
+    // <html> before React hydrates. One level deep — children still checked.
+    <html
+      lang="en"
+      className={`${instrumentSerif.variable} ${figtree.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Runs before first paint so scroll scenes are laid out correctly from
+            frame one (see src/lib/motion.ts). Static string, no user input. */}
+        <script dangerouslySetInnerHTML={{ __html: RICH_MOTION_BOOT_SCRIPT }} />
+      </head>
       <body className="pb-24 xl:pb-0">
         <a href="#main" className="skip-link">
           Skip to main content

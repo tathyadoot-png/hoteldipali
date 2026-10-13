@@ -25,7 +25,10 @@
   --color-brand-ink: #faf6ee;
   --color-accent: #8a5a14;
   --color-accent-ink: #ffffff;
-  --color-pop: #1f5c5a;
+  /* Olive-sage: the one contrast accent, for interactive states, small labels and
+     a single signature band. A touch deeper than the #727D5B reference so it
+     clears AA as text on both light surfaces and with white text on it. */
+  --color-pop: #626c4b;
   --color-pop-ink: #ffffff;
   --color-highlight: #c9a45c;
   --color-line: rgba(42, 31, 23, 0.15);
@@ -67,10 +70,18 @@
   --color-brand-ink: #f3ebdd;
   --color-accent: #c9a45c;
   --color-accent-ink: #14110e;
-  --color-pop: #4fa39e;
+  --color-pop: #9aa57e;
   --color-pop-ink: #14110e;
   --color-highlight: #c9a45c;
   --color-line: rgba(243, 235, 221, 0.15);
+}
+
+/* Non-colour design constants shared by component classes. */
+:root {
+  /* Rise of the arched threshold that follows the home entrance. */
+  --arch: clamp(3rem, 10vw, 9rem);
+  /* Fractal-noise tile used for paper grain and film grain. */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 @layer base {
@@ -516,7 +527,7 @@
     pointer-events: none;
     opacity: 0.05;
     mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-image: var(--noise);
     background-size: 180px 180px;
   }
 
@@ -525,15 +536,6 @@
   [data-theme="dusk"] .paper-grain::before {
     mix-blend-mode: screen;
     opacity: 0.04;
-  }
-
-  /* Oversized editorial section marker (e.g. "01"). Pairs with .eyebrow. */
-  .section-index {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 1.5rem + 3vw, 4rem);
-    line-height: 1;
-    color: color-mix(in srgb, var(--color-highlight) 45%, transparent);
-    font-variant-numeric: lining-nums;
   }
 
   /* Hairline frame for campaign-style blocks. */
@@ -585,8 +587,8 @@
     }
   }
 
-  /* Scroll indicator bob (hero). Disabled by the global reduced-motion
-     reset in @layer base. */
+  /* Scroll-cue bob, used by .entrance-cue (a few iterations, never a loop).
+     Disabled by the global reduced-motion reset in @layer base. */
   @keyframes scroll-cue {
     0%,
     100% {
@@ -597,7 +599,415 @@
     }
   }
 
-  .scroll-cue {
-    animation: scroll-cue 2.5s var(--ease-out-soft) infinite;
+  /* ═════════════════════════════════════════════════════════════════════
+     HOME EXPERIENCE
+     Scroll-linked scenes are driven by unitless custom properties written by
+     useScrollProgress (--p, and --v for the entrance film). Everything here
+     animates transform / opacity / clip-path only, and every scene has a
+     complete static layout that applies when JS, video or motion is absent.
+     ═════════════════════════════════════════════════════════════════════ */
+
+  /* ── The entrance: a pinned, scroll-scrubbed arrival film ── */
+  .entrance {
+    /* No overflow:hidden here — it would break the sticky frame. */
+    position: relative;
+  }
+
+  [data-motion="rich"] .entrance {
+    height: 380vh;
+  }
+
+  .entrance-frame {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .entrance-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .entrance-video {
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out-soft);
+  }
+
+  .entrance-video[data-ready] {
+    opacity: 1;
+  }
+
+  /* Legibility only: a top band for the overlay header over a bright sky, a
+     lower band for the copy. Built on the scoped surface, so it stays on-palette. */
+  .entrance-scrim {
+    background:
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
+        transparent 24%
+      ),
+      /* Backs the copy column without dimming the centre of the frame. */
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-surface) 62%, transparent) 0%,
+        color-mix(in srgb, var(--color-surface) 30%, transparent) 30%,
+        transparent 52%
+      ),
+      linear-gradient(
+        to top,
+        color-mix(in srgb, var(--color-surface) 90%, transparent) 0%,
+        color-mix(in srgb, var(--color-surface) 45%, transparent) 36%,
+        transparent 64%
+      );
+  }
+
+  /* Film grain over the footage: hides upscaling softness in low-res clips. */
+  .entrance-grain {
+    pointer-events: none;
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    background-image: var(--noise);
+    background-size: 180px 180px;
+  }
+
+  .entrance-copy {
+    display: grid;
+  }
+
+  /* Colour lives here, not in a utility: Tailwind utilities sit in a later
+     layer and would beat the rich-motion override below regardless of
+     specificity. */
+  .entrance-tagline {
+    margin-top: 1.5rem;
+    max-width: 36rem;
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-ink-muted);
+  }
+
+  /* Static layout (mobile, reduced motion, no JS): leave room for the arch. */
+  .entrance-content {
+    padding-bottom: calc(var(--arch) + 2.5rem);
+  }
+
+  /* Scrub layout: the beats share one grid cell and hand over to each other. */
+  [data-motion="rich"] .entrance .entrance-content {
+    padding-bottom: clamp(2.5rem, 7vh, 5rem);
+  }
+
+  /* 1024–1279px gets rich motion AND the fixed StickyCtaBar (hidden from xl):
+     keep the pinned frames' content clear of the bar. */
+  @media (max-width: 1279.98px) {
+    [data-motion="rich"] .entrance .entrance-content {
+      padding-bottom: 6.5rem;
+    }
+
+    [data-motion="rich"] .journey .journey-frame {
+      padding-bottom: 4.5rem;
+    }
+  }
+
+  [data-motion="rich"] .entrance .entrance-copy > * {
+    grid-area: 1 / 1;
+    align-self: end;
+  }
+
+  /* Beat 1 — the title holds, then lifts away as the gates part. */
+  [data-motion="rich"] .entrance .entrance-open {
+    --out: clamp(0, (var(--v, 0) - 0.03) * 8, 1);
+    opacity: calc(1 - var(--out));
+    transform: translate3d(0, calc(var(--out) * -2.5rem), 0);
+  }
+
+  /* Beat 2 — the tagline arrives word by word down the avenue, then clears
+     for the lobby. Each word carries its own start point in --s. */
+  [data-motion="rich"] .entrance .entrance-tagline {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 1.25rem + 4.2vw, 5.75rem);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    max-width: 15ch;
+    color: var(--color-ink);
+    opacity: calc(1 - clamp(0, (var(--v, 0) - 0.86) * 8, 1));
+  }
+
+  [data-motion="rich"] .entrance .entrance-word {
+    --w: clamp(0, (var(--v, 0) - var(--s, 0)) * 14, 1);
+    display: inline-block;
+    opacity: var(--w);
+    transform: translate3d(0, calc((1 - var(--w)) * 0.4em), 0);
+  }
+
+  /* Only an invitation where scrolling actually drives the film. */
+  .entrance-cue {
+    display: none;
+  }
+
+  [data-motion="rich"] .entrance-cue {
+    display: flex;
+    opacity: calc(1 - clamp(0, var(--v, 0) * 25, 1));
+  }
+
+  /* A few bobs to invite the first scroll, then stillness — no idle loop. */
+  .entrance-cue svg {
+    animation: scroll-cue 2.5s var(--ease-out-soft) 3;
+  }
+
+  /* Once the threshold starts to rise the actions are covered: take them out
+     of the tab order too. */
+  .entrance[data-stage="threshold"] .entrance-actions {
+    visibility: hidden;
+  }
+
+  /* ── The threshold: an ivory arch that rises over the end of the film ── */
+  .threshold {
+    position: relative;
+    z-index: 10;
+    margin-top: calc(-1 * var(--arch));
+    border-top-left-radius: 50% var(--arch);
+    border-top-right-radius: 50% var(--arch);
+  }
+
+  /* Pinned: overlap the last viewport of the entrance so the arch climbs over
+     the final lobby frame while it is still held in place. */
+  [data-motion="rich"] .entrance + .threshold {
+    margin-top: -100vh;
+  }
+
+  /* ── The pillar index: oversized words that double as navigation ── */
+  .pillar-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    padding-block: clamp(0.75rem, 1.6vw, 1.5rem);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .pillar-word {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 1.25rem + 7.5vw, 8.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+    transition:
+      color var(--duration-base) var(--ease-out-soft),
+      transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .pillar-row:hover .pillar-word,
+  .pillar-row:focus-visible .pillar-word {
+    color: var(--color-pop);
+    font-style: italic;
+    transform: translate3d(0.06em, 0, 0);
+  }
+
+  /* A photograph tucked into the journal: settles into place on hover or
+     focus. Hover-capable screens only — touch gets the plain index. Revealed
+     with opacity + scale, not clip-path: a fully clipped image never counts as
+     "near the viewport", so lazy loading would wait for the first hover. */
+  .pillar-row {
+    position: relative;
+  }
+
+  .pillar-peek {
+    display: none;
+  }
+
+  @media (hover: hover) and (min-width: 768px) {
+    .pillar-peek {
+      position: absolute;
+      top: 50%;
+      right: 22%;
+      z-index: 1;
+      display: block;
+      width: clamp(9rem, 15vw, 15rem);
+      pointer-events: none;
+      box-shadow: var(--shadow-lift);
+      opacity: 0;
+      transform: translate3d(0, -42%, 0) rotate(-4deg) scale(0.9);
+      transition:
+        opacity var(--duration-base) var(--ease-out-soft),
+        transform var(--duration-base) var(--ease-out-soft);
+    }
+
+    .pillar-row:hover .pillar-peek,
+    .pillar-row:focus-visible .pillar-peek {
+      opacity: 1;
+      transform: translate3d(0, -50%, 0) rotate(-2deg) scale(1);
+    }
+  }
+
+  /* ── Stay: the room discovery stage ── */
+  .room-stage {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+
+  .room-stage-item {
+    position: absolute;
+    inset: 0;
+    /* Not a full 100%: an image clipped to zero area never counts as near the
+       viewport, so lazy loading would wait until its first reveal. The
+       remaining sliver sits beneath the active item (z-index 1), unseen. */
+    clip-path: inset(99.5% 0 0 0);
+    transition: clip-path 380ms var(--ease-out-soft);
+  }
+
+  .room-stage-item[data-active] {
+    z-index: 1;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .room-marker {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--color-pop);
+    opacity: 0;
+    transform: scale(0.4);
+    transition:
+      opacity var(--duration-fast) var(--ease-out-soft),
+      transform var(--duration-fast) var(--ease-out-soft);
+  }
+
+  [data-active] > .room-marker {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Celebrate: a window that opens as the section rises ── */
+  .celebrate-window {
+    --open: clamp(0, (var(--p, 1) - 0.12) * 2.6, 1);
+    clip-path: inset(
+      calc((1 - var(--open)) * 14%) calc((1 - var(--open)) * 20%)
+    );
+  }
+
+  .celebrate-word {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(4rem, 1.5rem + 14vw, 16rem);
+    line-height: 0.82;
+    letter-spacing: -0.03em;
+    color: var(--color-accent);
+  }
+
+  /* ── The sage band: the one full olive-sage moment ── */
+  .band-pop {
+    --color-line: color-mix(in srgb, var(--color-pop-ink) 30%, transparent);
+    background-color: var(--color-pop);
+    color: var(--color-pop-ink);
+  }
+
+  /* Classes that hardcode ink/accent must re-point at pop-ink on sage — the
+     same reason .band-brand needs its overrides. */
+  .band-pop .eyebrow,
+  .band-pop .caption,
+  .band-pop .link,
+  .band-pop .heading-hero em,
+  .band-pop .heading-1 em,
+  .band-pop .heading-2 em {
+    color: var(--color-pop-ink);
+  }
+
+  .band-pop .link {
+    text-decoration-color: color-mix(in srgb, var(--color-pop-ink) 45%, transparent);
+  }
+
+  .band-pop .btn-ghost {
+    border-color: var(--color-pop-ink);
+    color: var(--color-pop-ink);
+  }
+
+  .band-pop .btn-ghost:hover {
+    background-color: color-mix(in srgb, var(--color-pop-ink) 14%, transparent);
+  }
+
+  /* The bronze focus ring vanishes on sage. */
+  .band-pop :focus-visible {
+    outline-color: var(--color-pop-ink);
+  }
+
+  /* ── Dine: a horizontal walk from the table into the evening ── */
+  .journey {
+    /* Bottom room for the closing arch that rises over the end of the walk. */
+    padding-block: 5rem calc(var(--arch) + 3rem);
+  }
+
+  .journey-track {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: var(--container-site);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .journey-progress-track {
+    display: none;
+  }
+
+  [data-motion="rich"] .journey {
+    /* clip, not hidden: no scroll container, so the sticky frame still works. */
+    overflow-x: clip;
+    padding-block: 0;
+    height: calc(100vh + var(--journey-travel, 0px));
+  }
+
+  [data-motion="rich"] .journey .journey-progress-track {
+    display: block;
+    height: 2px;
+    margin: 1.75rem 6vw 0;
+    background-color: var(--color-line);
+  }
+
+  [data-motion="rich"] .journey .journey-frame {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    /* Centre in the area below the solid header (md:h-22), not under it. */
+    padding-top: 5.5rem;
+    /* clip, not hidden: a hidden box is still a scroll container, so focusing
+       an off-screen link would scroll it sideways behind the transform's back.
+       `hidden` stays first only as the fallback for engines without clip. */
+    overflow: hidden;
+    overflow: clip;
+  }
+
+  [data-motion="rich"] .journey .journey-track {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 3vw;
+    width: max-content;
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 6vw;
+    transform: translate3d(calc(var(--p, 0) * -1 * var(--journey-travel, 0px)), 0, 0);
+  }
+
+  [data-motion="rich"] .journey .journey-panel {
+    width: 62vw;
+    height: min(70vh, 44rem);
+  }
+
+  [data-motion="rich"] .journey .journey-intro {
+    width: 34vw;
+  }
+
+  .journey-progress {
+    height: 2px;
+    background-color: var(--color-pop);
+    transform: scaleX(var(--p, 0));
+    transform-origin: left center;
   }
 }

@@ -26,7 +26,12 @@ type PictureProps = {
   priority?: boolean;
   /** Treat as decorative: empty alt + aria-hidden, regardless of the image's alt. */
   decorative?: boolean;
-  /** Classes for the wrapper (cropped mode) or the <img> (natural mode). */
+  /**
+   * Fill a positioned parent edge to edge (object-cover) instead of setting its
+   * own size — for frames whose height is fixed by layout. Ignores `ratio`.
+   */
+  fill?: boolean;
+  /** Classes for the wrapper (cropped mode) or the <img> (natural / fill mode). */
   className?: string;
 };
 
@@ -36,12 +41,31 @@ export function Picture({
   sizes,
   priority = false,
   decorative = false,
+  fill = false,
   className,
 }: PictureProps) {
   const alt = decorative ? "" : image.alt;
   const ariaHidden = decorative ? true : undefined;
   const loading = priority ? "eager" : "lazy";
   const fetchPriority = priority ? "high" : undefined;
+
+  if (fill) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation
+      <img
+        src={image.src}
+        alt={alt}
+        aria-hidden={ariaHidden}
+        width={image.width}
+        height={image.height}
+        sizes={sizes}
+        loading={loading}
+        fetchPriority={fetchPriority}
+        decoding="async"
+        className={`absolute inset-0 h-full w-full bg-surface-alt object-cover ${className ?? ""}`}
+      />
+    );
+  }
 
   if (ratio) {
     return (

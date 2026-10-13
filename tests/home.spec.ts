@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import roomsData from "../content/rooms.json" with { type: "json" };
+
 test.describe("Home page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -64,14 +66,26 @@ test.describe("Home page", () => {
     await expect(form).toBeVisible();
   });
 
-  /* ──── Room cards ──── */
+  /* ──── Rooms ──── */
 
-  test("renders room cards for non-featured rooms", async ({ page }) => {
-    const roomCards = page.locator("section")
-      .filter({ has: page.locator("#home-rooms") })
-      .locator(".card");
-    const count = await roomCards.count();
-    expect(count).toBeGreaterThanOrEqual(1);
+  // The rooms section is an index rather than a card grid; what matters is
+  // that every room is reachable from it.
+  test("lists every room, each linking to its detail page", async ({ page }) => {
+    const section = page.locator("#stay");
+    for (const room of roomsData) {
+      await expect(section.locator(`a[href="/rooms/${room.slug}/"]`)).toContainText(room.name);
+    }
+  });
+
+  /* ──── Pillar index ──── */
+
+  test("the welcome index links to sections that exist on the page", async ({ page }) => {
+    const index = page.getByRole("navigation", { name: "Explore the hotel" });
+    const hrefs = await index.locator("a").evaluateAll((els) =>
+      els.map((e) => e.getAttribute("href") ?? ""),
+    );
+    expect(hrefs).toEqual(["#stay", "#celebrate", "#unwind", "#dine"]);
+    for (const href of hrefs) await expect(page.locator(href)).toBeAttached();
   });
 
   /* ──── Dusk sections carry text-ink ──── */

@@ -70,8 +70,10 @@ availability" link. Never embed a booking widget or third-party script without a
   `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.chip`, `.card`, `.link`,
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
   `.rule-ornament`, `.label`, `.input`, `.select`, `.textarea`, `.field-error`,
-  `.field-hint`, `.visually-hidden`, `.hero-gradient`, `[data-reveal]`,
-  `.scroll-cue`). Never raw hex, never raw Tailwind palette colours
+  `.field-hint`, `.visually-hidden`, `.hero-gradient`, `.hero-tint`, `.paper-grain`,
+  `.frame-hairline`, `.img-hover`, `.band-pop`, `.threshold`, `[data-reveal]`, plus
+  the home-experience scene classes `.entrance*`, `.pillar-*`, `.room-stage*`,
+  `.celebrate-*`, `.journey*`). Never raw hex, never raw Tailwind palette colours
   (`bg-amber-700`), never font names in components.
 - Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Dusk"
   variant for weddings and the bar). Every element that sets `data-theme="dusk"`
@@ -81,8 +83,10 @@ availability" link. Never embed a booking widget or third-party script without a
   silently renders in the parent's (light) ink colour.
 - Every text/background pair passes WCAG AA (4.5:1 body, 3:1 large text and UI).
   Gold-like colours are never body text on light backgrounds.
-- Palette: "Ivory & Gold" (Light, default) with a dark "Dusk" variant. Fonts: display
-  Instrument Serif, body Figtree. See `theme.css` and `src/app/fonts.ts`.
+- Palette: "Ivory & Gold" (Light, default) with a dark "Dusk" variant. `pop` is a muted
+  olive-sage — the only contrast accent: interactive states, small labels and at most
+  one full sage band (`.band-pop`). Fonts: display Instrument Serif, body Figtree. See
+  `theme.css` and `src/app/fonts.ts`.
 
 ## F. Content & data trust
 
@@ -149,6 +153,14 @@ inputs, 44×44 px touch targets. Mobile Lighthouse ≥ 90, LCP < 2.5 s, CLS < 0.
 hero image ≤ 150 KB, no autoplay video on mobile. Motion: < 400 ms,
 transform/opacity/clip-path only, no scroll-jacking, everything disabled under
 `prefers-reduced-motion`. Breakpoints 360, 768, 1024, 1280, 1536.
+
+Scroll-driven scenes (no animation library): `useScrollProgress` writes a unitless
+`--p` (0–1) and CSS does the animating. Scenes only activate under
+`html[data-motion="rich"]`, set before first paint from `src/lib/motion.ts` (≥1024px,
+fine pointer, no reduced motion, no data-saver); every scene must have a complete
+static layout without it. Pin with `position: sticky` inside a tall runway — never
+intercept wheel/touch events — and use `overflow: clip` (not `hidden`) on pinned
+frames, which a focused element could otherwise scroll sideways.
 
 ## L. Workflow (every task, no exceptions)
 
