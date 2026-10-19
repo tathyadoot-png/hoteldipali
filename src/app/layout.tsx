@@ -5,11 +5,14 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { StickyCtaBar } from "@/components/layout/StickyCtaBar";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { MobileMenuProvider } from "@/components/providers/MobileMenuProvider";
 import { SiteDataProvider } from "@/components/providers/SiteDataProvider";
 import { getOutlets, getSite } from "@/content";
 import { RICH_MOTION_BOOT_SCRIPT } from "@/lib/motion";
 import { figtree, instrumentSerif } from "./fonts";
+// Lenis's structural rules (stopped state, data-lenis-prevent); no theming.
+import "lenis/dist/lenis.css";
 import "@/styles/theme.css";
 
 export const metadata: Metadata = {
@@ -43,6 +46,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {/* Observed by Header to flip between overlay and solid, never via a scroll listener. */}
         <div id="scroll-sentinel" aria-hidden="true" className="h-px w-full" />
 
+        <SmoothScroll />
         <MobileMenuProvider>
           <SiteDataProvider site={site} outlets={outlets}>
             <Header />

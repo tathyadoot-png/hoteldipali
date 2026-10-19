@@ -109,6 +109,12 @@
     }
   }
 
+  /* With Lenis running, it animates scrolling itself; CSS smooth scrolling
+     would turn its per-frame position updates into competing animations. */
+  html.lenis {
+    scroll-behavior: auto;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

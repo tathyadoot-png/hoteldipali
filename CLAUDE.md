@@ -25,7 +25,8 @@ Next.js App Router, static export (`output: 'export'`), TypeScript strict, Tailw
 (`@theme` in CSS), pnpm, ESLint + Prettier, Playwright. Hosting: Cloudflare Pages
 (static). Forms post to a hosted form endpoint set by an env var. Images are
 pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height). Animation:
-CSS + IntersectionObserver first.
+CSS + IntersectionObserver first. Smooth wheel scrolling: Lenis (approved 2026-10-19),
+only through `src/lib/smooth-scroll.ts`.
 
 Not allowed in Phase 1: server code, API routes, middleware, `next/image` optimisation,
 CMS, database, auth, localStorage features.
@@ -152,16 +153,21 @@ Never call `window.dataLayer.push` or a vendor SDK directly from a component.
 WCAG 2.2 AA, semantic landmarks, one H1 per page, skip link, visible focus, labelled
 inputs, 44×44 px touch targets. Mobile Lighthouse ≥ 90, LCP < 2.5 s, CLS < 0.1, mobile
 hero image ≤ 150 KB, no autoplay video on mobile. Motion: < 400 ms,
-transform/opacity/clip-path only, no scroll-jacking, everything disabled under
-`prefers-reduced-motion`. Breakpoints 360, 768, 1024, 1280, 1536.
+transform/opacity/clip-path only, everything disabled under `prefers-reduced-motion`.
+Scrolling: wheel input on mouse/trackpad devices is smoothed by Lenis — never slowed
+(wheelMultiplier 1) and never locked except under a modal; touch, keyboard, reduced
+motion and Lenis-failure all stay native. Breakpoints 360, 768, 1024, 1280, 1536.
 
 Scroll-driven scenes (no animation library): `useScrollProgress` writes a unitless
-`--p` (0–1) and CSS does the animating. Scenes only activate under
+`--p` (0–1) and CSS does the animating; with Lenis running it updates from Lenis's
+synchronous `scroll` event (same frame, one loop). Code that scrolls the page uses
+`scrollToY()` from `src/lib/smooth-scroll.ts`, never `window.scrollTo`, and modals call
+`pauseSmoothScroll()` and carry `data-lenis-prevent`. Scenes only activate under
 `html[data-motion="rich"]`, set before first paint from `src/lib/motion.ts` (≥1024px,
 fine pointer, no reduced motion, no data-saver); every scene must have a complete
-static layout without it. Pin with `position: sticky` inside a tall runway — never
-intercept wheel/touch events — and use `overflow: clip` (not `hidden`) on pinned
-frames, which a focused element could otherwise scroll sideways.
+static layout without it. Pin with `position: sticky` inside a tall runway — scenes
+themselves never listen to wheel/touch events — and use `overflow: clip` (not
+`hidden`) on pinned frames, which a focused element could otherwise scroll sideways.
 
 ## L. Workflow (every task, no exceptions)
 

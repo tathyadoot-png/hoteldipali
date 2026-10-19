@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useSyncExternalStore, type RefObject } from "react";
 
+import { useSmoothScroll } from "@/components/motion/SmoothScroll";
 import { prefersRichMotion, RICH_MOTION_QUERY, syncRootMotionAttribute } from "@/lib/motion";
 
 export type ProgressMode = "pinned" | "through";
@@ -30,14 +31,17 @@ type Options = {
  * - the element's document offset is measured only on resize / reflow
  *   (ResizeObserver), never per frame — each frame reads `scrollY` alone, so
  *   there is no forced layout during scroll;
- * - progress maps 1:1 to scroll — no easing loop, so the scene never lags
- *   the visitor's input;
+ * - progress maps 1:1 to the rendered scroll position — no easing of its own;
+ * - with smooth scrolling (Lenis) it updates inside Lenis's frame, right after
+ *   the window moves, so there is one animation loop and the scene is never a
+ *   frame behind the page; with native scrolling it uses one rAF per change;
  * - nothing runs unless the element is near the viewport and the page moves.
  */
 export function useScrollProgress<T extends HTMLElement>(
   ref: RefObject<T | null>,
   { enabled = true, mode = "pinned", cssVar = "--p", onProgress }: Options = {},
 ) {
+  const lenis = useSmoothScroll();
   const callback = useRef(onProgress);
   useEffect(() => {
     callback.current = onProgress;
@@ -81,6 +85,17 @@ export function useScrollProgress<T extends HTMLElement>(
       if (near) schedule();
     };
 
+    // Lenis emits after moving the window (and after native scrolls it
+    // observes): compute in the same frame rather than the next one.
+    const onLenisScroll = () => {
+      if (!near) return;
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+      tick();
+    };
+
     // Proximity gate; when the element leaves, one last frame lands it on 0 / 1.
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -101,19 +116,23 @@ export function useScrollProgress<T extends HTMLElement>(
     observer.observe(el);
     resize.observe(document.body);
     resize.observe(el);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    const offLenis = lenis?.on("scroll", onLenisScroll);
+    if (!lenis) window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
-    schedule();
+    // Write the first value now, so re-subscribing (e.g. when Lenis starts
+    // after mount) never leaves a frame without the property.
+    tick();
 
     return () => {
       observer.disconnect();
       resize.disconnect();
+      offLenis?.();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", schedule);
       if (frame) cancelAnimationFrame(frame);
       el.style.removeProperty(cssVar);
     };
-  }, [ref, enabled, mode, cssVar]);
+  }, [ref, enabled, mode, cssVar, lenis]);
 }
 
 function subscribeToRichMotion(onChange: () => void) {

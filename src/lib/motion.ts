@@ -28,3 +28,12 @@ export function syncRootMotionAttribute(): void {
   if (prefersRichMotion()) document.documentElement.setAttribute("data-motion", "rich");
   else document.documentElement.removeAttribute("data-motion");
 }
+
+/**
+ * When to smooth wheel scrolling (Lenis, see smooth-scroll.ts): a device with a
+ * hovering fine pointer — i.e. a mouse or trackpad that produces wheel events —
+ * and no reduced-motion request. Width does not matter. Touch screens keep
+ * native, momentum-driven touch scrolling regardless.
+ */
+export const SMOOTH_SCROLL_QUERY =
+  "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";

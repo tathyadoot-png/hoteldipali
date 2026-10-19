@@ -3,6 +3,7 @@
 import { useEffect, useRef, type FocusEvent, type ReactNode } from "react";
 
 import { useRichMotion, useScrollProgress } from "@/components/motion/useScrollProgress";
+import { scrollToY } from "@/lib/smooth-scroll";
 
 type DayJourneyProps = {
   id: string;
@@ -68,7 +69,7 @@ export function DayJourney({ id, labelledBy, className, children }: DayJourneyPr
       const x = Math.min(travel, Math.max(0, panel.offsetLeft - inset));
       const runway = section.offsetHeight - window.innerHeight;
       const top = section.getBoundingClientRect().top + window.scrollY + (x / travel) * runway;
-      window.scrollTo({ top, behavior: "instant" });
+      scrollToY(top, { smooth: false });
     });
   };
 

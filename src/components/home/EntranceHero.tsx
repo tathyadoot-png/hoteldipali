@@ -6,6 +6,7 @@ import { CallLink } from "@/components/links/CallLink";
 import { useRichMotion, useScrollProgress } from "@/components/motion/useScrollProgress";
 import { captureFilm, type FilmFrames } from "@/components/home/film-frames";
 import { RICH_MOTION_QUERY } from "@/lib/motion";
+import { scrollToY } from "@/lib/smooth-scroll";
 
 type EntranceHeroProps = {
   video: { src: string; poster: string; still: string; width: number; height: number };
@@ -189,7 +190,7 @@ export function EntranceHero({ video, eyebrow, title, tagline, directory }: Entr
     if (!section) return;
     const top = section.getBoundingClientRect().top + window.scrollY;
     const travel = section.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: top + at * filmEnd.current * travel, behavior: "smooth" });
+    scrollToY(top + at * filmEnd.current * travel);
   };
 
   return (

@@ -43,6 +43,8 @@ export default defineConfig([
   globalIgnores([
     ".next/**",
     "out/**",
+    // Local Playwright MCP scratch output (gitignored).
+    ".playwright-mcp/**",
     "build/**",
     "next-env.d.ts",
     "playwright-report/**",

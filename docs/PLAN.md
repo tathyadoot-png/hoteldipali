@@ -85,6 +85,9 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-19 | Header = two nav wings flanking a centred, hanging logo "keystone" (inverted-arch foot); a small gold arch glides to the hovered/focused link and rests on the current page; solid state shrinks the keystone and draws a gold hairline outward. Below xl: Menu · keystone · call. | The navigation's signature, built from the site's arch motif. One `<nav aria-label="Primary">`; nothing is hover-only. |
 | 2026-10-19 | Mobile menu = two brand-colour gate leaves that part onto a dusk hall, links framed in a hairline doorway arch; current page marked by a sage arch. | "Entering another part of the hotel"; uses `@starting-style` + native `<dialog>`, so focus trap/Escape/focus return are unchanged. |
 | 2026-10-19 | Home hero = "the aperture": the film is seen through an arched doorway (clip-path) that opens with the gates; "Hotel" / "Dipali" are inscriptions on the two pillars and part with them; an arrival rail (Gate · Avenue · Lobby) shows progress and jumps; in the lobby a directory plaque offers Stay / Celebrate / Unwind / Dine. Static (phones, reduced motion) keeps the full-frame still and stacked name. | One signature idea instead of more animated text: the typography belongs to the architecture of the arrival. |
+| 2026-10-19 | Smooth wheel scrolling with Lenis 1.3.27 (first runtime dependency beyond Next/React/Zod; requested by the owner, CLAUDE.md §B/§K updated). One instance in `src/lib/smooth-scroll.ts`: `lerp` 0.14, `wheelMultiplier` 1, `syncTouch` off, `anchors` on, `stopInertiaOnNavigate` on; Lenis's own rAF loop off — a loop runs only during a glide. Mounted by `SmoothScroll` for `(hover: hover) and (pointer: fine)` without reduced motion. | Measured cause of the "abrupt stop": native wheel scrolling moves each notch ~100 px in one frame with no deceleration (no app code involved). Lenis keeps real window scrolling (sticky, IO, anchors, scrollbar) so the existing architecture holds. |
+| 2026-10-19 | A wheel notch against a glide in progress drops the rest of the glide first (Lenis `virtualScroll` hook). | Lenis adds notches to its target, so a reversing notch only shortened the glide: in testing the page never moved back. Now it moves back within ~37 ms. Consequence: the untravelled part of the glide is discarded, as with trackpad/touch momentum. |
+| 2026-10-19 | `scrollToY()` re-measures Lenis (`resize()`) before every code-initiated scroll, and before hash-link clicks. | Lenis clamps to a scroll limit refreshed 250 ms after a height change; the dining walk sizes itself after hydration, so an early keyboard-focus jump was cut short (caught by the existing e2e test). |
 
 ## Brand assets
 
@@ -121,6 +124,10 @@ See CLAUDE.md section M:
   logo mark (square monogram) for the favicon — see "Brand assets" above.
 - Optimise the 506 KB logo PNG into a small derivative for the header (not done in the
   creative overhaul to avoid touching brand assets without sign-off).
+- Smooth scrolling was tuned with synthetic wheel input (100 px notches) in Chromium on
+  Windows. Confirm the feel on real hardware: a notched mouse on Windows, a Mac
+  trackpad (its own momentum + Lenis), a Magic Mouse, and Safari/Firefox. Touch was
+  verified only with emulated touch in Chromium.
 - Scroll-scrubbing was measured in Chromium only (2026-10-19, frame cache: p95 13.5 ms
   on a 75 Hz display, zero frames >33 ms through the pinned hero with real wheel
   input, forward and reverse). Test Safari (macOS + iOS iPad at ≥1024px) and Firefox on real devices once the
@@ -491,3 +498,39 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     off-screen without blocking taps, dusk hall, current-page marker and menu
     navigation. All 326 e2e tests pass; lint, typecheck, contrast gate clean.
     Nothing marked verified.
+- 2026-10-19: Smooth scrolling with Lenis (not a numbered step; current step stays 11).
+  - **Diagnosis** (production build, 1440×900, Chromium, Playwright wheel input, same
+    script before/after): natively every notch moved the page exactly 100 px in one
+    frame and stopped dead — moving frames = number of notches, last step = largest
+    step (ratio 1.0), 0 ms of motion after the last input. No wheel listeners exist in
+    the app; the abruptness is native wheel behaviour. Side effect found: each 100 px
+    jump spans ~21 film frames, and the async frame decode drew one frame late, so the
+    hero showed a frame up to 21 indices stale on every notch.
+  - **Implementation:** `src/lib/smooth-scroll.ts` (Lenis lifecycle, on-demand clock,
+    keyboard/popstate hand-over, reversal handling, `scrollToY`, `pauseSmoothScroll`),
+    `src/components/motion/SmoothScroll.tsx` (media-query lifecycle + `useSmoothScroll`),
+    `SMOOTH_SCROLL_QUERY` in `src/lib/motion.ts`, `lenis/dist/lenis.css` imported in the
+    layout, `html.lenis { scroll-behavior: auto }`. `useScrollProgress` subscribes to
+    Lenis's `scroll` event (same frame) and writes its first value synchronously;
+    hero rail and dining-walk focus use `scrollToY`; the mobile menu pauses Lenis and
+    is `data-lenis-prevent`. `.playwright-mcp/` added to ESLint ignores.
+  - **Before → after** (same input): moving frames 8→160 (slow notches), 5→53 (flick),
+    12→134 (repeated), 8→63 (reverse), 6→57 (pin exit); largest step 100→13–30 px;
+    final/largest step 1.0→0.03–0.08 (eased stop); motion after last input 0→650–790
+    ms (to the final 1 px); end positions identical (no slow-down); frame p95 13.4–13.5
+    ms both, 0 frames >33 ms; film more than 3 frames from the scroll position: max 21 →
+    max 3–5, on ≤1 frame per scenario. Single notch at lerp 0.14: 50% in ~100 ms, 90% in
+    ~285 ms, settled ~520 ms over ~30 frames (0.12 measured 113/339/606 ms). Reversal
+    after the fix: page moves back 37 ms after the opposing notch (before: never).
+  - **Verified:** rail Gate/Avenue/Lobby land within 1 px with the film in step during
+    the programmatic glide (124/125 frames within 3); hash links glide, honour
+    `scroll-margin-top`, update the URL, and Back restores the position; End pressed
+    mid-glide reaches the bottom; route change mid-glide starts the new page at the
+    top with a solid header; menu open freezes the page, close restores wheel and
+    focus; reduced motion → no Lenis, native 100 px steps, still image; phone (touch,
+    no fine pointer) → no Lenis, native touch scrolling; touch on a fine-pointer device
+    with Lenis running stays native (fling included, in headed Chrome); CLS 0, no
+    overflow, no console errors at 360–1536. Lenis-failure fallback (constructor throws
+    → native) is code-reviewed, not exercised in a browser.
+  - Tests: `tests/smooth-scroll.spec.ts` (new, 9 × 2 projects). All 344 e2e tests pass;
+    lint, typecheck, contrast gate and production build clean. Nothing marked verified.

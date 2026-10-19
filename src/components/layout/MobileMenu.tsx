@@ -9,6 +9,7 @@ import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
+import { pauseSmoothScroll } from "@/lib/smooth-scroll";
 
 function CloseIcon() {
   return (
@@ -67,13 +68,16 @@ export function MobileMenu() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  // Lock body scroll while open.
+  // Lock page scroll while open (smooth scrolling pauses too; the menu itself
+  // still scrolls natively — it is marked data-lenis-prevent).
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    pauseSmoothScroll(true);
     return () => {
       document.body.style.overflow = previous;
+      pauseSmoothScroll(false);
     };
   }, [open]);
 
@@ -85,6 +89,7 @@ export function MobileMenu() {
       id="mobile-menu"
       aria-label="Site menu"
       data-theme="dusk"
+      data-lenis-prevent=""
       className="menu-dialog m-0 h-dvh max-h-none w-screen max-w-none bg-surface p-0 text-ink"
     >
       {/* Two gate leaves that part as the menu opens and close behind you. */}
