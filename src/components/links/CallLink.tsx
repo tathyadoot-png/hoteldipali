@@ -28,10 +28,12 @@ function PhoneIcon() {
 type CallLinkProps = {
   department?: Department;
   className?: string;
+  /** Classes for the label next to the icon (e.g. to hide it visually). */
+  labelClassName?: string;
   children?: ReactNode;
 };
 
-export function CallLink({ department, className, children }: CallLinkProps) {
+export function CallLink({ department, className, labelClassName, children }: CallLinkProps) {
   const { site } = useSiteData();
   const pathname = usePathname();
 
@@ -49,7 +51,7 @@ export function CallLink({ department, className, children }: CallLinkProps) {
       onClick={() => track("call_click", { department: department ?? site.primaryPhone, page: pathname })}
     >
       <PhoneIcon />
-      <span>{children ?? contact.phone.value}</span>
+      <span className={labelClassName}>{children ?? contact.phone.value}</span>
     </a>
   );
 }

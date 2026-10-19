@@ -26,7 +26,13 @@ function Wordmark({ variant }: { variant: LogoVariant }) {
   );
 }
 
-export function Logo({ variant = "default" }: { variant?: LogoVariant }) {
+type LogoProps = {
+  variant?: LogoVariant;
+  /** Image size classes; the header keystone sets its own. */
+  imgClassName?: string;
+};
+
+export function Logo({ variant = "default", imgClassName = "h-14 md:h-18" }: LogoProps) {
   const file = LOGO_FILES[variant];
 
   return (
@@ -40,7 +46,7 @@ export function Logo({ variant = "default" }: { variant?: LogoVariant }) {
           height={file.height}
           // Square canvas with generous internal padding, so the box runs a
           // little larger than the mark it renders. w-auto keeps the ratio.
-          className="h-14 w-auto object-contain md:h-18"
+          className={`w-auto object-contain ${imgClassName}`}
         />
       ) : (
         <Wordmark variant={variant} />

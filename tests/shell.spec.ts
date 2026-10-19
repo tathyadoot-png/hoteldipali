@@ -48,6 +48,52 @@ test.describe("Desktop (1280px)", () => {
     await expect(header).toHaveAttribute("data-theme", "dusk");
   });
 
+  test("the logo keystone is centred between the two nav wings", async ({ page }) => {
+    await page.goto("/");
+    const nav = page.getByRole("navigation", { name: "Primary" });
+    await expect(nav.getByRole("link")).toHaveCount(7);
+
+    const keystone = await page.locator(".header-keystone").boundingBox();
+    const wings = await page.locator(".header-wing").evaluateAll((els) =>
+      els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect),
+    );
+    expect(keystone).not.toBeNull();
+    const centre = keystone!.x + keystone!.width / 2;
+    expect(Math.abs(centre - 640)).toBeLessThanOrEqual(2);
+    // Left wing ends before the keystone; right wing starts after it.
+    expect(wings[0]!.right).toBeLessThanOrEqual(keystone!.x);
+    expect(wings[1]!.left).toBeGreaterThanOrEqual(keystone!.x + keystone!.width);
+    await expect(page.locator(".header-keystone").getByRole("link", { name: /home/ })).toBeVisible();
+  });
+
+  test("the glide marker rests on the current page and follows hover and focus", async ({
+    page,
+  }) => {
+    await page.goto("/rooms/");
+    const leftWing = page.locator(".header-wing-l");
+    const rightWing = page.locator(".header-wing-r");
+    const markerX = (wing: typeof leftWing) =>
+      wing.locator(".header-glide").evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return r.left + r.width / 2;
+      });
+    const linkX = async (name: string) => {
+      const box = await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name }).boundingBox();
+      return box!.x + box!.width / 2;
+    };
+
+    await expect(leftWing).toHaveAttribute("data-glide", "on");
+    await expect(rightWing).toHaveAttribute("data-glide", "off");
+    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Rooms")))).toBeLessThan(2);
+
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Dining" }).hover();
+    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Dining")))).toBeLessThan(2);
+
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Gallery" }).focus();
+    await expect(rightWing).toHaveAttribute("data-glide", "on");
+    await expect.poll(async () => Math.abs((await markerX(rightWing)) - (await linkX("Gallery")))).toBeLessThan(2);
+  });
+
   test("header is solid on a page without an overlay hero", async ({ page }) => {
     await page.goto("/rooms/");
     await expect(page.locator("header")).not.toHaveAttribute("data-theme", "dusk");
@@ -100,6 +146,32 @@ test.describe("Mobile (360px)", () => {
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(menuButton).toBeFocused();
+  });
+
+  test("the menu opens like gates onto a dusk hall", async ({ page }) => {
+    await page.goto("/rooms/");
+    await page.getByRole("button", { name: "Menu" }).click();
+    const dialog = page.locator("#mobile-menu");
+    await expect(dialog).toHaveAttribute("data-theme", "dusk");
+    await expect(dialog).toHaveClass(/text-ink/);
+
+    // Both leaves end fully outside the viewport, and never block taps.
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const l = document.querySelector(".menu-gate-l")!.getBoundingClientRect();
+          const r = document.querySelector(".menu-gate-r")!.getBoundingClientRect();
+          return l.right <= 0 && r.left >= window.innerWidth;
+        }),
+      )
+      .toBe(true);
+    await expect(page.locator(".menu-gate-l")).toHaveCSS("pointer-events", "none");
+
+    const current = dialog.getByRole("link", { name: "Rooms" });
+    await expect(current).toHaveAttribute("aria-current", "page");
+    await dialog.getByRole("link", { name: "Weddings" }).click();
+    await expect(page).toHaveURL(/\/weddings\/$/);
+    await expect(dialog).toBeHidden();
   });
 });
 

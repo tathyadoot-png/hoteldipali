@@ -26,7 +26,7 @@ export function DayJourney({ id, labelledBy, className, children }: DayJourneyPr
   const frameRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  useScrollProgress(sectionRef, { enabled: rich, mode: "pinned", smooth: 0.18 });
+  useScrollProgress(sectionRef, { enabled: rich, mode: "pinned" });
 
   // The runway's extra height is the track's overflow, measured from content.
   useEffect(() => {

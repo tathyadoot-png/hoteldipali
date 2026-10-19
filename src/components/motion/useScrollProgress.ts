@@ -16,24 +16,27 @@ type Options = {
    * at the top — for elements that simply scroll past.
    */
   mode?: ProgressMode;
-  /** 0 = follow scroll exactly; 0–1 = ease toward it each frame (inertia). */
-  smooth?: number;
   /** Custom property written on the element, as a unitless 0–1 number. */
   cssVar?: string;
-  /** Called with the (eased) progress on every frame that changes it. */
+  /** Called with the progress whenever it changes. */
   onProgress?: (progress: number) => void;
 };
 
 /**
  * Maps an element's scroll position to 0–1 and writes it to a CSS custom
- * property, so scenes animate in CSS (transform / opacity / clip-path) while
- * JS does almost nothing. Work only happens while the element is near the
- * viewport and the page is scrolling; with `smooth`, a short rAF loop eases
- * toward the target and then stops — there is no idle animation loop.
+ * property, so scenes animate in CSS (transform / opacity / clip-path).
+ *
+ * Built to stay off the critical path while scrolling:
+ * - the element's document offset is measured only on resize / reflow
+ *   (ResizeObserver), never per frame — each frame reads `scrollY` alone, so
+ *   there is no forced layout during scroll;
+ * - progress maps 1:1 to scroll — no easing loop, so the scene never lags
+ *   the visitor's input;
+ * - nothing runs unless the element is near the viewport and the page moves.
  */
 export function useScrollProgress<T extends HTMLElement>(
   ref: RefObject<T | null>,
-  { enabled = true, mode = "pinned", smooth = 0, cssVar = "--p", onProgress }: Options = {},
+  { enabled = true, mode = "pinned", cssVar = "--p", onProgress }: Options = {},
 ) {
   const callback = useRef(onProgress);
   useEffect(() => {
@@ -44,29 +47,30 @@ export function useScrollProgress<T extends HTMLElement>(
     const el = ref.current;
     if (!el || !enabled) return;
 
-    let frame = 0;
+    let top = 0;
+    let height = 1;
+    let vh = window.innerHeight;
     let near = false;
-    let current = -1;
+    let frame = 0;
+    let last = -1;
 
-    const read = () => {
+    const measure = () => {
       const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const raw =
-        mode === "pinned"
-          ? -rect.top / Math.max(1, rect.height - vh)
-          : (vh - rect.top) / (vh + rect.height);
-      return Math.min(1, Math.max(0, raw));
+      top = rect.top + window.scrollY;
+      height = rect.height;
+      vh = window.innerHeight;
     };
 
     const tick = () => {
       frame = 0;
-      const target = read();
-      current = current < 0 || !smooth ? target : current + (target - current) * smooth;
-      if (Math.abs(target - current) < 0.0005) current = target;
-      el.style.setProperty(cssVar, current.toFixed(4));
-      callback.current?.(current);
-      // Keep easing only until we arrive; then go quiet until the next scroll.
-      if (current !== target) frame = requestAnimationFrame(tick);
+      const y = window.scrollY;
+      const raw =
+        mode === "pinned" ? (y - top) / Math.max(1, height - vh) : (y + vh - top) / (vh + height);
+      const p = Math.round(Math.min(1, Math.max(0, raw)) * 10000) / 10000;
+      if (p === last) return;
+      last = p;
+      el.style.setProperty(cssVar, String(p));
+      callback.current?.(p);
     };
 
     const schedule = () => {
@@ -77,8 +81,7 @@ export function useScrollProgress<T extends HTMLElement>(
       if (near) schedule();
     };
 
-    // Gate the scroll work on proximity; when the element leaves, run one last
-    // frame so a fast flick past it still lands exactly on 0 or 1.
+    // Proximity gate; when the element leaves, one last frame lands it on 0 / 1.
     const observer = new IntersectionObserver(
       ([entry]) => {
         near = Boolean(entry?.isIntersecting);
@@ -87,19 +90,30 @@ export function useScrollProgress<T extends HTMLElement>(
       { rootMargin: "25% 0px" },
     );
 
+    // Offsets change when anything above reflows (fonts, images, a runway
+    // switching on), so re-measure on body and element resizes — not on scroll.
+    const resize = new ResizeObserver(() => {
+      measure();
+      schedule();
+    });
+
+    measure();
     observer.observe(el);
+    resize.observe(document.body);
+    resize.observe(el);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", schedule);
+    window.addEventListener("resize", schedule, { passive: true });
     schedule();
 
     return () => {
       observer.disconnect();
+      resize.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", schedule);
       if (frame) cancelAnimationFrame(frame);
       el.style.removeProperty(cssVar);
     };
-  }, [ref, enabled, mode, smooth, cssVar]);
+  }, [ref, enabled, mode, cssVar]);
 }
 
 function subscribeToRichMotion(onChange: () => void) {

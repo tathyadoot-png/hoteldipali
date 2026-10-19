@@ -77,52 +77,58 @@ export function MobileMenu() {
     };
   }, [open]);
 
+  // The hall behind the gates is dusk; data-theme needs its own text-ink (see
+  // CLAUDE.md §E) so colour re-resolves inside it.
   return (
     <dialog
       ref={dialogRef}
       id="mobile-menu"
       aria-label="Site menu"
+      data-theme="dusk"
       className="menu-dialog m-0 h-dvh max-h-none w-screen max-w-none bg-surface p-0 text-ink"
     >
-      <div className="container-site flex h-full flex-col py-6">
-        <div className="flex items-center justify-between">
-          <Logo variant="default" />
+      {/* Two gate leaves that part as the menu opens and close behind you. */}
+      <div aria-hidden="true" className="menu-gate menu-gate-l" />
+      <div aria-hidden="true" className="menu-gate menu-gate-r" />
+
+      <div className="menu-hall container-site flex h-full flex-col py-4">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center">
           <button
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="flex min-h-11 min-w-11 items-center justify-center"
+            className="header-menu-button"
           >
             <CloseIcon />
+            <span aria-hidden="true" className="header-menu-label">
+              Close
+            </span>
           </button>
+          <Logo variant="reverse" imgClassName="h-15" />
         </div>
 
-        <nav aria-label="Mobile" className="mt-10 flex flex-1 flex-col gap-1 overflow-y-auto">
-          {site.navigation.main.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                prefetch={false}
-                aria-current={isActive ? "page" : undefined}
-                className={
-                  "heading-2 flex min-h-11 items-center py-3 " +
-                  (isActive ? "text-accent" : "text-ink")
-                }
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+        <nav aria-label="Mobile" className="menu-arch mt-6 flex flex-1 flex-col overflow-y-auto">
+          {site.navigation.main.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              prefetch={false}
+              aria-current={pathname === link.href ? "page" : undefined}
+              className="menu-link"
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
-        <div className="flex flex-col gap-3 pb-[env(safe-area-inset-bottom)]">
-          <CallLink className="btn-ghost justify-center" />
-          <WhatsAppLink context="general" className="btn-primary justify-center">
-            WhatsApp us
-          </WhatsAppLink>
-          <p className="caption not-italic">{site.locationLine.value}</p>
+        <div className="flex flex-col gap-3 pt-6 pb-[env(safe-area-inset-bottom)]">
+          <div className="flex flex-col gap-3 md:flex-row">
+            <CallLink className="btn-ghost justify-center md:flex-1" />
+            <WhatsAppLink context="general" className="btn-primary justify-center md:flex-1">
+              WhatsApp us
+            </WhatsAppLink>
+          </div>
+          <p className="caption">{site.locationLine.value}</p>
         </div>
       </div>
     </dialog>

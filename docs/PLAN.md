@@ -1,6 +1,6 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-13
+Last updated: 2026-10-19
 Current step: 11 — Pool & Gym, Gallery + Lightbox
 
 ## Status legend
@@ -80,6 +80,11 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-13 | Rich motion is gated (≥1024px, fine pointer, no reduced motion, no data-saver) by a pre-paint boot script that sets `html[data-motion="rich"]`; CSS lays scenes out from that attribute. | Switching layouts after hydration made the hero jump (CLS). Phones and reduced-motion visitors get complete static compositions and never download the film. |
 | 2026-10-13 | The entrance film is content (`site.entranceVideo`) with trust fields, status `sample`. | It is prototype AI footage of unconfirmed architecture; registering it means `check:content:strict` (and so `pnpm release`) blocks launch until original footage replaces it. |
 | 2026-10-13 | On `/` the overlay header ends when the ivory arch reaches it (`[data-header-solid-from]`), observed against a root extended far above the viewport. | Keeps the film immersive. A thin-strip version was tried first and failed: one-frame jump scrolls (anchors, End, flings) leapt over the strip and left the header transparent. |
+| 2026-10-19 | The entrance film is scrubbed from a frame cache drawn to a `<canvas>` (`film-frames.ts`), never by seeking the `<video>`. After `load` the film plays once, muted and offscreen at 2.5×, and `requestVideoFrameCallback` captures frames as JPEG blobs (12 slots/s); scroll draws the nearest cached frame. | Measured root cause of the scroll jank: seeking this sparse-keyframe H.264 stalled frame presentation (p95 40 ms, max 53–120 ms with the film; 13.5 ms with it removed). Playback is cheap where seeking is not. Costs ~14 MB of blobs and ~8 s of background capture; nearest-neighbour fills missed slots. |
+| 2026-10-19 | Scroll progress is mapped 1:1, with no easing/lerp, from offsets cached on resize (no per-frame layout reads). | Easing made the film trail the scrollbar and kept rAF loops running after scrolling stopped; the brief forbids slowing native scroll to mask cost. |
+| 2026-10-19 | Header = two nav wings flanking a centred, hanging logo "keystone" (inverted-arch foot); a small gold arch glides to the hovered/focused link and rests on the current page; solid state shrinks the keystone and draws a gold hairline outward. Below xl: Menu · keystone · call. | The navigation's signature, built from the site's arch motif. One `<nav aria-label="Primary">`; nothing is hover-only. |
+| 2026-10-19 | Mobile menu = two brand-colour gate leaves that part onto a dusk hall, links framed in a hairline doorway arch; current page marked by a sage arch. | "Entering another part of the hotel"; uses `@starting-style` + native `<dialog>`, so focus trap/Escape/focus return are unchanged. |
+| 2026-10-19 | Home hero = "the aperture": the film is seen through an arched doorway (clip-path) that opens with the gates; "Hotel" / "Dipali" are inscriptions on the two pillars and part with them; an arrival rail (Gate · Avenue · Lobby) shows progress and jumps; in the lobby a directory plaque offers Stay / Celebrate / Unwind / Dine. Static (phones, reduced motion) keeps the full-frame still and stacked name. | One signature idea instead of more animated text: the typography belongs to the architecture of the arrival. |
 
 ## Brand assets
 
@@ -116,8 +121,9 @@ See CLAUDE.md section M:
   logo mark (square monogram) for the favicon — see "Brand assets" above.
 - Optimise the 506 KB logo PNG into a small derivative for the header (not done in the
   creative overhaul to avoid touching brand assets without sign-off).
-- Scroll-scrubbing was measured in Chromium only (~22–25 presented fps with real wheel
-  input). Test Safari (macOS + iOS iPad at ≥1024px) and Firefox on real devices once the
+- Scroll-scrubbing was measured in Chromium only (2026-10-19, frame cache: p95 13.5 ms
+  on a 75 Hz display, zero frames >33 ms through the pinned hero with real wheel
+  input, forward and reverse). Test Safari (macOS + iOS iPad at ≥1024px) and Firefox on real devices once the
   final footage is encoded; Firefox/WebKit engines are not installed locally.
 
 ### Shoot brief for the home experience
@@ -127,7 +133,10 @@ The layouts are built so originals drop in by replacing files — no redesign ne
 - **Entrance film** (replaces `public/video/entry.mp4`): one continuous, stabilised move —
   closed gate → gates open → drive up to the entrance → into the lobby; 15–25 s;
   ≥1920×1080 (ideally 2560×1440), 24–30 fps, H.264 with a keyframe at least every
-  0.5 s (or all-intra) so scroll-scrubbing stays smooth; no audio needed. First frame
+  0.5 s (or all-intra); no audio needed. Scrubbing uses a captured frame cache, so a
+  longer or higher-resolution film costs more memory (`maxEdge` caps stored frames at
+  1280px) and capture time — keep it ≤25 s. The opening is framed by a centred arched
+  aperture (middle ~36% of the width), so compose the closed gate centrally. First frame
   becomes the desktop poster, so start on a composed, still gate. Keep the top band
   calm (sky/ceiling) for the transparent header and the left third quieter for the
   title. Ending in the lobby's light, warm tones lets the ivory arch take over
@@ -439,3 +448,46 @@ The layouts are built so originals drop in by replacing files — no redesign ne
   check replaced by "every room is listed and linked" plus a pillar-index check;
   shell spec's "solid after 200px" replaced by the new contract incl. the
   jump-scroll regression. All 316 e2e tests pass. Nothing marked verified.
+- 2026-10-19: Premium interaction & navigation overhaul (not a numbered step; current
+  step stays 11).
+  - **Smoothness — measured, then fixed.** Production build, 1440×900, Chromium, real
+    wheel input. Before: fast scroll p95 40 ms, max 53–120 ms, long animation frames
+    without script attribution. Isolation runs: no grain p95 39.9 ms, no scrims 40 ms,
+    **no film 13.5 ms** → the cost was seeking the sparse-keyframe H.264, not CSS or
+    JS. A seek-based frame capture would itself jank (11 s of seeks), so
+    `src/components/home/film-frames.ts` plays the Blob once offscreen at 2.5× and
+    captures presented frames (`requestVideoFrameCallback`, rAF fallback) into JPEG
+    blobs; `EntranceHero` draws the nearest frame to `.entrance-film` (one
+    `createImageBitmap` decode in flight, catching up afterwards). The capture
+    `<video>` is removed when done; nothing is ever seeked. `useScrollProgress`
+    rewritten: offsets cached via ResizeObserver, per-frame work reads only
+    `scrollY`, 1:1 mapping (the `smooth` option is gone from it, `ScrollSection` and
+    `DayJourney`), IntersectionObserver gate, passive listeners, writes only on change.
+    Runway 380vh → 330vh. After: hero slow/fast/reverse p95 13.4–13.5 ms, **0 frames
+    >33 ms over 6 fast passes**, 0 long animation frames; scrolling during capture
+    p95 ≤26.7 ms, 0 >33 ms; leaving the pin is clean. Remaining: the first trip past
+    the hero can show a few 40–53 ms frames while lazy images below decode for the
+    first time (clean on the second pass); measured in Chromium only.
+  - **Aperture hero** (`EntranceHero`, `.entrance-aperture/-architrave/-inscription/
+    -plate/-waypoints/-directory`): see decision log. `--o` (aperture opening,
+    smoothstep over the first 30% of the film) is written only when it changes.
+    Removed the word-by-word tagline and the "Scroll to enter" cue (+ its keyframes).
+  - **Keystone header** (`Header`, `NavDesktop` wings + `.header-glide`,
+    `.header-*` classes) and **gate menu** (`MobileMenu`, `.menu-gate*`,
+    `.menu-arch`, `.menu-link`); `.btn-arch` modifier for the signature CTAs. `Logo`
+    gains `imgClassName`; `CallLink` gains `labelClassName` (the header call link is
+    icon-only below 1536px but keeps the number as its accessible name).
+  - Fixed while verifying: the static desktop hero lost its left scrim (restored for
+    the static layout only); the plate crossed into the doorway at 1536 (width now
+    accounts for the centred container).
+  - Verified in Chrome: 360/390/768/1024/1280/1536 — CLS 0, no horizontal overflow, no
+    console errors; reduced motion (static composition); film request blocked (poster
+    stays, aperture still works); Escape/focus return and route-change close in the
+    menu; every nav destination via tests. Tests: entrance spec now asserts the
+    canvas frame cache (forward/back/top, capture completes, no `<video>` left), the
+    aperture opening/closing, rail jumps (click + keyboard) and the lobby directory,
+    rail hidden at the threshold/phone/reduced motion, full-frame static still;
+    shell spec adds keystone centring, glide rest/hover/focus, gate leaves parting
+    off-screen without blocking taps, dusk hall, current-page marker and menu
+    navigation. All 326 e2e tests pass; lint, typecheck, contrast gate clean.
+    Nothing marked verified.

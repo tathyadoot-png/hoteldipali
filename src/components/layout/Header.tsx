@@ -75,36 +75,48 @@ export function Header() {
   return (
     <header
       data-theme={isOverlay ? "dusk" : undefined}
+      data-state={isOverlay ? "overlay" : "solid"}
       className={
         // text-ink re-declares `color` on this element so it re-resolves
         // against the (possibly dusk-scoped) --color-ink custom property —
         // inherited `color` only carries the already-resolved parent value.
         "header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22 " +
-        (isOverlay ? "bg-transparent" : "bg-surface shadow-hairline")
+        (isOverlay ? "bg-transparent" : "bg-surface")
       }
     >
-      <div className="container-site flex items-center justify-between">
-        <Logo variant={isOverlay ? "reverse" : "default"} />
-
-        <div className="hidden items-center gap-8 xl:flex">
-          <NavDesktop links={site.navigation.main} pathname={pathname} />
-          <CallLink className="body font-medium" />
-          <a href={enquireHref(pathname)} className="btn-primary">
-            Enquire
-          </a>
-        </div>
-
+      {/* Three columns around a centred keystone: the nav's two wings flank
+          the logo; the outer edges hold the call link and the enquiry arch
+          (below xl: the menu and the call link). */}
+      <div className="container-site header-bar">
         <button
           ref={triggerRef}
           type="button"
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
           aria-label="Menu"
-          className="flex min-h-11 min-w-11 items-center justify-center xl:hidden"
+          className="header-menu-button xl:hidden"
           onClick={() => setMenuOpen(true)}
         >
           <MenuIcon />
+          <span aria-hidden="true" className="header-menu-label">
+            Menu
+          </span>
         </button>
+
+        <NavDesktop links={site.navigation.main} pathname={pathname} />
+
+        <div className="header-keystone">
+          <Logo
+            variant={isOverlay ? "reverse" : "default"}
+            imgClassName="h-16 md:h-21"
+          />
+        </div>
+
+        <CallLink className="header-call" labelClassName="header-call-label" />
+
+        <a href={enquireHref(pathname)} className="header-enquire btn-primary btn-arch">
+          Enquire
+        </a>
       </div>
     </header>
   );

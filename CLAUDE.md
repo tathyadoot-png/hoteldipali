@@ -73,7 +73,8 @@ availability" link. Never embed a booking widget or third-party script without a
   `.field-hint`, `.visually-hidden`, `.hero-gradient`, `.hero-tint`, `.paper-grain`,
   `.frame-hairline`, `.img-hover`, `.band-pop`, `.threshold`, `[data-reveal]`, plus
   the home-experience scene classes `.entrance*`, `.pillar-*`, `.room-stage*`,
-  `.celebrate-*`, `.journey*`). Never raw hex, never raw Tailwind palette colours
+  `.celebrate-*`, `.journey*`, and the shell classes `.header-*`, `.menu-*`,
+  `.btn-arch`). Never raw hex, never raw Tailwind palette colours
   (`bg-amber-700`), never font names in components.
 - Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Dusk"
   variant for weddings and the bar). Every element that sets `data-theme="dusk"`

@@ -259,6 +259,14 @@
     background-color: var(--color-surface-alt);
   }
 
+  /* Arch-topped modifier for the signature calls to action: a shallow
+     elliptical arch, like the doorways the site is built around. */
+  .btn-arch {
+    padding-top: 0.25rem;
+    border-radius: 50% 50% var(--radius-sm) var(--radius-sm) / 1.125rem 1.125rem
+      var(--radius-sm) var(--radius-sm);
+  }
+
   /* Chips */
   .chip {
     display: inline-flex;
@@ -371,34 +379,348 @@
     background-color: var(--color-highlight);
   }
 
-  /* Header: colour/background only transition between overlay and solid. */
+  /* ── Header: two nav wings flanking a hanging logo keystone ── */
   .header-shell {
     transition:
       background-color var(--duration-base) var(--ease-out-soft),
       color var(--duration-base) var(--ease-out-soft);
   }
 
-  /* MobileMenu: entrance animation for the native <dialog>. */
-  .menu-dialog {
-    opacity: 0;
-    transform: translateY(8px);
-    transition:
-      opacity var(--duration-base) var(--ease-out-soft),
-      transform var(--duration-base) var(--ease-out-soft),
-      display var(--duration-base) allow-discrete,
-      overlay var(--duration-base) allow-discrete;
+  /* Solid state: a gold hairline draws outward from the keystone. */
+  .header-shell::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background-color: color-mix(in srgb, var(--color-highlight) 60%, transparent);
+    transform: scaleX(0);
+    transition: transform 380ms var(--ease-out-soft);
   }
 
+  .header-shell[data-state="solid"]::after {
+    transform: scaleX(1);
+  }
+
+  .header-bar {
+    --keystone: 6.5rem;
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--keystone) minmax(0, 1fr);
+    align-items: center;
+    height: 100%;
+  }
+
+  .header-bar > * {
+    grid-row: 1;
+  }
+
+  .header-menu-button {
+    grid-column: 1;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 44px;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .header-menu-label {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* The keystone hangs below the bar, its foot an inverted arch — the
+     doorway motif turned upside down. Over the home film it sits just above
+     the aperture's crown. */
+  .header-keystone {
+    grid-column: 2;
+    align-self: start;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: calc(100% + 1.5rem);
+    padding-bottom: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 70%, transparent);
+    border-top: 0;
+    border-radius: 0 0 50% 50% / 0 0 2.25rem 2.25rem;
+    background-color: color-mix(in srgb, var(--color-surface) 82%, transparent);
+    transform-origin: 50% 0;
+    transition:
+      transform var(--duration-base) var(--ease-out-soft),
+      background-color var(--duration-base) var(--ease-out-soft);
+  }
+
+  .header-shell[data-state="solid"] .header-keystone {
+    background-color: var(--color-surface);
+    transform: scale(0.86);
+  }
+
+  .header-nav {
+    display: none;
+  }
+
+  .header-call {
+    grid-column: 3;
+    justify-self: end;
+    justify-content: center;
+  }
+
+  /* The number stays the link's name everywhere; it is shown from 1536px. */
+  .header-call-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .header-enquire {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .header-bar {
+      --keystone: 8rem;
+    }
+
+    .header-keystone {
+      height: calc(100% + 1.75rem);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .header-nav {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--keystone) minmax(0, 1fr);
+      align-items: center;
+    }
+
+    .header-call {
+      grid-column: 1;
+      justify-self: start;
+    }
+
+    .header-enquire {
+      grid-column: 3;
+      justify-self: end;
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .header-call-label {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      font-weight: 500;
+    }
+  }
+
+  .header-wing {
+    position: relative;
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .header-wing-l {
+    grid-column: 1;
+    justify-self: end;
+    padding-right: 1.75rem;
+  }
+
+  .header-wing-r {
+    grid-column: 3;
+    justify-self: start;
+    padding-left: 1.75rem;
+  }
+
+  @media (min-width: 1536px) {
+    .header-wing {
+      gap: 2.25rem;
+    }
+  }
+
+  .header-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition: color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .header-link:hover,
+  .header-link[aria-current="page"] {
+    color: var(--color-accent);
+  }
+
+  /* A small gold arch that glides to the pointed-at / focused link and rests
+     under the current page. */
+  .header-glide {
+    position: absolute;
+    bottom: 0.125rem;
+    left: -0.375rem;
+    width: 0.75rem;
+    height: 0.375rem;
+    border-radius: 0.375rem 0.375rem 0 0;
+    background-color: var(--color-highlight);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(var(--x, 0), 0, 0);
+    transition:
+      transform var(--duration-base) var(--ease-out-soft),
+      opacity var(--duration-fast) var(--ease-out-soft);
+  }
+
+  /* Jump (don't slide) to the first position while invisible. */
+  .header-wing[data-glide="off"] > .header-glide {
+    transition: opacity var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .header-wing[data-glide="on"] > .header-glide {
+    opacity: 1;
+  }
+
+  /* ── MobileMenu: two gate leaves part to reveal a dusk hall ── */
+  .menu-dialog {
+    overflow: hidden;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      opacity 240ms var(--ease-out-soft),
+      display 240ms allow-discrete,
+      overlay 240ms allow-discrete;
+  }
+
+  /* Opening needs no fade: the gates do the reveal. */
   .menu-dialog[open] {
     opacity: 1;
-    transform: translateY(0);
+  }
+
+  .menu-gate {
+    position: absolute;
+    inset-block: 0;
+    z-index: 2;
+    width: 50.5%;
+    background-color: var(--color-brand);
+    pointer-events: none;
+    transition: transform 240ms var(--ease-out-soft);
+  }
+
+  /* A gold arch panel on each leaf; together they make one doorway. */
+  .menu-gate::before {
+    content: "";
+    position: absolute;
+    inset: 12vh 1.25rem 8vh;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
+  }
+
+  .menu-gate-l {
+    left: 0;
+  }
+
+  .menu-gate-l::before {
+    left: 1.25rem;
+    right: 0;
+    border-right: 0;
+    border-top-left-radius: 100% 9rem;
+  }
+
+  .menu-gate-r {
+    right: 0;
+  }
+
+  .menu-gate-r::before {
+    left: 0;
+    right: 1.25rem;
+    border-left: 0;
+    border-top-right-radius: 100% 9rem;
+  }
+
+  .menu-dialog[open] .menu-gate {
+    transition-duration: 380ms;
+  }
+
+  .menu-dialog[open] .menu-gate-l {
+    transform: translateX(-101%);
+  }
+
+  .menu-dialog[open] .menu-gate-r {
+    transform: translateX(101%);
+  }
+
+  .menu-hall {
+    position: relative;
+    transition:
+      opacity 320ms var(--ease-out-soft) 80ms,
+      transform 320ms var(--ease-out-soft) 80ms;
   }
 
   @starting-style {
     .menu-dialog[open] {
-      opacity: 0;
-      transform: translateY(8px);
+      opacity: 1;
     }
+
+    .menu-dialog[open] .menu-gate {
+      transform: translateX(0);
+    }
+
+    .menu-dialog[open] .menu-hall {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+
+  /* The links stand inside a doorway: a hairline arch filling the hall. */
+  .menu-arch {
+    padding: clamp(3.5rem, 12vh, 6rem) 1.5rem 1.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 40%, transparent);
+    border-bottom: 0;
+    border-radius: 50% 50% 0 0 / 7rem 7rem 0 0;
+  }
+
+  .menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 44px;
+    padding-block: 0.375rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem);
+    line-height: 1.05;
+    color: var(--color-ink);
+    transition: color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .menu-link:hover {
+    color: var(--color-accent);
+  }
+
+  /* Where you are: a small sage arch — the menu's one use of pop. */
+  .menu-link::before {
+    content: "";
+    flex: none;
+    width: 0.625rem;
+    height: 0.375rem;
+    border-radius: 0.375rem 0.375rem 0 0;
+    background-color: var(--color-line);
+  }
+
+  .menu-link[aria-current="page"]::before {
+    background-color: var(--color-pop);
   }
 
   .menu-dialog::backdrop {
@@ -587,34 +909,31 @@
     }
   }
 
-  /* Scroll-cue bob, used by .entrance-cue (a few iterations, never a loop).
-     Disabled by the global reduced-motion reset in @layer base. */
-  @keyframes scroll-cue {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(6px);
-    }
-  }
-
   /* ═════════════════════════════════════════════════════════════════════
      HOME EXPERIENCE
      Scroll-linked scenes are driven by unitless custom properties written by
-     useScrollProgress (--p, and --v for the entrance film). Everything here
-     animates transform / opacity / clip-path only, and every scene has a
-     complete static layout that applies when JS, video or motion is absent.
+     useScrollProgress (--p; the entrance adds --v for the film and --o for the
+     aperture). Everything here animates transform / opacity / clip-path only,
+     and every scene has a complete static layout that applies when JS, the
+     film or motion is absent.
      ═════════════════════════════════════════════════════════════════════ */
 
-  /* ── The entrance: a pinned, scroll-scrubbed arrival film ── */
+  /* ── The entrance: an arched aperture onto a scroll-scrubbed arrival film ── */
   .entrance {
     /* No overflow:hidden here — it would break the sticky frame. */
     position: relative;
   }
 
   [data-motion="rich"] .entrance {
-    height: 380vh;
+    height: 330vh;
+    /* Clear of the viewport edge; 1024–1279px also clears the StickyCtaBar. */
+    --entrance-floor: clamp(2.5rem, 7vh, 5rem);
+  }
+
+  @media (max-width: 1279.98px) {
+    [data-motion="rich"] .entrance {
+      --entrance-floor: 6.5rem;
+    }
   }
 
   .entrance-frame {
@@ -622,6 +941,46 @@
     top: 0;
     height: 100svh;
     overflow: hidden;
+    overflow: clip;
+  }
+
+  .entrance-aperture {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Closed, the film is seen through a doorway — a true semicircular arch
+     (radius = half its width) standing on the floor of the frame. It opens
+     with the gates in the footage until it is the whole frame. */
+  [data-motion="rich"] .entrance-aperture {
+    --c: calc(1 - var(--o, 0));
+    clip-path: inset(
+      calc(var(--c) * max(16%, 9.5rem)) calc(var(--c) * 32%) 0 calc(var(--c) * 32%) round
+        calc(var(--c) * 18vw) calc(var(--c) * 18vw) 0 0
+    );
+  }
+
+  /* A gold architrave around the closed doorway; it lifts away as it opens. */
+  .entrance-architrave {
+    display: none;
+  }
+
+  [data-motion="rich"] .entrance-architrave {
+    display: block;
+    position: absolute;
+    top: calc(max(16%, 9.5rem) - 0.875rem);
+    right: calc(32% - 0.875rem);
+    bottom: 0;
+    left: calc(32% - 0.875rem);
+    border: 1px solid var(--color-highlight);
+    border-bottom: 0;
+    border-radius: calc(18vw + 0.875rem) calc(18vw + 0.875rem) 0 0;
+    pointer-events: none;
+    /* The line fades into the floor band, clear of the plate. */
+    mask-image: linear-gradient(to bottom, black 55%, transparent 80%);
+    transform-origin: 50% 100%;
+    opacity: calc(0.7 - var(--o, 0) * 2.5);
+    transform: scale(calc(1 + var(--o, 0) * 0.2));
   }
 
   .entrance-media {
@@ -632,17 +991,18 @@
     object-fit: cover;
   }
 
-  .entrance-video {
+  .entrance-film {
     opacity: 0;
     transition: opacity var(--duration-base) var(--ease-out-soft);
   }
 
-  .entrance-video[data-ready] {
+  .entrance-film[data-ready] {
     opacity: 1;
   }
 
-  /* Legibility only: a top band for the overlay header over a bright sky, a
-     lower band for the copy. Built on the scoped surface, so it stays on-palette. */
+  /* Legibility only: a top band for the overlay header over a bright sky and
+     a floor band for the plate and rail. Built on the scoped surface, so it
+     stays on-palette. */
   .entrance-scrim {
     background:
       linear-gradient(
@@ -650,12 +1010,28 @@
         color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
         transparent 24%
       ),
-      /* Backs the copy column without dimming the centre of the frame. */
+      /* Static layout: backs the copy column without dimming the centre. */
       linear-gradient(
         to right,
         color-mix(in srgb, var(--color-surface) 62%, transparent) 0%,
         color-mix(in srgb, var(--color-surface) 30%, transparent) 30%,
         transparent 52%
+      ),
+      linear-gradient(
+        to top,
+        color-mix(in srgb, var(--color-surface) 90%, transparent) 0%,
+        color-mix(in srgb, var(--color-surface) 45%, transparent) 36%,
+        transparent 64%
+      );
+  }
+
+  /* Rich layout: the copy sits on the dark field or the floor band. */
+  [data-motion="rich"] .entrance-scrim {
+    background:
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
+        transparent 24%
       ),
       linear-gradient(
         to top,
@@ -674,13 +1050,32 @@
     background-size: 180px 180px;
   }
 
-  .entrance-copy {
-    display: grid;
+  /* Static layout (mobile, reduced motion, no JS): the name over the still,
+     clear of the arch that follows. */
+  .entrance-content {
+    padding-bottom: calc(var(--arch) + 2.5rem);
+  }
+
+  .entrance-content > .container-site {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .entrance-plate {
+    display: contents;
+  }
+
+  .entrance-plate > .eyebrow {
+    order: -1;
+    margin-bottom: 1.25rem;
+  }
+
+  .entrance-inscription {
+    display: block;
   }
 
   /* Colour lives here, not in a utility: Tailwind utilities sit in a later
-     layer and would beat the rich-motion override below regardless of
-     specificity. */
+     layer and would beat the rich-motion overrides regardless of specificity. */
   .entrance-tagline {
     margin-top: 1.5rem;
     max-width: 36rem;
@@ -690,78 +1085,222 @@
     color: var(--color-ink-muted);
   }
 
-  /* Static layout (mobile, reduced motion, no JS): leave room for the arch. */
-  .entrance-content {
-    padding-bottom: calc(var(--arch) + 2.5rem);
-  }
-
-  /* Scrub layout: the beats share one grid cell and hand over to each other. */
+  /* Rich layout: the name is carved on the two pillars either side of the
+     doorway; the plate sits on the floor of the frame. */
   [data-motion="rich"] .entrance .entrance-content {
-    padding-bottom: clamp(2.5rem, 7vh, 5rem);
+    padding-bottom: var(--entrance-floor);
   }
 
-  /* 1024–1279px gets rich motion AND the fixed StickyCtaBar (hidden from xl):
-     keep the pinned frames' content clear of the bar. */
-  @media (max-width: 1279.98px) {
-    [data-motion="rich"] .entrance .entrance-content {
-      padding-bottom: 6.5rem;
-    }
-
-    [data-motion="rich"] .journey .journey-frame {
-      padding-bottom: 4.5rem;
-    }
+  [data-motion="rich"] .entrance-title {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 32% 36% 32%;
+    align-content: center;
+    padding-bottom: 14vh;
+    pointer-events: none;
   }
 
-  [data-motion="rich"] .entrance .entrance-copy > * {
-    grid-area: 1 / 1;
-    align-self: end;
+  [data-motion="rich"] .entrance-inscription {
+    position: relative;
+    padding-inline: 2rem;
+    will-change: transform, opacity;
+    opacity: calc(1 - var(--o, 0) * 2.2);
   }
 
-  /* Beat 1 — the title holds, then lifts away as the gates part. */
-  [data-motion="rich"] .entrance .entrance-open {
-    --out: clamp(0, (var(--v, 0) - 0.03) * 8, 1);
-    opacity: calc(1 - var(--out));
-    transform: translate3d(0, calc(var(--out) * -2.5rem), 0);
+  [data-motion="rich"] .entrance-inscription-l {
+    grid-column: 1;
+    justify-self: end;
+    transform: translate3d(calc(var(--o, 0) * -14vw), 0, 0);
   }
 
-  /* Beat 2 — the tagline arrives word by word down the avenue, then clears
-     for the lobby. Each word carries its own start point in --s. */
+  [data-motion="rich"] .entrance-inscription-r {
+    grid-column: 3;
+    justify-self: start;
+    transform: translate3d(calc(var(--o, 0) * 14vw), 0, 0);
+  }
+
+  /* A capital line over each inscription, set where the arch springs. */
+  [data-motion="rich"] .entrance-inscription::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + 1.25rem);
+    width: 1px;
+    height: 3.5rem;
+    background-color: var(--color-highlight);
+  }
+
+  [data-motion="rich"] .entrance-inscription-l::before {
+    right: 2rem;
+  }
+
+  [data-motion="rich"] .entrance-inscription-r::before {
+    left: 2rem;
+  }
+
+  /* Kept to the left pillar, so it never crosses into the doorway. */
+  [data-motion="rich"] .entrance-plate {
+    display: block;
+    max-width: min(
+      21rem,
+      calc(32vw - max(var(--gutter), (100vw - var(--container-site)) / 2 + var(--gutter)) - 1.5rem)
+    );
+  }
+
+  [data-motion="rich"] .entrance-plate > .eyebrow {
+    margin-bottom: 0;
+  }
+
   [data-motion="rich"] .entrance .entrance-tagline {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 1.25rem + 4.2vw, 5.75rem);
-    line-height: 1;
-    letter-spacing: -0.015em;
-    max-width: 15ch;
-    color: var(--color-ink);
-    opacity: calc(1 - clamp(0, (var(--v, 0) - 0.86) * 8, 1));
+    margin-top: 0.75rem;
+    font-size: 1rem;
   }
 
-  [data-motion="rich"] .entrance .entrance-word {
-    --w: clamp(0, (var(--v, 0) - var(--s, 0)) * 14, 1);
-    display: inline-block;
-    opacity: var(--w);
-    transform: translate3d(0, calc((1 - var(--w)) * 0.4em), 0);
-  }
-
-  /* Only an invitation where scrolling actually drives the film. */
-  .entrance-cue {
+  /* Arrival rail — rich motion only (there is no journey to jump along
+     otherwise). Its marker travels with the film. */
+  .entrance-waypoints {
     display: none;
   }
 
-  [data-motion="rich"] .entrance-cue {
+  [data-motion="rich"] .entrance-waypoints {
+    --rail: 9rem;
+    position: absolute;
+    right: var(--gutter);
+    bottom: calc(var(--entrance-floor) + 0.5rem);
+    z-index: 20;
     display: flex;
-    opacity: calc(1 - clamp(0, var(--v, 0) * 25, 1));
+    gap: 1rem;
   }
 
-  /* A few bobs to invite the first scroll, then stillness — no idle loop. */
-  .entrance-cue svg {
-    animation: scroll-cue 2.5s var(--ease-out-soft) 3;
+  .entrance-waypoints ol {
+    position: relative;
+    width: 7rem;
+    height: var(--rail);
   }
 
-  /* Once the threshold starts to rise the actions are covered: take them out
-     of the tab order too. */
-  .entrance[data-stage="threshold"] .entrance-actions {
+  .entrance-waypoints li {
+    position: absolute;
+    right: 0;
+    top: calc(var(--at) * 100%);
+    transform: translateY(-50%);
+  }
+
+  .entrance-waypoint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 44px;
+    min-height: 44px;
+    padding-inline: 0.5rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .entrance-waypoint:hover {
+    color: var(--color-ink);
+  }
+
+  /* The stage you are in — the hero's one use of the pop colour. */
+  .entrance[data-stage="gate"] [data-waypoint="gate"],
+  .entrance[data-stage="avenue"] [data-waypoint="avenue"],
+  .entrance[data-stage="lobby"] [data-waypoint="lobby"] {
+    color: var(--color-pop);
+  }
+
+  .entrance-rail {
+    position: relative;
+    width: 1px;
+    height: var(--rail);
+    background-color: var(--color-line);
+  }
+
+  .entrance-rail-marker {
+    position: absolute;
+    top: -0.3125rem;
+    left: -0.3125rem;
+    width: 0.6875rem;
+    height: 0.6875rem;
+    /* A tiny arch, echoing the doorway. */
+    border-radius: 50% 50% 0 0;
+    background-color: var(--color-highlight);
+    transform: translate3d(0, calc(var(--v, 0) * var(--rail)), 0);
+  }
+
+  /* Lobby directory: in the lobby, the ways into the rest of the hotel appear
+     on a small arched plaque. Hidden (and out of the tab order) otherwise. */
+  .entrance-directory {
+    display: none;
+  }
+
+  [data-motion="rich"] .entrance-directory {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    z-index: 20;
+    display: block;
+    padding: 1.75rem 2.25rem 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
+    border-bottom: 0;
+    border-radius: 50% 50% 0 0 / 2.75rem 2.75rem 0 0;
+    background-color: color-mix(in srgb, var(--color-surface) 86%, transparent);
+    text-align: center;
     visibility: hidden;
+    opacity: 0;
+    transform: translate3d(-50%, calc(-50% + 1rem), 0);
+    transition:
+      opacity var(--duration-base) var(--ease-out-soft),
+      transform var(--duration-base) var(--ease-out-soft),
+      visibility var(--duration-base) allow-discrete;
+  }
+
+  [data-motion="rich"] .entrance[data-stage="lobby"] .entrance-directory {
+    visibility: visible;
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0);
+  }
+
+  .entrance-directory ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 2rem;
+    margin-top: 0.5rem;
+  }
+
+  .entrance-directory a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1rem + 1.6vw, 2.75rem);
+    line-height: 1;
+    color: var(--color-ink);
+    transition: color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .entrance-directory a:hover {
+    color: var(--color-accent);
+  }
+
+  /* Once the threshold starts to rise the controls are covered: take them
+     out of the tab order too. */
+  .entrance[data-stage="threshold"] .entrance-actions,
+  .entrance[data-stage="threshold"] .entrance-waypoints {
+    visibility: hidden;
+  }
+
+  /* 1024–1279px gets rich motion AND the fixed StickyCtaBar (hidden from xl):
+     keep the pinned journey clear of the bar. */
+  @media (max-width: 1279.98px) {
+    [data-motion="rich"] .journey .journey-frame {
+      padding-bottom: 4.5rem;
+    }
   }
 
   /* ── The threshold: an ivory arch that rises over the end of the film ── */

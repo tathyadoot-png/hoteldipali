@@ -10,7 +10,6 @@ import {
 
 type ScrollSectionProps = ComponentPropsWithoutRef<"section"> & {
   mode?: ProgressMode;
-  smooth?: number;
 };
 
 /**
@@ -18,15 +17,10 @@ type ScrollSectionProps = ComponentPropsWithoutRef<"section"> & {
  * Only active for rich motion; otherwise `--p` is never written and CSS falls
  * back to the scene's finished state. Children stay server-rendered.
  */
-export function ScrollSection({
-  mode = "through",
-  smooth = 0,
-  children,
-  ...rest
-}: ScrollSectionProps) {
+export function ScrollSection({ mode = "through", children, ...rest }: ScrollSectionProps) {
   const ref = useRef<HTMLElement>(null);
   const rich = useRichMotion();
-  useScrollProgress(ref, { enabled: rich, mode, smooth });
+  useScrollProgress(ref, { enabled: rich, mode });
 
   return (
     <section ref={ref} {...rest}>

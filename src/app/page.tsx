@@ -97,6 +97,7 @@ export default async function HomePage() {
         eyebrow={`${site.address.value.city}, ${site.address.value.state}`}
         title={{ lead: titleLead, emphasis: titleRest.join(" ") }}
         tagline={site.tagline.value}
+        directory={pillars.map(({ word, href }) => ({ label: word, href }))}
       />
 
       {/* ═══ WELCOME — an ivory arch rises over the last frame ═══
