@@ -47,7 +47,7 @@ export default async function DiningPage() {
           <div className="mt-10 grid items-center gap-x-12 gap-y-10 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <p className="eyebrow">Restaurant · Bakery · Bar</p>
-              <h1 id="dining-title" className="heading-hero mt-5">
+              <h1 id="dining-title" className="heading-page mt-5">
                 The Dipali <em>table</em>
               </h1>
               <p className="body-lg mt-6 text-ink-muted">

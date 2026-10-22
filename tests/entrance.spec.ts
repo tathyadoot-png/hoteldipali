@@ -1,16 +1,16 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-// The home page's hero and scroll-driven scenes. The hero is temporarily a
-// static full-bleed image (the scroll-scrubbed film was removed on 2026-10-21);
-// the other scenes still run under "rich motion" (>=1024px, fine pointer, no
+// The home page's hero and scroll-driven scenes. The hero is the hotel's own
+// aerial photograph, full bleed (the scroll-scrubbed film was removed on
+// 2026-10-21); scenes run under "rich motion" (>=1024px, fine pointer, no
 // reduced-motion request — the same query the boot script uses).
 
 const DESKTOP = { width: 1280, height: 800 };
 const PHONE = { width: 360, height: 780 };
 
-/** The static hero: name, image and calls to action in one viewport, no film. */
-async function expectStaticHero(page: Page) {
+/** The hero: name, photograph and calls to action in one viewport, no film. */
+async function expectHero(page: Page, photo: string) {
   const videoRequests: string[] = [];
   page.on("request", (req) => {
     if (req.url().includes("/video/")) videoRequests.push(req.url());
@@ -25,9 +25,12 @@ async function expectStaticHero(page: Page) {
 
   const image = await hero.locator("img").evaluate((img: HTMLImageElement) => ({
     src: img.currentSrc,
+    srcset: img.srcset,
     loaded: img.complete && img.naturalWidth > 0,
   }));
-  expect(image.src).toContain("/sample/property-home-hero.svg");
+  // A real, responsive photograph — not a placeholder, not the camera original.
+  expect(image.src).toMatch(new RegExp(`/images/hotel/${photo}-\\d+\\.webp$`));
+  expect(image.srcset).toContain("aerial-pool-grounds-960.webp 960w");
   expect(image.loaded).toBe(true);
 
   // No runway: the hero is one viewport tall.
@@ -40,15 +43,17 @@ async function expectStaticHero(page: Page) {
   expect(videoRequests).toEqual([]);
 }
 
-test.describe("Home hero — static", () => {
-  test("desktop: name, image and calls to action, with no film", async ({ page }) => {
+test.describe("Home hero", () => {
+  test("desktop: the aerial photograph, name and calls to action, with no film", async ({
+    page,
+  }) => {
     await page.setViewportSize(DESKTOP);
-    await expectStaticHero(page);
+    await expectHero(page, "aerial-pool-grounds");
   });
 
-  test("phone: the same static hero, with no film", async ({ page }) => {
+  test("phone: the portrait crop of the same photograph, with no film", async ({ page }) => {
     await page.setViewportSize(PHONE);
-    await expectStaticHero(page);
+    await expectHero(page, "aerial-pool-grounds-portrait");
   });
 });
 

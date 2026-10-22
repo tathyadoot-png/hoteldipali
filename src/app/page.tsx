@@ -11,7 +11,16 @@ import { EntranceHero } from "@/components/home/EntranceHero";
 import { RoomDiscovery, type RoomPreview } from "@/components/home/RoomDiscovery";
 import { DayJourney } from "@/components/home/DayJourney";
 import { ScrollSection } from "@/components/motion/ScrollSection";
-import { getLeisure, getOutlet, getRooms, getSite, getVenues, type Outlet } from "@/content";
+import {
+  getGallery,
+  getLeisure,
+  getOutlet,
+  getRooms,
+  getSite,
+  getVenues,
+  type Outlet,
+} from "@/content";
+import { isPhoto } from "@/lib/images";
 import { outletHref } from "@/lib/routes";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,11 +39,12 @@ const VENUE_KIND: Record<string, string> = {
 };
 
 export default async function HomePage() {
-  const [site, rooms, venues, leisure] = await Promise.all([
+  const [site, rooms, venues, leisure, gallery] = await Promise.all([
     getSite(),
     getRooms(),
     getVenues(),
     getLeisure(),
+    getGallery(),
   ]);
   const [restaurant, bakery, sweets, poolside, bar] = await Promise.all([
     getOutlet("restaurant"),
@@ -59,8 +69,25 @@ export default async function HomePage() {
         ]
       : [],
   );
-  const celebrateImage = venues[0]?.images[0];
+  // Scenes take the first real photograph available, so a venue still on a
+  // placeholder never fills the full-bleed window.
+  const venuePhotos = venues.flatMap((venue) => venue.images.filter(isPhoto));
+  const celebrateImage = venuePhotos[0] ?? venues[0]?.images[0];
   const { pool, gym } = leisure;
+  // "In pictures": the hospitality photographs with no section of their own —
+  // reception, sitting areas, the portico and the lounges.
+  // Rooms have their own section, so room photographs are left out here.
+  const PICTURE_ORDER = ["property", "stay", "events"];
+  const pictures = gallery
+    .filter(
+      (item) =>
+        isPhoto(item.image) &&
+        PICTURE_ORDER.includes(item.category) &&
+        !item.image.src.includes("/room-"),
+    )
+    .sort((a, b) => PICTURE_ORDER.indexOf(a.category) - PICTURE_ORDER.indexOf(b.category) || a.order - b.order)
+    .slice(0, 5)
+    .map((item) => item.image);
 
   // The four ways into the hotel, in the order the page tells them — each row
   // grounded in what the content actually holds, with a photograph that peeks
@@ -71,7 +98,7 @@ export default async function HomePage() {
       word: "Celebrate",
       href: "#celebrate",
       detail: "Lawns & banquet halls",
-      image: venues[0]?.images[1] ?? celebrateImage,
+      image: venuePhotos[1] ?? celebrateImage,
     },
     { word: "Unwind", href: "#unwind", detail: "Pool & gym", image: pool.images[0] },
     {
@@ -84,7 +111,7 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ═══ ARRIVE — a pinned, scroll-scrubbed arrival film ═══ */}
+      {/* ═══ ARRIVE — the hotel from the air ═══ */}
       <EntranceHero
         image={site.homeHero}
         eyebrow={`${site.address.value.city}, ${site.address.value.state}`}
@@ -92,7 +119,7 @@ export default async function HomePage() {
         tagline={site.tagline.value}
       />
 
-      {/* ═══ WELCOME — an ivory arch rises over the last frame ═══
+      {/* ═══ WELCOME — an ivory arch rises over the hero ═══
           It is also the element that turns the overlay header solid. */}
       <section
         data-header-solid-from=""
@@ -102,7 +129,7 @@ export default async function HomePage() {
         <div className="container-site relative">
           <ScrollReveal>
             <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-              {/* The gold logo washes out on sandstone, so it sits on a peacock medallion. */}
+              {/* The gold logo washes out on ivory, so it sits on a deep green medallion. */}
               <span aria-hidden="true" className="logo-medallion">
                 {/* eslint-disable-next-line @next/next/no-img-element -- the header already loads this exact file */}
                 <img
@@ -113,11 +140,15 @@ export default async function HomePage() {
                   className="h-20 w-auto md:h-24"
                 />
               </span>
-              <h2 id="home-intro" className="heading-1 mt-8">
-                Step inside Hotel <em>Dipali</em>
-              </h2>
-              <p className="body-lg mt-6 text-ink-muted">{site.shortDescription.value}</p>
             </div>
+          </ScrollReveal>
+          <ScrollReveal variant="mask" delay={60} className="mx-auto max-w-3xl text-center">
+            <h2 id="home-intro" className="heading-1 mt-8">
+              Step inside Hotel <em>Dipali</em>
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal delay={140} className="mx-auto max-w-3xl text-center">
+            <p className="body-lg mt-6 text-ink-muted">{site.shortDescription.value}</p>
           </ScrollReveal>
 
           <nav aria-label="Explore the hotel" className="mt-16 md:mt-20">
@@ -147,19 +178,23 @@ export default async function HomePage() {
         className="scroll-mt-24 bg-surface-alt py-20 md:py-28"
       >
         <div className="container-site">
-          <ScrollReveal>
-            <div className="flex flex-wrap items-end justify-between gap-6">
-              <div>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <ScrollReveal>
                 <p className="eyebrow">Stay</p>
+              </ScrollReveal>
+              <ScrollReveal variant="mask" delay={60}>
                 <h2 id="home-rooms" className="heading-1 mt-4 max-w-xl">
                   A room for every <em>guest</em>
                 </h2>
-              </div>
-              <Link href="/rooms/" prefetch={false} className="link pb-2">
+              </ScrollReveal>
+            </div>
+            <ScrollReveal delay={140}>
+              <Link href="/rooms/" prefetch={false} className="link-cta">
                 Explore all rooms
               </Link>
-            </div>
-          </ScrollReveal>
+            </ScrollReveal>
+          </div>
 
           <div className="mt-12 md:mt-16">
             <RoomDiscovery rooms={roomPreviews} />
@@ -203,7 +238,7 @@ export default async function HomePage() {
                 <Link href="/weddings/" prefetch={false} className="btn-primary">
                   Plan your wedding
                 </Link>
-                <Link href="/events/" prefetch={false} className="link">
+                <Link href="/events/" prefetch={false} className="link-cta">
                   Events &amp; gatherings
                 </Link>
               </div>
@@ -225,7 +260,7 @@ export default async function HomePage() {
         </div>
       </ScrollSection>
 
-      {/* ═══ UNWIND — the one full olive-sage moment ═══ */}
+      {/* ═══ UNWIND — the pool, seen from above ═══ */}
       <section
         id="unwind"
         aria-labelledby="home-leisure"
@@ -250,11 +285,12 @@ export default async function HomePage() {
 
             <div className="relative lg:col-span-6 lg:col-start-7">
               {pool.images[0] ? (
-                <div className="img-hover">
+                <ScrollReveal variant="image" className="frame-arch">
                   <Picture image={pool.images[0]} ratio="4:5" sizes="(min-width: 1024px) 50vw, 100vw" />
-                </div>
+                </ScrollReveal>
               ) : null}
-              {gym.images[0] ? (
+              {/* The gym inset waits for a real photograph. */}
+              {isPhoto(gym.images[0]) ? (
                 <div className="absolute -bottom-8 -left-6 hidden w-44 bg-accent p-2 lg:block">
                   <Picture image={gym.images[0]} ratio="1:1" sizes="11rem" />
                 </div>
@@ -275,7 +311,7 @@ export default async function HomePage() {
             A restaurant, the Dipali counters, poolside plates and the Infinity Bar —
             one family of places to eat, drink and gather.
           </p>
-          <Link href="/dining/" prefetch={false} className="link mt-6 self-start">
+          <Link href="/dining/" prefetch={false} className="link-cta mt-6 self-start">
             Explore dining
           </Link>
         </div>
@@ -316,6 +352,40 @@ export default async function HomePage() {
 
         {bar ? <JourneyPanel outlet={bar} mood="Evening" tone="peacock" /> : null}
       </DayJourney>
+
+      {/* ═══ IN PICTURES — a look around the hotel ═══ */}
+      {pictures.length >= 3 ? (
+        <section aria-labelledby="home-pictures" className="bg-surface py-20 md:py-28">
+          <div className="container-site">
+            <ScrollReveal>
+              <p className="eyebrow">In pictures</p>
+            </ScrollReveal>
+            <ScrollReveal variant="mask" delay={60}>
+              <h2 id="home-pictures" className="heading-1 mt-4 max-w-2xl">
+                A look <em>around</em>
+              </h2>
+            </ScrollReveal>
+            <ul className="pictures-grid mt-12 md:mt-16">
+              {pictures.map((image, i) => (
+                <li key={image.id} className="pictures-item">
+                  <ScrollReveal variant="image" delay={(i % 3) * 70} className="h-full">
+                    <figure className="img-hover relative h-full">
+                      {/* The caption describes the photo; the image itself is decorative. */}
+                      <Picture
+                        image={image}
+                        fill
+                        decorative
+                        sizes={i === 0 ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 25vw, 50vw"}
+                      />
+                      <figcaption className="pictures-caption">{image.alt}</figcaption>
+                    </figure>
+                  </ScrollReveal>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       {/* ═══ CLOSE — a peacock arch, and the conversation that starts a visit ═══ */}
       <section

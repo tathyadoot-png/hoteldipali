@@ -3,8 +3,11 @@
 /*
  * Design tokens and component classes. Never put colours or font names anywhere else.
  * Fonts are named here and in src/app/fonts.ts only.
- * Light ("Sandstone") is the default; Peacock is the dark variant for weddings,
- * Infinity Bar and dark bands.
+ * Palette "Peacock & Ivory" (2026-10-22): a warm near-white ivory light default and a
+ * deep forest-peacock dark variant ("Peacock") for the hero, weddings, the bar and
+ * dark bands, with terracotta clay for actions and antique gold for ornament.
+ * Tuned against the hotel's photographs: warm wood and cream walls, teal upholstery,
+ * green lawns and the blue pool.
  */
 
 @theme {
@@ -16,29 +19,28 @@
   --font-display: var(--font-instrument), "Times New Roman", Georgia, serif;
   --font-body: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  /* Colours — Light (default, "Sandstone"). Palette "Peacock & Sandstone". */
-  --color-surface: #efe6d6;
-  --color-surface-alt: #e4d6bf;
-  --color-ink: #0f2422;
-  --color-ink-muted: #3e5552;
-  --color-brand: #0e3b3a;
-  --color-brand-ink: #f7f2e9;
-  /* Copper: buttons, links, small emphasis. One step deeper than the #9A4E25
-     reference so it also reads as small text (form errors, current nav link) on
-     surface-alt — 4.61:1 there, where #9A4E25 measured 4.20:1. */
-  --color-accent: #914922;
+  /* Colours — Light (default, "Ivory"). */
+  --color-surface: #f8f4ec;
+  --color-surface-alt: #efe7da;
+  --color-ink: #13221e;
+  --color-ink-muted: #4a5752;
+  --color-brand: #0f2e2a;
+  --color-brand-ink: #f8f4ec;
+  /* Terracotta clay: buttons, links, small emphasis — passes as small text on
+     both light surfaces (5.88 / 5.26:1). */
+  --color-accent: #9a4527;
   --color-accent-ink: #ffffff;
-  /* Brass: decorative only on light grounds (rules, hairlines) — never text. */
-  --color-highlight: #c9a45c;
-  --color-line: rgba(15, 36, 34, 0.15);
+  /* Antique gold: decorative only on light grounds (rules, hairlines) — never text. */
+  --color-highlight: #b89a5e;
+  --color-line: rgba(19, 34, 30, 0.14);
 
-  /* Radius */
+  /* Radius — buttons and frames stay architectural: nearly square. */
   --radius-none: 0;
   --radius-sm: 2px;
 
   /* Shadows */
   --shadow-hairline: 0 0 0 1px var(--color-line);
-  --shadow-lift: 0 8px 24px -12px rgba(0, 0, 0, 0.25);
+  --shadow-lift: 0 18px 40px -24px rgba(8, 24, 21, 0.45);
 
   /* Breakpoints */
   --breakpoint-xs: 360px;
@@ -58,25 +60,28 @@
   --duration-base: 320ms;
 }
 
-/* Colours — Peacock variant (dark). Redefines the same tokens; utilities resolve per-element. */
+/* Colours — Peacock variant (dark: deep forest-peacock). Redefines the same
+   tokens; utilities resolve per-element. */
 [data-theme="peacock"] {
   color-scheme: dark;
-  --color-surface: #0e3b3a;
-  --color-surface-alt: #082624;
-  --color-ink: #f7f2e9;
-  --color-ink-muted: #c9d1cb;
-  --color-brand: #082624;
-  --color-brand-ink: #f7f2e9;
-  --color-accent: #c9a45c;
-  --color-accent-ink: #082624;
-  --color-highlight: #c9a45c;
-  --color-line: rgba(247, 242, 233, 0.15);
+  --color-surface: #0f2e2a;
+  --color-surface-alt: #0a211e;
+  --color-ink: #f6f1e7;
+  --color-ink-muted: #c5cec8;
+  --color-brand: #0a211e;
+  --color-brand-ink: #f6f1e7;
+  --color-accent: #cda866;
+  --color-accent-ink: #0a211e;
+  --color-highlight: #cda866;
+  --color-line: rgba(246, 241, 231, 0.16);
 }
 
 /* Non-colour design constants shared by component classes. */
 :root {
-  /* Rise of the arched threshold that follows the home entrance. */
-  --arch: clamp(3rem, 10vw, 9rem);
+  /* Rise of the arched section thresholds — a gentle curve, not a dome. */
+  --arch: clamp(1.75rem, 4.5vw, 4.5rem);
+  /* Arrow glyph, used as a mask (so it takes currentColor) by .btn-cta / .link-cta. */
+  --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath d='M0 8h21M15 2l6 6-6 6' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
   /* Fractal-noise tile used for paper grain and film grain. */
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
 }
@@ -134,10 +139,22 @@
     letter-spacing: -0.02em;
   }
 
+  /* Inner-page heroes: one step below the home hero, sized for split
+     layouts so headings break into phrases, not single words. */
+  .heading-page {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 1rem + 7vw, 8.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
   .heading-1 {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 1rem + 6vw, 8rem);
-    line-height: 0.98;
+    /* ~4.4vw at 1440px: large, but sized for the split (5/7-column) layouts
+       most sections use, so long words stay inside their column. */
+    font-size: clamp(2.5rem, 1.25rem + 3.4vw, 5rem);
+    line-height: 1;
   }
 
   .heading-2 {
@@ -155,7 +172,16 @@
   }
 
   /* One emphasised word per heading: display italic in accent. */
+  /* Safety net: a heading may never spill out of its column. */
+  .heading-hero,
+  .heading-page,
+  .heading-1,
+  .heading-2 {
+    overflow-wrap: break-word;
+  }
+
   .heading-hero em,
+  .heading-page em,
   .heading-1 em,
   .heading-2 em,
   .heading-3 em {
@@ -200,37 +226,62 @@
     color: var(--color-accent);
   }
 
-  /* Buttons */
+  /* ── Buttons: "architrave" language ──────────────────────────────────
+     Nearly square, confident type, a fill that sweeps up from the base on
+     hover/focus (transform only — nothing around the button moves). */
   .btn-primary,
   .btn-secondary,
   .btn-ghost {
+    --btn-sweep: transparent;
+    position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.625rem;
     min-height: 48px;
-    padding-inline: 1.5rem;
-    border-radius: var(--radius-sm);
+    padding-inline: 1.375rem;
+    overflow: hidden;
     border: 1px solid transparent;
+    border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
     line-height: 1;
     text-align: center;
     cursor: pointer;
-    transition-property: color, background-color, border-color, transform;
-    transition-duration: var(--duration-fast);
-    transition-timing-function: var(--ease-out-soft);
+    transition:
+      color var(--duration-base) var(--ease-out-soft),
+      border-color var(--duration-base) var(--ease-out-soft);
   }
 
-  .btn-primary:hover,
-  .btn-secondary:hover,
-  .btn-ghost:hover {
-    transform: translateY(-1px);
+  .btn-primary::before,
+  .btn-secondary::before,
+  .btn-ghost::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--btn-sweep);
+    transform: scaleY(0);
+    transform-origin: 50% 100%;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .btn-primary:hover::before,
+  .btn-secondary:hover::before,
+  .btn-ghost:hover::before,
+  .btn-primary:focus-visible::before,
+  .btn-secondary:focus-visible::before,
+  .btn-ghost:focus-visible::before {
+    transform: scaleY(1);
   }
 
   .btn-primary:active,
   .btn-secondary:active,
   .btn-ghost:active {
-    transform: translateY(0);
+    transform: translateY(1px);
   }
 
   .btn-primary:disabled,
@@ -244,38 +295,148 @@
     cursor: not-allowed;
   }
 
+  .btn-primary:disabled::before,
+  .btn-secondary:disabled::before,
+  .btn-ghost:disabled::before,
+  .btn-primary[aria-disabled="true"]::before,
+  .btn-secondary[aria-disabled="true"]::before,
+  .btn-ghost[aria-disabled="true"]::before {
+    transform: scaleY(0);
+  }
+
+  /* Primary: clay (gold on Peacock); the sweep deepens it. */
   .btn-primary {
+    --btn-sweep: color-mix(in srgb, var(--color-accent) 72%, var(--color-ink));
     background-color: var(--color-accent);
     color: var(--color-accent-ink);
   }
 
-  /* Outline button: ink (pearl on Peacock) border and text. */
+  [data-theme="peacock"] .btn-primary,
+  [data-theme="peacock"].btn-primary {
+    --btn-sweep: color-mix(in srgb, var(--color-accent) 78%, var(--color-ink));
+  }
+
+  /* Secondary: outline in ink (pearl on Peacock); the sweep inverts it. */
   .btn-secondary {
+    --btn-sweep: var(--color-ink);
     background-color: transparent;
     border-color: var(--color-ink);
     color: var(--color-ink);
   }
 
-  .btn-secondary:hover {
-    background-color: var(--color-surface-alt);
+  .btn-secondary:hover,
+  .btn-secondary:focus-visible {
+    color: var(--color-surface);
   }
 
+  /* Ghost: a quieter outline beside a primary; the sweep is a soft tint. */
   .btn-ghost {
+    --btn-sweep: color-mix(in srgb, var(--color-ink) 10%, transparent);
     background-color: transparent;
-    border-color: var(--color-ink);
+    border-color: color-mix(in srgb, var(--color-ink) 55%, transparent);
     color: var(--color-ink);
   }
 
-  .btn-ghost:hover {
-    background-color: var(--color-surface-alt);
+  .btn-ghost:hover,
+  .btn-ghost:focus-visible {
+    border-color: var(--color-ink);
   }
 
-  /* Arch-topped modifier for the signature calls to action: a shallow
-     elliptical arch, like the doorways the site is built around. */
-  .btn-arch {
-    padding-top: 0.25rem;
-    border-radius: 50% 50% var(--radius-sm) var(--radius-sm) / 1.125rem 1.125rem
-      var(--radius-sm) var(--radius-sm);
+  /* Signature CTA (the enquiry): an inset hairline "architrave" and an arrow
+     that steps forward on hover. The frame is an outline, so it stays drawn
+     above the sweep; the focus ring replaces it while focused. */
+  .btn-cta {
+    padding-inline: 1.5rem 1.25rem;
+    outline: 1px solid color-mix(in srgb, var(--color-accent-ink) 42%, transparent);
+    outline-offset: -5px;
+  }
+
+  .btn-cta::after {
+    content: "";
+    flex: none;
+    width: 1.05em;
+    height: 0.7em;
+    background-color: currentColor;
+    mask: var(--arrow) center / contain no-repeat;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .btn-cta:hover::after,
+  .btn-cta:focus-visible::after {
+    transform: translateX(0.25rem);
+  }
+
+  .btn-cta:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Text link with an arrow and an underline that draws in from the left. */
+  .link-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    color: var(--color-ink);
+  }
+
+  .link-cta::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 1.6em;
+    bottom: 0.55rem;
+    height: 1px;
+    background-color: var(--color-accent);
+    transform: scaleX(0.35);
+    transform-origin: 0 50%;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .link-cta::after {
+    content: "";
+    width: 1.05em;
+    height: 0.7em;
+    background-color: var(--color-accent);
+    mask: var(--arrow) center / contain no-repeat;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .link-cta:hover::before,
+  .link-cta:focus-visible::before,
+  :where(a, article):hover > .link-cta::before {
+    transform: scaleX(1);
+  }
+
+  .link-cta:hover::after,
+  .link-cta:focus-visible::after {
+    transform: translateX(0.25rem);
+  }
+
+  /* Square icon button with a hairline frame. */
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 40%, transparent);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    transition:
+      border-color var(--duration-fast) var(--ease-out-soft),
+      background-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .btn-icon:hover,
+  .btn-icon:focus-visible {
+    border-color: var(--color-ink);
+    background-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
   }
 
   /* Chips */
@@ -391,37 +552,58 @@
     background-color: var(--color-highlight);
   }
 
-  /* ── Header: two nav wings flanking a hanging logo keystone ── */
+  /* ── Header: the doorway in the architrave ─────────────────────────────
+     A hairline runs along the base of the bar and, at the centre, rises into
+     an arched niche that holds the logo on a deep green ground. Everything
+     sits inside the bar, so nothing hangs over page content. */
   .header-shell {
+    background-color: transparent;
     transition:
       background-color var(--duration-base) var(--ease-out-soft),
+      box-shadow var(--duration-base) var(--ease-out-soft),
       color var(--duration-base) var(--ease-out-soft);
   }
 
-  /* Solid state: a gold hairline draws outward from the keystone. */
-  .header-shell::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 1px;
-    background-color: color-mix(in srgb, var(--color-highlight) 60%, transparent);
-    transform: scaleX(0);
-    transition: transform 380ms var(--ease-out-soft);
-  }
-
-  .header-shell[data-state="solid"]::after {
-    transform: scaleX(1);
+  /* Scrolled / light pages: near-opaque ivory (no backdrop blur — blurring
+     behind a sticky bar repaints on every scroll frame). */
+  .header-shell[data-state="solid"] {
+    background-color: color-mix(in srgb, var(--color-surface) 95%, transparent);
+    box-shadow: 0 12px 30px -28px rgba(8, 24, 21, 0.5);
   }
 
   .header-bar {
-    --keystone: 6.5rem;
+    --keystone: 5.25rem;
+    --rule: color-mix(in srgb, var(--color-ink) 28%, transparent);
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) var(--keystone) minmax(0, 1fr);
     align-items: center;
     height: 100%;
+  }
+
+  .header-shell[data-state="solid"] .header-bar {
+    --rule: color-mix(in srgb, var(--color-highlight) 75%, transparent);
+  }
+
+  /* The architrave: two hairline segments meeting the niche's sides. */
+  .header-bar::before,
+  .header-bar::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--rule);
+    transition: background-color var(--duration-base) var(--ease-out-soft);
+  }
+
+  .header-bar::before {
+    left: var(--gutter);
+    right: calc(50% + var(--keystone) / 2);
+  }
+
+  .header-bar::after {
+    left: calc(50% + var(--keystone) / 2);
+    right: var(--gutter);
   }
 
   .header-bar > * {
@@ -433,7 +615,7 @@
     justify-self: start;
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 0.75rem;
     min-width: 44px;
     min-height: 44px;
     cursor: pointer;
@@ -441,38 +623,41 @@
 
   .header-menu-label {
     font-family: var(--font-body);
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.75rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
   }
 
-  /* The keystone hangs below the bar, its foot an inverted arch — the
-     doorway motif turned upside down. */
+  /* The niche: an arched doorway rising from the hairline, deep green inside
+     so the gold logo always reads (5–8:1 on green, under 2:1 on ivory). */
   .header-keystone {
     grid-column: 2;
-    align-self: start;
+    align-self: end;
     position: relative;
     z-index: 1;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    height: calc(100% + 1.5rem);
-    padding-bottom: 0.5rem;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 70%, transparent);
-    border-top: 0;
-    border-radius: 0 0 50% 50% / 0 0 2.25rem 2.25rem;
-    /* Peacock in every header state: the gold logo washes out on sandstone
-       (~1.3–1.9:1) but reads at 5–8:1 on peacock. */
+    height: calc(100% - 0.75rem);
+    padding-bottom: 0.25rem;
+    border: 1px solid var(--rule);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
     background-color: var(--color-brand);
-    transform-origin: 50% 0;
-    transition:
-      transform var(--duration-base) var(--ease-out-soft),
-      background-color var(--duration-base) var(--ease-out-soft);
+    transition: border-color var(--duration-base) var(--ease-out-soft);
   }
 
-  .header-shell[data-state="solid"] .header-keystone {
-    transform: scale(0.86);
+  /* A brass keystone mark at the crown of the arch. */
+  .header-keystone::before {
+    content: "";
+    position: absolute;
+    top: -0.25rem;
+    left: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: var(--color-highlight);
+    transform: translateX(-50%) rotate(45deg);
   }
 
   .header-nav {
@@ -485,7 +670,7 @@
     justify-content: center;
   }
 
-  /* The number stays the link's name everywhere; it is shown from 1536px. */
+  /* The number stays the link's name everywhere; it is shown from 1440px. */
   .header-call-label {
     position: absolute;
     width: 1px;
@@ -501,11 +686,7 @@
 
   @media (min-width: 768px) {
     .header-bar {
-      --keystone: 8rem;
-    }
-
-    .header-keystone {
-      height: calc(100% + 1.75rem);
+      --keystone: 6.25rem;
     }
   }
 
@@ -520,16 +701,20 @@
     .header-call {
       grid-column: 1;
       justify-self: start;
+      gap: 0.625rem;
     }
 
     .header-enquire {
       grid-column: 3;
       justify-self: end;
       display: inline-flex;
+      min-height: 44px;
+      padding-inline: 1.125rem 1rem;
+      font-size: 0.875rem;
     }
   }
 
-  @media (min-width: 1536px) {
+  @media (min-width: 1440px) {
     .header-call-label {
       position: static;
       width: auto;
@@ -537,31 +722,27 @@
       overflow: visible;
       clip-path: none;
       font-weight: 500;
+      font-size: 0.875rem;
+      letter-spacing: 0.04em;
     }
   }
 
   .header-wing {
     position: relative;
     display: flex;
-    gap: 1.5rem;
+    gap: 1.75rem;
   }
 
   .header-wing-l {
     grid-column: 1;
     justify-self: end;
-    padding-right: 1.75rem;
+    padding-right: 2.25rem;
   }
 
   .header-wing-r {
     grid-column: 3;
     justify-self: start;
-    padding-left: 1.75rem;
-  }
-
-  @media (min-width: 1536px) {
-    .header-wing {
-      gap: 2.25rem;
-    }
+    padding-left: 2.25rem;
   }
 
   .header-link {
@@ -570,28 +751,31 @@
     min-height: 44px;
     font-family: var(--font-body);
     font-weight: 500;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     transition: color var(--duration-fast) var(--ease-out-soft);
   }
 
   .header-link:hover,
+  .header-link:focus-visible,
   .header-link[aria-current="page"] {
     color: var(--color-accent);
   }
 
-  /* A small gold arch that glides to the pointed-at / focused link and rests
-     under the current page. */
+  /* A hairline that slides to — and takes the width of — the pointed-at or
+     focused link, resting under the current page. Transform only. */
   .header-glide {
     position: absolute;
-    bottom: 0.125rem;
-    left: -0.375rem;
-    width: 0.75rem;
-    height: 0.375rem;
-    border-radius: 0.375rem 0.375rem 0 0;
-    background-color: var(--color-highlight);
+    bottom: 0.5rem;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    background-color: var(--color-accent);
     pointer-events: none;
     opacity: 0;
-    transform: translate3d(var(--x, 0), 0, 0);
+    transform: translate3d(var(--x, 0), 0, 0) scaleX(var(--w, 0));
+    transform-origin: 0 50%;
     transition:
       transform var(--duration-base) var(--ease-out-soft),
       opacity var(--duration-fast) var(--ease-out-soft);
@@ -838,8 +1022,17 @@
   /* Pulls a light placeholder/photograph slightly towards the surface tone so
      the image belongs to the palette. Kept low so the midband stays legible as
      an image rather than a flat wash. */
+  /* Photo heroes: an even veil plus a column behind the copy, so body text
+     holds over busy photographs (chandeliers, white table linen). */
   .hero-tint {
-    background-color: color-mix(in srgb, var(--color-surface) 18%, transparent);
+    background:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-surface) 70%, transparent) 0%,
+        color-mix(in srgb, var(--color-surface) 35%, transparent) 55%,
+        transparent 80%
+      ),
+      color-mix(in srgb, var(--color-surface) 30%, transparent);
   }
 
   /*
@@ -903,10 +1096,10 @@
      [data-revealed] via IntersectionObserver. */
   [data-reveal] {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translate3d(0, 1.5rem, 0);
     transition:
-      opacity var(--duration-base) var(--ease-out-soft),
-      transform var(--duration-base) var(--ease-out-soft);
+      opacity 380ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+      transform 380ms var(--ease-out-soft) var(--reveal-delay, 0ms);
   }
 
   [data-reveal][data-revealed] {
@@ -914,9 +1107,54 @@
     transform: none;
   }
 
+  /* Headings: the line rises out of a mask (clip-path + transform only). */
+  [data-reveal="mask"] {
+    opacity: 1;
+    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 0.6em, 0);
+    transition:
+      clip-path 380ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+      transform 380ms var(--ease-out-soft) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="mask"][data-revealed] {
+    clip-path: inset(0 0 -0.25em 0);
+    transform: none;
+  }
+
+  /* Images: the frame opens from the base while the photo settles from a
+     slight zoom. */
+  [data-reveal="image"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(12% 0 0 0);
+    transition: clip-path 380ms var(--ease-out-soft) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="image"] img {
+    transform: scale(1.06);
+    transition: transform 380ms var(--ease-out-soft) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="image"][data-revealed] {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* :where() keeps this below .img-hover's hover zoom in specificity. */
+  [data-reveal="image"]:where([data-revealed]) img {
+    transform: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    [data-reveal] {
+    [data-reveal],
+    [data-reveal="mask"],
+    [data-reveal="image"] {
       opacity: 1;
+      clip-path: none;
+      transform: none;
+    }
+
+    [data-reveal="image"] img {
       transform: none;
     }
   }
@@ -929,8 +1167,7 @@
      that applies when JS or motion is absent.
      ═════════════════════════════════════════════════════════════════════ */
 
-  /* ── The home hero (temporary, static): one full-bleed image under the
-     name and the calls to action. Prompt 4 redesigns it. ── */
+  /* ── The home hero: the hotel's aerial photograph, full bleed ── */
   .entrance {
     position: relative;
     display: flex;
@@ -941,26 +1178,42 @@
     overflow: clip;
   }
 
-  /* Legibility only: a top band for the overlay header, a column for the
-     copy and a floor band. Built on the scoped (Peacock) surface. */
+  /* The photograph's frame. With rich motion it drifts down at a fraction of
+     the scroll speed as the hero leaves (--p runs 0.5 → 1 over that span),
+     so it is taller than the hero to never reveal an edge. */
+  .entrance-media {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-motion="rich"] .entrance-media {
+    inset: -6% 0 auto;
+    height: 112%;
+    will-change: transform;
+    transform: translate3d(0, calc(max(0, var(--p, 0.5) - 0.5) * 36vh), 0);
+  }
+
+  /* Contrast only where the copy and the header sit: a top band for the
+     header, a column for the title and a floor for the actions. The centre
+     and right of the photograph stay clear. */
   .entrance-scrim {
     background:
       linear-gradient(
         to bottom,
-        color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
-        transparent 24%
+        color-mix(in srgb, var(--color-surface-alt) 62%, transparent) 0%,
+        transparent 22%
       ),
       linear-gradient(
         to right,
-        color-mix(in srgb, var(--color-surface) 62%, transparent) 0%,
-        color-mix(in srgb, var(--color-surface) 30%, transparent) 30%,
-        transparent 52%
+        color-mix(in srgb, var(--color-surface-alt) 78%, transparent) 0%,
+        color-mix(in srgb, var(--color-surface-alt) 40%, transparent) 38%,
+        transparent 62%
       ),
       linear-gradient(
         to top,
-        color-mix(in srgb, var(--color-surface) 90%, transparent) 0%,
-        color-mix(in srgb, var(--color-surface) 45%, transparent) 36%,
-        transparent 64%
+        color-mix(in srgb, var(--color-surface-alt) 88%, transparent) 0%,
+        color-mix(in srgb, var(--color-surface-alt) 30%, transparent) 38%,
+        transparent 58%
       );
   }
 
@@ -969,17 +1222,58 @@
     position: relative;
     z-index: 1;
     padding-top: 7rem;
-    padding-bottom: calc(var(--arch) + 2.5rem);
+    padding-bottom: calc(var(--arch) + clamp(2.5rem, 7vh, 4.5rem));
+  }
+
+  .entrance-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    color: var(--color-ink);
+  }
+
+  /* A short antique-gold rule before the location. */
+  .entrance-eyebrow::before {
+    content: "";
+    width: 2.5rem;
+    height: 1px;
+    background-color: var(--color-highlight);
   }
 
   /* Colour lives here, not in a utility, alongside the other hero rules. */
   .entrance-tagline {
     margin-top: 1.5rem;
-    max-width: 36rem;
+    max-width: 34rem;
+    text-wrap: balance;
     font-family: var(--font-body);
-    font-size: 1.125rem;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
     line-height: 1.6;
-    color: var(--color-ink-muted);
+    color: var(--color-ink);
+  }
+
+  /* Load-in: eyebrow, title, copy and actions rise in sequence. CSS only, so
+     it plays from first paint (no JS, no layout shift). */
+  @keyframes entrance-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1.25rem, 0);
+    }
+  }
+
+  .entrance-rise {
+    animation: entrance-rise 380ms var(--ease-out-soft) both;
+  }
+
+  .entrance-rise:nth-child(2) {
+    animation-delay: 90ms;
+  }
+
+  .entrance-rise:nth-child(3) {
+    animation-delay: 180ms;
+  }
+
+  .entrance-rise:nth-child(4) {
+    animation-delay: 260ms;
   }
 
   /* 1024–1279px gets rich motion AND the fixed StickyCtaBar (hidden from xl):
@@ -991,7 +1285,7 @@
   }
 
   /* An arched peacock ground for the gold logo on light surfaces, where the
-     logo's paler golds wash out (~1.3–1.9:1 on sandstone, 5–8:1 on peacock). */
+     logo's paler golds wash out (under 2:1 on ivory, 7–8:1 on the deep green). */
   .logo-medallion {
     display: inline-flex;
     align-items: center;
@@ -1002,13 +1296,59 @@
     background-color: var(--color-brand);
   }
 
-  /* ── The threshold: a sandstone arch that rises over the bottom of the hero ── */
+  /* ── In pictures: an editorial mosaic of the hotel's interiors ── */
+  .pictures-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: clamp(10rem, 42vw, 16rem);
+    gap: 0.75rem;
+  }
+
+  .pictures-item:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  @media (min-width: 1024px) {
+    .pictures-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: clamp(14rem, 19vw, 20rem);
+      gap: 1rem;
+    }
+  }
+
+  .pictures-caption {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 2.5rem 1rem 0.875rem;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--color-brand-ink);
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--color-brand) 82%, transparent),
+      transparent
+    );
+  }
+
+  /* ── The threshold: an ivory arch that rises over the bottom of the hero ── */
   .threshold {
     position: relative;
     z-index: 10;
     margin-top: calc(-1 * var(--arch));
+    /* A gentle elliptical rise (see --arch) traced by an antique-gold hairline,
+       the same line that runs along the header. */
+    border-top: 1px solid color-mix(in srgb, var(--color-highlight) 60%, transparent);
     border-top-left-radius: 50% var(--arch);
     border-top-right-radius: 50% var(--arch);
+  }
+
+  /* Arched-top image mask: a true semicircle on portrait frames — the
+     doorway of the header's niche, used sparingly on feature images. */
+  .frame-arch {
+    overflow: hidden;
+    border-radius: 999px 999px var(--radius-sm) var(--radius-sm);
   }
 
   /* ── The pillar index: oversized words that double as navigation ── */

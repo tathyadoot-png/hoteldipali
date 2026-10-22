@@ -1,9 +1,12 @@
+import type { CSSProperties } from "react";
+
 import type { Aspect, Image } from "@/content";
 
-// STATIC-ONLY: renders a plain <img> because static export disables next/image
-// optimisation (CLAUDE.md §B). Images are expected to be pre-optimised; when a
-// real multi-width/srcset pipeline is added, extend this component — pages that
-// use <Picture> will not need to change.
+// STATIC-ONLY: renders plain <img>/<picture> because static export disables
+// next/image optimisation (CLAUDE.md §B). Photos are pre-optimised by
+// `pnpm make:photos` into width sets; an entry with `widths` gets a srcset, and
+// one with `small` gets an art-directed crop for phones. When a dynamic image
+// pipeline arrives, extend this component — pages need not change.
 
 // Full class strings (no dynamic concatenation) so Tailwind detects them.
 const ASPECT_CLASS: Record<Aspect, string> = {
@@ -15,6 +18,9 @@ const ASPECT_CLASS: Record<Aspect, string> = {
   "3:4": "aspect-[3/4]",
   "9:16": "aspect-[9/16]",
 };
+
+/** Viewports that get the `small` crop. */
+const SMALL_MEDIA = "(max-width: 767px)";
 
 type PictureProps = {
   image: Image;
@@ -35,6 +41,12 @@ type PictureProps = {
   className?: string;
 };
 
+/** "…/name-2560.webp" + [480, 960] → "…/name-480.webp 480w, …/name-960.webp 960w". */
+export function srcSetFor(src: string, widths: number[] | undefined): string | undefined {
+  if (!widths?.length || !/-\d+\.webp$/.test(src)) return undefined;
+  return widths.map((w) => `${src.replace(/-\d+\.webp$/, `-${w}.webp`)} ${w}w`).join(", ");
+}
+
 export function Picture({
   image,
   ratio,
@@ -48,22 +60,42 @@ export function Picture({
   const ariaHidden = decorative ? true : undefined;
   const loading = priority ? "eager" : "lazy";
   const fetchPriority = priority ? "high" : undefined;
+  const srcSet = srcSetFor(image.src, image.widths);
+  const style: CSSProperties | undefined = image.focus ? { objectPosition: image.focus } : undefined;
+  const common = {
+    src: image.src,
+    srcSet,
+    sizes,
+    "aria-hidden": ariaHidden,
+    width: image.width,
+    height: image.height,
+    loading,
+    fetchPriority,
+    decoding: "async",
+    style,
+  } as const;
 
   if (fill) {
-    return (
+    const img = (
       // eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation
       <img
-        src={image.src}
+        {...common}
         alt={alt}
-        aria-hidden={ariaHidden}
-        width={image.width}
-        height={image.height}
-        sizes={sizes}
-        loading={loading}
-        fetchPriority={fetchPriority}
-        decoding="async"
         className={`absolute inset-0 h-full w-full bg-surface-alt object-cover ${className ?? ""}`}
       />
+    );
+    if (!image.small) return img;
+    return (
+      <picture>
+        <source
+          media={SMALL_MEDIA}
+          srcSet={srcSetFor(image.small.src, image.small.widths)}
+          sizes="100vw"
+          width={image.small.width}
+          height={image.small.height}
+        />
+        {img}
+      </picture>
     );
   }
 
@@ -73,35 +105,13 @@ export function Picture({
         className={`relative overflow-hidden bg-surface-alt ${ASPECT_CLASS[ratio]} ${className ?? ""}`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation */}
-        <img
-          src={image.src}
-          alt={alt}
-          aria-hidden={ariaHidden}
-          width={image.width}
-          height={image.height}
-          sizes={sizes}
-          loading={loading}
-          fetchPriority={fetchPriority}
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <img {...common} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
       </div>
     );
   }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation
-    <img
-      src={image.src}
-      alt={alt}
-      aria-hidden={ariaHidden}
-      width={image.width}
-      height={image.height}
-      sizes={sizes}
-      loading={loading}
-      fetchPriority={fetchPriority}
-      decoding="async"
-      className={`h-auto w-full bg-surface-alt ${className ?? ""}`}
-    />
+    <img {...common} alt={alt} className={`h-auto w-full bg-surface-alt ${className ?? ""}`} />
   );
 }

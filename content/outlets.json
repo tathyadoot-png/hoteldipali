@@ -6,11 +6,21 @@
     "status": "sample",
     "note": "outlet name is sample; the restaurant's existence is from OTA listings. Confirm the official name.",
     "summary": "The hotel's main multi-cuisine restaurant, serving guests through the day.",
-    "cuisine": ["North Indian", "Chinese", "Continental"],
+    "cuisine": [
+      "North Indian",
+      "Chinese",
+      "Continental"
+    ],
     "timings": {
       "status": "sample",
       "note": "sample timings — confirm opening hours",
-      "value": [{ "days": "Mon–Sun", "open": "07:00", "close": "23:00" }]
+      "value": [
+        {
+          "days": "Mon–Sun",
+          "open": "07:00",
+          "close": "23:00"
+        }
+      ]
     },
     "dietPolicy": {
       "status": "public-unverified",
@@ -19,10 +29,68 @@
       "value": "veg-only"
     },
     "hasMenu": true,
-    "orderChannels": ["dine-in", "takeaway"],
+    "orderChannels": [
+      "dine-in",
+      "takeaway"
+    ],
     "images": [
-      { "id": "outlet-restaurant-1", "src": "/sample/outlet-restaurant-1.svg", "alt": "Dining room of the restaurant set for service", "shot": "Restaurant interior, wide shot set for service", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "outlet-restaurant-2", "src": "/sample/outlet-restaurant-2.svg", "alt": "A plated North Indian thali on the table", "shot": "Restaurant, signature dish / thali close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+      {
+        "id": "outlet-restaurant-1",
+        "src": "/images/hotel/restaurant-interior-2560.webp",
+        "alt": "Restaurant dining room with long rows of laid tables and warm wood panelling",
+        "shot": "Restaurant interior, wide",
+        "aspect": "3:2",
+        "width": 2560,
+        "height": 1707,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_1690.JPG), received 2026-10",
+        "note": "confirm usage rights and caption with the hotel"
+      },
+      {
+        "id": "outlet-restaurant-2",
+        "src": "/images/hotel/food-paneer-tikka-2560.webp",
+        "alt": "Paneer tikka with onion rings and mint chutney on a blue-rimmed platter",
+        "shot": "Signature dish, close",
+        "aspect": "3:2",
+        "width": 2560,
+        "height": 1707,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_1996.JPG), received 2026-10",
+        "note": "confirm usage rights and caption with the hotel"
+      },
+      {
+        "id": "outlet-restaurant-3",
+        "src": "/images/hotel/food-pasta-2560.webp",
+        "alt": "Creamy penne with garlic bread, olives and peppers",
+        "shot": "Dish, overhead",
+        "aspect": "3:2",
+        "width": 2560,
+        "height": 1707,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_1971 (2).JPG), received 2026-10",
+        "note": "confirm usage rights and caption with the hotel"
+      }
     ]
   },
   {
@@ -33,11 +101,21 @@
     "source": "Hotel's own social posts",
     "note": "confirm menu, timings and seating",
     "summary": "Relaxed dining beside the pool for snacks, grills and drinks.",
-    "cuisine": ["Snacks", "Grills", "Beverages"],
+    "cuisine": [
+      "Snacks",
+      "Grills",
+      "Beverages"
+    ],
     "timings": {
       "status": "sample",
       "note": "sample timings — confirm opening hours",
-      "value": [{ "days": "Mon–Sun", "open": "11:00", "close": "22:00" }]
+      "value": [
+        {
+          "days": "Mon–Sun",
+          "open": "11:00",
+          "close": "22:00"
+        }
+      ]
     },
     "dietPolicy": {
       "status": "sample",
@@ -45,10 +123,30 @@
       "value": "unknown"
     },
     "hasMenu": false,
-    "orderChannels": ["dine-in"],
+    "orderChannels": [
+      "dine-in"
+    ],
     "images": [
-      { "id": "outlet-poolside-restaurant-1", "src": "/sample/outlet-poolside-restaurant-1.svg", "alt": "Tables set beside the pool at dusk", "shot": "Poolside Restaurant, seating by the water at dusk", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "outlet-poolside-restaurant-2", "src": "/sample/outlet-poolside-restaurant-2.svg", "alt": "Grilled snacks and a cold drink on a poolside table", "shot": "Poolside Restaurant, food and drink close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+      {
+        "id": "outlet-poolside-restaurant-1",
+        "src": "/sample/outlet-poolside-restaurant-1.svg",
+        "alt": "Tables set beside the pool at dusk",
+        "shot": "Poolside Restaurant, seating by the water at dusk",
+        "aspect": "3:2",
+        "width": 1500,
+        "height": 1000,
+        "status": "sample"
+      },
+      {
+        "id": "outlet-poolside-restaurant-2",
+        "src": "/sample/outlet-poolside-restaurant-2.svg",
+        "alt": "Grilled snacks and a cold drink on a poolside table",
+        "shot": "Poolside Restaurant, food and drink close-up",
+        "aspect": "4:3",
+        "width": 1600,
+        "height": 1200,
+        "status": "sample"
+      }
     ]
   },
   {
@@ -59,11 +157,20 @@
     "source": "Hotel's own social posts",
     "note": "appears as 'Infinity Bar & Restaurant' in posts — confirm the exact name",
     "summary": "A warm, low-lit bar for evening drinks and small bites.",
-    "cuisine": ["Bar bites", "Beverages"],
+    "cuisine": [
+      "Bar bites",
+      "Beverages"
+    ],
     "timings": {
       "status": "sample",
       "note": "sample timings — confirm opening hours",
-      "value": [{ "days": "Mon–Sun", "open": "18:00", "close": "23:30" }]
+      "value": [
+        {
+          "days": "Mon–Sun",
+          "open": "18:00",
+          "close": "23:30"
+        }
+      ]
     },
     "dietPolicy": {
       "status": "sample",
@@ -76,10 +183,70 @@
       "value": "21+ as per state rules — confirm"
     },
     "hasMenu": false,
-    "orderChannels": ["dine-in"],
+    "orderChannels": [
+      "dine-in"
+    ],
     "images": [
-      { "id": "outlet-infinity-bar-1", "src": "/sample/outlet-infinity-bar-1.svg", "alt": "Low-lit bar counter with seating", "shot": "Infinity Bar, counter and seating in warm light", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "outlet-infinity-bar-2", "src": "/sample/outlet-infinity-bar-2.svg", "alt": "A cocktail served on the bar counter", "shot": "Infinity Bar, signature drink close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+      {
+        "id": "outlet-infinity-bar-1",
+        "src": "/images/hotel/cocktail-martini-2560.webp",
+        "alt": "Amber cocktail in a martini glass against soft bokeh lights",
+        "shot": "Cocktail, portrait",
+        "aspect": "3:4",
+        "width": 2560,
+        "height": 3840,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "focus": "50% 60%",
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_3493.JPG), received 2026-10",
+        "note": "outlet inferred — confirm these drinks were photographed at the Infinity Bar"
+      },
+      {
+        "id": "outlet-infinity-bar-2",
+        "src": "/images/hotel/cocktail-blue-2560.webp",
+        "alt": "Blue mocktail with a lime wheel in a tall glass",
+        "shot": "Mocktail, portrait",
+        "aspect": "3:4",
+        "width": 2560,
+        "height": 3840,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "focus": "50% 65%",
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_3482.JPG), received 2026-10",
+        "note": "outlet inferred — confirm these drinks were photographed at the Infinity Bar"
+      },
+      {
+        "id": "outlet-infinity-bar-3",
+        "src": "/images/hotel/cocktail-red-2560.webp",
+        "alt": "Ruby cocktail in a stemmed glass on the bar",
+        "shot": "Cocktail, portrait",
+        "aspect": "3:4",
+        "width": 2560,
+        "height": 3840,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "focus": "40% 70%",
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_3490.JPG), received 2026-10",
+        "note": "outlet inferred — confirm these drinks were photographed at the Infinity Bar"
+      }
     ]
   },
   {
@@ -89,11 +256,20 @@
     "status": "sample",
     "note": "bakery as a named outlet is unconfirmed — confirm existence and name",
     "summary": "Fresh breads, cakes and bakes for takeaway and celebrations.",
-    "cuisine": ["Bakery", "Desserts"],
+    "cuisine": [
+      "Bakery",
+      "Desserts"
+    ],
     "timings": {
       "status": "sample",
       "note": "sample timings — confirm opening hours",
-      "value": [{ "days": "Mon–Sun", "open": "09:00", "close": "21:00" }]
+      "value": [
+        {
+          "days": "Mon–Sun",
+          "open": "09:00",
+          "close": "21:00"
+        }
+      ]
     },
     "dietPolicy": {
       "status": "sample",
@@ -101,10 +277,31 @@
       "value": "unknown"
     },
     "hasMenu": false,
-    "orderChannels": ["takeaway", "dine-in"],
+    "orderChannels": [
+      "takeaway",
+      "dine-in"
+    ],
     "images": [
-      { "id": "outlet-bakery-1", "src": "/sample/outlet-bakery-1.svg", "alt": "Display counter with cakes and breads", "shot": "Bakery display counter, wide shot", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "outlet-bakery-2", "src": "/sample/outlet-bakery-2.svg", "alt": "A decorated celebration cake", "shot": "Bakery, celebration cake close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+      {
+        "id": "outlet-bakery-1",
+        "src": "/sample/outlet-bakery-1.svg",
+        "alt": "Display counter with cakes and breads",
+        "shot": "Bakery display counter, wide shot",
+        "aspect": "3:2",
+        "width": 1500,
+        "height": 1000,
+        "status": "sample"
+      },
+      {
+        "id": "outlet-bakery-2",
+        "src": "/sample/outlet-bakery-2.svg",
+        "alt": "A decorated celebration cake",
+        "shot": "Bakery, celebration cake close-up",
+        "aspect": "4:3",
+        "width": 1600,
+        "height": 1200,
+        "status": "sample"
+      }
     ]
   },
   {
@@ -115,11 +312,20 @@
     "source": "Hotel's own social posts",
     "note": "confirm product range and timings",
     "summary": "Traditional Indian sweets and namkeen for every occasion.",
-    "cuisine": ["Indian sweets", "Namkeen"],
+    "cuisine": [
+      "Indian sweets",
+      "Namkeen"
+    ],
     "timings": {
       "status": "sample",
       "note": "sample timings — confirm opening hours",
-      "value": [{ "days": "Mon–Sun", "open": "08:00", "close": "22:00" }]
+      "value": [
+        {
+          "days": "Mon–Sun",
+          "open": "08:00",
+          "close": "22:00"
+        }
+      ]
     },
     "dietPolicy": {
       "status": "sample",
@@ -127,10 +333,30 @@
       "value": "unknown"
     },
     "hasMenu": false,
-    "orderChannels": ["takeaway"],
+    "orderChannels": [
+      "takeaway"
+    ],
     "images": [
-      { "id": "outlet-sweets-1", "src": "/sample/outlet-sweets-1.svg", "alt": "Trays of assorted Indian sweets", "shot": "Dipali Sweets, assorted mithai trays", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "outlet-sweets-2", "src": "/sample/outlet-sweets-2.svg", "alt": "A boxed assortment of sweets for gifting", "shot": "Dipali Sweets, gift box close-up", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+      {
+        "id": "outlet-sweets-1",
+        "src": "/sample/outlet-sweets-1.svg",
+        "alt": "Trays of assorted Indian sweets",
+        "shot": "Dipali Sweets, assorted mithai trays",
+        "aspect": "3:2",
+        "width": 1500,
+        "height": 1000,
+        "status": "sample"
+      },
+      {
+        "id": "outlet-sweets-2",
+        "src": "/sample/outlet-sweets-2.svg",
+        "alt": "A boxed assortment of sweets for gifting",
+        "shot": "Dipali Sweets, gift box close-up",
+        "aspect": "4:3",
+        "width": 1600,
+        "height": 1200,
+        "status": "sample"
+      }
     ]
   }
 ]

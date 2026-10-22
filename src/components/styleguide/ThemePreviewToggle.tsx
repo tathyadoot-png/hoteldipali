@@ -5,7 +5,7 @@ import { useState, type ReactNode } from "react";
 type Mode = "light" | "peacock" | "side-by-side";
 
 const MODES: ReadonlyArray<{ value: Mode; label: string }> = [
-  { value: "light", label: "Sandstone" },
+  { value: "light", label: "Ivory" },
   { value: "peacock", label: "Peacock" },
   { value: "side-by-side", label: "Side-by-side" },
 ];
@@ -16,7 +16,7 @@ type Props = {
 };
 
 /**
- * Renders the styleguide preview in Sandstone (light), Peacock, or both panes side by side.
+ * Renders the styleguide preview in Ivory (light), Peacock, or both panes side by side.
  * data-theme is set on the preview panes only — never on <html>.
  */
 export function ThemePreviewToggle({ light, peacock }: Props) {

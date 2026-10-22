@@ -112,6 +112,23 @@ export const imageSchema = z
     aspect: aspectSchema,
     width: z.number().int().positive(),
     height: z.number().int().positive(),
+    // Responsive set: when `src` ends in "-<width>.webp", these are the widths
+    // that exist alongside it (made by `pnpm make:photos`).
+    widths: z.array(z.number().int().positive()).min(1).optional(),
+    // CSS object-position for crops, e.g. "50% 65%" (the subject's focal point).
+    focus: z
+      .string()
+      .regex(/^\d{1,3}% \d{1,3}%$/, 'focus must look like "50% 40%"')
+      .optional(),
+    // Art direction for small screens: a separately cropped set (same rules).
+    small: z
+      .object({
+        src: z.string().regex(/^\/images\/.+-\d+\.webp$/),
+        widths: z.array(z.number().int().positive()).min(1),
+        width: z.number().int().positive(),
+        height: z.number().int().positive(),
+      })
+      .optional(),
     credit: z
       .object({
         name: z.string().min(1),

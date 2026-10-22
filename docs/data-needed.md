@@ -2,7 +2,7 @@
 
 > Auto-generated — do not edit by hand; run `pnpm content:report`.
 
-Last generated: 2026-10-21
+Last generated: 2026-10-22
 
 Everything below is still **sample** (we invented it) or **public-unverified** (found online, not confirmed by the hotel). The hotel needs to confirm or replace each item before launch. See also `docs/public-data.md`.
 
@@ -12,7 +12,7 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 
 - [ ] **tagline** _(sample)_ — sample tagline — confirm the hotel's preferred line · `tagline`
 - [ ] **shortDescription** _(sample)_ — sample copy — rewrite with verified details · `shortDescription`
-- [ ] **property-home-hero** _(sample)_ · `homeHero`
+- [ ] **home-hero-aerial** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10 · `homeHero`
 - [ ] **address** _(public-unverified)_ — address conflicts across platforms — hotel must confirm one; see docs/public-data.md · source: GST public record (see docs/public-data.md) · `address`
 - [ ] **locationLine** _(public-unverified)_ — confirm spelling Makroniya vs Makronia · source: Hotel's own social posts · `locationLine`
 - [ ] **mapsUrl** _(sample)_ — generic Maps search link — replace with the hotel's verified Google Business profile URL · `mapsUrl`
@@ -35,11 +35,11 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 ### Rooms
 
 - [ ] **Garden Deluxe Room** _(sample)_ — sample room details — confirm size, bed, occupancy and price · `[0]`
-- [ ] **room-garden-deluxe-1** _(sample)_ · `[0].images[0]`
-- [ ] **room-garden-deluxe-2** _(sample)_ · `[0].images[1]`
-- [ ] **room-garden-deluxe-3** _(sample)_ · `[0].images[2]`
+- [ ] **room-garden-deluxe-1** _(public-unverified)_ — room category inferred — confirm which room type this photograph shows · source: Owner-supplied hotel photograph (public/hotel/DSC_6534.JPG), received 2026-10 · `[0].images[0]`
+- [ ] **room-garden-deluxe-2** _(public-unverified)_ — room category inferred — confirm which room type this photograph shows · source: Owner-supplied hotel photograph (public/hotel/DSC_6535.JPG), received 2026-10 · `[0].images[1]`
+- [ ] **room-garden-deluxe-3** _(public-unverified)_ — room category inferred — confirm which room type this photograph shows · source: Owner-supplied hotel photograph (public/hotel/DSC_6536.JPG), received 2026-10 · `[0].images[2]`
 - [ ] **Premium Room** _(sample)_ — sample room details — confirm size, bed, occupancy and price · `[1]`
-- [ ] **room-premium-1** _(sample)_ · `[1].images[0]`
+- [ ] **room-premium-1** _(public-unverified)_ — room category inferred — confirm which room type this photograph shows · source: Owner-supplied hotel photograph (public/hotel/DSC_6542.JPG), received 2026-10 · `[1].images[0]`
 - [ ] **room-premium-2** _(sample)_ · `[1].images[1]`
 - [ ] **room-premium-3** _(sample)_ · `[1].images[2]`
 - [ ] **Executive Suite** _(sample)_ — sample suite details — confirm size, layout, occupancy and price · `[2]`
@@ -60,8 +60,9 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **venue-poolside-lawn-1** _(sample)_ · `[1].images[0]`
 - [ ] **venue-poolside-lawn-2** _(sample)_ · `[1].images[1]`
 - [ ] **Grand Banquet Hall** _(sample)_ — capacities are sample — confirm seated and floating numbers · `[2]`
-- [ ] **venue-grand-banquet-hall-1** _(sample)_ · `[2].images[0]`
-- [ ] **venue-grand-banquet-hall-2** _(sample)_ · `[2].images[1]`
+- [ ] **venue-grand-banquet-hall-1** _(public-unverified)_ — venue inferred — confirm this is the Grand Banquet Hall · source: Owner-supplied hotel photograph (public/hotel/DSC_3324.JPG), received 2026-10 · `[2].images[0]`
+- [ ] **venue-grand-banquet-hall-2** _(public-unverified)_ — venue inferred — confirm this is the Grand Banquet Hall · source: Owner-supplied hotel photograph (public/hotel/DSC_3329.JPG), received 2026-10 · `[2].images[1]`
+- [ ] **venue-grand-banquet-hall-3** _(public-unverified)_ — venue inferred — confirm this is the Grand Banquet Hall · source: Owner-supplied hotel photograph (public/hotel/DSC_3352.JPG), received 2026-10 · `[2].images[2]`
 - [ ] **Celebration Hall** _(sample)_ — capacities are sample — confirm seated and floating numbers · `[3]`
 - [ ] **venue-celebration-hall-1** _(sample)_ · `[3].images[0]`
 - [ ] **venue-celebration-hall-2** _(sample)_ · `[3].images[1]`
@@ -71,8 +72,9 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **Dipali Restaurant** _(sample)_ — outlet name is sample; the restaurant's existence is from OTA listings. Confirm the official name. · `[0]`
 - [ ] **timings** _(sample)_ — sample timings — confirm opening hours · `[0].timings`
 - [ ] **dietPolicy** _(public-unverified)_ — listed as vegetarian only — confirm before claiming 'pure veg' · source: District / Zomato (see docs/public-data.md) · `[0].dietPolicy`
-- [ ] **outlet-restaurant-1** _(sample)_ · `[0].images[0]`
-- [ ] **outlet-restaurant-2** _(sample)_ · `[0].images[1]`
+- [ ] **outlet-restaurant-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1690.JPG), received 2026-10 · `[0].images[0]`
+- [ ] **outlet-restaurant-2** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1996.JPG), received 2026-10 · `[0].images[1]`
+- [ ] **outlet-restaurant-3** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1971 (2).JPG), received 2026-10 · `[0].images[2]`
 - [ ] **Poolside Restaurant** _(public-unverified)_ — confirm menu, timings and seating · source: Hotel's own social posts · `[1]`
 - [ ] **timings** _(sample)_ — sample timings — confirm opening hours · `[1].timings`
 - [ ] **dietPolicy** _(sample)_ — diet policy unconfirmed · `[1].dietPolicy`
@@ -82,8 +84,9 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **timings** _(sample)_ — sample timings — confirm opening hours · `[2].timings`
 - [ ] **dietPolicy** _(sample)_ — diet policy unconfirmed · `[2].dietPolicy`
 - [ ] **ageRestriction** _(sample)_ — sample — confirm the hotel's policy · `[2].ageRestriction`
-- [ ] **outlet-infinity-bar-1** _(sample)_ · `[2].images[0]`
-- [ ] **outlet-infinity-bar-2** _(sample)_ · `[2].images[1]`
+- [ ] **outlet-infinity-bar-1** _(public-unverified)_ — outlet inferred — confirm these drinks were photographed at the Infinity Bar · source: Owner-supplied hotel photograph (public/hotel/DSC_3493.JPG), received 2026-10 · `[2].images[0]`
+- [ ] **outlet-infinity-bar-2** _(public-unverified)_ — outlet inferred — confirm these drinks were photographed at the Infinity Bar · source: Owner-supplied hotel photograph (public/hotel/DSC_3482.JPG), received 2026-10 · `[2].images[1]`
+- [ ] **outlet-infinity-bar-3** _(public-unverified)_ — outlet inferred — confirm these drinks were photographed at the Infinity Bar · source: Owner-supplied hotel photograph (public/hotel/DSC_3490.JPG), received 2026-10 · `[2].images[2]`
 - [ ] **Dipali Bakery** _(sample)_ — bakery as a named outlet is unconfirmed — confirm existence and name · `[3]`
 - [ ] **timings** _(sample)_ — sample timings — confirm opening hours · `[3].timings`
 - [ ] **dietPolicy** _(sample)_ — diet policy unconfirmed · `[3].dietPolicy`
@@ -99,8 +102,7 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 ### Pool & Gym
 
 - [ ] **pool** _(sample)_ — sample pool details — confirm timings and rules · `pool`
-- [ ] **leisure-pool-1** _(sample)_ · `pool.images[0]`
-- [ ] **leisure-pool-2** _(sample)_ · `pool.images[1]`
+- [ ] **leisure-pool-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DJI_20260831173334_0354_D.JPG), received 2026-10 · `pool.images[0]`
 - [ ] **gym** _(sample)_ — sample gym details — confirm equipment and timings · `gym`
 - [ ] **leisure-gym-1** _(sample)_ · `gym.images[0]`
 - [ ] **leisure-gym-2** _(sample)_ · `gym.images[1]`
@@ -140,39 +142,31 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 
 ### Gallery
 
-- [ ] **gallery-stay-1** _(sample)_ · `[0].image`
-- [ ] **gallery-stay-2** _(sample)_ · `[1].image`
-- [ ] **gallery-stay-3** _(sample)_ · `[2].image`
-- [ ] **gallery-dining-1** _(sample)_ · `[3].image`
-- [ ] **gallery-dining-2** _(sample)_ · `[4].image`
-- [ ] **gallery-dining-3** _(sample)_ · `[5].image`
-- [ ] **gallery-weddings-1** _(sample)_ · `[6].image`
-- [ ] **gallery-weddings-2** _(sample)_ · `[7].image`
-- [ ] **gallery-weddings-3** _(sample)_ · `[8].image`
-- [ ] **gallery-events-1** _(sample)_ · `[9].image`
+- [ ] **gallery-stay-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1601.JPG), received 2026-10 · `[0].image`
+- [ ] **gallery-stay-2** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1621.JPG), received 2026-10 · `[1].image`
+- [ ] **gallery-stay-3** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_6535.JPG), received 2026-10 · `[2].image`
+- [ ] **gallery-dining-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1988.JPG), received 2026-10 · `[3].image`
+- [ ] **gallery-dining-2** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1975.JPG), received 2026-10 · `[4].image`
+- [ ] **gallery-dining-3** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_3242.JPG), received 2026-10 · `[5].image`
+- [ ] **gallery-weddings-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_3329.JPG), received 2026-10 · `[6].image`
+- [ ] **gallery-weddings-2** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_3352.JPG), received 2026-10 · `[7].image`
+- [ ] **gallery-weddings-3** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_3324.JPG), received 2026-10 · `[8].image`
+- [ ] **gallery-events-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_0646.JPG), received 2026-10 · `[9].image`
 - [ ] **gallery-events-2** _(sample)_ · `[10].image`
 - [ ] **gallery-events-3** _(sample)_ · `[11].image`
-- [ ] **gallery-pool-gym-1** _(sample)_ · `[12].image`
+- [ ] **gallery-pool-gym-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10 · `[12].image`
 - [ ] **gallery-pool-gym-2** _(sample)_ · `[13].image`
-- [ ] **gallery-pool-gym-3** _(sample)_ · `[14].image`
-- [ ] **gallery-property-1** _(sample)_ · `[15].image`
-- [ ] **gallery-property-2** _(sample)_ · `[16].image`
-- [ ] **gallery-property-3** _(sample)_ · `[17].image`
+- [ ] **gallery-pool-gym-3** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DJI_20260831173334_0354_D.JPG), received 2026-10 · `[14].image`
+- [ ] **gallery-property-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10 · `[15].image`
+- [ ] **gallery-property-2** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_3355.JPG), received 2026-10 · `[16].image`
+- [ ] **gallery-property-3** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_3240.JPG), received 2026-10 · `[17].image`
 
 ## Photos needed
 
 Every image below is a labelled placeholder. Provide an original photograph matching the described shot and aspect ratio; file names can stay the same.
 
-### Site-wide & Contact
-
-- [ ] Full-bleed arrival view: the hotel's front entrance and drive at golden hour, calm sky in the top third for the header, quieter left third for the title — aspect 16:9 · `/sample/property-home-hero.svg`
-
 ### Rooms
 
-- [ ] Garden Deluxe Room, wide shot showing the bed and window light — aspect 4:3 · `/sample/room-garden-deluxe-1.svg`
-- [ ] Garden Deluxe Room, detail of the seating/work corner — aspect 3:2 · `/sample/room-garden-deluxe-2.svg`
-- [ ] Garden Deluxe Room bathroom, showing the shower — aspect 1:1 · `/sample/room-garden-deluxe-3.svg`
-- [ ] Premium Room, wide shot showing the king bed — aspect 4:3 · `/sample/room-premium-1.svg`
 - [ ] Premium Room, detail of the reading chair and lamp — aspect 3:2 · `/sample/room-premium-2.svg`
 - [ ] Premium Room bathroom with vanity and shower — aspect 1:1 · `/sample/room-premium-3.svg`
 - [ ] Executive Suite, bedroom wide shot — aspect 4:3 · `/sample/room-executive-suite-1.svg`
@@ -188,19 +182,13 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 - [ ] Main Lawn, guest seating arrangement detail — aspect 4:3 · `/sample/venue-main-lawn-2.svg`
 - [ ] Poolside Lawn at night, cocktail setup by the water — aspect 16:9 · `/sample/venue-poolside-lawn-1.svg`
 - [ ] Poolside Lawn, lounge seating detail — aspect 4:3 · `/sample/venue-poolside-lawn-2.svg`
-- [ ] Grand Banquet Hall, wide shot set for a reception — aspect 16:9 · `/sample/venue-grand-banquet-hall-1.svg`
-- [ ] Grand Banquet Hall, stage and seating detail — aspect 4:3 · `/sample/venue-grand-banquet-hall-2.svg`
 - [ ] Celebration Hall, wide shot set for a small party — aspect 16:9 · `/sample/venue-celebration-hall-1.svg`
 - [ ] Celebration Hall, decor detail — aspect 4:3 · `/sample/venue-celebration-hall-2.svg`
 
 ### Dining
 
-- [ ] Restaurant interior, wide shot set for service — aspect 3:2 · `/sample/outlet-restaurant-1.svg`
-- [ ] Restaurant, signature dish / thali close-up — aspect 4:3 · `/sample/outlet-restaurant-2.svg`
 - [ ] Poolside Restaurant, seating by the water at dusk — aspect 3:2 · `/sample/outlet-poolside-restaurant-1.svg`
 - [ ] Poolside Restaurant, food and drink close-up — aspect 4:3 · `/sample/outlet-poolside-restaurant-2.svg`
-- [ ] Infinity Bar, counter and seating in warm light — aspect 3:2 · `/sample/outlet-infinity-bar-1.svg`
-- [ ] Infinity Bar, signature drink close-up — aspect 4:3 · `/sample/outlet-infinity-bar-2.svg`
 - [ ] Bakery display counter, wide shot — aspect 3:2 · `/sample/outlet-bakery-1.svg`
 - [ ] Bakery, celebration cake close-up — aspect 4:3 · `/sample/outlet-bakery-2.svg`
 - [ ] Dipali Sweets, assorted mithai trays — aspect 3:2 · `/sample/outlet-sweets-1.svg`
@@ -208,32 +196,15 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 
 ### Pool & Gym
 
-- [ ] Swimming pool, wide shot with loungers — aspect 16:9 · `/sample/leisure-pool-1.svg`
-- [ ] Pool deck, loungers detail — aspect 4:3 · `/sample/leisure-pool-2.svg`
 - [ ] Gym, wide shot of the floor — aspect 16:9 · `/sample/leisure-gym-1.svg`
 - [ ] Gym, free-weights area detail — aspect 4:3 · `/sample/leisure-gym-2.svg`
 
 ### Gallery
 
-- [ ] Guest room, styled bed with daylight — aspect 4:5 · `/sample/gallery-stay-1.svg`
-- [ ] Guest room, linen and bedside detail — aspect 1:1 · `/sample/gallery-stay-2.svg`
-- [ ] Suite sitting area, wide shot — aspect 3:2 · `/sample/gallery-stay-3.svg`
-- [ ] Restaurant, signature dish plating — aspect 4:5 · `/sample/gallery-dining-1.svg`
-- [ ] Dipali Sweets, mithai assortment — aspect 1:1 · `/sample/gallery-dining-2.svg`
-- [ ] Infinity Bar, drink on the counter — aspect 3:2 · `/sample/gallery-dining-3.svg`
-- [ ] Main Lawn, wedding mandap at dusk — aspect 3:2 · `/sample/gallery-weddings-1.svg`
-- [ ] Reception table styling detail — aspect 4:5 · `/sample/gallery-weddings-2.svg`
-- [ ] Main Lawn, wide evening wedding shot — aspect 16:9 · `/sample/gallery-weddings-3.svg`
-- [ ] Celebration Hall, birthday setup — aspect 1:1 · `/sample/gallery-events-1.svg`
 - [ ] Hall stage, ring ceremony decor — aspect 3:2 · `/sample/gallery-events-2.svg`
 - [ ] Hall, corporate seating arrangement — aspect 4:5 · `/sample/gallery-events-3.svg`
-- [ ] Pool, wide daytime shot — aspect 16:9 · `/sample/gallery-pool-gym-1.svg`
 - [ ] Gym, cardio equipment detail — aspect 1:1 · `/sample/gallery-pool-gym-2.svg`
-- [ ] Pool deck, evening loungers — aspect 4:3 · `/sample/gallery-pool-gym-3.svg`
-- [ ] Hotel exterior / entrance, wide shot — aspect 16:9 · `/sample/gallery-property-1.svg`
-- [ ] Gardens, landscaped path detail — aspect 3:2 · `/sample/gallery-property-2.svg`
-- [ ] Lobby / reception seating, wide shot — aspect 4:5 · `/sample/gallery-property-3.svg`
 
 ---
 
-Totals: 127 items/facts to confirm · 53 photos to replace.
+Totals: 129 items/facts to confirm · 25 photos to replace.

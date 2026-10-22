@@ -6,8 +6,8 @@ import { useCallback, useEffect, useRef, type FocusEvent, type PointerEvent } fr
 type NavLink = { label: string; href: string };
 
 /**
- * One wing of the primary nav. A small gold arch glides beneath whichever
- * link is pointed at or focused, and rests under the current page's link (or
+ * One wing of the primary nav. A hairline slides beneath — and takes the width
+ * of — whichever link is pointed at or focused, and rests under the current page's link (or
  * fades away if that page lives in the other wing). Positions are measured
  * only on pointer/focus events and on resize — never while scrolling.
  */
@@ -21,7 +21,8 @@ function NavWing({ links, pathname, side }: { links: NavLink[]; pathname: string
       list.dataset.glide = "off";
       return;
     }
-    list.style.setProperty("--x", `${target.offsetLeft + target.offsetWidth / 2}px`);
+    list.style.setProperty("--x", `${target.offsetLeft}px`);
+    list.style.setProperty("--w", String(target.offsetWidth));
     list.dataset.glide = "on";
   }, []);
 

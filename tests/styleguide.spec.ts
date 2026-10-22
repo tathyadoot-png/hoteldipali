@@ -21,8 +21,8 @@ test("styleguide loads with one h1, noindex, no console errors", async ({ page }
 test("peacock toggle changes the preview wrapper background colour", async ({ page }) => {
   await page.goto("/styleguide/");
 
-  // Side-by-side is the default; switch to Sandstone to read a single pane's colour.
-  await page.getByRole("button", { name: "Sandstone", exact: true }).click();
+  // Side-by-side is the default; switch to Ivory to read a single pane's colour.
+  await page.getByRole("button", { name: "Ivory", exact: true }).click();
   const lightBg = await page
     .locator('[data-preview-pane="light"]')
     .evaluate((el) => getComputedStyle(el).backgroundColor);

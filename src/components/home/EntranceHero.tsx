@@ -1,5 +1,6 @@
 import { CallLink } from "@/components/links/CallLink";
 import { Picture } from "@/components/media/Picture";
+import { ScrollSection } from "@/components/motion/ScrollSection";
 import type { Image } from "@/content";
 
 type EntranceHeroProps = {
@@ -12,35 +13,40 @@ type EntranceHeroProps = {
 };
 
 /**
- * The home page's hero — temporary and static: one full-bleed image under the
- * name and the calls to action, in the Peacock variant so the transparent
- * header reads over it. A server component; the redesign replaces it.
+ * The home page's hero: the hotel's own aerial photograph, full bleed, with
+ * the name and the calls to action on a forest-green gradient. The copy rises
+ * in on load (CSS only, so it runs before hydration and without JS); with rich
+ * motion the photograph drifts a little slower than the page as you scroll
+ * away. Complete and legible with every animation disabled.
  */
 export function EntranceHero({ image, eyebrow, title, tagline }: EntranceHeroProps) {
   return (
-    <section
+    <ScrollSection
+      mode="through"
       data-theme="peacock"
       aria-labelledby="home-hero"
       className="entrance -mt-18 bg-surface text-ink md:-mt-22"
     >
-      <Picture image={image} fill priority decorative sizes="100vw" />
+      <div aria-hidden="true" className="entrance-media">
+        <Picture image={image} fill priority decorative sizes="100vw" />
+      </div>
       <div aria-hidden="true" className="entrance-scrim absolute inset-0" />
 
       <div className="entrance-content container-site">
-        <p className="eyebrow">{eyebrow}</p>
-        <h1 id="home-hero" className="heading-hero mt-5">
+        <p className="entrance-rise eyebrow entrance-eyebrow">{eyebrow}</p>
+        <h1 id="home-hero" className="entrance-rise heading-hero mt-5">
           {title.lead}
           <br />
           <em>{title.emphasis}</em>
         </h1>
-        <p className="entrance-tagline">{tagline}</p>
-        <div className="entrance-actions mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
-          <a href="#enquire" className="btn-primary btn-arch">
+        <p className="entrance-rise entrance-tagline">{tagline}</p>
+        <div className="entrance-rise entrance-actions mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
+          <a href="#enquire" className="btn-primary btn-cta">
             Enquire now
           </a>
           <CallLink className="btn-ghost" />
         </div>
       </div>
-    </section>
+    </ScrollSection>
   );
 }

@@ -59,8 +59,8 @@ const SWATCH_ORDER = [
 ];
 
 const VARIANT_LABEL: Record<Variant, string> = {
-  light: "Sandstone — the light default. Copper for actions, brass for ornament only.",
-  peacock: "Peacock — the dark variant ([data-theme=\"peacock\"]). Brass for actions and ornament.",
+  light: "Ivory — the light default. Terracotta clay for actions, antique gold for ornament only.",
+  peacock: "Peacock — the dark forest-peacock variant ([data-theme=\"peacock\"]). Antique gold for actions and ornament.",
 };
 
 const PLANNING_CHIPS = [
@@ -238,7 +238,9 @@ function Sections({
           Buttons
         </h2>
         <p className="body mt-3">
-          Default and disabled shown below. Hover lifts; the focus ring appears on Tab.
+          Architrave buttons: nearly square, a fill that sweeps up on hover or focus
+          (nothing moves around them), and the signature enquiry CTA with an inset
+          hairline and a stepping arrow. The focus ring appears on Tab.
         </p>
         <div className="mt-6 flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-4">
@@ -250,6 +252,19 @@ function Sections({
             </button>
             <button type="button" className="btn-ghost">
               Ghost
+            </button>
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
+            <button type="button" className="btn-primary btn-cta">
+              Enquire now
+            </button>
+            <a href="#buttons-example" className="link-cta">
+              Text link
+            </a>
+            <button type="button" className="btn-icon" aria-label="Icon button example">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
             </button>
           </div>
           <div className="flex flex-wrap items-center gap-4">

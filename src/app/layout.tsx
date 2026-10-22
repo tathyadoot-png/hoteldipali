@@ -38,6 +38,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {/* Runs before first paint so scroll scenes are laid out correctly from
             frame one (see src/lib/motion.ts). Static string, no user input. */}
         <script dangerouslySetInnerHTML={{ __html: RICH_MOTION_BOOT_SCRIPT }} />
+        {/* Without JS nothing would reveal: show scroll-reveal content as-is. */}
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html:
+              "<style>[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}[data-reveal] img{transform:none!important}</style>",
+          }}
+        />
       </head>
       <body className="pb-24 xl:pb-0">
         <a href="#main" className="skip-link">

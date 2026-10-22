@@ -188,3 +188,15 @@ Header (transparent over hero, solid on scroll) · MobileMenu (full-screen, focu
 4. Suggested order: (1) scaffold + CLAUDE.md → (2) theme.css tokens, fonts, component classes, /styleguide → (3) content schemas, loaders, sample data, check script → (4) global components → (5) enquiry form + thank-you → (6) Home → (7) Rooms + room detail → (8) Weddings → (9) Events → (10) Dining → (11) Pool & Gym, Gallery → (12) About, Contact, FAQ → (13) wedding LP, legal pages, 404 → (14) SEO layer → (15) analytics + consent → (16) motion/"wow" polish pass → (17) QA: accessibility, performance, mobile → (18) Cloudflare Pages deployment guide → then Phase 1B pages.
 5. If I paste an error or screenshot, give me a focused fix prompt before moving on.
 6. If something in this brief conflicts or is unclear, ask me one short question instead of guessing.
+
+
+## 14. Overrides for this run (these take priority over anything above)
+
+1. RUN 1 = INSPECTION ONLY. Produce the audit and implementation plan (section 9). Do not modify any code in this run. Stop after the report.
+2. In later runs, implement ONE phase per run and make a git commit at the end of each phase, so every phase can be rolled back.
+3. Sample data is allowed: where verified data is missing, use clearly fake but realistic values, stored in /content with status "sample", exactly as the project already does. Never present them as verified. check:content --strict must still block launch while any sample remains.
+4. Booking is out of scope for now. Keep the existing Book Now gating (hidden unless site.bookingEngineUrl is set). Do not build or redesign any booking flow.
+5. Do not add GSAP or any other animation library unless the existing system (useScrollProgress, ScrollSection, Lenis) provably cannot achieve a specific effect. If you propose one, explain which effect and why.
+6. Do not use the reference sites' fonts (e.g. "editorialOld"), logos, copy, images or exact layouts. Borrow techniques only. Keep Instrument Serif + Figtree and the existing Ivory & Gold tokens unless I approve a change.
+7. All 344 existing e2e tests, lint, typecheck, contrast gate and build must pass after every phase. If a test must change, explain why.
+8. Priority order if time is short: finish the remaining Phase 1A pages (PLAN steps 11–13) in the current design language before the motion phases.

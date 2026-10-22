@@ -22,7 +22,7 @@ function MenuIcon() {
       strokeLinecap="round"
       aria-hidden="true"
     >
-      <path d="M3 6h18M3 12h18M3 18h18" />
+      <path d="M3 8h18M9 16h12" />
     </svg>
   );
 }
@@ -80,13 +80,14 @@ export function Header() {
         // text-ink re-declares `color` on this element so it re-resolves
         // against the (possibly peacock-scoped) --color-ink custom property —
         // inherited `color` only carries the already-resolved parent value.
-        "header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22 " +
-        (isOverlay ? "bg-transparent" : "bg-surface")
+        // Background lives in .header-shell[data-state] (theme.css).
+        "header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22"
       }
     >
-      {/* Three columns around a centred keystone: the nav's two wings flank
-          the logo; the outer edges hold the call link and the enquiry arch
-          (below xl: the menu and the call link). */}
+      {/* Three columns around a centred arched niche: the nav's two wings
+          flank the logo; the outer edges hold the call link and the enquiry
+          (below xl: the menu and the call link). A hairline along the base
+          rises into the niche. */}
       <div className="container-site header-bar">
         <button
           ref={triggerRef}
@@ -108,13 +109,13 @@ export function Header() {
         <div className="header-keystone">
           <Logo
             variant={isOverlay ? "reverse" : "default"}
-            imgClassName="h-16 md:h-21"
+            imgClassName="h-13 md:h-16"
           />
         </div>
 
         <CallLink className="header-call" labelClassName="header-call-label" />
 
-        <a href={enquireHref(pathname)} className="header-enquire btn-primary btn-arch">
+        <a href={enquireHref(pathname)} className="header-enquire btn-primary btn-cta">
           Enquire
         </a>
       </div>

@@ -2,10 +2,10 @@ import { expect, test, type Page } from "@playwright/test";
 
 // The Step 4b content components are showcased in Section 08 of /styleguide/
 // (the project's noindex design-system surface). Switching the preview to
-// "Sandstone" (the light variant) leaves a single pane so selectors resolve uniquely.
+// "Ivory" (the light variant) leaves a single pane so selectors resolve uniquely.
 async function openComponents(page: Page) {
   await page.goto("/styleguide/");
-  await page.getByRole("button", { name: "Sandstone", exact: true }).click();
+  await page.getByRole("button", { name: "Ivory", exact: true }).click();
   return page.locator('section[aria-labelledby="light-components"]');
 }
 

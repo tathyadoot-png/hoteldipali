@@ -12,14 +12,90 @@
     "maxGuests": 3,
     "maxChildren": 1,
     "view": "Garden view",
-    "priceFrom": { "amount": 3500, "currency": "INR", "unit": "per night", "showOnSite": false },
-    "highlights": ["Garden view", "Daylight-filled", "Queen bed", "Work corner"],
-    "roomAmenities": ["Air conditioning", "Smart TV", "Free Wi-Fi", "Tea & coffee maker", "Wardrobe", "Daily housekeeping"],
-    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Toiletries", "Fresh towels"],
+    "priceFrom": {
+      "amount": 3500,
+      "currency": "INR",
+      "unit": "per night",
+      "showOnSite": false
+    },
+    "highlights": [
+      "Garden view",
+      "Daylight-filled",
+      "Queen bed",
+      "Work corner"
+    ],
+    "roomAmenities": [
+      "Air conditioning",
+      "Smart TV",
+      "Free Wi-Fi",
+      "Tea & coffee maker",
+      "Wardrobe",
+      "Daily housekeeping"
+    ],
+    "bathroomAmenities": [
+      "Hot & cold water",
+      "Rain shower",
+      "Toiletries",
+      "Fresh towels"
+    ],
     "images": [
-      { "id": "room-garden-deluxe-1", "src": "/sample/room-garden-deluxe-1.svg", "alt": "Garden Deluxe Room with a queen bed and garden-facing windows", "shot": "Garden Deluxe Room, wide shot showing the bed and window light", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
-      { "id": "room-garden-deluxe-2", "src": "/sample/room-garden-deluxe-2.svg", "alt": "Seating corner by the window in the Garden Deluxe Room", "shot": "Garden Deluxe Room, detail of the seating/work corner", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "room-garden-deluxe-3", "src": "/sample/room-garden-deluxe-3.svg", "alt": "Bathroom of the Garden Deluxe Room", "shot": "Garden Deluxe Room bathroom, showing the shower", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+      {
+        "id": "room-garden-deluxe-1",
+        "src": "/images/hotel/room-double-1-2560.webp",
+        "alt": "Guest room with a king bed, navy throw and warm wood headboard",
+        "shot": "Guest room, wide view from the entrance",
+        "aspect": "3:2",
+        "width": 2560,
+        "height": 1703,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_6534.JPG), received 2026-10",
+        "note": "room category inferred — confirm which room type this photograph shows"
+      },
+      {
+        "id": "room-garden-deluxe-2",
+        "src": "/images/hotel/room-double-2-2560.webp",
+        "alt": "Guest room with bedside lamps, wardrobe and an armchair",
+        "shot": "Guest room, alternate angle",
+        "aspect": "3:2",
+        "width": 2560,
+        "height": 1703,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_6535.JPG), received 2026-10",
+        "note": "room category inferred — confirm which room type this photograph shows"
+      },
+      {
+        "id": "room-garden-deluxe-3",
+        "src": "/images/hotel/room-double-3-2560.webp",
+        "alt": "Guest room with sheer curtains drawn back and wood flooring",
+        "shot": "Guest room, angle toward the window",
+        "aspect": "3:2",
+        "width": 2560,
+        "height": 1703,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_6536.JPG), received 2026-10",
+        "note": "room category inferred — confirm which room type this photograph shows"
+      }
     ]
   },
   {
@@ -35,14 +111,74 @@
     "maxGuests": 3,
     "maxChildren": 1,
     "view": "City view",
-    "priceFrom": { "amount": 4500, "currency": "INR", "unit": "per night", "showOnSite": false },
-    "highlights": ["King bed", "Reading chair", "Extra space", "Warm lighting"],
-    "roomAmenities": ["Air conditioning", "Smart TV", "Free Wi-Fi", "Mini fridge", "Tea & coffee maker", "Work desk", "Daily housekeeping"],
-    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Premium toiletries", "Fresh towels", "Hairdryer"],
+    "priceFrom": {
+      "amount": 4500,
+      "currency": "INR",
+      "unit": "per night",
+      "showOnSite": false
+    },
+    "highlights": [
+      "King bed",
+      "Reading chair",
+      "Extra space",
+      "Warm lighting"
+    ],
+    "roomAmenities": [
+      "Air conditioning",
+      "Smart TV",
+      "Free Wi-Fi",
+      "Mini fridge",
+      "Tea & coffee maker",
+      "Work desk",
+      "Daily housekeeping"
+    ],
+    "bathroomAmenities": [
+      "Hot & cold water",
+      "Rain shower",
+      "Premium toiletries",
+      "Fresh towels",
+      "Hairdryer"
+    ],
     "images": [
-      { "id": "room-premium-1", "src": "/sample/room-premium-1.svg", "alt": "Premium Room with a king bed and warm lighting", "shot": "Premium Room, wide shot showing the king bed", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
-      { "id": "room-premium-2", "src": "/sample/room-premium-2.svg", "alt": "Reading chair beside the window in the Premium Room", "shot": "Premium Room, detail of the reading chair and lamp", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "room-premium-3", "src": "/sample/room-premium-3.svg", "alt": "Bathroom of the Premium Room", "shot": "Premium Room bathroom with vanity and shower", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+      {
+        "id": "room-premium-1",
+        "src": "/images/hotel/room-double-4-2560.webp",
+        "alt": "Bed with crisp white linen and a navy runner beneath an abstract painting",
+        "shot": "Guest room, bed detail",
+        "aspect": "3:2",
+        "width": 2560,
+        "height": 1703,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DSC_6542.JPG), received 2026-10",
+        "note": "room category inferred — confirm which room type this photograph shows"
+      },
+      {
+        "id": "room-premium-2",
+        "src": "/sample/room-premium-2.svg",
+        "alt": "Reading chair beside the window in the Premium Room",
+        "shot": "Premium Room, detail of the reading chair and lamp",
+        "aspect": "3:2",
+        "width": 1500,
+        "height": 1000,
+        "status": "sample"
+      },
+      {
+        "id": "room-premium-3",
+        "src": "/sample/room-premium-3.svg",
+        "alt": "Bathroom of the Premium Room",
+        "shot": "Premium Room bathroom with vanity and shower",
+        "aspect": "1:1",
+        "width": 1200,
+        "height": 1200,
+        "status": "sample"
+      }
     ]
   },
   {
@@ -58,14 +194,67 @@
     "maxGuests": 4,
     "maxChildren": 2,
     "view": "Garden view",
-    "priceFrom": { "amount": 6500, "currency": "INR", "unit": "per night", "showOnSite": false },
-    "highlights": ["Separate sitting area", "King bed", "Larger bathroom", "Ideal for long stays"],
-    "roomAmenities": ["Air conditioning", "Two Smart TVs", "Free Wi-Fi", "Mini fridge", "Tea & coffee maker", "Work desk", "Sofa seating", "Daily housekeeping"],
-    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Premium toiletries", "Bathrobe", "Fresh towels", "Hairdryer"],
+    "priceFrom": {
+      "amount": 6500,
+      "currency": "INR",
+      "unit": "per night",
+      "showOnSite": false
+    },
+    "highlights": [
+      "Separate sitting area",
+      "King bed",
+      "Larger bathroom",
+      "Ideal for long stays"
+    ],
+    "roomAmenities": [
+      "Air conditioning",
+      "Two Smart TVs",
+      "Free Wi-Fi",
+      "Mini fridge",
+      "Tea & coffee maker",
+      "Work desk",
+      "Sofa seating",
+      "Daily housekeeping"
+    ],
+    "bathroomAmenities": [
+      "Hot & cold water",
+      "Rain shower",
+      "Premium toiletries",
+      "Bathrobe",
+      "Fresh towels",
+      "Hairdryer"
+    ],
     "images": [
-      { "id": "room-executive-suite-1", "src": "/sample/room-executive-suite-1.svg", "alt": "Executive Suite bedroom with a king bed", "shot": "Executive Suite, bedroom wide shot", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
-      { "id": "room-executive-suite-2", "src": "/sample/room-executive-suite-2.svg", "alt": "Sitting area of the Executive Suite with a sofa", "shot": "Executive Suite, separate sitting area", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "room-executive-suite-3", "src": "/sample/room-executive-suite-3.svg", "alt": "Bathroom of the Executive Suite", "shot": "Executive Suite bathroom, wide shot", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+      {
+        "id": "room-executive-suite-1",
+        "src": "/sample/room-executive-suite-1.svg",
+        "alt": "Executive Suite bedroom with a king bed",
+        "shot": "Executive Suite, bedroom wide shot",
+        "aspect": "4:3",
+        "width": 1600,
+        "height": 1200,
+        "status": "sample"
+      },
+      {
+        "id": "room-executive-suite-2",
+        "src": "/sample/room-executive-suite-2.svg",
+        "alt": "Sitting area of the Executive Suite with a sofa",
+        "shot": "Executive Suite, separate sitting area",
+        "aspect": "3:2",
+        "width": 1500,
+        "height": 1000,
+        "status": "sample"
+      },
+      {
+        "id": "room-executive-suite-3",
+        "src": "/sample/room-executive-suite-3.svg",
+        "alt": "Bathroom of the Executive Suite",
+        "shot": "Executive Suite bathroom, wide shot",
+        "aspect": "1:1",
+        "width": 1200,
+        "height": 1200,
+        "status": "sample"
+      }
     ]
   },
   {
@@ -81,14 +270,65 @@
     "maxGuests": 5,
     "maxChildren": 3,
     "view": "Garden view",
-    "priceFrom": { "amount": 7500, "currency": "INR", "unit": "per night", "showOnSite": false },
-    "highlights": ["Flexible bedding", "Room for the whole family", "Extra storage", "Blackout curtains"],
-    "roomAmenities": ["Air conditioning", "Two Smart TVs", "Free Wi-Fi", "Mini fridge", "Tea & coffee maker", "Extra storage", "Daily housekeeping"],
-    "bathroomAmenities": ["Hot & cold water", "Rain shower", "Toiletries", "Fresh towels", "Hairdryer"],
+    "priceFrom": {
+      "amount": 7500,
+      "currency": "INR",
+      "unit": "per night",
+      "showOnSite": false
+    },
+    "highlights": [
+      "Flexible bedding",
+      "Room for the whole family",
+      "Extra storage",
+      "Blackout curtains"
+    ],
+    "roomAmenities": [
+      "Air conditioning",
+      "Two Smart TVs",
+      "Free Wi-Fi",
+      "Mini fridge",
+      "Tea & coffee maker",
+      "Extra storage",
+      "Daily housekeeping"
+    ],
+    "bathroomAmenities": [
+      "Hot & cold water",
+      "Rain shower",
+      "Toiletries",
+      "Fresh towels",
+      "Hairdryer"
+    ],
     "images": [
-      { "id": "room-family-suite-1", "src": "/sample/room-family-suite-1.svg", "alt": "Family Suite with a king bed and two single beds", "shot": "Family Suite, wide shot showing flexible bedding", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" },
-      { "id": "room-family-suite-2", "src": "/sample/room-family-suite-2.svg", "alt": "Children's beds and play corner in the Family Suite", "shot": "Family Suite, detail of the single beds / play corner", "aspect": "3:2", "width": 1500, "height": 1000, "status": "sample" },
-      { "id": "room-family-suite-3", "src": "/sample/room-family-suite-3.svg", "alt": "Bathroom of the Family Suite", "shot": "Family Suite bathroom, wide shot", "aspect": "1:1", "width": 1200, "height": 1200, "status": "sample" }
+      {
+        "id": "room-family-suite-1",
+        "src": "/sample/room-family-suite-1.svg",
+        "alt": "Family Suite with a king bed and two single beds",
+        "shot": "Family Suite, wide shot showing flexible bedding",
+        "aspect": "4:3",
+        "width": 1600,
+        "height": 1200,
+        "status": "sample"
+      },
+      {
+        "id": "room-family-suite-2",
+        "src": "/sample/room-family-suite-2.svg",
+        "alt": "Children's beds and play corner in the Family Suite",
+        "shot": "Family Suite, detail of the single beds / play corner",
+        "aspect": "3:2",
+        "width": 1500,
+        "height": 1000,
+        "status": "sample"
+      },
+      {
+        "id": "room-family-suite-3",
+        "src": "/sample/room-family-suite-3.svg",
+        "alt": "Bathroom of the Family Suite",
+        "shot": "Family Suite bathroom, wide shot",
+        "aspect": "1:1",
+        "width": 1200,
+        "height": 1200,
+        "status": "sample"
+      }
     ]
   }
 ]

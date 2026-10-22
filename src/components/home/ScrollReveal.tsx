@@ -1,48 +1,65 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+
+type RevealVariant = "rise" | "mask" | "image";
 
 type ScrollRevealProps = {
   children: ReactNode;
   className?: string;
-  /** Stagger delay in ms after the element enters the viewport. */
+  /** "rise" (default) fades content up; "mask" lifts a heading out of a
+   * mask; "image" opens a frame from its base while the photo settles. */
+  variant?: RevealVariant;
+  /** Stagger after the element enters, in ms (applied in CSS, not a timer). */
   delay?: number;
 };
 
-export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealProps) {
+// One observer for every reveal on the page. It fires as content approaches
+// the viewport (10% before it is fully in view), reveals once, and forgets.
+let observer: IntersectionObserver | null = null;
+
+function observe(el: HTMLElement) {
+  observer ??= new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        (entry.target as HTMLElement).dataset.revealed = "";
+        observer?.unobserve(entry.target);
+      }
+    },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0 },
+  );
+  observer.observe(el);
+  return () => observer?.unobserve(el);
+}
+
+/**
+ * Reveals its children once as they approach the viewport. Reduced-motion
+ * visitors and no-JS visitors (see the <noscript> rule in the root layout)
+ * get the content immediately.
+ */
+export function ScrollReveal({ children, className, variant = "rise", delay = 0 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       el.dataset.revealed = "";
       return;
     }
+    return observe(el);
+  }, []);
 
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          timer = setTimeout(() => {
-            el.dataset.revealed = "";
-          }, delay);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" },
-    );
-    observer.observe(el);
-    return () => {
-      if (timer !== undefined) clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [delay]);
+  const style = delay ? ({ "--reveal-delay": `${delay}ms` } as CSSProperties) : undefined;
 
   return (
-    <div ref={ref} data-reveal className={className}>
+    <div
+      ref={ref}
+      data-reveal={variant === "rise" ? "" : variant}
+      className={className}
+      style={style}
+    >
       {children}
     </div>
   );

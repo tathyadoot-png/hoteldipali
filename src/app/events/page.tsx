@@ -9,6 +9,7 @@ import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { ScrollReveal } from "@/components/home/ScrollReveal";
 import { EventFinder, type EventType } from "@/components/events/EventFinder";
+import { featureImage } from "@/lib/images";
 import { getVenues } from "@/content";
 
 export const metadata: Metadata = {
@@ -35,8 +36,12 @@ const EVENT_TYPE_ORDER = Object.keys(OCCASION_LABELS);
 
 export default async function EventsPage() {
   const venues = await getVenues();
-  const heroImage =
-    venues.find((v) => v.slug === "grand-banquet-hall")?.images[0] ?? venues[0]?.images[0];
+  // The hall during an event (the seated event leads the home page, the
+  // dressed tables lead /weddings/).
+  const heroImage = featureImage(
+    venues.find((v) => v.slug === "grand-banquet-hall")?.images[2],
+    venues.flatMap((v) => v.images),
+  );
 
   // Event types present across all venues, in the event-first display order.
   const present = new Set(venues.flatMap((v) => v.suitableFor));
@@ -59,7 +64,7 @@ export default async function EventsPage() {
           <div className="mt-10 grid items-center gap-x-12 gap-y-10 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <p className="eyebrow">Events &amp; gatherings</p>
-              <h1 id="events-title" className="heading-hero mt-5">
+              <h1 id="events-title" className="heading-page mt-5">
                 Room for every <em>occasion</em>
               </h1>
               <p className="body-lg mt-6 text-ink-muted">

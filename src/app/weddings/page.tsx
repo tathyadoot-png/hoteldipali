@@ -8,6 +8,7 @@ import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { ScrollReveal } from "@/components/home/ScrollReveal";
 import { getVenues, type Venue } from "@/content";
+import { featureImage } from "@/lib/images";
 
 export const metadata: Metadata = {
   title: "Weddings & Celebrations | Hotel Dipali, Sagar",
@@ -45,7 +46,14 @@ function formatArea(sqft: number): string {
 export default async function WeddingsPage() {
   const venues = await getVenues();
   const [featured, ...supporting] = venues;
-  const heroImage = featured?.images[0];
+  // The banquet tables dressed for a reception (each banquet photo leads one
+  // page); falls back to the first real photograph while venues are still on
+  // placeholders.
+  const allImages = venues.flatMap((v) => v.images);
+  const heroImage = featureImage(
+    venues.find((v) => v.slug === "grand-banquet-hall")?.images[1],
+    allImages,
+  );
 
   // Occasions supported across all venues, in display order, each with the
   // spaces that list it — entirely derived from venue `suitableFor` data.
@@ -69,18 +77,7 @@ export default async function WeddingsPage() {
       >
         {heroImage ? (
           <>
-            {/* eslint-disable-next-line @next/next/no-img-element -- static export; decorative hero background */}
-            <img
-              src={heroImage.src}
-              alt=""
-              aria-hidden="true"
-              width={heroImage.width}
-              height={heroImage.height}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+            <Picture image={heroImage} fill priority decorative sizes="100vw" />
             <div aria-hidden="true" className="hero-tint absolute inset-0" />
             <div aria-hidden="true" className="hero-gradient absolute inset-0" />
           </>
@@ -93,7 +90,7 @@ export default async function WeddingsPage() {
             <p className="eyebrow">Celebrations at Hotel Dipali</p>
             <hr className="rule-ornament mt-5" aria-hidden="true" />
 
-            <h1 id="weddings-title" className="heading-hero mt-6">
+            <h1 id="weddings-title" className="heading-page mt-6">
               Weddings &amp;
               <br />
               <em>celebrations</em>

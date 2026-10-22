@@ -24,7 +24,10 @@ Business goals, in priority order:
 Next.js App Router, static export (`output: 'export'`), TypeScript strict, Tailwind v4
 (`@theme` in CSS), pnpm, ESLint + Prettier, Playwright. Hosting: Cloudflare Pages
 (static). Forms post to a hosted form endpoint set by an env var. Images are
-pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height). Animation:
+pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height): the hotel's
+camera originals live in `public/hotel/` (never renamed, moved or edited by code, never
+referenced by pages) and `pnpm make:photos` writes WebP width sets to
+`public/images/hotel/` (Playwright's Chromium — no image library). Animation:
 CSS + IntersectionObserver first. Smooth wheel scrolling: Lenis (approved 2026-10-19),
 only through `src/lib/smooth-scroll.ts`.
 
@@ -63,19 +66,23 @@ availability" link. Never embed a booking widget or third-party script without a
   only). `pop` was retired on 2026-10-21 — do not reintroduce it without asking.
 - `src/app/fonts.ts` is the only file besides `theme.css` allowed to contain font
   names.
-- `highlight` (brass) is decorative only on light surfaces — rules, hairlines, never
-  text. `accent` is copper on light and brass on Peacock; it is gated as small text.
+- `highlight` (antique gold) is decorative only on light surfaces — rules, hairlines,
+  never text. `accent` is terracotta clay on light and antique gold on Peacock; it is
+  gated as small text.
 - Components use only semantic utilities (`bg-surface`, `text-ink`, `bg-accent`,
   `font-display`…) and component classes defined in `theme.css` (`.heading-hero`,
   `.heading-1/2/3`, `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.big-number`,
-  `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.chip`, `.card`, `.link`,
+  `.heading-page` (inner-page heroes), `.btn-primary`, `.btn-secondary`, `.btn-ghost`,
+  `.btn-cta` (signature enquiry modifier), `.link-cta`, `.btn-icon`, `.chip`, `.card`,
+  `.link`,
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
   `.rule-ornament`, `.label`, `.input`, `.select`, `.textarea`, `.field-error`,
   `.field-hint`, `.visually-hidden`, `.hero-gradient`, `.hero-tint`, `.paper-grain`,
-  `.frame-hairline`, `.img-hover`, `.logo-medallion`, `.threshold`, `[data-reveal]`, plus
+  `.frame-hairline`, `.frame-arch`, `.img-hover`, `.logo-medallion`, `.threshold`,
+  `[data-reveal]` (`""` rise, `"mask"` headings, `"image"` frames), `.pictures-*`, plus
   the home-experience scene classes `.entrance*`, `.pillar-*`, `.room-stage*`,
-  `.celebrate-*`, `.journey*`, and the shell classes `.header-*`, `.menu-*`,
-  `.btn-arch`). Never raw hex, never raw Tailwind palette colours
+  `.celebrate-*`, `.journey*`, and the shell classes `.header-*`, `.menu-*`). Never
+  raw hex, never raw Tailwind palette colours
   (`bg-amber-700`), never font names in components.
 - Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Peacock"
   variant for weddings, the bar, the Unwind band and the home hero). Every element
@@ -85,12 +92,15 @@ availability" link. Never embed a booking widget or third-party script without a
   re-evaluate `var(--color-ink)` per scope, so without this the Peacock subtree
   silently renders in the parent's (light) ink colour.
 - Every text/background pair passes WCAG AA (4.5:1 body, 3:1 large text and UI).
-  Gold-like colours are never body text on light backgrounds. The gold logo sits on a
-  peacock ground on light pages (header keystone, `.logo-medallion`).
-- Palette: "Peacock & Sandstone" — "Sandstone" (light, default: sandstone surfaces,
-  near-black peacock ink, copper accent, peacock brand, brass ornament) with a dark
-  "Peacock" variant (peacock surfaces, pearl ink, brass accent). Fonts: display
-  Instrument Serif, body Figtree, on an editorial scale (hero up to ~12vw). See
+  Gold-like colours are never body text on light backgrounds. The gold logo always
+  sits on the deep green (`brand`) on light pages (header niche, `.logo-medallion`).
+- Palette: "Peacock & Ivory" — "Ivory" (light, default: warm near-white surfaces,
+  near-black green ink, terracotta clay accent, deep forest-peacock brand, antique gold
+  ornament) with a dark "Peacock" variant (deep forest-peacock surfaces, pearl ink,
+  antique gold accent), tuned against the hotel's photographs. Buttons are nearly
+  square ("architrave"); arches appear as the header's doorway niche, the gentle
+  section thresholds and `.frame-arch` feature images. Fonts: display Instrument
+  Serif, body Figtree; home hero up to ~12vw, inner-page heroes `.heading-page`. See
   `theme.css` and `src/app/fonts.ts`.
 
 ## F. Content & data trust
@@ -106,7 +116,13 @@ availability" link. Never embed a booking widget or third-party script without a
   so each fact can have its own status. A `public-unverified` status always requires
   a `source` (enforced by Zod).
 - Every image entry records status, intended shot description, aspect ratio and
-  credit, so originals can replace files later.
+  credit, so originals can replace files later. Photo entries also carry `widths`
+  (the WebP set), optional `focus` (object-position) and optional `small` (a phone
+  crop). The owner-supplied photographs are `public-unverified` with their original
+  file as `source`, plus a `note` wherever the room/venue/outlet shown was inferred.
+  Never present placeholder or AI imagery as the hotel; pick features with
+  `featureImage()` / `isPhoto()` (`src/lib/images.ts`) so prominent slots prefer real
+  photographs.
 - Import rule: pages and components import content ONLY from the `@/content` barrel
   (typed async loaders) — never raw JSON (`@content/*`) or loader/schema internals
   (`@/content/*`). ESLint enforces this everywhere except `src/content/`, `scripts/`

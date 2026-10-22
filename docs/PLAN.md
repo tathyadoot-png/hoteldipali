@@ -95,6 +95,14 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-21 | Display scale enlarged: `.heading-hero` clamp(3.25rem, 1rem + 11vw, 11.5rem) (~15.4vw at 360, ~12vw at 1440), `.heading-1` clamp(2.5rem, 1rem + 6vw, 8rem), `.heading-2` clamp(2rem, 0.75rem + 4vw, 5rem) (~4.8vw at 1440). | Editorial feel requested. Consequence: half-column heroes (Events, Weddings) break one or two words per line on wide screens and push their CTAs toward the fold — left for the hero redesign (prompt 4). |
 | 2026-10-21 | Entrance film removed: `film-frames.ts`, the 330vh runway, aperture/rail/directory, `public/video/*`, `scripts/extract-video-frames.ts` + `make:video-frames`, `site.entranceVideo`. Temporary static hero (server component): full-bleed `site.homeHero` placeholder image + H1 + CTAs, Peacock variant. | Owner decision: the prototype footage was unverified AI video of unconfirmed architecture, and prompt 4 redesigns the hero. Removes ~1 MB of video plus the capture pass from every desktop visit. |
 | 2026-10-21 | Lenis `lerp` 0.14 → **0.10** (wheelMultiplier 1). Tried 0.10 / 0.09 / 0.08: 50% of a notch at 128 / 143 / 166 ms, 90% at 395 / 436 / 486 ms, settled ~716 / ~796 / ~900 ms; reversal 37 / 39 / 31 ms. | "Buttery" requested; 0.10 is the softest setting that still stops in < 0.75 s. Reversal stays instant via the `virtualScroll` hook. |
+| 2026-10-22 | The hotel's own photographs replace placeholders wherever a photo matches the slot (24 of 27 used). Originals stay untouched in `public/hotel/`; `pnpm make:photos` (new, Playwright Chromium) writes WebP sets (480–2560 w, plus a portrait phone crop of the hero) to `public/images/hotel/`; image schema gains `widths`, `focus`, `small`; `Picture` emits `srcset` and a phone `<source>`. Entries are `public-unverified` (source = original file). | The originals are 8–26 MB each (447 MB total) — unservable as-is. 17 MB of derivatives; pages load only the width they need. `public-unverified` keeps `pnpm release` blocked until usage rights and captions are confirmed. |
+| 2026-10-22 | Not used: the two night exteriors (DJI_…0041, …0044) and the "Game Zone" building (DJI_…0068). | The night photos show rooftop signage reading "DIPALI RESIDENCY" (CLAUDE.md §G: not to be presented until confirmed); "Game Zone" is a facility the content does not list. |
+| 2026-10-22 | Where the subject of a photo is inferred, only one item gets it: the four room photos (one room type) go to Garden Deluxe + Premium; the three banquet photos (one hall) to Grand Banquet Hall; cocktails to Infinity Bar. Executive/Family suites, Celebration Hall, Main Lawn, Poolside Lawn, gym, bakery, sweets and Poolside Restaurant keep labelled placeholders. | Avoids presenting one room or hall as several. Each inferred mapping carries a `note` to confirm. |
+| 2026-10-22 | Palette "Peacock & Ivory": light surfaces warm near-white (#F8F4EC / #EFE7DA), ink #13221E, accent terracotta clay #9A4527, brand deep forest-peacock #0F2E2A, ornament antique gold #B89A5E; Peacock variant #0F2E2A / #0A211E with pearl ink and gold accent #CDA866. | Owner brief: less beige and washed-out, more depth; chosen against the photographs (wood, cream, teal upholstery, lawns, pool). All 26 gated pairs pass with margin (terracotta as small text 5.88 / 5.26:1). |
+| 2026-10-22 | Header = "doorway in the architrave": a hairline along the bar's base rises into an arched deep-green niche holding the logo (inside the bar — no longer hanging over content); links uppercase-tracked with a sliding, resizing hairline indicator; solid state is 95% ivory without backdrop blur. | Owner: generic navbar, logo collisions. Blur behind a sticky bar repaints every scroll frame, so it is avoided. |
+| 2026-10-22 | Buttons = "architrave": 2px radius, a fill that sweeps up on hover/focus (transform only), `.btn-cta` (inset hairline + stepping arrow) for the enquiry CTA (replaces the dome-topped `.btn-arch`); `.link-cta`, `.btn-icon` added. | Owner: pill/dome shapes looked generic and inconsistent. |
+| 2026-10-22 | Motion: one shared IntersectionObserver for reveals (earlier trigger, −8% bottom margin), variants rise / mask (headings) / image (frames), CSS-applied stagger; `<noscript>` shows reveal content without JS; hero copy rises on load in CSS; hero photo parallax under rich motion only (transform via `--p`). No custom cursor. | Short (380 ms), consistent patterns; a cursor follower would add a pointermove/rAF loop for no information gain. |
+| 2026-10-22 | `.heading-1` back to clamp(2.5rem, 1.25rem + 3.4vw, 5rem); new `.heading-page` for inner-page heroes; headings get `overflow-wrap: break-word`. | At the 2026-10-21 scale, "conversation" overflowed its 5-column cell over the enquiry form at 1920 px. |
 
 ## Brand assets
 
@@ -119,6 +127,20 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 ## Open questions
 
 See CLAUDE.md section M:
+
+- **Photos (2026-10-22):** confirm usage rights and captions for the 24 placed
+  photographs; confirm which room type DSC_6534–6542 show, that DSC_3324–3352 are the
+  Grand Banquet Hall, and that the cocktails were shot at the Infinity Bar.
+- **"Dipali Residency" signage** appears on the night exteriors — is it the same
+  property/brand? Until confirmed those photos stay unused.
+- **"Game Zone"** (DJI_…0068) — is it a hotel facility to list?
+- **Still needed:** Executive Suite, Family Suite, Celebration Hall, Main Lawn,
+  Poolside Lawn, gym, bakery, sweets and Poolside Restaurant photos (landscape,
+  ≥2400 px wide); a daytime exterior/entrance photo without signage issues.
+- **Deploy:** `public/hotel/` originals (447 MB, files up to 26 MB) are copied into the
+  static export; Cloudflare Pages rejects files over 25 MB. Move the originals out of
+  `public/` (e.g. to a `photos/` source folder and point `make:photos` at it) before
+  deploying — not done, as the brief said not to move them.
 
 - Official single address and pincode (platforms conflict — see docs/public-data.md).
 - Room count and categories.
@@ -573,3 +595,36 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     errors, CLS 0, zero `/video/` requests; keystone and medallion logo legible.
     Known: half-column hero headings on Events/Weddings wrap word-by-word on wide
     screens (see decision row). Nothing marked verified.
+- 2026-10-22: Visual polish & client demo (not a numbered step; current step stays 11;
+  uncommitted per the brief — "do not commit").
+  - **Photos:** `scripts/make-photos.ts` + `pnpm make:photos` (119 + 3 crop files,
+    17.2 MB from 447 MB of originals); content mapped as in the decision rows; hero =
+    aerial pool & gardens (DJI_…0351) with a portrait phone crop (131 KB at 720 w;
+    283 KB at 1080 w on 3× phones); Unwind = aerial pool & lawns (…0354) in an arched
+    frame; Celebrate window = seated banquet event; Weddings hero = dressed tables;
+    Events hero = hall during an event; Dining = restaurant interior + dishes; Infinity
+    Bar = cocktails; rooms = DSC_6534–6542; new home "In pictures" mosaic = reception
+    atrium, portico courtyard, lounge, sitting areas. Placeholders 53 → 25.
+  - **Design:** palette, header, buttons, reveals, heading scale as in the decision rows;
+    hero rebuilt (photo, forest gradient only where copy sits, CSS rise-in, parallax);
+    thresholds gentler (`--arch` clamp(1.75rem, 4.5vw, 4.5rem)) with a gold hairline;
+    `.frame-arch`; weddings/events/dining heroes use real photos via `featureImage()`;
+    stronger `.hero-tint` for busy photos; styleguide shows the new button family and
+    "Ivory" / "Peacock" toggle.
+  - **Smoothness (headless Chromium, production build, wheel input over the whole home
+    page, down and back):** 1440×900 first pass 1 frame > 33 ms of 1,058 (one 66 ms
+    long animation frame while photos first decode), second pass 0; 1920×1080 both
+    passes 0 frames > 33 ms, 0 long frames; Lenis active once (`html.lenis`). Not
+    measured on real devices or Safari/Firefox.
+  - **Verified (headless Chromium):** 6 routes × 360/390/768/1024/1440/1920 — no
+    horizontal overflow, no console errors, CLS 0, no requests for `/hotel/` originals
+    or video; no heading spills outside its column; screenshots reviewed at 390, 1024,
+    1440, 1920 (hero, header overlay/solid, menu, Celebrate, Unwind, pictures, enquiry,
+    footer, rooms, weddings, events, dining, bar). Fixed while verifying: phone number
+    colliding with ROOMS at ≥1536 (wing gap), enquiry heading overflowing at 1920,
+    niche crown clipped, mosaic leading with a room photo, Celebrate using a placeholder.
+  - **Tests:** hero tests now assert the real photograph (landscape set on desktop,
+    portrait crop on phones, `srcset`); new `tests/photos.spec.ts` (6 routes: no
+    originals requested, every photo has a `srcset`); shell spec adds logo-niche
+    containment (desktop + phone); "Sandstone" → "Ivory" toggle label in three helpers.
+    All 352 e2e tests pass; lint, typecheck, contrast gate and build clean.

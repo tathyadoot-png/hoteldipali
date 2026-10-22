@@ -3,7 +3,13 @@
     "status": "sample",
     "note": "sample pool details — confirm timings and rules",
     "summary": "An outdoor swimming pool for a refreshing dip, with loungers along the deck.",
-    "timings": [{ "days": "Mon–Sun", "open": "06:00", "close": "20:00" }],
+    "timings": [
+      {
+        "days": "Mon–Sun",
+        "open": "06:00",
+        "close": "20:00"
+      }
+    ],
     "rules": [
       "Shower before entering the pool",
       "Children must be supervised by an adult",
@@ -11,15 +17,39 @@
       "No glassware in the pool area"
     ],
     "images": [
-      { "id": "leisure-pool-1", "src": "/sample/leisure-pool-1.svg", "alt": "Outdoor swimming pool with loungers along the deck", "shot": "Swimming pool, wide shot with loungers", "aspect": "16:9", "width": 1600, "height": 900, "status": "sample" },
-      { "id": "leisure-pool-2", "src": "/sample/leisure-pool-2.svg", "alt": "Poolside loungers in the afternoon sun", "shot": "Pool deck, loungers detail", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+      {
+        "id": "leisure-pool-1",
+        "src": "/images/hotel/aerial-pool-lawns-2560.webp",
+        "alt": "Aerial view of the swimming pool and its circular plunge pools beside the lawns",
+        "shot": "Pool, aerial wide",
+        "aspect": "4:3",
+        "width": 2560,
+        "height": 1920,
+        "widths": [
+          480,
+          960,
+          1440,
+          1920,
+          2560
+        ],
+        "focus": "45% 70%",
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DJI_20260831173334_0354_D.JPG), received 2026-10",
+        "note": "confirm usage rights and caption with the hotel"
+      }
     ]
   },
   "gym": {
     "status": "sample",
     "note": "sample gym details — confirm equipment and timings",
     "summary": "An air-conditioned gym with cardio and strength equipment for members and guests.",
-    "timings": [{ "days": "Mon–Sun", "open": "05:30", "close": "22:00" }],
+    "timings": [
+      {
+        "days": "Mon–Sun",
+        "open": "05:30",
+        "close": "22:00"
+      }
+    ],
     "equipment": [
       "Treadmills",
       "Cross trainers",
@@ -29,19 +59,197 @@
       "Benches"
     ],
     "images": [
-      { "id": "leisure-gym-1", "src": "/sample/leisure-gym-1.svg", "alt": "Gym floor with cardio and strength equipment", "shot": "Gym, wide shot of the floor", "aspect": "16:9", "width": 1600, "height": 900, "status": "sample" },
-      { "id": "leisure-gym-2", "src": "/sample/leisure-gym-2.svg", "alt": "Free weights and benches in the gym", "shot": "Gym, free-weights area detail", "aspect": "4:3", "width": 1600, "height": 1200, "status": "sample" }
+      {
+        "id": "leisure-gym-1",
+        "src": "/sample/leisure-gym-1.svg",
+        "alt": "Gym floor with cardio and strength equipment",
+        "shot": "Gym, wide shot of the floor",
+        "aspect": "16:9",
+        "width": 1600,
+        "height": 900,
+        "status": "sample"
+      },
+      {
+        "id": "leisure-gym-2",
+        "src": "/sample/leisure-gym-2.svg",
+        "alt": "Free weights and benches in the gym",
+        "shot": "Gym, free-weights area detail",
+        "aspect": "4:3",
+        "width": 1600,
+        "height": 1200,
+        "status": "sample"
+      }
     ]
   },
   "memberships": [
-    { "slug": "pool-monthly", "name": "Pool — Monthly", "covers": "pool", "duration": "monthly", "status": "sample", "note": "sample price", "price": { "amount": 1500, "currency": "INR", "unit": "per month", "showOnSite": false }, "perks": ["Pool access during opening hours", "Use of changing rooms"] },
-    { "slug": "pool-quarterly", "name": "Pool — Quarterly", "covers": "pool", "duration": "quarterly", "status": "sample", "note": "sample price", "price": { "amount": 4000, "currency": "INR", "unit": "per quarter", "showOnSite": false }, "perks": ["Pool access during opening hours", "Use of changing rooms", "One guest pass per month"] },
-    { "slug": "pool-annual", "name": "Pool — Annual", "covers": "pool", "duration": "annual", "status": "sample", "note": "sample price", "price": { "amount": 14000, "currency": "INR", "unit": "per year", "showOnSite": false }, "perks": ["Pool access during opening hours", "Use of changing rooms", "Two guest passes per month"] },
-    { "slug": "gym-monthly", "name": "Gym — Monthly", "covers": "gym", "duration": "monthly", "status": "sample", "note": "sample price", "price": { "amount": 1200, "currency": "INR", "unit": "per month", "showOnSite": false }, "perks": ["Full gym access", "Locker use"] },
-    { "slug": "gym-quarterly", "name": "Gym — Quarterly", "covers": "gym", "duration": "quarterly", "status": "sample", "note": "sample price", "price": { "amount": 3200, "currency": "INR", "unit": "per quarter", "showOnSite": false }, "perks": ["Full gym access", "Locker use", "One induction session"] },
-    { "slug": "gym-annual", "name": "Gym — Annual", "covers": "gym", "duration": "annual", "status": "sample", "note": "sample price", "price": { "amount": 11000, "currency": "INR", "unit": "per year", "showOnSite": false }, "perks": ["Full gym access", "Locker use", "Quarterly fitness review"] },
-    { "slug": "both-monthly", "name": "Pool + Gym — Monthly", "covers": "both", "duration": "monthly", "status": "sample", "note": "sample price", "price": { "amount": 2200, "currency": "INR", "unit": "per month", "showOnSite": false }, "perks": ["Pool and gym access", "Locker and changing rooms"] },
-    { "slug": "both-quarterly", "name": "Pool + Gym — Quarterly", "covers": "both", "duration": "quarterly", "status": "sample", "note": "sample price", "price": { "amount": 6000, "currency": "INR", "unit": "per quarter", "showOnSite": false }, "perks": ["Pool and gym access", "Locker and changing rooms", "One guest pass per month"] },
-    { "slug": "both-annual", "name": "Pool + Gym — Annual", "covers": "both", "duration": "annual", "status": "sample", "note": "sample price", "price": { "amount": 20000, "currency": "INR", "unit": "per year", "showOnSite": false }, "perks": ["Pool and gym access", "Locker and changing rooms", "Two guest passes per month", "Quarterly fitness review"] }
+    {
+      "slug": "pool-monthly",
+      "name": "Pool — Monthly",
+      "covers": "pool",
+      "duration": "monthly",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 1500,
+        "currency": "INR",
+        "unit": "per month",
+        "showOnSite": false
+      },
+      "perks": [
+        "Pool access during opening hours",
+        "Use of changing rooms"
+      ]
+    },
+    {
+      "slug": "pool-quarterly",
+      "name": "Pool — Quarterly",
+      "covers": "pool",
+      "duration": "quarterly",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 4000,
+        "currency": "INR",
+        "unit": "per quarter",
+        "showOnSite": false
+      },
+      "perks": [
+        "Pool access during opening hours",
+        "Use of changing rooms",
+        "One guest pass per month"
+      ]
+    },
+    {
+      "slug": "pool-annual",
+      "name": "Pool — Annual",
+      "covers": "pool",
+      "duration": "annual",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 14000,
+        "currency": "INR",
+        "unit": "per year",
+        "showOnSite": false
+      },
+      "perks": [
+        "Pool access during opening hours",
+        "Use of changing rooms",
+        "Two guest passes per month"
+      ]
+    },
+    {
+      "slug": "gym-monthly",
+      "name": "Gym — Monthly",
+      "covers": "gym",
+      "duration": "monthly",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 1200,
+        "currency": "INR",
+        "unit": "per month",
+        "showOnSite": false
+      },
+      "perks": [
+        "Full gym access",
+        "Locker use"
+      ]
+    },
+    {
+      "slug": "gym-quarterly",
+      "name": "Gym — Quarterly",
+      "covers": "gym",
+      "duration": "quarterly",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 3200,
+        "currency": "INR",
+        "unit": "per quarter",
+        "showOnSite": false
+      },
+      "perks": [
+        "Full gym access",
+        "Locker use",
+        "One induction session"
+      ]
+    },
+    {
+      "slug": "gym-annual",
+      "name": "Gym — Annual",
+      "covers": "gym",
+      "duration": "annual",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 11000,
+        "currency": "INR",
+        "unit": "per year",
+        "showOnSite": false
+      },
+      "perks": [
+        "Full gym access",
+        "Locker use",
+        "Quarterly fitness review"
+      ]
+    },
+    {
+      "slug": "both-monthly",
+      "name": "Pool + Gym — Monthly",
+      "covers": "both",
+      "duration": "monthly",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 2200,
+        "currency": "INR",
+        "unit": "per month",
+        "showOnSite": false
+      },
+      "perks": [
+        "Pool and gym access",
+        "Locker and changing rooms"
+      ]
+    },
+    {
+      "slug": "both-quarterly",
+      "name": "Pool + Gym — Quarterly",
+      "covers": "both",
+      "duration": "quarterly",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 6000,
+        "currency": "INR",
+        "unit": "per quarter",
+        "showOnSite": false
+      },
+      "perks": [
+        "Pool and gym access",
+        "Locker and changing rooms",
+        "One guest pass per month"
+      ]
+    },
+    {
+      "slug": "both-annual",
+      "name": "Pool + Gym — Annual",
+      "covers": "both",
+      "duration": "annual",
+      "status": "sample",
+      "note": "sample price",
+      "price": {
+        "amount": 20000,
+        "currency": "INR",
+        "unit": "per year",
+        "showOnSite": false
+      },
+      "perks": [
+        "Pool and gym access",
+        "Locker and changing rooms",
+        "Two guest passes per month",
+        "Quarterly fitness review"
+      ]
+    }
   ]
 }

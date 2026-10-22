@@ -1,6 +1,9 @@
 {
   "name": "Hotel Dipali",
-  "alternateNames": ["Hotel Deepali", "होटल दीपाली"],
+  "alternateNames": [
+    "Hotel Deepali",
+    "होटल दीपाली"
+  ],
   "tagline": {
     "status": "sample",
     "note": "sample tagline — confirm the hotel's preferred line",
@@ -12,14 +15,34 @@
     "value": "A welcoming hotel in Sagar with comfortable rooms, lawns and banquet halls for weddings and events, a multi-cuisine restaurant, the Infinity Bar, Dipali Sweets, a swimming pool and a gym."
   },
   "homeHero": {
-    "id": "property-home-hero",
-    "src": "/sample/property-home-hero.svg",
-    "alt": "Hotel Dipali's entrance at golden hour",
-    "shot": "Full-bleed arrival view: the hotel's front entrance and drive at golden hour, calm sky in the top third for the header, quieter left third for the title",
-    "aspect": "16:9",
-    "width": 2400,
-    "height": 1350,
-    "status": "sample"
+    "id": "home-hero-aerial",
+    "src": "/images/hotel/aerial-pool-grounds-2560.webp",
+    "alt": "Aerial view of Hotel Dipali's curved swimming pool, gardens and thatched pavilion",
+    "shot": "Aerial, daylight: the curved pool, landscaped gardens and thatched pavilion",
+    "aspect": "4:3",
+    "width": 2560,
+    "height": 1920,
+    "widths": [
+      480,
+      960,
+      1440,
+      1920,
+      2560
+    ],
+    "focus": "62% 60%",
+    "small": {
+      "src": "/images/hotel/aerial-pool-grounds-portrait-1080.webp",
+      "widths": [
+        480,
+        720,
+        1080
+      ],
+      "width": 1080,
+      "height": 1929
+    },
+    "status": "public-unverified",
+    "source": "Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10",
+    "note": "confirm usage rights and caption with the hotel"
   },
   "address": {
     "status": "public-unverified",
@@ -164,46 +187,118 @@
     }
   },
   "brandFamily": [
-    { "slug": "dipali-sweets", "name": "Dipali Sweets", "kind": "sub-brand", "confirmed": false },
-    { "slug": "dipali-bakery", "name": "Dipali Bakery", "kind": "sub-brand", "confirmed": false },
-    { "slug": "infinity-bar", "name": "Infinity Bar", "kind": "outlet", "confirmed": false }
+    {
+      "slug": "dipali-sweets",
+      "name": "Dipali Sweets",
+      "kind": "sub-brand",
+      "confirmed": false
+    },
+    {
+      "slug": "dipali-bakery",
+      "name": "Dipali Bakery",
+      "kind": "sub-brand",
+      "confirmed": false
+    },
+    {
+      "slug": "infinity-bar",
+      "name": "Infinity Bar",
+      "kind": "outlet",
+      "confirmed": false
+    }
   ],
   "navigation": {
     "main": [
-      { "label": "Rooms", "href": "/rooms/" },
-      { "label": "Weddings", "href": "/weddings/" },
-      { "label": "Events", "href": "/events/" },
-      { "label": "Dining", "href": "/dining/" },
-      { "label": "Pool & Gym", "href": "/pool-and-gym/" },
-      { "label": "Gallery", "href": "/gallery/" },
-      { "label": "Contact", "href": "/contact/" }
+      {
+        "label": "Rooms",
+        "href": "/rooms/"
+      },
+      {
+        "label": "Weddings",
+        "href": "/weddings/"
+      },
+      {
+        "label": "Events",
+        "href": "/events/"
+      },
+      {
+        "label": "Dining",
+        "href": "/dining/"
+      },
+      {
+        "label": "Pool & Gym",
+        "href": "/pool-and-gym/"
+      },
+      {
+        "label": "Gallery",
+        "href": "/gallery/"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact/"
+      }
     ],
     "footer": [
       {
         "title": "Explore",
         "links": [
-          { "label": "Rooms", "href": "/rooms/" },
-          { "label": "Weddings", "href": "/weddings/" },
-          { "label": "Events", "href": "/events/" },
-          { "label": "Dining", "href": "/dining/" },
-          { "label": "Pool & Gym", "href": "/pool-and-gym/" },
-          { "label": "Gallery", "href": "/gallery/" }
+          {
+            "label": "Rooms",
+            "href": "/rooms/"
+          },
+          {
+            "label": "Weddings",
+            "href": "/weddings/"
+          },
+          {
+            "label": "Events",
+            "href": "/events/"
+          },
+          {
+            "label": "Dining",
+            "href": "/dining/"
+          },
+          {
+            "label": "Pool & Gym",
+            "href": "/pool-and-gym/"
+          },
+          {
+            "label": "Gallery",
+            "href": "/gallery/"
+          }
         ]
       },
       {
         "title": "Hotel",
         "links": [
-          { "label": "About", "href": "/about/" },
-          { "label": "Contact", "href": "/contact/" },
-          { "label": "FAQ", "href": "/faq/" }
+          {
+            "label": "About",
+            "href": "/about/"
+          },
+          {
+            "label": "Contact",
+            "href": "/contact/"
+          },
+          {
+            "label": "FAQ",
+            "href": "/faq/"
+          }
         ]
       },
       {
         "title": "Policies",
         "links": [
-          { "label": "Privacy Policy", "href": "/privacy-policy/" },
-          { "label": "Terms", "href": "/terms/" },
-          { "label": "Booking & Cancellation", "href": "/booking-cancellation-policy/" }
+          {
+            "label": "Privacy Policy",
+            "href": "/privacy-policy/"
+          },
+          {
+            "label": "Terms",
+            "href": "/terms/"
+          },
+          {
+            "label": "Booking & Cancellation",
+            "href": "/booking-cancellation-policy/"
+          }
         ]
       }
     ]

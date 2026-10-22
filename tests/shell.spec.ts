@@ -66,6 +66,17 @@ test.describe("Desktop (1280px)", () => {
     await expect(page.locator(".header-keystone").getByRole("link", { name: /home/ })).toBeVisible();
   });
 
+  test("the logo niche sits inside the header bar, clear of page content", async ({ page }) => {
+    for (const route of ["/", "/rooms/"]) {
+      await page.goto(route);
+      const header = await page.locator("header").boundingBox();
+      const niche = await page.locator(".header-keystone").boundingBox();
+      expect(header && niche).toBeTruthy();
+      expect(niche!.y).toBeGreaterThanOrEqual(header!.y);
+      expect(niche!.y + niche!.height).toBeLessThanOrEqual(header!.y + header!.height + 0.5);
+    }
+  });
+
   test("the glide marker rests on the current page and follows hover and focus", async ({
     page,
   }) => {
@@ -102,6 +113,13 @@ test.describe("Desktop (1280px)", () => {
 
 test.describe("Mobile (360px)", () => {
   test.use({ viewport: { width: 360, height: 780 } });
+
+  test("the logo niche stays inside the header on a phone", async ({ page }) => {
+    await page.goto("/");
+    const header = await page.locator("header").boundingBox();
+    const niche = await page.locator(".header-keystone").boundingBox();
+    expect(niche!.y + niche!.height).toBeLessThanOrEqual(header!.y + header!.height + 0.5);
+  });
 
   test("Menu button visible; sticky bar visible with 3 buttons", async ({ page }) => {
     await page.goto("/");
