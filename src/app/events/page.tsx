@@ -48,7 +48,7 @@ export default async function EventsPage() {
     <>
       {/* ───────────────────────── HERO (Light split) ─────────────────────────
           A split, image-beside-text opening — deliberately lighter and calmer
-          than the Weddings page's full-bleed Dusk cover. */}
+          than the Weddings page's full-bleed Peacock cover. */}
       <section
         className="paper-grain bg-surface pt-10 pb-16 md:pb-20"
         aria-labelledby="events-title"
@@ -135,10 +135,10 @@ export default async function EventsPage() {
         </div>
       </section>
 
-      {/* ───────────────────── ENQUIRY (Dusk) ───────────────────── */}
+      {/* ───────────────────── ENQUIRY (Peacock) ───────────────────── */}
       <section
         id="enquire"
-        data-theme="dusk"
+        data-theme="peacock"
         className="paper-grain bg-surface py-16 text-ink md:py-20"
         aria-labelledby="events-enquire"
       >

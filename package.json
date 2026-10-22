@@ -17,7 +17,6 @@
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
     "make:placeholders": "tsx scripts/make-placeholders.ts",
-    "make:video-frames": "tsx scripts/extract-video-frames.ts",
     "check:content": "tsx scripts/check-content.ts",
     "check:content:strict": "tsx scripts/check-content.ts --strict",
     "content:report": "tsx scripts/content-report.ts",

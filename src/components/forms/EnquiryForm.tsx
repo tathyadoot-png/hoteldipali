@@ -25,7 +25,7 @@ type EnquiryFormProps = {
   enquiryTypes?: readonly EnquiryType[];
   defaultEnquiryType?: EnquiryType;
   /** Namespaces element ids. Only needed if a page ever renders the form more
-   * than once (e.g. shown in both the Light and Dusk styleguide panes). */
+   * than once (e.g. shown in both the Light and Peacock styleguide panes). */
   idPrefix?: string;
   className?: string;
 };

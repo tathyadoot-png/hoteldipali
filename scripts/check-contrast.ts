@@ -15,7 +15,7 @@ const themePath = join(here, "..", "src", "styles", "theme.css");
 const css = readFileSync(themePath, "utf8");
 const tokens = parseThemeTokens(css);
 
-const variants: Variant[] = ["light", "dusk"];
+const variants: Variant[] = ["light", "peacock"];
 let failures = 0;
 
 console.log("\nWCAG AA contrast check — src/styles/theme.css\n");
@@ -28,7 +28,8 @@ for (const variant of variants) {
       "pair".padEnd(28) +
       "ratio".padEnd(10) +
       "min".padEnd(7) +
-      "result",
+      "result".padEnd(8) +
+      "use",
   );
 
   for (const pair of pairsForVariant(variant)) {
@@ -47,7 +48,8 @@ for (const variant of variants) {
         `${pair.fg}/${pair.bg}`.padEnd(28) +
         `${ratio.toFixed(2)}:1`.padEnd(10) +
         `${pair.min}`.padEnd(7) +
-        (pass ? "PASS" : "FAIL"),
+        (pass ? "PASS" : "FAIL").padEnd(8) +
+        pair.use,
     );
   }
   console.log("");

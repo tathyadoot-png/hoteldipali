@@ -86,18 +86,10 @@ export default async function HomePage() {
     <>
       {/* ═══ ARRIVE — a pinned, scroll-scrubbed arrival film ═══ */}
       <EntranceHero
-        // Only what the client needs — the trust note stays server-side.
-        video={{
-          src: site.entranceVideo.src,
-          poster: site.entranceVideo.poster,
-          still: site.entranceVideo.still,
-          width: site.entranceVideo.width,
-          height: site.entranceVideo.height,
-        }}
+        image={site.homeHero}
         eyebrow={`${site.address.value.city}, ${site.address.value.state}`}
         title={{ lead: titleLead, emphasis: titleRest.join(" ") }}
         tagline={site.tagline.value}
-        directory={pillars.map(({ word, href }) => ({ label: word, href }))}
       />
 
       {/* ═══ WELCOME — an ivory arch rises over the last frame ═══
@@ -110,15 +102,17 @@ export default async function HomePage() {
         <div className="container-site relative">
           <ScrollReveal>
             <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element -- the header already loads this exact file */}
-              <img
-                src="/brand/logo-primary.png"
-                alt=""
-                aria-hidden="true"
-                width={1080}
-                height={1080}
-                className="h-20 w-auto md:h-24"
-              />
+              {/* The gold logo washes out on sandstone, so it sits on a peacock medallion. */}
+              <span aria-hidden="true" className="logo-medallion">
+                {/* eslint-disable-next-line @next/next/no-img-element -- the header already loads this exact file */}
+                <img
+                  src="/brand/logo-primary.png"
+                  alt=""
+                  width={1080}
+                  height={1080}
+                  className="h-20 w-auto md:h-24"
+                />
+              </span>
               <h2 id="home-intro" className="heading-1 mt-8">
                 Step inside Hotel <em>Dipali</em>
               </h2>
@@ -176,7 +170,7 @@ export default async function HomePage() {
       {/* ═══ CELEBRATE — a window that opens as the scene rises ═══ */}
       <ScrollSection
         id="celebrate"
-        data-theme="dusk"
+        data-theme="peacock"
         mode="through"
         aria-labelledby="home-weddings"
         className="paper-grain scroll-mt-24 overflow-x-clip bg-surface pt-20 pb-20 text-ink md:pt-28 md:pb-28"
@@ -235,7 +229,8 @@ export default async function HomePage() {
       <section
         id="unwind"
         aria-labelledby="home-leisure"
-        className="band-pop scroll-mt-24 py-20 md:py-28"
+        data-theme="peacock"
+        className="scroll-mt-24 bg-surface py-20 text-ink md:py-28"
       >
         <div className="container-site">
           <div className="grid items-center gap-x-12 gap-y-12 lg:grid-cols-12">
@@ -260,7 +255,7 @@ export default async function HomePage() {
                 </div>
               ) : null}
               {gym.images[0] ? (
-                <div className="absolute -bottom-8 -left-6 hidden w-44 bg-pop p-2 lg:block">
+                <div className="absolute -bottom-8 -left-6 hidden w-44 bg-accent p-2 lg:block">
                   <Picture image={gym.images[0]} ratio="1:1" sizes="11rem" />
                 </div>
               ) : null}
@@ -319,13 +314,13 @@ export default async function HomePage() {
 
         {poolside ? <JourneyPanel outlet={poolside} mood="By the water" tone="surface" /> : null}
 
-        {bar ? <JourneyPanel outlet={bar} mood="Evening" tone="dusk" /> : null}
+        {bar ? <JourneyPanel outlet={bar} mood="Evening" tone="peacock" /> : null}
       </DayJourney>
 
-      {/* ═══ CLOSE — a dusk arch, and the conversation that starts a visit ═══ */}
+      {/* ═══ CLOSE — a peacock arch, and the conversation that starts a visit ═══ */}
       <section
         id="enquire"
-        data-theme="dusk"
+        data-theme="peacock"
         aria-labelledby="home-enquire"
         className="threshold paper-grain scroll-mt-24 bg-surface pt-[calc(var(--arch)+3rem)] pb-20 text-ink md:pb-28"
       >
@@ -374,13 +369,13 @@ function JourneyPanel({
 }: {
   outlet: Outlet;
   mood: string;
-  tone: "surface" | "dusk";
+  tone: "surface" | "peacock";
 }) {
   const cover = outlet.images[0];
   return (
     <article
       data-panel
-      data-theme={tone === "dusk" ? "dusk" : undefined}
+      data-theme={tone === "peacock" ? "peacock" : undefined}
       className="journey-panel grid overflow-hidden bg-surface text-ink lg:grid-cols-[1.15fr_1fr]"
     >
       {cover ? (

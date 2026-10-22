@@ -22,7 +22,7 @@ test.describe("Desktop (1280px)", () => {
     await page.goto("/");
     const header = page.locator("header");
 
-    await expect(header).toHaveAttribute("data-theme", "dusk");
+    await expect(header).toHaveAttribute("data-theme", "peacock");
     const transparentBg = await header.evaluate(
       (el) => getComputedStyle(el).backgroundColor,
     );
@@ -30,7 +30,7 @@ test.describe("Desktop (1280px)", () => {
 
     // Still inside the pinned film: still transparent.
     await page.evaluate(() => window.scrollTo(0, 200));
-    await expect(header).toHaveAttribute("data-theme", "dusk");
+    await expect(header).toHaveAttribute("data-theme", "peacock");
 
     // One-frame jump well past the arch (anchor link, End key, fling): solid.
     await page.evaluate(() => {
@@ -38,14 +38,14 @@ test.describe("Desktop (1280px)", () => {
       if (!arch) throw new Error("missing [data-header-solid-from]");
       window.scrollTo({ top: arch.getBoundingClientRect().top + window.scrollY + 600, behavior: "instant" });
     });
-    await expect(header).not.toHaveAttribute("data-theme", "dusk");
+    await expect(header).not.toHaveAttribute("data-theme", "peacock");
     await expect
       .poll(async () => header.evaluate((el) => getComputedStyle(el).backgroundColor))
       .not.toBe("rgba(0, 0, 0, 0)");
 
     // One-frame jump back to the top: transparent again.
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-    await expect(header).toHaveAttribute("data-theme", "dusk");
+    await expect(header).toHaveAttribute("data-theme", "peacock");
   });
 
   test("the logo keystone is centred between the two nav wings", async ({ page }) => {
@@ -96,7 +96,7 @@ test.describe("Desktop (1280px)", () => {
 
   test("header is solid on a page without an overlay hero", async ({ page }) => {
     await page.goto("/rooms/");
-    await expect(page.locator("header")).not.toHaveAttribute("data-theme", "dusk");
+    await expect(page.locator("header")).not.toHaveAttribute("data-theme", "peacock");
   });
 });
 
@@ -148,11 +148,11 @@ test.describe("Mobile (360px)", () => {
     await expect(menuButton).toBeFocused();
   });
 
-  test("the menu opens like gates onto a dusk hall", async ({ page }) => {
+  test("the menu opens like gates onto a peacock hall", async ({ page }) => {
     await page.goto("/rooms/");
     await page.getByRole("button", { name: "Menu" }).click();
     const dialog = page.locator("#mobile-menu");
-    await expect(dialog).toHaveAttribute("data-theme", "dusk");
+    await expect(dialog).toHaveAttribute("data-theme", "peacock");
     await expect(dialog).toHaveClass(/text-ink/);
 
     // Both leaves end fully outside the viewport, and never block taps.

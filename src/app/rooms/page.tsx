@@ -156,7 +156,7 @@ export default async function RoomsPage() {
 
       {/* ── Closing CTA ───────────────────────────────────────── */}
       <section
-        data-theme="dusk"
+        data-theme="peacock"
         className="paper-grain bg-surface py-16 text-ink md:py-20"
         aria-labelledby="rooms-help"
       >

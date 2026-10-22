@@ -2,7 +2,7 @@
 
 > Auto-generated — do not edit by hand; run `pnpm content:report`.
 
-Last generated: 2026-10-13
+Last generated: 2026-10-21
 
 Everything below is still **sample** (we invented it) or **public-unverified** (found online, not confirmed by the hotel). The hotel needs to confirm or replace each item before launch. See also `docs/public-data.md`.
 
@@ -12,7 +12,7 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 
 - [ ] **tagline** _(sample)_ — sample tagline — confirm the hotel's preferred line · `tagline`
 - [ ] **shortDescription** _(sample)_ — sample copy — rewrite with verified details · `shortDescription`
-- [ ] **entranceVideo** _(sample)_ — prototype AI-generated walkthrough (gates, drive, porte-cochère, lobby) at 854×480 with a generator watermark — the architecture shown is NOT confirmed as Hotel Dipali. Replace with original footage (≥1920×1080, short keyframe interval for smooth scrubbing) and re-run pnpm make:video-frames before launch. · `entranceVideo`
+- [ ] **property-home-hero** _(sample)_ · `homeHero`
 - [ ] **address** _(public-unverified)_ — address conflicts across platforms — hotel must confirm one; see docs/public-data.md · source: GST public record (see docs/public-data.md) · `address`
 - [ ] **locationLine** _(public-unverified)_ — confirm spelling Makroniya vs Makronia · source: Hotel's own social posts · `locationLine`
 - [ ] **mapsUrl** _(sample)_ — generic Maps search link — replace with the hotel's verified Google Business profile URL · `mapsUrl`
@@ -163,6 +163,10 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 
 Every image below is a labelled placeholder. Provide an original photograph matching the described shot and aspect ratio; file names can stay the same.
 
+### Site-wide & Contact
+
+- [ ] Full-bleed arrival view: the hotel's front entrance and drive at golden hour, calm sky in the top third for the header, quieter left third for the title — aspect 16:9 · `/sample/property-home-hero.svg`
+
 ### Rooms
 
 - [ ] Garden Deluxe Room, wide shot showing the bed and window light — aspect 4:3 · `/sample/room-garden-deluxe-1.svg`
@@ -232,4 +236,4 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 
 ---
 
-Totals: 127 items/facts to confirm · 52 photos to replace.
+Totals: 127 items/facts to confirm · 53 photos to replace.

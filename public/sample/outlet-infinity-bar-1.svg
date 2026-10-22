@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1000" viewBox="0 0 1500 1000" role="img" aria-label="Infinity Bar, counter and seating in warm light (sample placeholder)">
-  <rect x="0" y="0" width="1500" height="1000" fill="#241F1B"/>
-  <path d="M240 1000 V445 a225 225 0 0 1 450 0 V1000 Z" fill="#2F2823"/>
+  <rect x="0" y="0" width="1500" height="1000" fill="#0B2F2E"/>
+  <path d="M240 1000 V445 a225 225 0 0 1 450 0 V1000 Z" fill="#0E3B3A"/>
   <path d="M930 1000 V420" stroke="#6B5A3E" stroke-width="2" opacity="0.45"/>
   <rect x="11" y="11" width="1478" height="978" fill="none" stroke="#6B5A3E" stroke-width="2" opacity="0.35"/>
 </svg>

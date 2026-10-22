@@ -59,12 +59,12 @@ availability" link. Never embed a booking widget or third-party script without a
   `src/styles/theme.css`. Changing that file must re-theme the whole site.
 - Tokens use Tailwind `@theme` (NOT `@theme inline`) with semantic names: `surface`,
   `surface-alt`, `ink`, `ink-muted`, `brand`, `brand-ink`, `accent`, `accent-ink`,
-  `pop`, `pop-ink`, `highlight`, `line`, `font-display`, `font-body` (more may be
-  added in `theme.css` only).
+  `highlight`, `line`, `font-display`, `font-body` (more may be added in `theme.css`
+  only). `pop` was retired on 2026-10-21 — do not reintroduce it without asking.
 - `src/app/fonts.ts` is the only file besides `theme.css` allowed to contain font
   names.
-- Pop colour: max one element per section. `highlight` is never used for body text on
-  light surfaces.
+- `highlight` (brass) is decorative only on light surfaces — rules, hairlines, never
+  text. `accent` is copper on light and brass on Peacock; it is gated as small text.
 - Components use only semantic utilities (`bg-surface`, `text-ink`, `bg-accent`,
   `font-display`…) and component classes defined in `theme.css` (`.heading-hero`,
   `.heading-1/2/3`, `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.big-number`,
@@ -72,22 +72,25 @@ availability" link. Never embed a booking widget or third-party script without a
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
   `.rule-ornament`, `.label`, `.input`, `.select`, `.textarea`, `.field-error`,
   `.field-hint`, `.visually-hidden`, `.hero-gradient`, `.hero-tint`, `.paper-grain`,
-  `.frame-hairline`, `.img-hover`, `.band-pop`, `.threshold`, `[data-reveal]`, plus
+  `.frame-hairline`, `.img-hover`, `.logo-medallion`, `.threshold`, `[data-reveal]`, plus
   the home-experience scene classes `.entrance*`, `.pillar-*`, `.room-stage*`,
   `.celebrate-*`, `.journey*`, and the shell classes `.header-*`, `.menu-*`,
   `.btn-arch`). Never raw hex, never raw Tailwind palette colours
   (`bg-amber-700`), never font names in components.
-- Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Dusk"
-  variant for weddings and the bar). Every element that sets `data-theme="dusk"`
+- Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Peacock"
+  variant for weddings, the bar, the Unwind band and the home hero). Every element
+  that sets `data-theme="peacock"`
   MUST also carry an explicit `text-ink` (or other colour utility) on that same
   element — `color` inherits the ancestor's already-resolved value, it does not
-  re-evaluate `var(--color-ink)` per scope, so without this the dusk subtree
+  re-evaluate `var(--color-ink)` per scope, so without this the Peacock subtree
   silently renders in the parent's (light) ink colour.
 - Every text/background pair passes WCAG AA (4.5:1 body, 3:1 large text and UI).
-  Gold-like colours are never body text on light backgrounds.
-- Palette: "Ivory & Gold" (Light, default) with a dark "Dusk" variant. `pop` is a muted
-  olive-sage — the only contrast accent: interactive states, small labels and at most
-  one full sage band (`.band-pop`). Fonts: display Instrument Serif, body Figtree. See
+  Gold-like colours are never body text on light backgrounds. The gold logo sits on a
+  peacock ground on light pages (header keystone, `.logo-medallion`).
+- Palette: "Peacock & Sandstone" — "Sandstone" (light, default: sandstone surfaces,
+  near-black peacock ink, copper accent, peacock brand, brass ornament) with a dark
+  "Peacock" variant (peacock surfaces, pearl ink, brass accent). Fonts: display
+  Instrument Serif, body Figtree, on an editorial scale (hero up to ~12vw). See
   `theme.css` and `src/app/fonts.ts`.
 
 ## F. Content & data trust

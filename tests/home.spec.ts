@@ -27,14 +27,14 @@ test.describe("Home page", () => {
     await expect(page.locator("#home-enquire")).toBeVisible();
   });
 
-  test("hero section has dusk theme", async ({ page }) => {
+  test("hero section has peacock theme", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    await expect(hero).toHaveAttribute("data-theme", "dusk");
+    await expect(hero).toHaveAttribute("data-theme", "peacock");
   });
 
-  test("enquiry section has dusk theme and anchor id", async ({ page }) => {
+  test("enquiry section has peacock theme and anchor id", async ({ page }) => {
     const enquiry = page.locator("#enquire");
-    await expect(enquiry).toHaveAttribute("data-theme", "dusk");
+    await expect(enquiry).toHaveAttribute("data-theme", "peacock");
   });
 
   /* ──── Navigation & links ──── */
@@ -88,14 +88,14 @@ test.describe("Home page", () => {
     for (const href of hrefs) await expect(page.locator(href)).toBeAttached();
   });
 
-  /* ──── Dusk sections carry text-ink ──── */
+  /* ──── Peacock sections carry text-ink ──── */
 
-  test("all dusk-themed sections carry text-ink class", async ({ page }) => {
-    const duskSections = page.locator('section[data-theme="dusk"]');
-    const count = await duskSections.count();
+  test("all peacock-themed sections carry text-ink class", async ({ page }) => {
+    const peacockSections = page.locator('section[data-theme="peacock"]');
+    const count = await peacockSections.count();
     expect(count).toBeGreaterThanOrEqual(2);
     for (let i = 0; i < count; i++) {
-      const classes = await duskSections.nth(i).getAttribute("class");
+      const classes = await peacockSections.nth(i).getAttribute("class");
       expect(classes).toContain("text-ink");
     }
   });

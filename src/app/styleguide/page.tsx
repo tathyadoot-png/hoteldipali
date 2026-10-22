@@ -43,8 +43,6 @@ const SWATCH_BG: Record<string, string> = {
   "brand-ink": "bg-brand-ink",
   accent: "bg-accent",
   "accent-ink": "bg-accent-ink",
-  pop: "bg-pop",
-  "pop-ink": "bg-pop-ink",
   highlight: "bg-highlight",
 };
 
@@ -57,10 +55,13 @@ const SWATCH_ORDER = [
   "brand-ink",
   "accent",
   "accent-ink",
-  "pop",
-  "pop-ink",
   "highlight",
 ];
+
+const VARIANT_LABEL: Record<Variant, string> = {
+  light: "Sandstone — the light default. Copper for actions, brass for ornament only.",
+  peacock: "Peacock — the dark variant ([data-theme=\"peacock\"]). Brass for actions and ornament.",
+};
 
 const PLANNING_CHIPS = [
   "a stay",
@@ -114,7 +115,8 @@ function ContrastTable({ variant, tokens }: { variant: Variant; tokens: ThemeTok
             <th className="eyebrow py-2 pr-4">Pair</th>
             <th className="eyebrow py-2 pr-4">Ratio</th>
             <th className="eyebrow py-2 pr-4">Min</th>
-            <th className="eyebrow py-2">Result</th>
+            <th className="eyebrow py-2 pr-4">Result</th>
+            <th className="eyebrow py-2">Use</th>
           </tr>
         </thead>
         <tbody>
@@ -124,15 +126,16 @@ function ContrastTable({ variant, tokens }: { variant: Variant; tokens: ThemeTok
             const ratio = fg && bg ? contrastRatio(fg, bg) : 0;
             const pass = ratio >= pair.min;
             return (
-              <tr key={`${pair.fg}/${pair.bg}`} className="border-t border-line">
+              <tr key={`${pair.fg}/${pair.bg}/${pair.kind}`} className="border-t border-line">
                 <td className="body py-2 pr-4">
                   {pair.fg} / {pair.bg}
                 </td>
                 <td className="body py-2 pr-4">{ratio.toFixed(2)}:1</td>
                 <td className="body py-2 pr-4">{pair.min}</td>
-                <td className="py-2">
+                <td className="py-2 pr-4">
                   <Badge pass={pass} />
                 </td>
+                <td className="caption py-2 not-italic">{pair.use}</td>
               </tr>
             );
           })}
@@ -159,7 +162,7 @@ function Sections({
         <h2 id={`${variant}-colours`} className="heading-2">
           Colour &amp; <em>contrast</em>
         </h2>
-        <p className="body-lg mt-3">Variant: {variant}.</p>
+        <p className="body-lg mt-3">{VARIANT_LABEL[variant]}</p>
         <div className="mt-6">
           <Swatches tokens={tokens} />
         </div>
@@ -174,19 +177,20 @@ function Sections({
         </h2>
         <div className="mt-6 flex flex-col gap-6">
           <div>
-            <p className="eyebrow">heading-hero</p>
-            <p className="heading-hero">
+            <p className="eyebrow">heading-hero · up to ~12vw desktop, ~15vw phone</p>
+            {/* break-words: the specimen sits in a half-width pane side by side. */}
+            <p className="heading-hero break-words">
               Weddings under the <em>open</em> sky
             </p>
           </div>
           <div>
             <p className="eyebrow">heading-1</p>
-            <p className="heading-1">
+            <p className="heading-1 break-words">
               Weddings under the <em>open</em> sky
             </p>
           </div>
           <div>
-            <p className="eyebrow">heading-2</p>
+            <p className="eyebrow">heading-2 · ~4.8vw desktop</p>
             <p className="heading-2">
               Weddings under the <em>open</em> sky
             </p>
@@ -316,7 +320,7 @@ function Sections({
         </h2>
         <div className="band-brand mt-6 p-8">
           <p className="eyebrow">Hotel Dipali</p>
-          <p className="heading-3">A warm brown band for the footer and brand moments.</p>
+          <p className="heading-3">A deep peacock band for the footer and brand moments.</p>
         </div>
       </section>
 
@@ -465,7 +469,7 @@ export default async function StyleguidePage() {
       </div>
       <ThemePreviewToggle
         light={<Sections variant="light" tokens={tokens.light} content={content} />}
-        dusk={<Sections variant="dusk" tokens={tokens.dusk} content={content} />}
+        peacock={<Sections variant="peacock" tokens={tokens.peacock} content={content} />}
       />
     </>
   );

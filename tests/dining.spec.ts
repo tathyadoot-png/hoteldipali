@@ -55,9 +55,9 @@ test.describe("Dining hub", () => {
     expect(hasScrollMargin).toBe(true);
   });
 
-  test("the Infinity Bar section uses the dusk evening treatment", async ({ page }) => {
+  test("the Infinity Bar section uses the peacock evening treatment", async ({ page }) => {
     const bar = page.locator("#infinity-bar");
-    await expect(bar).toHaveAttribute("data-theme", "dusk");
+    await expect(bar).toHaveAttribute("data-theme", "peacock");
     await expect(bar).toContainText("Infinity Bar");
   });
 

@@ -18,21 +18,21 @@ test("styleguide loads with one h1, noindex, no console errors", async ({ page }
   expect(consoleErrors).toEqual([]);
 });
 
-test("dusk toggle changes the preview wrapper background colour", async ({ page }) => {
+test("peacock toggle changes the preview wrapper background colour", async ({ page }) => {
   await page.goto("/styleguide/");
 
-  // Side-by-side is the default; switch to Light to read a single pane's colour.
-  await page.getByRole("button", { name: "Light", exact: true }).click();
+  // Side-by-side is the default; switch to Sandstone to read a single pane's colour.
+  await page.getByRole("button", { name: "Sandstone", exact: true }).click();
   const lightBg = await page
     .locator('[data-preview-pane="light"]')
     .evaluate((el) => getComputedStyle(el).backgroundColor);
 
-  await page.getByRole("button", { name: "Dusk", exact: true }).click();
-  const duskBg = await page
-    .locator('[data-preview-pane="dusk"]')
+  await page.getByRole("button", { name: "Peacock", exact: true }).click();
+  const peacockBg = await page
+    .locator('[data-preview-pane="peacock"]')
     .evaluate((el) => getComputedStyle(el).backgroundColor);
 
-  expect(duskBg).not.toBe(lightBg);
+  expect(peacockBg).not.toBe(lightBg);
 });
 
 test("home skip link is hidden by default and visible after first Tab", async ({

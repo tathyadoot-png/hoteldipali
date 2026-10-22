@@ -1,137 +1,65 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-// The home page's scroll-driven experience. "Rich motion" = >=1024px, fine
-// pointer, no reduced-motion request — the same query the boot script uses.
+// The home page's hero and scroll-driven scenes. The hero is temporarily a
+// static full-bleed image (the scroll-scrubbed film was removed on 2026-10-21);
+// the other scenes still run under "rich motion" (>=1024px, fine pointer, no
+// reduced-motion request — the same query the boot script uses).
 
 const DESKTOP = { width: 1280, height: 800 };
 const PHONE = { width: 360, height: 780 };
 
-/** Scroll instantly (progress is 1:1 with scroll), then let a frame land. */
-async function scrollAndSettle(page: Page, y: number) {
-  await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
-  await page.waitForTimeout(400);
-}
+/** The static hero: name, image and calls to action in one viewport, no film. */
+async function expectStaticHero(page: Page) {
+  const videoRequests: string[] = [];
+  page.on("request", (req) => {
+    if (req.url().includes("/video/")) videoRequests.push(req.url());
+  });
+  await page.goto("/");
+  await page.waitForLoadState("load");
 
-/** Index of the cached film frame currently drawn on the canvas. */
-async function filmFrame(page: Page) {
-  return page.evaluate(() =>
-    Number(document.querySelector<HTMLCanvasElement>(".entrance-film")?.dataset.frame ?? -1),
+  const hero = page.locator(".entrance");
+  await expect(hero.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(hero.getByRole("link", { name: "Enquire now" })).toHaveAttribute("href", "#enquire");
+  await expect(hero.locator('a[href^="tel:"]')).toBeVisible();
+
+  const image = await hero.locator("img").evaluate((img: HTMLImageElement) => ({
+    src: img.currentSrc,
+    loaded: img.complete && img.naturalWidth > 0,
+  }));
+  expect(image.src).toContain("/sample/property-home-hero.svg");
+  expect(image.loaded).toBe(true);
+
+  // No runway: the hero is one viewport tall.
+  const ratio = await page.evaluate(
+    () => document.querySelector<HTMLElement>(".entrance")!.offsetHeight / window.innerHeight,
   );
+  expect(ratio).toBeLessThan(1.15);
+
+  await expect(page.locator("video, canvas")).toHaveCount(0);
+  expect(videoRequests).toEqual([]);
 }
 
-async function entranceVar(page: Page, name: string) {
-  return page.evaluate(
-    (n) => Number(document.querySelector<HTMLElement>(".entrance")!.style.getPropertyValue(n) || 0),
-    name,
-  );
-}
+test.describe("Home hero — static", () => {
+  test("desktop: name, image and calls to action, with no film", async ({ page }) => {
+    await page.setViewportSize(DESKTOP);
+    await expectStaticHero(page);
+  });
 
-test.describe("Entrance — rich motion (desktop)", () => {
+  test("phone: the same static hero, with no film", async ({ page }) => {
+    await page.setViewportSize(PHONE);
+    await expectStaticHero(page);
+  });
+});
+
+test.describe("Home scenes — rich motion (desktop)", () => {
   test.use({ viewport: DESKTOP });
 
-  test("lays out a pinned runway before first paint", async ({ page }) => {
+  test("rich motion is still laid out before first paint for the other scenes", async ({
+    page,
+  }) => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-motion", "rich");
-    const ratio = await page.evaluate(
-      () => document.querySelector<HTMLElement>(".entrance")!.offsetHeight / window.innerHeight,
-    );
-    expect(ratio).toBeGreaterThan(3);
-  });
-
-  test("scrubs the film from a frame cache, forward and back, without seeking a video", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    const film = page.locator(".entrance-film");
-    await expect(film).toHaveAttribute("data-ready", "", { timeout: 15_000 });
-    await expect(film).toHaveAttribute("data-captured", "complete", { timeout: 30_000 });
-    // The capture pass removes its offscreen <video>; nothing is ever seeked.
-    await expect(page.locator("video")).toHaveCount(0);
-
-    await scrollAndSettle(page, 900);
-    await expect.poll(() => filmFrame(page)).toBeGreaterThan(150);
-    const deep = await filmFrame(page);
-
-    await scrollAndSettle(page, 300);
-    await expect.poll(() => filmFrame(page)).toBeLessThan(deep - 60);
-
-    await scrollAndSettle(page, 0);
-    await expect.poll(() => filmFrame(page)).toBeLessThanOrEqual(3);
-  });
-
-  test("the aperture opens with the gates and closes again in reverse", async ({ page }) => {
-    await page.goto("/");
-    const clip = () =>
-      page.evaluate(() => getComputedStyle(document.querySelector(".entrance-aperture")!).clipPath);
-
-    // Closed: an arched doorway (a rounded inset), the name on both pillars.
-    expect(await clip()).toContain("round");
-    await expect(page.locator("#home-hero")).toBeVisible();
-    await expect(page.locator(".entrance-inscription-l")).toHaveCSS("opacity", "1");
-
-    await scrollAndSettle(page, 600);
-    await expect.poll(() => entranceVar(page, "--o")).toBe(1);
-    await expect(page.locator(".entrance-inscription-l")).toHaveCSS("opacity", "0");
-
-    await scrollAndSettle(page, 0);
-    await expect.poll(() => entranceVar(page, "--o")).toBe(0);
-  });
-
-  test("the arrival rail jumps to the lobby, where the directory appears", async ({ page }) => {
-    await page.goto("/");
-    const section = page.locator(".entrance");
-    const directory = page.getByRole("navigation", { name: "Inside the hotel" });
-    const rail = page.getByRole("navigation", { name: "Arrival" });
-
-    await expect(section).toHaveAttribute("data-stage", "gate");
-    await expect(directory).toBeHidden();
-    await expect(rail.getByRole("button")).toHaveCount(3);
-
-    await rail.getByRole("button", { name: "Jump to the Lobby" }).click();
-    await expect(section).toHaveAttribute("data-stage", "lobby", { timeout: 5_000 });
-    await expect(directory).toBeVisible();
-    const hrefs = await directory
-      .getByRole("link")
-      .evaluateAll((els) => els.map((el) => el.getAttribute("href")));
-    expect(hrefs).toEqual(["#stay", "#celebrate", "#unwind", "#dine"]);
-
-    // Keyboard: the rail is reachable and works with Enter.
-    await rail.getByRole("button", { name: "Jump to the Gate" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(section).toHaveAttribute("data-stage", "gate", { timeout: 5_000 });
-    await expect(directory).toBeHidden();
-  });
-
-  test("hands over to the arch: actions leave the tab order at the threshold", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    const actions = page.locator(".entrance-actions");
-    await expect(actions).toBeVisible();
-
-    const runway = await page.evaluate(() => {
-      const s = document.querySelector<HTMLElement>(".entrance")!;
-      return s.offsetHeight - window.innerHeight;
-    });
-    await scrollAndSettle(page, runway - 20);
-    await expect(page.locator(".entrance")).toHaveAttribute("data-stage", "threshold");
-    await expect(actions).toBeHidden();
-    await expect(page.getByRole("navigation", { name: "Arrival" })).toBeHidden();
-  });
-
-  test("keeps the composition when the film fails to load", async ({ page }) => {
-    await page.route("**/video/entry.mp4", (route) => route.abort());
-    await page.goto("/");
-    await page.waitForTimeout(1500);
-
-    await expect(page.locator(".entrance-film")).not.toHaveAttribute("data-ready", "");
-    await expect(page.locator("#home-hero")).toBeVisible();
-    await expect(page.locator(".entrance-actions").getByText("Enquire now")).toBeVisible();
-    const poster = await page.evaluate(
-      () => document.querySelector<HTMLImageElement>(".entrance-media")!.currentSrc,
-    );
-    expect(poster).toContain("/video/entry-poster.webp");
   });
 
   test("room discovery follows hover and keyboard focus", async ({ page }) => {
@@ -183,32 +111,12 @@ test.describe("Entrance — rich motion (desktop)", () => {
   });
 });
 
-test.describe("Entrance — phone", () => {
+test.describe("Home scenes — phone", () => {
   test.use({ viewport: PHONE });
 
-  test("is a single still frame with no film download", async ({ page }) => {
-    const videoRequests: string[] = [];
-    page.on("request", (req) => {
-      if (req.url().includes("/video/entry.mp4")) videoRequests.push(req.url());
-    });
+  test("no rich motion on a phone", async ({ page }) => {
     await page.goto("/");
-    await page.waitForTimeout(1500);
-
     await expect(page.locator("html")).not.toHaveAttribute("data-motion", "rich");
-    await expect(page.locator(".entrance-film")).toHaveCount(0);
-    expect(videoRequests).toEqual([]);
-    // No rail or directory without the scrubbed journey.
-    await expect(page.getByRole("navigation", { name: "Arrival" })).toBeHidden();
-    await expect(page.getByRole("navigation", { name: "Inside the hotel" })).toBeHidden();
-
-    const still = await page.evaluate(
-      () => document.querySelector<HTMLImageElement>(".entrance-media")!.currentSrc,
-    );
-    expect(still).toContain("/video/entry-still.webp");
-    const ratio = await page.evaluate(
-      () => document.querySelector<HTMLElement>(".entrance")!.offsetHeight / window.innerHeight,
-    );
-    expect(ratio).toBeLessThan(1.05);
   });
 
   test("the dining walk stacks vertically", async ({ page }) => {
@@ -220,25 +128,18 @@ test.describe("Entrance — phone", () => {
   });
 });
 
-test.describe("Entrance — reduced motion", () => {
+test.describe("Home scenes — reduced motion", () => {
   test.use({ viewport: DESKTOP, reducedMotion: "reduce" });
 
-  test("gets the full static composition and no film", async ({ page }) => {
+  test("gets the full static composition", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("html")).not.toHaveAttribute("data-motion", "rich");
-    await expect(page.locator(".entrance-film")).toHaveCount(0);
 
-    // The whole name and tagline are readable without scrolling, and the
-    // still is shown full-frame (no closed aperture).
-    for (const selector of [".entrance-inscription-l", ".entrance-inscription-r", ".entrance-tagline"]) {
+    // The name and tagline are readable without scrolling.
+    for (const selector of ["#home-hero", ".entrance-tagline"]) {
       await expect(page.locator(selector)).toBeVisible();
       await expect(page.locator(selector)).toHaveCSS("opacity", "1");
     }
-    const aperture = await page.evaluate(
-      () => getComputedStyle(document.querySelector(".entrance-aperture")!).clipPath,
-    );
-    expect(aperture).toBe("none");
-    await expect(page.getByRole("navigation", { name: "Arrival" })).toBeHidden();
 
     // The Celebrate window is already fully open.
     const clip = await page.evaluate(

@@ -74,11 +74,11 @@ export function Header() {
 
   return (
     <header
-      data-theme={isOverlay ? "dusk" : undefined}
+      data-theme={isOverlay ? "peacock" : undefined}
       data-state={isOverlay ? "overlay" : "solid"}
       className={
         // text-ink re-declares `color` on this element so it re-resolves
-        // against the (possibly dusk-scoped) --color-ink custom property —
+        // against the (possibly peacock-scoped) --color-ink custom property —
         // inherited `color` only carries the already-resolved parent value.
         "header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22 " +
         (isOverlay ? "bg-transparent" : "bg-surface")

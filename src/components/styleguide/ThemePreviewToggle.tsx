@@ -2,28 +2,28 @@
 
 import { useState, type ReactNode } from "react";
 
-type Mode = "light" | "dusk" | "side-by-side";
+type Mode = "light" | "peacock" | "side-by-side";
 
 const MODES: ReadonlyArray<{ value: Mode; label: string }> = [
-  { value: "light", label: "Light" },
-  { value: "dusk", label: "Dusk" },
+  { value: "light", label: "Sandstone" },
+  { value: "peacock", label: "Peacock" },
   { value: "side-by-side", label: "Side-by-side" },
 ];
 
 type Props = {
   light: ReactNode;
-  dusk: ReactNode;
+  peacock: ReactNode;
 };
 
 /**
- * Renders the styleguide preview in Light, Dusk, or both panes side by side.
+ * Renders the styleguide preview in Sandstone (light), Peacock, or both panes side by side.
  * data-theme is set on the preview panes only — never on <html>.
  */
-export function ThemePreviewToggle({ light, dusk }: Props) {
+export function ThemePreviewToggle({ light, peacock }: Props) {
   const [mode, setMode] = useState<Mode>("side-by-side");
 
   const showLight = mode === "light" || mode === "side-by-side";
-  const showDusk = mode === "dusk" || mode === "side-by-side";
+  const showPeacock = mode === "peacock" || mode === "side-by-side";
 
   return (
     <>
@@ -58,9 +58,9 @@ export function ThemePreviewToggle({ light, dusk }: Props) {
             {light}
           </div>
         ) : null}
-        {showDusk ? (
-          <div data-preview-pane="dusk" data-theme="dusk" className="bg-surface text-ink">
-            {dusk}
+        {showPeacock ? (
+          <div data-preview-pane="peacock" data-theme="peacock" className="bg-surface text-ink">
+            {peacock}
           </div>
         ) : null}
       </div>

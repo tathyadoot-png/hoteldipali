@@ -35,7 +35,7 @@ test.describe("Weddings page", () => {
 
   test("the hero has its content and a plan-your-wedding CTA", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#weddings-title") });
-    await expect(hero).toHaveAttribute("data-theme", "dusk");
+    await expect(hero).toHaveAttribute("data-theme", "peacock");
     const cta = hero.getByRole("link", { name: "Plan your wedding" });
     await expect(cta).toHaveAttribute("href", "#enquire");
   });

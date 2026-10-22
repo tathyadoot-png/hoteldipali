@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350" role="img" aria-label="Full-bleed arrival view: the hotel&apos;s front entrance and drive at golden hour, calm sky in the top third for the header, quieter left third for the title (sample placeholder)">
+  <rect x="0" y="0" width="2400" height="1350" fill="#D2C4A9"/>
+  <path d="M400 243 V1350" stroke="#A2906F" stroke-width="3" opacity="0.45"/>
+  <path d="M800 243 V1350" stroke="#A2906F" stroke-width="3" opacity="0.3"/>
+  <path d="M1200 243 V1350" stroke="#A2906F" stroke-width="3" opacity="0.45"/>
+  <path d="M1600 243 V1350" stroke="#A2906F" stroke-width="3" opacity="0.3"/>
+  <path d="M2000 243 V1350" stroke="#A2906F" stroke-width="3" opacity="0.45"/>
+  <rect x="0" y="1161" width="2400" height="189" fill="#C2B294"/>
+  <rect x="15" y="15" width="2370" height="1320" fill="none" stroke="#A2906F" stroke-width="3" opacity="0.35"/>
+</svg>

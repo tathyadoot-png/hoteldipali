@@ -84,25 +84,41 @@ test.describe("Smooth scrolling — mouse / trackpad", () => {
     expect(trace[firstUp]![0] - reverseAt).toBeLessThan(120);
   });
 
-  test("the hero film stays in step with a glide, forward and back", async ({ page }) => {
+  test("a pinned scene's progress stays in step with a glide, forward and back", async ({
+    page,
+  }) => {
     await page.goto("/");
     await page.mouse.move(640, 400);
-    const film = page.locator(".entrance-film");
-    await expect(film).toHaveAttribute("data-captured", "complete", { timeout: 30_000 });
-
+    // The dining walk sizes its runway after hydration.
+    await expect
+      .poll(() =>
+        page.evaluate(() =>
+          Number.parseFloat(
+            document.querySelector<HTMLElement>("#dine")!.style.getPropertyValue("--journey-travel"),
+          ) || 0,
+        ),
+      )
+      .toBeGreaterThan(0);
     const geo = await page.evaluate(() => {
-      const s = document.querySelector<HTMLElement>(".entrance")!;
-      const travel = s.offsetHeight - window.innerHeight;
-      return { travel, filmEnd: (travel - window.innerHeight) / travel };
+      const s = document.querySelector<HTMLElement>("#dine")!;
+      return {
+        top: s.getBoundingClientRect().top + window.scrollY,
+        travel: s.offsetHeight - window.innerHeight,
+      };
     });
+    await jumpTo(page, geo.top + 200);
+
+    // Every frame: the progress written for the frame vs. the scroll position
+    // actually rendered in it.
     await page.evaluate((g) => {
-      const w = window as Window & { __lag?: number[]; __on?: boolean };
-      const canvas = document.querySelector<HTMLCanvasElement>(".entrance-film")!;
-      w.__lag = [];
+      const w = window as Window & { __gap?: number[]; __on?: boolean };
+      const dine = document.querySelector<HTMLElement>("#dine")!;
+      w.__gap = [];
       w.__on = true;
       const loop = () => {
-        const v = Math.min(1, window.scrollY / g.travel / g.filmEnd);
-        w.__lag!.push(Math.abs(Math.round(v * 239) - Number(canvas.dataset.frame)));
+        const expected = Math.min(1, Math.max(0, (window.scrollY - g.top) / g.travel));
+        const written = Number(dine.style.getPropertyValue("--p"));
+        w.__gap!.push(Math.abs(expected - written));
         if (w.__on) requestAnimationFrame(loop);
       };
       requestAnimationFrame(loop);
@@ -112,30 +128,15 @@ test.describe("Smooth scrolling — mouse / trackpad", () => {
     for (let i = 0; i < 3; i++) await page.mouse.wheel(0, -100);
     await page.waitForTimeout(900);
 
-    const lag = await page.evaluate(() => {
-      const w = window as Window & { __lag?: number[]; __on?: boolean };
+    const gap = await page.evaluate(() => {
+      const w = window as Window & { __gap?: number[]; __on?: boolean };
       w.__on = false;
-      return w.__lag!;
+      return w.__gap!;
     });
-    const inStep = lag.filter((d) => d <= 3).length / lag.length;
-    expect(inStep).toBeGreaterThanOrEqual(0.95);
-    expect(lag.at(-1)).toBeLessThanOrEqual(1);
-  });
-
-  test("the arrival rail lands exactly on its waypoint", async ({ page }) => {
-    await page.goto("/");
-    const expected = await page.evaluate(() => {
-      const s = document.querySelector<HTMLElement>(".entrance")!;
-      const travel = s.offsetHeight - window.innerHeight;
-      return 0.92 * ((travel - window.innerHeight) / travel) * travel;
-    });
-    await page.getByRole("button", { name: "Jump to the Lobby" }).click();
-    await expect
-      .poll(() => page.evaluate(() => window.scrollY), { timeout: 4_000 })
-      .toBeGreaterThan(expected - 2);
-    await page.waitForTimeout(300);
-    expect(Math.abs((await page.evaluate(() => window.scrollY)) - expected)).toBeLessThanOrEqual(2);
-    await expect(page.locator(".entrance")).toHaveAttribute("data-stage", "lobby");
+    // Updated inside Lenis's frame, so the scene is never a frame behind.
+    const inStep = gap.filter((d) => d <= 0.002).length / gap.length;
+    expect(inStep).toBeGreaterThanOrEqual(0.98);
+    expect(gap.at(-1)).toBeLessThanOrEqual(0.001);
   });
 
   test("hash links glide, honour scroll-margin, and keep the URL and history", async ({

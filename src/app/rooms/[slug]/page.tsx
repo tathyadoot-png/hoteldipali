@@ -199,7 +199,7 @@ export default async function RoomPage({ params }: RoomPageProps) {
       {/* ── Enquiry ───────────────────────────────────────────── */}
       <section
         id="enquire"
-        data-theme="dusk"
+        data-theme="peacock"
         className="paper-grain bg-surface py-16 text-ink md:py-20"
         aria-labelledby="room-enquire"
       >

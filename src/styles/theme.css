@@ -3,7 +3,7 @@
 /*
  * Design tokens and component classes. Never put colours or font names anywhere else.
  * Fonts are named here and in src/app/fonts.ts only.
- * Light ("Ivory & Gold") is the default; Dusk is the dark variant for weddings,
+ * Light ("Sandstone") is the default; Peacock is the dark variant for weddings,
  * Infinity Bar and dark bands.
  */
 
@@ -16,22 +16,21 @@
   --font-display: var(--font-instrument), "Times New Roman", Georgia, serif;
   --font-body: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  /* Colours — Light (default) */
-  --color-surface: #faf6ee;
-  --color-surface-alt: #f1e8d8;
-  --color-ink: #2a1f17;
-  --color-ink-muted: #5e4e40;
-  --color-brand: #3b2a1e;
-  --color-brand-ink: #faf6ee;
-  --color-accent: #8a5a14;
+  /* Colours — Light (default, "Sandstone"). Palette "Peacock & Sandstone". */
+  --color-surface: #efe6d6;
+  --color-surface-alt: #e4d6bf;
+  --color-ink: #0f2422;
+  --color-ink-muted: #3e5552;
+  --color-brand: #0e3b3a;
+  --color-brand-ink: #f7f2e9;
+  /* Copper: buttons, links, small emphasis. One step deeper than the #9A4E25
+     reference so it also reads as small text (form errors, current nav link) on
+     surface-alt — 4.61:1 there, where #9A4E25 measured 4.20:1. */
+  --color-accent: #914922;
   --color-accent-ink: #ffffff;
-  /* Olive-sage: the one contrast accent, for interactive states, small labels and
-     a single signature band. A touch deeper than the #727D5B reference so it
-     clears AA as text on both light surfaces and with white text on it. */
-  --color-pop: #626c4b;
-  --color-pop-ink: #ffffff;
+  /* Brass: decorative only on light grounds (rules, hairlines) — never text. */
   --color-highlight: #c9a45c;
-  --color-line: rgba(42, 31, 23, 0.15);
+  --color-line: rgba(15, 36, 34, 0.15);
 
   /* Radius */
   --radius-none: 0;
@@ -59,21 +58,19 @@
   --duration-base: 320ms;
 }
 
-/* Colours — Dusk variant. Redefines the same tokens; utilities resolve per-element. */
-[data-theme="dusk"] {
+/* Colours — Peacock variant (dark). Redefines the same tokens; utilities resolve per-element. */
+[data-theme="peacock"] {
   color-scheme: dark;
-  --color-surface: #14110e;
-  --color-surface-alt: #1e1915;
-  --color-ink: #f3ebdd;
-  --color-ink-muted: #cbbfae;
-  --color-brand: #3b2a1e;
-  --color-brand-ink: #f3ebdd;
+  --color-surface: #0e3b3a;
+  --color-surface-alt: #082624;
+  --color-ink: #f7f2e9;
+  --color-ink-muted: #c9d1cb;
+  --color-brand: #082624;
+  --color-brand-ink: #f7f2e9;
   --color-accent: #c9a45c;
-  --color-accent-ink: #14110e;
-  --color-pop: #9aa57e;
-  --color-pop-ink: #14110e;
+  --color-accent-ink: #082624;
   --color-highlight: #c9a45c;
-  --color-line: rgba(243, 235, 221, 0.15);
+  --color-line: rgba(247, 242, 233, 0.15);
 }
 
 /* Non-colour design constants shared by component classes. */
@@ -129,23 +126,25 @@
 
 @layer components {
   /* Typography */
+  /* Editorial scale: the hero runs to ~12vw on desktop and ~15–16vw on phones. */
   .heading-hero {
     font-family: var(--font-display);
-    font-size: clamp(2.75rem, 1.5rem + 6vw, 7.5rem);
+    font-size: clamp(3.25rem, 1rem + 11vw, 11.5rem);
     line-height: 0.95;
     letter-spacing: -0.02em;
   }
 
   .heading-1 {
     font-family: var(--font-display);
-    font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4.5rem);
-    line-height: 1;
+    font-size: clamp(2.5rem, 1rem + 6vw, 8rem);
+    line-height: 0.98;
   }
 
   .heading-2 {
     font-family: var(--font-display);
-    font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
-    line-height: 1.05;
+    /* ~4.8vw at 1440px. */
+    font-size: clamp(2rem, 0.75rem + 4vw, 5rem);
+    line-height: 1.02;
   }
 
   .heading-3 {
@@ -250,9 +249,15 @@
     color: var(--color-accent-ink);
   }
 
+  /* Outline button: ink (pearl on Peacock) border and text. */
   .btn-secondary {
-    background-color: var(--color-pop);
-    color: var(--color-pop-ink);
+    background-color: transparent;
+    border-color: var(--color-ink);
+    color: var(--color-ink);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-surface-alt);
   }
 
   .btn-ghost {
@@ -296,10 +301,11 @@
     background-color: var(--color-surface-alt);
   }
 
+  /* Pressed: copper on light, brass on Peacock. */
   .chip[aria-pressed="true"] {
-    background-color: var(--color-pop);
-    border-color: var(--color-pop);
-    color: var(--color-pop-ink);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 
   /* Surfaces */
@@ -340,7 +346,7 @@
 
   /*
    * .link/.eyebrow/.caption hardcode ink/ink-muted, which are only validated
-   * against surface/surface-alt (and, via [data-theme] re-scoping, Dusk's own
+   * against surface/surface-alt (and, via [data-theme] re-scoping, Peacock's own
    * surface pair). The brand band is a third, separate pairing (brand/
    * brand-ink) those tokens were never checked against — so inside
    * .band-brand, repoint them at brand-ink to stay AA-compliant.
@@ -442,8 +448,7 @@
   }
 
   /* The keystone hangs below the bar, its foot an inverted arch — the
-     doorway motif turned upside down. Over the home film it sits just above
-     the aperture's crown. */
+     doorway motif turned upside down. */
   .header-keystone {
     grid-column: 2;
     align-self: start;
@@ -457,7 +462,9 @@
     border: 1px solid color-mix(in srgb, var(--color-highlight) 70%, transparent);
     border-top: 0;
     border-radius: 0 0 50% 50% / 0 0 2.25rem 2.25rem;
-    background-color: color-mix(in srgb, var(--color-surface) 82%, transparent);
+    /* Peacock in every header state: the gold logo washes out on sandstone
+       (~1.3–1.9:1) but reads at 5–8:1 on peacock. */
+    background-color: var(--color-brand);
     transform-origin: 50% 0;
     transition:
       transform var(--duration-base) var(--ease-out-soft),
@@ -465,7 +472,6 @@
   }
 
   .header-shell[data-state="solid"] .header-keystone {
-    background-color: var(--color-surface);
     transform: scale(0.86);
   }
 
@@ -600,7 +606,7 @@
     opacity: 1;
   }
 
-  /* ── MobileMenu: two gate leaves part to reveal a dusk hall ── */
+  /* ── MobileMenu: two gate leaves part to reveal a Peacock hall ── */
   .menu-dialog {
     overflow: hidden;
     overflow: clip;
@@ -715,7 +721,7 @@
     color: var(--color-accent);
   }
 
-  /* Where you are: a small sage arch — the menu's one use of pop. */
+  /* Where you are: a small brass arch (the menu hall is Peacock). */
   .menu-link::before {
     content: "";
     flex: none;
@@ -726,7 +732,7 @@
   }
 
   .menu-link[aria-current="page"]::before {
-    background-color: var(--color-pop);
+    background-color: var(--color-accent);
   }
 
   .menu-dialog::backdrop {
@@ -810,7 +816,7 @@
   /* Hero scrim. Two jobs, both legibility, not decoration:
      bottom → the headline/CTA block sits on solid surface and fades up;
      top    → the overlay header's ink stays readable over a light image.
-     Uses the scoped --color-surface so it adapts to Light and Dusk. */
+     Uses the scoped --color-surface so it adapts to Light and Peacock. */
   .hero-gradient {
     background:
       linear-gradient(
@@ -860,8 +866,8 @@
   }
 
   /* Multiply disappears on dark; lighten the grain instead. */
-  [data-theme="dusk"].paper-grain::before,
-  [data-theme="dusk"] .paper-grain::before {
+  [data-theme="peacock"].paper-grain::before,
+  [data-theme="peacock"] .paper-grain::before {
     mix-blend-mode: screen;
     opacity: 0.04;
   }
@@ -917,98 +923,26 @@
 
   /* ═════════════════════════════════════════════════════════════════════
      HOME EXPERIENCE
-     Scroll-linked scenes are driven by unitless custom properties written by
-     useScrollProgress (--p; the entrance adds --v for the film and --o for the
-     aperture). Everything here animates transform / opacity / clip-path only,
-     and every scene has a complete static layout that applies when JS, the
-     film or motion is absent.
+     Scroll-linked scenes are driven by a unitless custom property (--p)
+     written by useScrollProgress. Everything here animates transform /
+     opacity / clip-path only, and every scene has a complete static layout
+     that applies when JS or motion is absent.
      ═════════════════════════════════════════════════════════════════════ */
 
-  /* ── The entrance: an arched aperture onto a scroll-scrubbed arrival film ── */
+  /* ── The home hero (temporary, static): one full-bleed image under the
+     name and the calls to action. Prompt 4 redesigns it. ── */
   .entrance {
-    /* No overflow:hidden here — it would break the sticky frame. */
     position: relative;
-  }
-
-  [data-motion="rich"] .entrance {
-    height: 330vh;
-    /* Clear of the viewport edge; 1024–1279px also clears the StickyCtaBar. */
-    --entrance-floor: clamp(2.5rem, 7vh, 5rem);
-  }
-
-  @media (max-width: 1279.98px) {
-    [data-motion="rich"] .entrance {
-      --entrance-floor: 6.5rem;
-    }
-  }
-
-  .entrance-frame {
-    position: sticky;
-    top: 0;
-    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100svh;
     overflow: hidden;
     overflow: clip;
   }
 
-  .entrance-aperture {
-    position: absolute;
-    inset: 0;
-  }
-
-  /* Closed, the film is seen through a doorway — a true semicircular arch
-     (radius = half its width) standing on the floor of the frame. It opens
-     with the gates in the footage until it is the whole frame. */
-  [data-motion="rich"] .entrance-aperture {
-    --c: calc(1 - var(--o, 0));
-    clip-path: inset(
-      calc(var(--c) * max(16%, 9.5rem)) calc(var(--c) * 32%) 0 calc(var(--c) * 32%) round
-        calc(var(--c) * 18vw) calc(var(--c) * 18vw) 0 0
-    );
-  }
-
-  /* A gold architrave around the closed doorway; it lifts away as it opens. */
-  .entrance-architrave {
-    display: none;
-  }
-
-  [data-motion="rich"] .entrance-architrave {
-    display: block;
-    position: absolute;
-    top: calc(max(16%, 9.5rem) - 0.875rem);
-    right: calc(32% - 0.875rem);
-    bottom: 0;
-    left: calc(32% - 0.875rem);
-    border: 1px solid var(--color-highlight);
-    border-bottom: 0;
-    border-radius: calc(18vw + 0.875rem) calc(18vw + 0.875rem) 0 0;
-    pointer-events: none;
-    /* The line fades into the floor band, clear of the plate. */
-    mask-image: linear-gradient(to bottom, black 55%, transparent 80%);
-    transform-origin: 50% 100%;
-    opacity: calc(0.7 - var(--o, 0) * 2.5);
-    transform: scale(calc(1 + var(--o, 0) * 0.2));
-  }
-
-  .entrance-media {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .entrance-film {
-    opacity: 0;
-    transition: opacity var(--duration-base) var(--ease-out-soft);
-  }
-
-  .entrance-film[data-ready] {
-    opacity: 1;
-  }
-
-  /* Legibility only: a top band for the overlay header over a bright sky and
-     a floor band for the plate and rail. Built on the scoped surface, so it
-     stays on-palette. */
+  /* Legibility only: a top band for the overlay header, a column for the
+     copy and a floor band. Built on the scoped (Peacock) surface. */
   .entrance-scrim {
     background:
       linear-gradient(
@@ -1016,7 +950,6 @@
         color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
         transparent 24%
       ),
-      /* Static layout: backs the copy column without dimming the centre. */
       linear-gradient(
         to right,
         color-mix(in srgb, var(--color-surface) 62%, transparent) 0%,
@@ -1031,57 +964,15 @@
       );
   }
 
-  /* Rich layout: the copy sits on the dark field or the floor band. */
-  [data-motion="rich"] .entrance-scrim {
-    background:
-      linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
-        transparent 24%
-      ),
-      linear-gradient(
-        to top,
-        color-mix(in srgb, var(--color-surface) 90%, transparent) 0%,
-        color-mix(in srgb, var(--color-surface) 45%, transparent) 36%,
-        transparent 64%
-      );
-  }
-
-  /* Film grain over the footage: hides upscaling softness in low-res clips. */
-  .entrance-grain {
-    pointer-events: none;
-    opacity: 0.16;
-    mix-blend-mode: overlay;
-    background-image: var(--noise);
-    background-size: 180px 180px;
-  }
-
-  /* Static layout (mobile, reduced motion, no JS): the name over the still,
-     clear of the arch that follows. */
+  /* Clear of the overlay header above and the arch that rises below. */
   .entrance-content {
+    position: relative;
+    z-index: 1;
+    padding-top: 7rem;
     padding-bottom: calc(var(--arch) + 2.5rem);
   }
 
-  .entrance-content > .container-site {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .entrance-plate {
-    display: contents;
-  }
-
-  .entrance-plate > .eyebrow {
-    order: -1;
-    margin-bottom: 1.25rem;
-  }
-
-  .entrance-inscription {
-    display: block;
-  }
-
-  /* Colour lives here, not in a utility: Tailwind utilities sit in a later
-     layer and would beat the rich-motion overrides regardless of specificity. */
+  /* Colour lives here, not in a utility, alongside the other hero rules. */
   .entrance-tagline {
     margin-top: 1.5rem;
     max-width: 36rem;
@@ -1089,216 +980,6 @@
     font-size: 1.125rem;
     line-height: 1.6;
     color: var(--color-ink-muted);
-  }
-
-  /* Rich layout: the name is carved on the two pillars either side of the
-     doorway; the plate sits on the floor of the frame. */
-  [data-motion="rich"] .entrance .entrance-content {
-    padding-bottom: var(--entrance-floor);
-  }
-
-  [data-motion="rich"] .entrance-title {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: 32% 36% 32%;
-    align-content: center;
-    padding-bottom: 14vh;
-    pointer-events: none;
-  }
-
-  [data-motion="rich"] .entrance-inscription {
-    position: relative;
-    padding-inline: 2rem;
-    will-change: transform, opacity;
-    opacity: calc(1 - var(--o, 0) * 2.2);
-  }
-
-  [data-motion="rich"] .entrance-inscription-l {
-    grid-column: 1;
-    justify-self: end;
-    transform: translate3d(calc(var(--o, 0) * -14vw), 0, 0);
-  }
-
-  [data-motion="rich"] .entrance-inscription-r {
-    grid-column: 3;
-    justify-self: start;
-    transform: translate3d(calc(var(--o, 0) * 14vw), 0, 0);
-  }
-
-  /* A capital line over each inscription, set where the arch springs. */
-  [data-motion="rich"] .entrance-inscription::before {
-    content: "";
-    position: absolute;
-    bottom: calc(100% + 1.25rem);
-    width: 1px;
-    height: 3.5rem;
-    background-color: var(--color-highlight);
-  }
-
-  [data-motion="rich"] .entrance-inscription-l::before {
-    right: 2rem;
-  }
-
-  [data-motion="rich"] .entrance-inscription-r::before {
-    left: 2rem;
-  }
-
-  /* Kept to the left pillar, so it never crosses into the doorway. */
-  [data-motion="rich"] .entrance-plate {
-    display: block;
-    max-width: min(
-      21rem,
-      calc(32vw - max(var(--gutter), (100vw - var(--container-site)) / 2 + var(--gutter)) - 1.5rem)
-    );
-  }
-
-  [data-motion="rich"] .entrance-plate > .eyebrow {
-    margin-bottom: 0;
-  }
-
-  [data-motion="rich"] .entrance .entrance-tagline {
-    margin-top: 0.75rem;
-    font-size: 1rem;
-  }
-
-  /* Arrival rail — rich motion only (there is no journey to jump along
-     otherwise). Its marker travels with the film. */
-  .entrance-waypoints {
-    display: none;
-  }
-
-  [data-motion="rich"] .entrance-waypoints {
-    --rail: 9rem;
-    position: absolute;
-    right: var(--gutter);
-    bottom: calc(var(--entrance-floor) + 0.5rem);
-    z-index: 20;
-    display: flex;
-    gap: 1rem;
-  }
-
-  .entrance-waypoints ol {
-    position: relative;
-    width: 7rem;
-    height: var(--rail);
-  }
-
-  .entrance-waypoints li {
-    position: absolute;
-    right: 0;
-    top: calc(var(--at) * 100%);
-    transform: translateY(-50%);
-  }
-
-  .entrance-waypoint {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    min-width: 44px;
-    min-height: 44px;
-    padding-inline: 0.5rem;
-    font-family: var(--font-body);
-    font-weight: 500;
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-    cursor: pointer;
-    transition: color var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .entrance-waypoint:hover {
-    color: var(--color-ink);
-  }
-
-  /* The stage you are in — the hero's one use of the pop colour. */
-  .entrance[data-stage="gate"] [data-waypoint="gate"],
-  .entrance[data-stage="avenue"] [data-waypoint="avenue"],
-  .entrance[data-stage="lobby"] [data-waypoint="lobby"] {
-    color: var(--color-pop);
-  }
-
-  .entrance-rail {
-    position: relative;
-    width: 1px;
-    height: var(--rail);
-    background-color: var(--color-line);
-  }
-
-  .entrance-rail-marker {
-    position: absolute;
-    top: -0.3125rem;
-    left: -0.3125rem;
-    width: 0.6875rem;
-    height: 0.6875rem;
-    /* A tiny arch, echoing the doorway. */
-    border-radius: 50% 50% 0 0;
-    background-color: var(--color-highlight);
-    transform: translate3d(0, calc(var(--v, 0) * var(--rail)), 0);
-  }
-
-  /* Lobby directory: in the lobby, the ways into the rest of the hotel appear
-     on a small arched plaque. Hidden (and out of the tab order) otherwise. */
-  .entrance-directory {
-    display: none;
-  }
-
-  [data-motion="rich"] .entrance-directory {
-    position: absolute;
-    top: 46%;
-    left: 50%;
-    z-index: 20;
-    display: block;
-    padding: 1.75rem 2.25rem 1.25rem;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
-    border-bottom: 0;
-    border-radius: 50% 50% 0 0 / 2.75rem 2.75rem 0 0;
-    background-color: color-mix(in srgb, var(--color-surface) 86%, transparent);
-    text-align: center;
-    visibility: hidden;
-    opacity: 0;
-    transform: translate3d(-50%, calc(-50% + 1rem), 0);
-    transition:
-      opacity var(--duration-base) var(--ease-out-soft),
-      transform var(--duration-base) var(--ease-out-soft),
-      visibility var(--duration-base) allow-discrete;
-  }
-
-  [data-motion="rich"] .entrance[data-stage="lobby"] .entrance-directory {
-    visibility: visible;
-    opacity: 1;
-    transform: translate3d(-50%, -50%, 0);
-  }
-
-  .entrance-directory ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.25rem 2rem;
-    margin-top: 0.5rem;
-  }
-
-  .entrance-directory a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 1rem + 1.6vw, 2.75rem);
-    line-height: 1;
-    color: var(--color-ink);
-    transition: color var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .entrance-directory a:hover {
-    color: var(--color-accent);
-  }
-
-  /* Once the threshold starts to rise the controls are covered: take them
-     out of the tab order too. */
-  .entrance[data-stage="threshold"] .entrance-actions,
-  .entrance[data-stage="threshold"] .entrance-waypoints {
-    visibility: hidden;
   }
 
   /* 1024–1279px gets rich motion AND the fixed StickyCtaBar (hidden from xl):
@@ -1309,19 +990,25 @@
     }
   }
 
-  /* ── The threshold: an ivory arch that rises over the end of the film ── */
+  /* An arched peacock ground for the gold logo on light surfaces, where the
+     logo's paler golds wash out (~1.3–1.9:1 on sandstone, 5–8:1 on peacock). */
+  .logo-medallion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem 1.5rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 70%, transparent);
+    border-radius: 999px 999px var(--radius-sm) var(--radius-sm);
+    background-color: var(--color-brand);
+  }
+
+  /* ── The threshold: a sandstone arch that rises over the bottom of the hero ── */
   .threshold {
     position: relative;
     z-index: 10;
     margin-top: calc(-1 * var(--arch));
     border-top-left-radius: 50% var(--arch);
     border-top-right-radius: 50% var(--arch);
-  }
-
-  /* Pinned: overlap the last viewport of the entrance so the arch climbs over
-     the final lobby frame while it is still held in place. */
-  [data-motion="rich"] .entrance + .threshold {
-    margin-top: -100vh;
   }
 
   /* ── The pillar index: oversized words that double as navigation ── */
@@ -1346,7 +1033,7 @@
 
   .pillar-row:hover .pillar-word,
   .pillar-row:focus-visible .pillar-word {
-    color: var(--color-pop);
+    color: var(--color-accent);
     font-style: italic;
     transform: translate3d(0.06em, 0, 0);
   }
@@ -1414,7 +1101,7 @@
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 999px;
-    background-color: var(--color-pop);
+    background-color: var(--color-accent);
     opacity: 0;
     transform: scale(0.4);
     transition:
@@ -1442,42 +1129,6 @@
     line-height: 0.82;
     letter-spacing: -0.03em;
     color: var(--color-accent);
-  }
-
-  /* ── The sage band: the one full olive-sage moment ── */
-  .band-pop {
-    --color-line: color-mix(in srgb, var(--color-pop-ink) 30%, transparent);
-    background-color: var(--color-pop);
-    color: var(--color-pop-ink);
-  }
-
-  /* Classes that hardcode ink/accent must re-point at pop-ink on sage — the
-     same reason .band-brand needs its overrides. */
-  .band-pop .eyebrow,
-  .band-pop .caption,
-  .band-pop .link,
-  .band-pop .heading-hero em,
-  .band-pop .heading-1 em,
-  .band-pop .heading-2 em {
-    color: var(--color-pop-ink);
-  }
-
-  .band-pop .link {
-    text-decoration-color: color-mix(in srgb, var(--color-pop-ink) 45%, transparent);
-  }
-
-  .band-pop .btn-ghost {
-    border-color: var(--color-pop-ink);
-    color: var(--color-pop-ink);
-  }
-
-  .band-pop .btn-ghost:hover {
-    background-color: color-mix(in srgb, var(--color-pop-ink) 14%, transparent);
-  }
-
-  /* The bronze focus ring vanishes on sage. */
-  .band-pop :focus-visible {
-    outline-color: var(--color-pop-ink);
   }
 
   /* ── Dine: a horizontal walk from the table into the evening ── */
@@ -1551,7 +1202,7 @@
 
   .journey-progress {
     height: 2px;
-    background-color: var(--color-pop);
+    background-color: var(--color-accent);
     transform: scaleX(var(--p, 0));
     transform-origin: left center;
   }

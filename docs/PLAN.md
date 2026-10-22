@@ -1,6 +1,6 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-19
+Last updated: 2026-10-22
 Current step: 11 — Pool & Gym, Gallery + Lightbox
 
 ## Status legend
@@ -88,6 +88,13 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-19 | Smooth wheel scrolling with Lenis 1.3.27 (first runtime dependency beyond Next/React/Zod; requested by the owner, CLAUDE.md §B/§K updated). One instance in `src/lib/smooth-scroll.ts`: `lerp` 0.14, `wheelMultiplier` 1, `syncTouch` off, `anchors` on, `stopInertiaOnNavigate` on; Lenis's own rAF loop off — a loop runs only during a glide. Mounted by `SmoothScroll` for `(hover: hover) and (pointer: fine)` without reduced motion. | Measured cause of the "abrupt stop": native wheel scrolling moves each notch ~100 px in one frame with no deceleration (no app code involved). Lenis keeps real window scrolling (sticky, IO, anchors, scrollbar) so the existing architecture holds. |
 | 2026-10-19 | A wheel notch against a glide in progress drops the rest of the glide first (Lenis `virtualScroll` hook). | Lenis adds notches to its target, so a reversing notch only shortened the glide: in testing the page never moved back. Now it moves back within ~37 ms. Consequence: the untravelled part of the glide is discarded, as with trackpad/touch momentum. |
 | 2026-10-19 | `scrollToY()` re-measures Lenis (`resize()`) before every code-initiated scroll, and before hash-link clicks. | Lenis clamps to a scroll limit refreshed 250 ms after a height change; the dining walk sizes itself after hydration, so an early keyboard-focus jump was cut short (caught by the existing e2e test). |
+| 2026-10-21 | Theme replaced: "Peacock & Sandstone" supersedes Ivory & Gold / Dusk / olive-sage. Light "Sandstone" (surface #EFE6D6, surface-alt #E4D6BF, ink #0F2422, ink-muted #3E5552, accent copper, brand peacock #0E3B3A, highlight brass #C9A45C); dark variant renamed Dusk → **Peacock** (`[data-theme="peacock"]`: surface #0E3B3A, surface-alt #082624, ink pearl #F7F2E9, ink-muted #C9D1CB, accent brass). Semantic token names kept, so components re-theme from `theme.css`. | Owner's new art direction. Approved in the run brief (overrides brief §14.6 "keep Ivory & Gold unless I approve"). |
+| 2026-10-21 | Copper is **#914922**, not the proposed #9A4E25; the contrast gate now checks `accent` as small text (4.5:1) on both surfaces in both variants. | Copper is used as small text (`.field-error`, current header link). #9A4E25 measured 4.20:1 on surface-alt; #914922 gives 5.33 / 4.61:1 and 6.60:1 with white text. Owner chose this option. |
+| 2026-10-21 | `pop` retired. Unwind band → `data-theme="peacock"`; pressed chips, menu current marker, pillar hover, room marker, journey progress → `accent` (copper on light, brass on Peacock); `.btn-secondary` → outline (ink/pearl border and text, hover surface-alt); `.band-pop` deleted. Gate pairs added for each. | Owner's mapping: one fewer colour; the peacock family already supplies the dark band. |
+| 2026-10-21 | The gold logo always sits on a peacock ground on light pages: header keystone background = `brand` in both states; `.logo-medallion` in the welcome section. | Sampled logo golds (#a25507–#ffd75c) measure ~1.3–1.9:1 on sandstone vs 5–8:1 on peacock. |
+| 2026-10-21 | Display scale enlarged: `.heading-hero` clamp(3.25rem, 1rem + 11vw, 11.5rem) (~15.4vw at 360, ~12vw at 1440), `.heading-1` clamp(2.5rem, 1rem + 6vw, 8rem), `.heading-2` clamp(2rem, 0.75rem + 4vw, 5rem) (~4.8vw at 1440). | Editorial feel requested. Consequence: half-column heroes (Events, Weddings) break one or two words per line on wide screens and push their CTAs toward the fold — left for the hero redesign (prompt 4). |
+| 2026-10-21 | Entrance film removed: `film-frames.ts`, the 330vh runway, aperture/rail/directory, `public/video/*`, `scripts/extract-video-frames.ts` + `make:video-frames`, `site.entranceVideo`. Temporary static hero (server component): full-bleed `site.homeHero` placeholder image + H1 + CTAs, Peacock variant. | Owner decision: the prototype footage was unverified AI video of unconfirmed architecture, and prompt 4 redesigns the hero. Removes ~1 MB of video plus the capture pass from every desktop visit. |
+| 2026-10-21 | Lenis `lerp` 0.14 → **0.10** (wheelMultiplier 1). Tried 0.10 / 0.09 / 0.08: 50% of a notch at 128 / 143 / 166 ms, 90% at 395 / 436 / 486 ms, settled ~716 / ~796 / ~900 ms; reversal 37 / 39 / 31 ms. | "Buttery" requested; 0.10 is the softest setting that still stops in < 0.75 s. Reversal stays instant via the `virtualScroll` hook. |
 
 ## Brand assets
 
@@ -137,17 +144,11 @@ See CLAUDE.md section M:
 
 The layouts are built so originals drop in by replacing files — no redesign needed.
 
-- **Entrance film** (replaces `public/video/entry.mp4`): one continuous, stabilised move —
-  closed gate → gates open → drive up to the entrance → into the lobby; 15–25 s;
-  ≥1920×1080 (ideally 2560×1440), 24–30 fps, H.264 with a keyframe at least every
-  0.5 s (or all-intra); no audio needed. Scrubbing uses a captured frame cache, so a
-  longer or higher-resolution film costs more memory (`maxEdge` caps stored frames at
-  1280px) and capture time — keep it ≤25 s. The opening is framed by a centred arched
-  aperture (middle ~36% of the width), so compose the closed gate centrally. First frame
-  becomes the desktop poster, so start on a composed, still gate. Keep the top band
-  calm (sky/ceiling) for the transparent header and the left third quieter for the
-  title. Ending in the lobby's light, warm tones lets the ivory arch take over
-  seamlessly. Then run `pnpm make:video-frames` and mark `site.entranceVideo` verified.
+- **Home hero photo** (replaces `public/sample/property-home-hero.svg`, `site.homeHero`):
+  the hotel's front entrance and drive at golden hour, landscape, ≥2400×1350; calm sky
+  in the top third for the transparent header, a quieter left third for the title.
+  (The scroll-scrubbed entrance film was removed on 2026-10-21; prompt 4 redesigns
+  the hero.)
 - **Stills**: every shot listed in `docs/data-needed.md` (rooms, venues, outlets, pool,
   gym, gallery). Most impactful for the home page: the Main Lawn wide at dusk (the
   Celebrate window opens to full-bleed), each room's wide shot (the room stage), the
@@ -534,3 +535,41 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     → native) is code-reviewed, not exercised in a browser.
   - Tests: `tests/smooth-scroll.spec.ts` (new, 9 × 2 projects). All 344 e2e tests pass;
     lint, typecheck, contrast gate and production build clean. Nothing marked verified.
+- 2026-10-21/22: Theme "Peacock & Sandstone"; entrance film removed (not a numbered
+  step; current step stays 11). See the decision rows of 2026-10-21.
+  - **Tokens/CSS:** new values in `theme.css`; `[data-theme="dusk"]` renamed to
+    `"peacock"` across pages, components and tests; `pop` removed and its uses mapped
+    to `accent` / the Peacock variant; outline `.btn-secondary`; keystone on `brand`;
+    `.logo-medallion`; larger display scale; film/aperture CSS replaced by a small static
+    hero block; the overlap rule `.entrance + .threshold` removed.
+  - **Contrast gate** (`src/lib/contrast.ts`, `scripts/check-contrast.ts`): variants
+    light + peacock; pop pairs removed; accent-as-text, outline-button border and marker
+    pairs added; each pair now prints where it is used. Results — Light: ink 13.09 /
+    11.32, ink-muted 6.46 / 5.59, accent-ink on accent 6.60, brand-ink on brand 11.04,
+    accent as text 5.33 / 4.61 (surface / surface-alt). Peacock: ink 11.04 / 14.34,
+    ink-muted 7.90 / 10.26, accent-ink on accent 6.81, brand-ink on brand 14.34, accent
+    as text 5.25 / 6.81, highlight 5.25 / 6.81. All 26 pairs pass.
+  - **Film removal:** files and assets deleted; `site.homeHero` image entry (sample)
+    replaces `site.entranceVideo`; `make:placeholders` generates
+    `property-home-hero.svg` (53 SVGs; bar tone moved to peacock); `docs/data-needed.md`
+    regenerated (127 items, 53 photos).
+  - **Styleguide:** "Sandstone" / "Peacock" / side-by-side toggle, no pop swatches,
+    variant descriptions, contrast table with a "Use" column, scale notes on the type
+    specimen.
+  - **Lenis:** lerp 0.10 (see decision row; measured with the production build at
+    1440×900 after bringing the browser to the front — a backgrounded window
+    throttled rAF to ~1 fps and produced one invalid reading, discarded).
+  - **Tests:** `entrance.spec.ts` film-only tests removed (runway, scrub, aperture, rail,
+    directory, film failure, phone/reduced-motion film checks) and replaced by
+    static-hero checks (H1, image loaded, CTAs, one viewport tall, no video/canvas, zero
+    `/video/` requests on desktop and phone); scene tests kept unchanged.
+    `smooth-scroll.spec.ts`: "hero film in step" and "arrival rail" removed, replaced by
+    "a pinned scene's `--p` stays in step with a glide" (the dining walk). Dusk →
+    Peacock and Light → Sandstone renames in home, shell, dining, events, weddings,
+    styleguide, components and enquiry-form specs (labels only, same assertions). All
+    336 e2e tests pass (344 − 8 film-only); lint, typecheck, contrast gate, build clean.
+  - **Verified (headless Chromium):** /, /rooms/, /weddings/, /events/, /dining/,
+    /styleguide/ at 360/390/768/1024/1280/1536 — no horizontal overflow, no console
+    errors, CLS 0, zero `/video/` requests; keystone and medallion logo legible.
+    Known: half-column hero headings on Events/Weddings wrap word-by-word on wide
+    screens (see decision row). Nothing marked verified.

@@ -7,7 +7,7 @@ type BotanicalProps = {
 };
 
 // Hand-drawn-feel line strokes. Decorative only — never conveys information.
-// Uses currentColor so it reads on Ivory and Dusk; colour it with text-* utilities
+// Uses currentColor so it reads on Sandstone and Peacock; colour it with text-* utilities
 // (e.g. text-highlight for a gold accent, text-ink-muted for a quiet divider).
 const PATHS: Record<BotanicalVariant, { viewBox: string; body: React.ReactNode }> = {
   sprig: {

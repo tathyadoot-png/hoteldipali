@@ -8,7 +8,7 @@ const FORM_ENDPOINT = "https://form-endpoint.test/submit";
 // renders a single, unambiguous instance (idPrefix="light-ef").
 async function openForm(page: Page) {
   await page.goto("/styleguide/");
-  await page.getByRole("button", { name: "Light", exact: true }).click();
+  await page.getByRole("button", { name: "Sandstone", exact: true }).click();
   return page.locator('section[aria-labelledby="light-form"]');
 }
 

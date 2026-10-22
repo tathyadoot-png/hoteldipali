@@ -81,14 +81,14 @@ export function MobileMenu() {
     };
   }, [open]);
 
-  // The hall behind the gates is dusk; data-theme needs its own text-ink (see
+  // The hall behind the gates is peacock; data-theme needs its own text-ink (see
   // CLAUDE.md §E) so colour re-resolves inside it.
   return (
     <dialog
       ref={dialogRef}
       id="mobile-menu"
       aria-label="Site menu"
-      data-theme="dusk"
+      data-theme="peacock"
       data-lenis-prevent=""
       className="menu-dialog m-0 h-dvh max-h-none w-screen max-w-none bg-surface p-0 text-ink"
     >

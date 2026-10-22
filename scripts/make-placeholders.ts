@@ -6,6 +6,7 @@ import {
   getLeisure,
   getOutlets,
   getRooms,
+  getSite,
   getVenues,
   type Image,
 } from "@/content";
@@ -28,8 +29,8 @@ const OUT_DIR = join(process.cwd(), "public", "sample");
 type Tone = { base: string; shade: string; line: string };
 
 /*
- * Bases sit a clear step darker than the page surfaces (surface #faf6ee,
- * surface-alt #f1e8d8) so an image slot reads as a distinct plane rather than
+ * Bases sit a clear step darker than the page surfaces (sandstone #efe6d6,
+ * surface-alt #e4d6bf) so an image slot reads as a distinct plane rather than
  * a faint rectangle on the background.
  */
 const TONES: Record<string, Tone> = {
@@ -39,8 +40,8 @@ const TONES: Record<string, Tone> = {
   stay: { base: "#DCCFB8", shade: "#CBBB9F", line: "#AE9C7C" },
   // Dining, bakery, sweets — warm clay.
   dining: { base: "#D8C6AB", shade: "#C6B191", line: "#A8906C" },
-  // Infinity Bar — dusk.
-  bar: { base: "#241F1B", shade: "#2F2823", line: "#6B5A3E" },
+  // Infinity Bar — peacock night.
+  bar: { base: "#0B2F2E", shade: "#0E3B3A", line: "#6B5A3E" },
   // Lawns and halls — garden green-gold.
   venue: { base: "#CFC6A8", shade: "#BDB290", line: "#9C8F6D" },
   // Pool and gym — cool sage.
@@ -150,7 +151,8 @@ function svgFor(image: Image): string {
 
 async function collectImages(): Promise<Image[]> {
   const images: Image[] = [];
-  const [rooms, venues, outlets, leisure, gallery] = await Promise.all([
+  const [site, rooms, venues, outlets, leisure, gallery] = await Promise.all([
+    getSite(),
     getRooms(),
     getVenues(),
     getOutlets(),
@@ -158,6 +160,7 @@ async function collectImages(): Promise<Image[]> {
     getGallery(),
   ]);
 
+  images.push(site.homeHero);
   for (const room of rooms) images.push(...room.images);
   for (const venue of venues) images.push(...venue.images);
   for (const outlet of outlets) images.push(...outlet.images);

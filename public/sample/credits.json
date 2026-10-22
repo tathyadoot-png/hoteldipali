@@ -1,6 +1,11 @@
 {
   "generated": [
     {
+      "id": "property-home-hero",
+      "file": "/sample/property-home-hero.svg",
+      "note": "generated placeholder, no licence needed"
+    },
+    {
       "id": "room-garden-deluxe-1",
       "file": "/sample/room-garden-deluxe-1.svg",
       "note": "generated placeholder, no licence needed"
