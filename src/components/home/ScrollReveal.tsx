@@ -10,14 +10,19 @@ type RevealVariant =
   | "wipe-up"
   | "wipe-down"
   | "wipe-left"
-  | "wipe-centre";
+  | "wipe-right"
+  | "wipe-centre"
+  // Text that arrives sideways, toward the photograph it belongs to.
+  | "slide-left"
+  | "slide-right";
 
 type ScrollRevealProps = {
   children: ReactNode;
   className?: string;
   /** "rise" (default) fades content up; "mask" lifts a heading out of a
    * mask; "image" opens a frame from its base while the photo settles;
-   * "wipe-*" open a photograph's frame from one edge (or the centre). */
+   * "wipe-*" open a photograph's frame from one edge (or the centre);
+   * "slide-*" fade content in while it moves left or right. */
   variant?: RevealVariant;
   /** Stagger after the element enters, in ms (applied in CSS, not a timer). */
   delay?: number;

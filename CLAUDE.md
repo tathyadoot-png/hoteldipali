@@ -93,13 +93,15 @@ third-party script without asking.
   `.rule-ornament`, `.label`, `.input`, `.select`, `.textarea`, `.field-error`,
   `.field-hint`, `.visually-hidden`, `.hero-gradient`, `.hero-tint`, `.paper-grain`,
   `.frame-hairline`, `.frame-arch`, `.img-hover`, `.logo-medallion`, `.threshold`,
-  `[data-reveal]` (`""` rise, `"mask"` headings, `"image"` frames), `.pictures-*`, plus
+  `[data-reveal]` (`""` rise, `"mask"` headings, `"image"` frames, `"wipe-*"`
+  photographs opening from one edge, `"slide-*"` sideways text), `.pictures-*`, plus
   the home-experience scene classes `.entrance*` (incl. `.entrance-video*`),
-  `.experience*` (The Dipali Experience), `.world*` (A World Within Dipali), the
+  `.experience*` (The Dipali Experience), `.world*` (A World Within Dipali),
+  `.grand-reveal*` (The Grand Reveal), `.living*` (The Living Experiences), the
   layered-section classes `.layers`, `.layer-rise`, `.layer-content`, `.layer-veil`,
   `.room-stage*`,
   `.celebrate-*`, `.journey*`, the opening-loader and ornament classes `.intro*`,
-  `.arch-*`, `.ring-*`, `.sprig-line`, `.ribbon-*`, `.stop-*`, and the shell classes
+  `.arch-*`, `.ring-*`, `.sprig-line`, `.ribbon-*`, `.stop-*`, `.corner-*`, and the shell classes
   `.header-*` (incl. `.header-band*`), `.menu-*` (incl. `.menu-medallion`,
   `.menu-address`)). Never
   raw hex, never raw Tailwind palette colours
@@ -211,7 +213,8 @@ reduced motion, and is skipped on data saver / 2G–3G (`html[data-intro="off"]`
 the boot script in `src/lib/motion.ts`). No WebGL/Three.js.
 
 Scroll-driven scenes (no animation library): `useScrollProgress` writes a unitless
-`--p` (0–1) and CSS does the animating; with Lenis running it updates from Lenis's
+`--p` (0–1) — on a whole section via `ScrollSection`, on a scene inside one via
+`ScrollScene` — and CSS does the animating; with Lenis running it updates from Lenis's
 synchronous `scroll` event (same frame, one loop). Code that scrolls the page uses
 `scrollToY()` from `src/lib/smooth-scroll.ts`, never `window.scrollTo`, and modals call
 `pauseSmoothScroll()` and carry `data-lenis-prevent`. Scenes only activate under

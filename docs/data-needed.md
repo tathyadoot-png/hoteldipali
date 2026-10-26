@@ -15,6 +15,7 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **home-hero-entrance-night** _(public-unverified)_ — cropped below the rooftop sign; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24 · `homeHero`
 - [ ] **home-hero-entrance-night-video** _(sample)_ — AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from public/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch · `homeHeroVideo`
 - [ ] **home-experience-reception** _(public-unverified)_ — portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10 · `homeExperience`
+- [ ] **home-reveal-facade-night** _(public-unverified)_ — cropped below the rooftop "DIPALI RESIDENCY" sign; the tower on the left still carries a "HOTEL DEEPALI" sign — confirm usage rights, caption and that signage with the hotel · source: Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011556_0038_D.JPG), received 2026-10-24 · `homeReveal`
 - [ ] **address** _(public-unverified)_ — address conflicts across platforms — hotel must confirm one; see docs/public-data.md · source: GST public record (see docs/public-data.md) · `address`
 - [ ] **locationLine** _(public-unverified)_ — confirm spelling Makroniya vs Makronia · source: Hotel's own social posts · `locationLine`
 - [ ] **mapsUrl** _(sample)_ — generic Maps search link — replace with the hotel's verified Google Business profile URL · `mapsUrl`
@@ -105,6 +106,7 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 
 - [ ] **pool** _(sample)_ — sample pool details — confirm timings and rules · `pool`
 - [ ] **leisure-pool-1** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DJI_20260831173334_0354_D.JPG), received 2026-10 · `pool.images[0]`
+- [ ] **leisure-pool-2** _(public-unverified)_ — portrait crop of the gallery's pool aerial (made by pnpm make:photos); confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10 · `pool.images[1]`
 - [ ] **gym** _(sample)_ — sample gym details — confirm equipment and timings · `gym`
 - [ ] **leisure-gym-1** _(sample)_ · `gym.images[0]`
 - [ ] **leisure-gym-2** _(sample)_ · `gym.images[1]`
@@ -209,4 +211,4 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 
 ---
 
-Totals: 131 items/facts to confirm · 25 photos to replace.
+Totals: 133 items/facts to confirm · 25 photos to replace.

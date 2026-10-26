@@ -36,6 +36,23 @@
         "status": "public-unverified",
         "source": "Owner-supplied hotel photograph (public/hotel/DJI_20260831173334_0354_D.JPG), received 2026-10",
         "note": "confirm usage rights and caption with the hotel"
+      },
+      {
+        "id": "leisure-pool-2",
+        "src": "/images/hotel/aerial-pool-grounds-portrait-1080.webp",
+        "alt": "The swimming pool and its circular plunge pools seen from above, with the gardens behind",
+        "shot": "Pool from above, tall portrait: the pool, the plunge pools and the gardens around them",
+        "aspect": "9:16",
+        "width": 1080,
+        "height": 1929,
+        "widths": [
+          480,
+          720,
+          1080
+        ],
+        "status": "public-unverified",
+        "source": "Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10",
+        "note": "portrait crop of the gallery's pool aerial (made by pnpm make:photos); confirm usage rights and caption with the hotel"
       }
     ]
   },

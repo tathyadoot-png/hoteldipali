@@ -45,6 +45,8 @@ export default defineConfig([
     "out/**",
     // Local Playwright MCP scratch output (gitignored).
     ".playwright-mcp/**",
+    // Local copy of the old npm-installed tree (gitignored).
+    "node_modules.npm-backup/**",
     "build/**",
     "next-env.d.ts",
     "playwright-report/**",

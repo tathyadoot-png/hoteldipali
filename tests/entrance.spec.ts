@@ -414,3 +414,140 @@ test.describe("Home scenes — reduced motion", () => {
     expect(serious).toEqual([]);
   });
 });
+
+// The Grand Reveal (the façade at night) and The Living Experiences
+// (2026-10-26/27): scroll-linked under rich motion, from each scene's own --p
+// (ScrollScene); a one-time reveal elsewhere; still under reduced motion.
+
+/** Scroll so the top of `selector` sits `fromTop` viewport heights down. */
+async function placeTop(page: Page, selector: string, fromTop: number) {
+  await page.evaluate(
+    ([s, f]) => {
+      const top = document.querySelector(s)!.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: top - f * innerHeight, behavior: "instant" });
+    },
+    [selector, fromTop] as const,
+  );
+}
+
+/** Whether the façade photograph shows at a point of its stage (fractions). */
+function photoShowsAt(page: Page, x: number, y: number) {
+  return page.evaluate(
+    ([fx, fy]) => {
+      const stage = document.querySelector(".grand-reveal-stage")!.getBoundingClientRect();
+      const hit = document.elementFromPoint(stage.left + fx * stage.width, stage.top + fy * stage.height);
+      return Boolean(hit?.closest(".grand-reveal-window"));
+    },
+    [x, y] as const,
+  );
+}
+
+test.describe("The Grand Reveal and The Living Experiences — rich motion (desktop)", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("the façade opens out of an arched doorway as it rises, then its gold frame completes", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "rich");
+    const stage = page.locator(".grand-reveal-stage");
+    const corner = page.locator(".grand-reveal-corner").first();
+
+    // On its way up: the doorway over the porch shows the photograph, the
+    // far left of the frame is still closed, and the ornaments are not set.
+    await placeTop(page, ".grand-reveal-stage", 0.6);
+    await expect.poll(() => stage.evaluate((el) => Number(el.style.getPropertyValue("--p")))).toBeGreaterThan(0.1);
+    await expect.poll(() => photoShowsAt(page, 0.63, 0.6)).toBe(true);
+    expect(await photoShowsAt(page, 0.08, 0.6)).toBe(false);
+    expect(Number(await corner.evaluate((el) => getComputedStyle(el).opacity))).toBeLessThan(0.5);
+
+    // Before it reaches the middle of the screen it is fully open, framed.
+    await placeTop(page, ".grand-reveal-stage", 0.1);
+    await expect.poll(() => photoShowsAt(page, 0.08, 0.6)).toBe(true);
+    await expect(corner).toHaveCSS("opacity", "1");
+    await expect
+      .poll(() => page.locator(".grand-reveal-edge-top").evaluate((el) => getComputedStyle(el).scale))
+      .toMatch(/^1( 1)?$/);
+  });
+
+  test("each Living composition slides its layers sideways and comes into focus at the centre", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const item = ".living-item-celebrate";
+    const read = () =>
+      page.evaluate((s) => {
+        const scene = document.querySelector<HTMLElement>(`${s} .living-scene`)!;
+        return {
+          p: Number(scene.style.getPropertyValue("--p")),
+          veil: Number(getComputedStyle(document.querySelector(`${s} .living-veil`)!).opacity),
+          tabletX: Number.parseFloat(getComputedStyle(document.querySelector(`${s} .living-tablet`)!).translate) || 0,
+        };
+      }, item);
+
+    // Entering at the foot of the screen: veiled, its layers offset.
+    await placeTop(page, `${item} .living-scene`, 0.95);
+    await expect.poll(async () => (await read()).p).toBeGreaterThan(0);
+    const entering = await read();
+    expect(entering.p).toBeLessThan(0.15);
+    expect(entering.veil).toBeGreaterThan(0.2);
+
+    // Centred: clear, its layers moved sideways; its text is never dimmed.
+    await page.evaluate((s) => {
+      const r = document.querySelector(`${s} .living-scene`)!.getBoundingClientRect();
+      window.scrollTo({ top: r.top + window.scrollY + r.height / 2 - innerHeight / 2, behavior: "instant" });
+    }, item);
+    await expect.poll(async () => Math.abs((await read()).p - 0.5)).toBeLessThan(0.1);
+    const centred = await read();
+    expect(centred.veil).toBe(0);
+    expect(Math.abs(centred.tabletX - entering.tabletX)).toBeGreaterThan(10);
+    await expect(page.locator(`${item} .living-text`)).toHaveCSS("opacity", "1");
+  });
+});
+
+test.describe("The Grand Reveal and The Living Experiences — reduced motion", () => {
+  test.use({ viewport: DESKTOP, reducedMotion: "reduce" });
+
+  test("are complete and still: no doorway, no drift, no veil", async ({ page }) => {
+    await page.goto("/");
+    // Nothing clipped ("inset(0)" once revealed is the same as none).
+    const unclipped = /^(none|inset\(0(px|%)?\))$/;
+    await page.locator("#reveal").scrollIntoViewIfNeeded();
+    await expect(page.locator(".grand-reveal-window")).toHaveCSS("clip-path", unclipped);
+    for (const corner of await page.locator(".grand-reveal-corner").all()) {
+      await expect(corner).toHaveCSS("opacity", "1");
+    }
+    await expect(page.locator(".grand-reveal-edge-top")).not.toHaveCSS("scale", "0 1");
+    expect(await page.locator(".grand-reveal-stage").evaluate((el) => el.style.getPropertyValue("--p"))).toBe("");
+
+    await page.locator("#living").scrollIntoViewIfNeeded();
+    for (const scene of await page.locator(".living-scene").all()) {
+      expect(await scene.evaluate((el) => el.style.getPropertyValue("--p"))).toBe("");
+    }
+    for (const veil of await page.locator(".living-veil").all()) {
+      await expect(veil).toHaveCSS("opacity", "0");
+    }
+    for (const frame of await page.locator(".living-frame").all()) {
+      await expect(frame).toHaveCSS("clip-path", unclipped);
+    }
+    for (const text of await page.locator(".living-text").all()) {
+      await expect(text).toHaveCSS("opacity", "1");
+    }
+  });
+});
+
+test.describe("The Grand Reveal — phone", () => {
+  test.use({ viewport: PHONE });
+
+  test("shows the portrait crop and opens once, with no scroll-linked progress", async ({ page }) => {
+    await page.goto("/");
+    const frame = page.locator(".grand-reveal-window");
+    await frame.scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => frame.locator("img").evaluate((img: HTMLImageElement) => img.currentSrc))
+      .toMatch(/\/images\/hotel\/reveal-night-portrait-\d+\.webp$/);
+    await expect.poll(() => frame.evaluate((el) => getComputedStyle(el).clipPath)).toMatch(/^inset\(0(px)?\)$/);
+    expect(await page.locator(".grand-reveal-stage").evaluate((el) => el.style.getPropertyValue("--p"))).toBe("");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
+  });
+});

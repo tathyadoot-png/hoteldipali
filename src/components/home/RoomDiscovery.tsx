@@ -23,18 +23,19 @@ function facts(room: RoomPreview): string {
 }
 
 /**
- * Rooms as an index rather than a card grid. On wide screens the large stage
- * on the right follows whichever room is hovered or keyboard-focused, wiping
- * the next photograph in from below. On small screens there is no hover to
- * rely on, so each room simply carries its own image inline.
+ * Rooms as an index rather than a card grid. On wide screens the stage beside
+ * it — a photograph under a shallow lintel, standing on emerald stone in a fine
+ * gold line — follows whichever room is hovered or keyboard-focused, the next
+ * photograph sweeping in from the side. On small screens there is no hover to
+ * rely on, so each room simply carries its own photograph inline.
  */
 export function RoomDiscovery({ rooms }: { rooms: RoomPreview[] }) {
   const [active, setActive] = useState(0);
   const current = rooms[active] ?? rooms[0];
 
   return (
-    <div className="grid gap-x-12 gap-y-10 lg:grid-cols-12">
-      <ol className="divide-y divide-line border-y border-line lg:col-span-5">
+    <div className="stay-discovery">
+      <ol className="stay-index">
         {rooms.map((room, i) => (
           <li key={room.slug}>
             <Link
@@ -43,43 +44,41 @@ export function RoomDiscovery({ rooms }: { rooms: RoomPreview[] }) {
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
               data-active={i === active ? "" : undefined}
-              className="group flex items-start gap-4 py-5 md:py-6"
+              className="stay-room"
             >
-              <span aria-hidden="true" className="room-marker mt-5 shrink-0" />
-              <span className="min-w-0 flex-1">
-                <span className="heading-2 block transition-colors group-hover:text-accent">
-                  {room.name}
-                </span>
-                <span className="caption mt-2 block not-italic">{facts(room)}</span>
+              <span aria-hidden="true" className="room-marker" />
+              <span className="stay-room-text">
+                <span className="stay-room-name">{room.name}</span>
+                <span className="stay-room-facts">{facts(room)}</span>
               </span>
             </Link>
-            <div className="pb-6 lg:hidden">
-              <Picture image={room.image} ratio="4:3" sizes="100vw" />
+            <div className="stay-room-photo">
+              <Picture image={room.image} ratio="3:2" sizes="(min-width: 768px) 76vw, 92vw" />
             </div>
           </li>
         ))}
       </ol>
 
-      <div className="hidden lg:col-span-7 lg:block">
-        <div className="sticky top-28">
-          <div className="room-stage">
-            {rooms.map((room, i) => (
-              <div
-                key={room.slug}
-                className="room-stage-item"
-                data-active={i === active ? "" : undefined}
-                aria-hidden={i === active ? undefined : true}
-              >
-                <Picture
-                  image={room.image}
-                  ratio="4:3"
-                  sizes="58vw"
-                  decorative={i !== active}
-                />
-              </div>
-            ))}
+      <div className="stay-stage-col">
+        <div className="stay-stage-sticky">
+          <div className="stay-stage-wrap">
+            {/* Emerald stone tablet; data-theme needs its own text-ink (CLAUDE.md §E). */}
+            <div aria-hidden="true" data-theme="emerald" className="stay-tablet text-ink" />
+            <div className="room-stage">
+              {rooms.map((room, i) => (
+                <div
+                  key={room.slug}
+                  className="room-stage-item"
+                  data-active={i === active ? "" : undefined}
+                  aria-hidden={i === active ? undefined : true}
+                >
+                  <Picture image={room.image} fill sizes="(min-width: 1024px) 50vw, 1px" decorative={i !== active} />
+                </div>
+              ))}
+              <span aria-hidden="true" className="room-stage-frame" />
+            </div>
           </div>
-          {current ? <p className="caption mt-4">{current.summary}</p> : null}
+          {current ? <p className="stay-stage-caption">{current.summary}</p> : null}
         </div>
       </div>
     </div>

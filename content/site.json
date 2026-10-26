@@ -62,6 +62,36 @@
     "source": "Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10",
     "note": "portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel"
   },
+  "homeReveal": {
+    "id": "home-reveal-facade-night",
+    "src": "/images/hotel/reveal-night-panorama-2560.webp",
+    "alt": "Hotel Dipali at night: the lit façade, the garden pergolas and the entrance porch behind a long hedge",
+    "shot": "Night, wide panorama of the whole lit façade, the gardens and the entrance porch — no rooftop signage and as little car park as possible in frame",
+    "aspect": "21:9",
+    "width": 2560,
+    "height": 1028,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ],
+    "focus": "75% 50%",
+    "small": {
+      "src": "/images/hotel/reveal-night-portrait-1434.webp",
+      "widths": [
+        480,
+        720,
+        1080,
+        1434
+      ],
+      "width": 1434,
+      "height": 1792
+    },
+    "status": "public-unverified",
+    "source": "Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011556_0038_D.JPG), received 2026-10-24",
+    "note": "cropped below the rooftop \"DIPALI RESIDENCY\" sign; the tower on the left still carries a \"HOTEL DEEPALI\" sign — confirm usage rights, caption and that signage with the hotel"
+  },
   "address": {
     "status": "public-unverified",
     "source": "GST public record (see docs/public-data.md)",

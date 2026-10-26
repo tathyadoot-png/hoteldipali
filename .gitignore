@@ -1,6 +1,8 @@
 # Dependencies
 node_modules/
 .pnpm-store/
+# Local copy of the old npm-installed tree, kept during the pnpm switch.
+/node_modules.npm-backup/
 
 # Next.js
 .next/

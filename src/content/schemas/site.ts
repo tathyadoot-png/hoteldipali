@@ -57,6 +57,8 @@ export const siteSchema = z.object({
   homeHeroVideo: heroVideoSchema,
   // "The Dipali Experience", the section below the home hero.
   homeExperience: imageSchema,
+  // "The Grand Reveal": the whole lit façade at night (home page).
+  homeReveal: imageSchema,
 
   address: tracked(
     z.object({

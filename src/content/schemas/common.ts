@@ -84,6 +84,7 @@ export function trackedMobile() {
 }
 
 export const aspectSchema = z.enum([
+  "21:9",
   "16:9",
   "4:3",
   "3:2",

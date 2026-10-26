@@ -124,6 +124,11 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-26 | "A World Within Dipali" replaces the "Explore the hotel" word index (owner's decision) and takes `#explore` (both hero CTAs and "Discover Our Story" still land on real sections). Celebrate featured (weddings first) on an ivory plaque; Stay, Unwind, Dine supporting in a desktop zig-zag (4:5 / 3:4 / 16:9 / 4:3), each a stretched link: /weddings/ (+ /events/), /rooms/, #unwind (no pool & gym page yet), /dining/. Photos the sections further down do not lead with. Reveals: heading mask + staggered accent line, photographs wipe from four directions (new `ScrollReveal` variants), captions rise, gold rules draw after; rich motion adds transform-only drift. | Owner brief: editorial gallery, featured vs supporting, no equal cards; only facilities in CLAUDE.md §A, no invented claims. |
 | 2026-10-26 | Measured with real GPU compositing (new-headless Chromium + ANGLE D3D11 on the GTX 1660 SUPER, 75 Hz): scrolling the whole layered sequence down and back, p50 13.3 ms, p95 13.5 ms, 0 frames > 33 ms (1× CPU); 4× CPU p50 26.6 ms, p95 39.9 ms, 19 of 343 frames > 33 ms. Default headless (SwiftShader) is ~4× slower and is not representative. | Fixes found by measuring: LayeredSection no longer writes custom properties no CSS reads (each re-styled a whole subtree per frame; 4× CPU p95 53 → 40 ms) and per-frame movers get `will-change`. |
 | 2026-10-24 | Performance: the stone texture (the home page's largest paint, CSS-only) is preloaded from `EntranceHero`; the hero photo's `sizes` match the arch's CSS width; the botanical panel is the 480 w file below 768 px; the welcome/enquiry logos use the 7–20 KB emblem set instead of the 506 KB PNG. | Measured on a throttled phone (4× CPU, 150 ms RTT, 1.6 Mbps): LCP 3.0 s → 1.67 s, home weight 643 → 579 KB. |
+| 2026-10-26 | The interrupted homepage prompt is finished on a second machine: "The Grand Reveal" and "The Living Experiences" are added after A World Within Dipali, before Stay; nothing existing is removed or restyled. The office machine had produced only the reveal's image crops (`make-photos.ts` job + `reveal-night-*` WebPs, commit `e7ea455`). | The run's brief: finish only what is missing and preserve every completed section. The overlap with World Within and the older sections is an open question. |
+| 2026-10-26 | The Grand Reveal = the night panorama of the whole lit façade (DJI_…0038) as `site.homeReveal` (`public-unverified`; new aspect `21:9`; the portrait crop as `small` for phones), on emerald deepening to charcoal, with a centred, line-by-line heading and a fine gold frame (`CornerOrnament` corners, a keystone). Tablet and up show it at a fixed 1.14 zoom toward the porch (`scale`, origin 76% 28%, focus 75% 50%), which leaves the far-left tower and its "HOTEL DEEPALI" sign out of frame and trims the wet forecourt; a charcoal shade settles over the forecourt. Rich motion, from the stage's own `--p` (new `ScrollScene`): an arched doorway over the porch (22% wide, 63% across, round head) opens to the full frame over p 0.04–0.40 (smoothstep) while the photograph settles from 12% closer; the frame's edges draw from their centres over 0.26–0.46 and the corners and keystone set over 0.40–0.52 — complete before the stage is centred, so nothing is pinned. Otherwise one `wipe-centre` reveal, then the frame draws. | Brief: a cinematic architectural reveal of real imagery, a restrained gold frame, choreographed scroll-linked motion, no heavy pinned scene or scroll hijacking. CLAUDE.md §G keeps the variant spelling to the footer line and schema, so the sign is framed out without editing the file. |
+| 2026-10-26 | The Living Experiences = Stay, Weddings & Events, Dining and Pool & Gym as four asymmetrical compositions on ivory, under the threshold's arch rising over the night: each photograph on an emerald stone tablet with an offset gold frame line behind it, alternating sides and proportions (3:2 / 4:3 / 16:10 / 3:4; desktop columns 1–7, 7–12, 2–7, 8–11); Dining layers an Infinity Bar photograph over its corner. Its motion is horizontal, unlike the Grand Reveal's opening: photographs open sideways from their text (`wipe-left` / new `wipe-right`), the text slides toward its photograph (new `slide-left` / `slide-right`) and the frame lines extend along the same line. Rich motion adds each composition's own `--p` (`ScrollScene`): tablet, photograph, frame line and inset drift sideways at different rates, and an ivory veil (max 0.45) lifts from the photograph as it reaches the viewport's centre — text is never dimmed. | Brief: an asymmetrical, layered photographic composition with directional reveals, subtle horizontal movement and controlled shifts of focus; no card grid, no pinned scene. |
+| 2026-10-26 | The Living Experiences' photographs: for each experience, the first real photograph of its kind that no other section of the page shows (`room-double-3`, `banquet-hall-wide`, `food-serving` with `cocktail-blue` over it); a reused one only when none is left. The pool's two aerials are both shown elsewhere, so its pool-centred portrait crop (`aerial-pool-grounds-portrait`, already made by `make:photos`, unused) is now the pool's second content image (`leisure.pool.images[1]`, `public-unverified`). The copy is display copy in `page.tsx`, as for World Within: it describes the photographs and the facilities in CLAUDE.md §A only. | No repeated, stock or fabricated imagery. There is no gym photograph, so "Pool & Gym" shows the pool only. |
+| 2026-10-26 | `node_modules.npm-backup/` (the npm-built tree kept during the switch to pnpm) is excluded in `.gitignore`, `tsconfig.json` and the ESLint ignores. | It sits in the project root: TypeScript's `**/*.ts` include picked up 3,832 of its files, ESLint and Tailwind's source scan would read it, and `git add -A` would have committed it. |
 
 ## Brand assets
 
@@ -205,6 +210,18 @@ See CLAUDE.md section M:
 - **A World Within Dipali:** "Unwind" links to the home section `#unwind` until a Pool &
   Gym page exists; the room, venue and outlet facts behind the four experiences are
   still `sample` content.
+- **The Grand Reveal (2026-10-26):** the tower on the far left of DJI_…0038 carries a
+  "HOTEL DEEPALI" sign; tablet and up frame it out (CSS zoom) and phones never show it
+  (portrait crop) — confirm with the hotel, with the usage rights and the caption "The
+  façade at night · Sagar". The forecourt is wet in this photograph: a dry, blue-hour
+  version of the same view would serve better.
+- **The Living Experiences (2026-10-26):** it covers the same four experiences as A
+  World Within Dipali and as the older Stay / Celebrate / Unwind / Dine sections below
+  it, which are still in the 2026-10-13 design language. Decide whether to retire or
+  restyle those (not done: this run preserved every completed section). "Pool & Gym"
+  shows the pool only until a gym photograph is supplied. Confirm the display copy.
+- **No JavaScript (pre-existing):** the header keeps its transparent overlay state, so its
+  links barely show over ivory sections. Not changed here (the navbar was preserved).
 - Smooth scrolling was tuned with synthetic wheel input (100 px notches) in Chromium on
   Windows. Confirm the feel on real hardware: a notched mouse on Windows, a Mac
   trackpad (its own momentum + Lenis), a Magic Mouse, and Safari/Firefox. Touch was
@@ -740,3 +757,48 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     desktop clip requested ~4.1 s after navigation (after `load` and the opening);
     34 Tab stops all visible and on top; a mid-page reload restores the held, covered
     state. Scroll pacing in the decision rows. Not tested on Safari/Firefox or real phones.
+- 2026-10-26: Claude Code permissions for this repo (tooling only, not a numbered step;
+  current step unchanged; no app code touched; uncommitted).
+  - **Added:** personal, git-ignored `.claude/settings.local.json` — allow rules for the
+    `package.json` scripts and in-project edits; ask rules for commit/push, history-rewriting
+    git, deletes, dependency installs, deploys (`wrangler`), `.env*` files and the source
+    media in `public/hotel|video|brand|palettes`.
+  - **Local toolchain is off-spec:** no `pnpm` on PATH, Node 20.20.0 (`.nvmrc` 24.19.0 is
+    not installed), `node_modules` installed by npm (untracked `package-lock.json`). npm
+    pulled `playwright-core` 1.64.1 beside 1.63.0 (pnpm lockfile pins 1.63.0 only), so
+    typecheck and build fail locally on `tests/*.spec.ts` (`Page` type mismatch); lint and
+    contrast pass; e2e not run. Fix: Node 24.19.0 + `pnpm install --frozen-lockfile`.
+  - **Resolved the same day** (by the owner of this machine): Node 24.19.0, pnpm 12.15.0
+    (corepack), `pnpm install --frozen-lockfile` and Playwright's Chromium; the npm tree is
+    kept as `node_modules.npm-backup/` (now ignored — see the decision row) and the untracked
+    `package-lock.json` is kept, both pending a decision. Typecheck and build pass.
+- 2026-10-26: Interrupted homepage work finished — "The Grand Reveal" and "The Living
+  Experiences" (not a numbered step; current step stays 11; uncommitted).
+  - **Recovered state:** the office machine had pushed only the reveal's image crops
+    (`make-photos.ts` job + 8 `reveal-night-*` WebPs, `e7ea455`) — no component, CSS,
+    content entry, tests or docs; nothing of the Living Experiences existed.
+  - **Built:** `GrandReveal`, `LivingExperiences`, `ScrollScene` (a scene's own `--p`),
+    `CornerOrnament`; `ScrollReveal` variants `wipe-right`, `slide-left`, `slide-right`;
+    `.grand-reveal*`, `.living*` and `.corner-*` in theme.css; `site.homeReveal` + schema
+    and the `21:9` aspect; the pool's portrait crop as `leisure.pool.images[1]`; `page.tsx`
+    places both after `#explore` (`#reveal`, `#living`). CLAUDE.md class list updated;
+    `docs/data-needed.md` regenerated (133 items, 25 photos).
+  - **Tests:** home — the reveal's photograph (panorama, phone crop, explicit size), its
+    frame parts and call to action; the four Living experiences in order, their links,
+    real sized photographs and layers, and no photograph repeated from elsewhere on the
+    page. Entrance — rich motion: the doorway shows the porch while the far side of the
+    frame is still closed, then the whole photograph shows and the frame completes before
+    the stage is centred; a Living composition is veiled entering and clear, shifted
+    sideways, at the centre, its text never dimmed; reduced motion: nothing clipped,
+    offset or veiled and no `--p`; phone: the portrait crop, a one-time reveal, no
+    overflow. **All 402 e2e tests pass** (388 before + 14 new); lint, typecheck,
+    contrast gate, content check and build clean (Node 24.19.0, pnpm 12.15.0).
+  - **Checked in headless Chromium (production build):** 360 and 390 (touch), 768 (touch),
+    1024×768, 1280×800, 1366×768, 1440×900, 1536×864 and 1920×1080 — no horizontal
+    overflow; rich motion from 1024; reduced motion and no JS show the complete static
+    compositions. Not checked on Safari/Firefox or real devices; the new scenes were not
+    frame-timed.
+  - **Environment:** `node_modules.npm-backup/` excluded (decision row). The first baseline
+    e2e run failed 12 enquiry-form tests only because the reused preview build lacked the
+    test form endpoint (Playwright sets it just for a server it starts itself); built with
+    it, all 36 pass.

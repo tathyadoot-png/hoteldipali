@@ -10,6 +10,7 @@ import type { Aspect, Image } from "@/content";
 
 // Full class strings (no dynamic concatenation) so Tailwind detects them.
 const ASPECT_CLASS: Record<Aspect, string> = {
+  "21:9": "aspect-[21/9]",
   "16:9": "aspect-[16/9]",
   "4:3": "aspect-[4/3]",
   "3:2": "aspect-[3/2]",

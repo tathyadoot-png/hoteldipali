@@ -155,6 +155,99 @@ test.describe("Home page", () => {
     await expect(link).toHaveAttribute("href", "/weddings/");
   });
 
+  /* ──── The Grand Reveal ──── */
+
+  test("The Grand Reveal: the façade at night, a real photograph in a gold frame", async ({ page }) => {
+    const section = page.locator("#reveal");
+    await expect(section).toHaveAttribute("data-theme", "emerald");
+    await expect(
+      section.getByRole("heading", { level: 2, name: "As evening falls, the whole house comes alight" }),
+    ).toBeVisible();
+
+    const image = await section.locator(".grand-reveal-window img").evaluate((img: HTMLImageElement) => ({
+      src: img.getAttribute("src") ?? "",
+      srcset: img.srcset,
+      alt: img.alt,
+      width: img.getAttribute("width"),
+      height: img.getAttribute("height"),
+    }));
+    // The optimised night panorama — never a placeholder or the camera
+    // original — with explicit dimensions, and a portrait crop for phones.
+    expect(image.src).toMatch(/^\/images\/hotel\/reveal-night-panorama-\d+\.webp$/);
+    expect(image.srcset).toContain("reveal-night-panorama-960.webp 960w");
+    expect(image.alt.length).toBeGreaterThan(0);
+    expect([image.width, image.height]).toEqual(["2560", "1028"]);
+    await expect(section.locator('.grand-reveal-window source[media="(max-width: 767px)"]')).toHaveAttribute(
+      "srcset",
+      /reveal-night-portrait-480\.webp 480w/,
+    );
+
+    // The frame: four edges, four corner ornaments and a keystone.
+    await expect(section.locator(".grand-reveal-edge")).toHaveCount(4);
+    await expect(section.locator(".grand-reveal-corner svg")).toHaveCount(4);
+    await expect(section.locator(".grand-reveal-key")).toHaveCount(1);
+
+    await expect(section.getByRole("link", { name: "Plan your visit" })).toHaveAttribute("href", "#enquire");
+  });
+
+  /* ──── The Living Experiences ──── */
+
+  test("The Living Experiences: Stay, Weddings & Events, Dining and Pool & Gym, each a real photograph", async ({
+    page,
+  }) => {
+    const section = page.locator("#living");
+    await expect(section.getByRole("heading", { level: 2, name: "The Living Experiences" })).toBeVisible();
+
+    await expect(section.locator(".living-item")).toHaveCount(4);
+    await expect(section.locator(".living-label")).toHaveText([
+      /Stay$/,
+      /Weddings & Events$/,
+      /Dining$/,
+      /Pool & Gym$/,
+    ]);
+    await expect(section.locator(".living-item-title")).toHaveCount(4);
+
+    const hrefs = await section
+      .locator(".living-links a")
+      .evaluateAll((els) => els.map((e) => e.getAttribute("href") ?? ""));
+    expect(hrefs.sort()).toEqual(["#unwind", "/dining/", "/events/", "/rooms/", "/weddings/"]);
+
+    const images = await section.locator(".living-frame img").evaluateAll((imgs) =>
+      (imgs as HTMLImageElement[]).map((img) => ({
+        src: img.getAttribute("src") ?? "",
+        srcset: img.srcset,
+        alt: img.alt,
+        sized: Boolean(img.getAttribute("width") && img.getAttribute("height")),
+      })),
+    );
+    expect(images).toHaveLength(4);
+    for (const image of images) {
+      expect(image.src).toMatch(/^\/images\/hotel\/.+\.webp$/);
+      expect(image.srcset.length).toBeGreaterThan(0);
+      expect(image.alt.length).toBeGreaterThan(0);
+      expect(image.sized).toBe(true);
+    }
+    expect(new Set(images.map((image) => image.src)).size).toBe(4);
+
+    // Layered: every photograph stands on an emerald stone tablet with a gold
+    // frame line behind it; Dining adds a second photograph over its corner.
+    await expect(section.locator(".living-tablet")).toHaveCount(4);
+    await expect(section.locator(".living-line")).toHaveCount(4);
+    await expect(section.locator(".living-item-dine .living-inset img")).toHaveAttribute(
+      "src",
+      /^\/images\/hotel\/.+\.webp$/,
+    );
+  });
+
+  test("The Living Experiences show photographs the rest of the page does not", async ({ page }) => {
+    const srcs = (selector: string) =>
+      page.locator(selector).evaluateAll((imgs) => imgs.map((img) => img.getAttribute("src") ?? ""));
+    const living = await srcs("#living img");
+    const elsewhere = new Set(await srcs("main img:not(#living img)"));
+    expect(living.length).toBeGreaterThanOrEqual(4);
+    expect(living.filter((src) => elsewhere.has(src))).toEqual([]);
+  });
+
   /* ──── Themed scopes carry text-ink ──── */
 
   test("all peacock-themed sections carry text-ink class", async ({ page }) => {
