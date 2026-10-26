@@ -111,6 +111,26 @@ const JOBS: Job[] = [
     widths: [480, 720, 960, 1200],
     quality: QUALITY,
   },
+  // The Grand Reveal (home): the night panorama of the whole lit façade,
+  // cropped below the rooftop "DIPALI RESIDENCY" sign (CLAUDE.md §G) and above
+  // most of the wet car park; and a 4:5 phone crop centred on the entrance,
+  // clear of the sign (which stands further right).
+  {
+    src: "images/hotel/DJI_20260909011556_0038_D.JPG",
+    out: "images/hotel",
+    slug: "reveal-night-panorama",
+    rect: { x: 0, y: 0.385, w: 1, h: 0.535 },
+    widths: [960, 1440, 1920, 2560],
+    quality: QUALITY,
+  },
+  {
+    src: "images/hotel/DJI_20260909011556_0038_D.JPG",
+    out: "images/hotel",
+    slug: "reveal-night-portrait",
+    rect: { x: 0.4, y: 0.385, w: 0.35, h: 0.5833 },
+    widths: [480, 720, 1080, 1434],
+    quality: QUALITY,
+  },
   // The real logo, trimmed to its artwork (alpha kept) for the loader and
   // the navigation medallion — instead of the 506 KB 1080 px PNG.
   {
