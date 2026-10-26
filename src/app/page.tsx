@@ -202,6 +202,7 @@ export default async function HomePage() {
       <LayeredSection
         id="explore"
         covers="#welcome"
+        scene
         data-theme="emerald"
         aria-labelledby="home-world"
         className="world-section layer-rise scroll-mt-28 bg-surface text-ink"

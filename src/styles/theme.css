@@ -2637,6 +2637,12 @@
 
   [data-motion="rich"] .layer-veil {
     opacity: calc(var(--cover, 0) * var(--veil-max, 0.55));
+    will-change: opacity;
+  }
+
+  /* What moves every frame gets its own compositor layer (no repaints). */
+  [data-motion="rich"] :is(.entrance-inner, .entrance-ribbon, .layer-rise > .layer-content) {
+    will-change: transform, opacity;
   }
 
   [data-motion="rich"] .entrance > .layer-veil {
@@ -3018,6 +3024,14 @@
     }
   }
 
+  /* Tablets: narrower supporting panels, so a portrait never fills the screen. */
+  @media (min-width: 768px) and (max-width: 1023.98px) {
+    .world-item-tall,
+    .world-item-wide {
+      width: 62%;
+    }
+  }
+
   @media (min-width: 768px) {
     .world-head {
       grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
@@ -3094,6 +3108,11 @@
      passes (transform only, from the section's --p); the featured one rises
      into place as the section arrives; the panorama's photograph slides
      within its frame. */
+  [data-motion="rich"] :is(.world-item-feature, .world-item-tall, .world-item-wide),
+  [data-motion="rich"] .world-item-panorama .world-frame img {
+    will-change: translate;
+  }
+
   [data-motion="rich"] .world-item-feature {
     translate: 0 calc(max(0, 0.4 - var(--p, 0.4)) * 20vh);
   }

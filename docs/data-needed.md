@@ -13,6 +13,7 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **tagline** _(sample)_ — sample tagline — confirm the hotel's preferred line · `tagline`
 - [ ] **shortDescription** _(sample)_ — sample copy — rewrite with verified details · `shortDescription`
 - [ ] **home-hero-entrance-night** _(public-unverified)_ — cropped below the rooftop sign; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24 · `homeHero`
+- [ ] **home-hero-entrance-night-video** _(sample)_ — AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from public/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch · `homeHeroVideo`
 - [ ] **home-experience-reception** _(public-unverified)_ — portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10 · `homeExperience`
 - [ ] **address** _(public-unverified)_ — address conflicts across platforms — hotel must confirm one; see docs/public-data.md · source: GST public record (see docs/public-data.md) · `address`
 - [ ] **locationLine** _(public-unverified)_ — confirm spelling Makroniya vs Makronia · source: Hotel's own social posts · `locationLine`
@@ -208,4 +209,4 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 
 ---
 
-Totals: 130 items/facts to confirm · 25 photos to replace.
+Totals: 131 items/facts to confirm · 25 photos to replace.

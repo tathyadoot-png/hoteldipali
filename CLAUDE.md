@@ -29,7 +29,10 @@ camera originals live in `public/hotel/` (never renamed, moved or edited by code
 referenced by pages) and `pnpm make:photos` writes WebP width sets to
 `public/images/hotel/` (Playwright's Chromium — no image library); the same script
 writes the trimmed logo emblem (`public/images/brand/`, from `public/brand/`) and the
-graded palette textures (`public/images/textures/`, from `public/palettes/`).
+graded palette textures (`public/images/textures/`, from `public/palettes/`). Video
+works the same way: source clips in `public/video/` are never served or edited, and
+`pnpm make:video` (Playwright's Chromium + WebCodecs — no ffmpeg) writes the cropped,
+looped, silent, web-optimised H.264 clip pages use.
 Animation:
 CSS + IntersectionObserver first. Smooth wheel scrolling: Lenis (approved 2026-10-19),
 only through `src/lib/smooth-scroll.ts`.
@@ -79,10 +82,11 @@ third-party script without asking.
 - Components use only semantic utilities (`bg-surface`, `text-ink`, `bg-accent`,
   `font-display`…) and component classes defined in `theme.css` (`.heading-hero`,
   `.heading-1/2/3`, `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.big-number`,
-  `.heading-page` (inner-page heroes), `.btn-primary`, `.btn-secondary`, `.btn-ghost`,
-  `.btn-cta` (signature enquiry modifier), `.link-cta`, `.btn-icon`, `.btn-royal`,
-  `.btn-royal-arrow`, `.link-royal` (Emerald chamfered gold-line buttons),
-  `.btn-royal-solid` (an emerald-scoped `.btn-royal` filled for use on ivory), `.chip`,
+  `.heading-page` (inner-page heroes), the button family (`.btn-primary` = the gold
+  plaque, booking actions; `.btn-secondary` = fine gold outline, every other action;
+  `.btn-ghost`; modifiers `.btn-cta` (stepping arrow) and `.btn-compact` (dense bars);
+  colours from the scope: gold = `highlight`, label = `brand`), `.link-cta`,
+  `.link-royal` (Emerald text link on a gold rule), `.btn-icon`, `.chip`,
   `.card`,
   `.link`,
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
@@ -90,8 +94,10 @@ third-party script without asking.
   `.field-hint`, `.visually-hidden`, `.hero-gradient`, `.hero-tint`, `.paper-grain`,
   `.frame-hairline`, `.frame-arch`, `.img-hover`, `.logo-medallion`, `.threshold`,
   `[data-reveal]` (`""` rise, `"mask"` headings, `"image"` frames), `.pictures-*`, plus
-  the home-experience scene classes `.entrance*`, `.experience*` (The Dipali
-  Experience, below the hero), `.pillar-*`, `.room-stage*`,
+  the home-experience scene classes `.entrance*` (incl. `.entrance-video*`),
+  `.experience*` (The Dipali Experience), `.world*` (A World Within Dipali), the
+  layered-section classes `.layers`, `.layer-rise`, `.layer-content`, `.layer-veil`,
+  `.room-stage*`,
   `.celebrate-*`, `.journey*`, the opening-loader and ornament classes `.intro*`,
   `.arch-*`, `.ring-*`, `.sprig-line`, `.ribbon-*`, `.stop-*`, and the shell classes
   `.header-*` (incl. `.header-band*`), `.menu-*` (incl. `.menu-medallion`,
@@ -190,7 +196,9 @@ Never call `window.dataLayer.push` or a vendor SDK directly from a component.
 
 WCAG 2.2 AA, semantic landmarks, one H1 per page, skip link, visible focus, labelled
 inputs, 44×44 px touch targets. Mobile Lighthouse ≥ 90, LCP < 2.5 s, CLS < 0.1, mobile
-hero image ≤ 150 KB, no autoplay video on mobile. Motion: < 400 ms,
+hero image ≤ 150 KB, no autoplay video on mobile (the home hero's clip plays from
+768px only, after `load`, never on reduced motion / data saver / 2G–3G, with a
+pause control — WCAG 2.2.2). Motion: < 400 ms,
 transform/opacity/clip-path only, everything disabled under `prefers-reduced-motion`.
 Scrolling: wheel input on mouse/trackpad devices is smoothed by Lenis — never slowed
 (wheelMultiplier 1) and never locked except under a modal; touch, keyboard, reduced
@@ -212,6 +220,12 @@ fine pointer, no reduced motion, no data-saver); every scene must have a complet
 static layout without it. Pin with `position: sticky` inside a tall runway — scenes
 themselves never listen to wheel/touch events — and use `overflow: clip` (not
 `hidden`) on pinned frames, which a focused element could otherwise scroll sideways.
+Layered sections (`LayeredSection`): a section rising over the previous one writes
+`--cover` (0–1) on it and CSS makes it recede (transform/opacity only); the home hero
+holds (sticky) only inside `.layers`, so the hold ends once it is covered. A focused
+element under a rising section scrolls back into view (WCAG 2.4.11). Each custom
+property write re-styles its element's whole subtree: write only variables CSS reads,
+and give what moves every frame `will-change`.
 
 ## L. Workflow (every task, no exceptions)
 

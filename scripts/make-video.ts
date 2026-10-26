@@ -160,7 +160,8 @@ async function encode(job: Job): Promise<Encoded> {
         const current = thumb(frames[i]!);
         let sum = 0;
         for (let p = 0; p < current.length; p += 4) {
-          sum += Math.abs(current[p]! - previous[p]!) + Math.abs(current[p + 1]! - previous[p + 1]!);
+          sum +=
+            Math.abs(current[p]! - previous[p]!) + Math.abs(current[p + 1]! - previous[p + 1]!);
         }
         diffs.push(sum / (current.length / 2));
         previous = current;
@@ -185,7 +186,8 @@ async function encode(job: Job): Promise<Encoded> {
       let description = "";
       const toBase64 = (bytes: Uint8Array) => {
         let bin = "";
-        for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+        for (let i = 0; i < bytes.length; i += 0x8000)
+          bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
         return btoa(bin);
       };
       const encoder = new VideoEncoder({
@@ -216,7 +218,10 @@ async function encode(job: Job): Promise<Encoded> {
           ctx.globalAlpha = into / K;
           ctx.drawImage(frames[0], 0, 0);
         }
-        const frame = new VideoFrame(canvas, { timestamp: Math.round(n * step), duration: Math.round(step) });
+        const frame = new VideoFrame(canvas, {
+          timestamp: Math.round(n * step),
+          duration: Math.round(step),
+        });
         encoder.encode(frame, { keyFrame: n % (fps * 2) === 0 });
         frame.close();
       }
@@ -265,36 +270,68 @@ function u16(...values: number[]): Buffer {
 
 const MATRIX = u32(0x00010000, 0, 0, 0, 0x00010000, 0, 0, 0, 0x40000000);
 
-function mp4({ width, height, fps }: Job, avcC: Buffer, samples: { key: boolean; data: Buffer }[]): Buffer {
+function mp4(
+  { width, height, fps }: Job,
+  avcC: Buffer,
+  samples: { key: boolean; data: Buffer }[],
+): Buffer {
   const timescale = fps * 1000;
   const delta = 1000;
   const duration = samples.length * delta;
   const movieTimescale = 1000;
   const movieDuration = Math.round((duration / timescale) * movieTimescale);
 
-  const ftyp = box("ftyp", Buffer.from("isom", "latin1"), u32(0x200), Buffer.from("isomiso2avc1mp41", "latin1"));
+  const ftyp = box(
+    "ftyp",
+    Buffer.from("isom", "latin1"),
+    u32(0x200),
+    Buffer.from("isomiso2avc1mp41", "latin1"),
+  );
 
   const build = (chunkOffset: number) => {
     const mvhd = fullBox(
-      "mvhd", 0, 0,
-      u32(0, 0, movieTimescale, movieDuration, 0x00010000), u16(0x0100), Buffer.alloc(10),
-      MATRIX, Buffer.alloc(24), u32(2),
+      "mvhd",
+      0,
+      0,
+      u32(0, 0, movieTimescale, movieDuration, 0x00010000),
+      u16(0x0100),
+      Buffer.alloc(10),
+      MATRIX,
+      Buffer.alloc(24),
+      u32(2),
     );
     const tkhd = fullBox(
-      "tkhd", 0, 3,
-      u32(0, 0, 1, 0, movieDuration), Buffer.alloc(8), u16(0, 0, 0, 0),
-      MATRIX, u32(width << 16, height << 16),
+      "tkhd",
+      0,
+      3,
+      u32(0, 0, 1, 0, movieDuration),
+      Buffer.alloc(8),
+      u16(0, 0, 0, 0),
+      MATRIX,
+      u32(width << 16, height << 16),
     );
     const mdhd = fullBox("mdhd", 0, 0, u32(0, 0, timescale, duration), u16(0x55c4, 0)); // language "und"
-    const hdlr = fullBox("hdlr", 0, 0, u32(0), Buffer.from("vide", "latin1"), Buffer.alloc(12), Buffer.from("VideoHandler\0", "latin1"));
+    const hdlr = fullBox(
+      "hdlr",
+      0,
+      0,
+      u32(0),
+      Buffer.from("vide", "latin1"),
+      Buffer.alloc(12),
+      Buffer.from("VideoHandler\0", "latin1"),
+    );
     const vmhd = fullBox("vmhd", 0, 1, Buffer.alloc(8));
     const dinf = box("dinf", fullBox("dref", 0, 0, u32(1), fullBox("url ", 0, 1)));
     const avc1 = box(
       "avc1",
-      Buffer.alloc(6), u16(1), // reserved, data_reference_index
-      Buffer.alloc(16), u16(width, height),
-      u32(0x00480000, 0x00480000, 0), u16(1), // 72 dpi, reserved, frame_count
-      Buffer.alloc(32), u16(0x0018, 0xffff), // compressor name, depth, pre_defined
+      Buffer.alloc(6),
+      u16(1), // reserved, data_reference_index
+      Buffer.alloc(16),
+      u16(width, height),
+      u32(0x00480000, 0x00480000, 0),
+      u16(1), // 72 dpi, reserved, frame_count
+      Buffer.alloc(32),
+      u16(0x0018, 0xffff), // compressor name, depth, pre_defined
       box("avcC", avcC),
     );
     const stsd = fullBox("stsd", 0, 0, u32(1), avc1);
@@ -302,7 +339,12 @@ function mp4({ width, height, fps }: Job, avcC: Buffer, samples: { key: boolean;
     const keys = samples.flatMap((s, i) => (s.key ? [i + 1] : []));
     const stss = fullBox("stss", 0, 0, u32(keys.length, ...keys));
     const stsc = fullBox("stsc", 0, 0, u32(1, 1, samples.length, 1));
-    const stsz = fullBox("stsz", 0, 0, u32(0, samples.length, ...samples.map((s) => s.data.length)));
+    const stsz = fullBox(
+      "stsz",
+      0,
+      0,
+      u32(0, samples.length, ...samples.map((s) => s.data.length)),
+    );
     const stco = fullBox("stco", 0, 0, u32(1, chunkOffset));
     const stbl = box("stbl", stsd, stts, stss, stsc, stsz, stco);
     const minf = box("minf", vmhd, dinf, stbl);

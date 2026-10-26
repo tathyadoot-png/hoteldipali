@@ -116,6 +116,13 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-26 | "The Dipali Experience" replaces the welcome block's logo medallion + "Step inside" heading (same `#welcome` section, threshold, `#home-intro` heading id; the pillar index `#explore` stays below it). Statement (eyebrow, two-line Cormorant heading with "Remember" in Great Vibes, gold rule, Cormorant italic lead, Manrope body = `site.shortDescription`, emerald-tablet `.btn-royal-solid` CTA) beside the reception atrium as a 4:5 portrait under a shallow lintel (the threshold's elliptical curve, not the hero's round arch), on an emerald stone tablet with a vertical caption, traced by one gold line that draws upward after the photo reveals; a gold thread continues down from the threshold keystone. Reveals reuse `ScrollReveal` (380 ms); no scroll-linked work. | Owner brief: editorial, architectural, emerald + ivory + gold, no repeat of the hero composition, lightweight. |
 | 2026-10-26 | New content image `site.homeExperience` (schema `imageSchema`): `reception-atrium-portrait-{480,720,960,1200}.webp`, a 4:5 crop of DSC_1632 below the ceiling band (36–146 KB; phones load 480 w). The "In pictures" mosaic skips the photo the section shows (matched on `source`). | A cover-crop of the landscape set made phones fetch 150–224 KB to show half of it; a dedicated crop keeps the trust fields and explicit dimensions. |
 | 2026-10-26 | Contrast gate: light-only large-text pair `brand`/`surface` (13.25:1) for the script accent word on ivory. | Every text/background pair is gated (CLAUDE.md §E). |
+| 2026-10-26 | Hero video = `public/video/1.mp4` (owner's), which is an **AI animation** (Google Veo watermark) of the night photo DJI_…0042 with the "DIPALI RESIDENCY" sign in view. Owner's decision: use it **as `sample`** content (`site.homeHeroVideo`, new `heroVideoSchema`), so `pnpm release` blocks launch until real footage replaces it. | CLAUDE.md §F (never present AI imagery as the hotel) — the trust system keeps it a placeholder, as with the 2026-10-13 entrance film. |
+| 2026-10-26 | `pnpm make:video` (new, `scripts/make-video.ts`): Playwright Chromium grabs every frame during quarter-speed playback (seeking returns stale frames headless), crops to the hero photo's arch crop (clear of the pillarbox, the watermark and — under the arch's round top — the sign), ends at 7.0 s (the source dissolves into a wide shot of other buildings from 7.2 s), dissolves its last 0.75 s back to frame 0 so every loop restarts on the poster's framing, encodes H.264 Constrained Baseline with WebCodecs at exact 1/24 s timestamps, and writes a faststart MP4 in Node (no audio). 532×740, 7.0 s, ~1.0 MB (source 12.9 MB, 1920×1080, ~13 Mbit/s, audio, index at the end). | No ffmpeg or muxing dependency. MediaRecorder was tried first: wall-clock capture gave 8–91 ms frame durations (visible judder). Poster → first frame differs as little as two consecutive frames; loop seam likewise. |
+| 2026-10-26 | Phones get the poster only (owner: "Poster on phones"). `HeroVideo` mounts from 768px, without reduced motion / data saver / 2G–3G, after `load` and after the photo's entrance zoom; fades in only once frames play (autoplay refused or a load error leave the photo); pauses off screen, when covered by the next section and when the tab is hidden; a pause / play control (WCAG 2.2.2). The photograph is the poster. | CLAUDE.md §K (no autoplay video on mobile); the brief's fallback and no-blocking requirements. |
+| 2026-10-26 | One button family on the shared classes: `.btn-primary` = antique-gold plaque with deep emerald label (booking: header, menu, sticky bar, enquiry), hover draws an engraved hairline 4px inside; `.btn-secondary` = fine gold outline, ivory label on emerald/Peacock and deep emerald on ivory, gold rises into it on hover; Manrope 0.75rem small capitals, 48px, 2px radius; `.btn-compact` for the phone sticky bar. `.btn-royal*` (chamfered border-image) retired. Contrast gate adds `brand`/`highlight` (5.41 / 7.52 / 5.15:1) and `brand`/`surface` on ivory (13.25:1) as body pairs. | Owner: polygon corners too prominent and inconsistent. Changing the shared classes also turns other pages' primary buttons from clay to gold — consistent with the identity, flagged for review. |
+| 2026-10-26 | Layered scroll: the hero holds (sticky inside `.layers`, rich motion, viewport ≥ 600px tall) while The Dipali Experience rises over it — the hero's content eases back (−6vh, scale 0.94, opacity 0.6) under a charcoal veil; then A World Within Dipali (emerald, a straight panel edge with a doorway crown and keystone) rises over the Experience, which lags (+16vh) and dims under a deep-green veil. `LayeredSection` + new `useScrollProgress` mode `"rise"` write `--cover` on the covered section; no new dependency. Reduced motion / touch / narrow: sections stack with their edges overlapping. | Owner's "most important" requirement, without scroll-jacking: native scrolling, nothing pinned beyond the cover, no wheel/touch handling. |
+| 2026-10-26 | "A World Within Dipali" replaces the "Explore the hotel" word index (owner's decision) and takes `#explore` (both hero CTAs and "Discover Our Story" still land on real sections). Celebrate featured (weddings first) on an ivory plaque; Stay, Unwind, Dine supporting in a desktop zig-zag (4:5 / 3:4 / 16:9 / 4:3), each a stretched link: /weddings/ (+ /events/), /rooms/, #unwind (no pool & gym page yet), /dining/. Photos the sections further down do not lead with. Reveals: heading mask + staggered accent line, photographs wipe from four directions (new `ScrollReveal` variants), captions rise, gold rules draw after; rich motion adds transform-only drift. | Owner brief: editorial gallery, featured vs supporting, no equal cards; only facilities in CLAUDE.md §A, no invented claims. |
+| 2026-10-26 | Measured with real GPU compositing (new-headless Chromium + ANGLE D3D11 on the GTX 1660 SUPER, 75 Hz): scrolling the whole layered sequence down and back, p50 13.3 ms, p95 13.5 ms, 0 frames > 33 ms (1× CPU); 4× CPU p50 26.6 ms, p95 39.9 ms, 19 of 343 frames > 33 ms. Default headless (SwiftShader) is ~4× slower and is not representative. | Fixes found by measuring: LayeredSection no longer writes custom properties no CSS reads (each re-styled a whole subtree per frame; 4× CPU p95 53 → 40 ms) and per-frame movers get `will-change`. |
 | 2026-10-24 | Performance: the stone texture (the home page's largest paint, CSS-only) is preloaded from `EntranceHero`; the hero photo's `sizes` match the arch's CSS width; the botanical panel is the 480 w file below 768 px; the welcome/enquiry logos use the 7–20 KB emblem set instead of the 506 KB PNG. | Measured on a throttled phone (4× CPU, 150 ms RTT, 1.6 Mbps): LCP 3.0 s → 1.67 s, home weight 643 → 579 KB. |
 
 ## Brand assets
@@ -184,10 +191,20 @@ See CLAUDE.md section M:
     emerald hero — outside this phase; decide whether it joins the Emerald identity.
   - Measured in headless Chromium only (software raster). Check the opening on a
     real mid-range Android phone and on Safari/iOS.
-- **The Dipali Experience (2026-10-26):** "Discover Our Story" points at the pillar
-  index (`#explore`) until an About / story page exists. Its body copy is
+- **The Dipali Experience (2026-10-26):** "Discover Our Story" points at A World Within
+  Dipali (`#explore`) until an About / story page exists. Its body copy is
   `site.shortDescription`, still `sample` — replace with verified wording. Confirm the
   caption "The reception atrium · Sagar" and `11.jfif` (now unused) can be removed.
+- **Hero video (2026-10-26):** it is AI-generated (Veo) and marked `sample`; launch is
+  blocked until original footage (a slow night push-in to the porch, ≥1080 px tall, no
+  signage in view) replaces it. The 12.9 MB source `public/video/1.mp4` is copied into
+  the export — move it out of `public/` before deploying (not done: the brief says not
+  to alter it).
+- **Buttons (2026-10-26):** the shared `.btn-primary` is now gold on every page (it was
+  clay on ivory pages) — confirm this is wanted site-wide.
+- **A World Within Dipali:** "Unwind" links to the home section `#unwind` until a Pool &
+  Gym page exists; the room, venue and outlet facts behind the four experiences are
+  still `sample` content.
 - Smooth scrolling was tuned with synthetic wheel input (100 px notches) in Chromium on
   Windows. Confirm the feel on real hardware: a notched mouse on Windows, a Mac
   trackpad (its own momentum + Lenis), a Magic Mouse, and Safari/Firefox. Touch was
@@ -703,3 +720,23 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     no horizontal overflow, no console errors, CLS 0 from the section (home total
     unchanged: 0.0095 at 1024, 0.0062 at 1440 from the hero font swap). Reduced motion:
     everything visible at once; no JS: frame and photo shown unclipped.
+- 2026-10-26: Hero video, button system, layered scroll and "A World Within Dipali" (not a
+  numbered step; current step stays 11; uncommitted per the brief).
+  - **Built:** `scripts/make-video.ts` + `pnpm make:video` → `public/video/entrance-night-arch-532.mp4`;
+    `site.homeHeroVideo` + schema; `HeroVideo`; shared button family rewritten
+    (`.btn-royal*` retired, `.btn-compact` added; header, menu, hero, Experience and the
+    sticky bar switched); `LayeredSection` + `useScrollProgress` `"rise"` mode and
+    `cssVar: null`; `.layers` wrapper; `WorldWithin` + `ScrollReveal` wipe variants;
+    pillar index and its CSS removed; contrast pairs.
+  - **Tests:** entrance — hero video plays muted/inline after load, the pause control,
+    autoplay refused and load failure keep the photo, reduced motion and phones fetch no
+    video (and never the 13 MB source), the hero holds then scrolls away, World rises
+    over the Experience, keyboard focus is never covered, reduced motion stacks; home —
+    A World Within Dipali's four items, links, photos and keyboard; button selectors.
+    **All 388 e2e tests pass**; lint, typecheck, contrast gate, build clean.
+  - **Measured (production build):** no horizontal overflow and no console errors at
+    1440 / 820 / 390; home CLS 0.0062 at 1440 (the known font swap), 0 at 820 and 390;
+    throttled phone (4× CPU, slow 4G): LCP 1.38–1.86 s, CLS 0, 572 KB, no video request;
+    desktop clip requested ~4.1 s after navigation (after `load` and the opening);
+    34 Tab stops all visible and on top; a mid-page reload restores the held, covered
+    state. Scroll pacing in the decision rows. Not tested on Safari/Firefox or real phones.

@@ -19,8 +19,12 @@ type Options = {
    * top — for a section rising over the one before it (LayeredSection).
    */
   mode?: ProgressMode;
-  /** Custom property written on the element, as a unitless 0–1 number. */
-  cssVar?: string;
+  /**
+   * Custom property written on the element, as a unitless 0–1 number — or
+   * null to only report through onProgress (writing a custom property
+   * re-styles the element's whole subtree, so skip it when no CSS reads it).
+   */
+  cssVar?: string | null;
   /** Called with the progress whenever it changes. */
   onProgress?: (progress: number) => void;
 };
@@ -79,7 +83,7 @@ export function useScrollProgress<T extends HTMLElement>(
       const p = Math.round(Math.min(1, Math.max(0, raw)) * 10000) / 10000;
       if (p === last) return;
       last = p;
-      el.style.setProperty(cssVar, String(p));
+      if (cssVar) el.style.setProperty(cssVar, String(p));
       callback.current?.(p);
     };
 
@@ -136,7 +140,7 @@ export function useScrollProgress<T extends HTMLElement>(
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", schedule);
       if (frame) cancelAnimationFrame(frame);
-      el.style.removeProperty(cssVar);
+      if (cssVar) el.style.removeProperty(cssVar);
     };
   }, [ref, enabled, mode, cssVar, lenis]);
 }

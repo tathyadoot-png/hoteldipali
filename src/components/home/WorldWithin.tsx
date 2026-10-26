@@ -27,7 +27,10 @@ type WorldWithinProps = {
 
 // How each photograph opens as it enters, and the width it is shown at
 // (the `sizes` hint): every slot reveals from its own direction.
-const SLOT: Record<WorldExperience["slot"], { reveal: "wipe-up" | "wipe-down" | "wipe-left" | "wipe-centre"; sizes: string }> = {
+const SLOT: Record<
+  WorldExperience["slot"],
+  { reveal: "wipe-up" | "wipe-down" | "wipe-left" | "wipe-centre"; sizes: string }
+> = {
   feature: { reveal: "wipe-up", sizes: "(min-width: 1024px) min(54vw, 41rem), 100vw" },
   tall: { reveal: "wipe-down", sizes: "(min-width: 1024px) min(30vw, 23rem), 80vw" },
   wide: { reveal: "wipe-left", sizes: "(min-width: 1024px) min(30vw, 23rem), 80vw" },
@@ -73,7 +76,11 @@ export function WorldWithin({ headingId, eyebrow, title, intro, items }: WorldWi
           return (
             <li key={item.href} className={`world-item world-item-${item.slot}`}>
               <div className="world-media">
-                <ScrollReveal variant={slot.reveal} delay={index === 0 ? 80 : 0} className="world-frame">
+                <ScrollReveal
+                  variant={slot.reveal}
+                  delay={index === 0 ? 80 : 0}
+                  className="world-frame"
+                >
                   <Picture image={item.image} fill decorative sizes={slot.sizes} />
                 </ScrollReveal>
               </div>

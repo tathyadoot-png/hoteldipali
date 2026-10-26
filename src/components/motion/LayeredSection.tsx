@@ -11,6 +11,8 @@ type LayeredSectionProps = ComponentPropsWithoutRef<"section"> & {
    * sibling element.
    */
   covers?: string;
+  /** Also write --p ("through") on this section, for a scene of its own. */
+  scene?: boolean;
 };
 
 /**
@@ -19,7 +21,8 @@ type LayeredSectionProps = ComponentPropsWithoutRef<"section"> & {
  * - writes --cover on the covered section (0 → 1 while this section's top
  *   travels from the bottom of the viewport to the top), which CSS turns into
  *   that section receding — transform and opacity only;
- * - writes --p ("through") on itself, for its own scene.
+ * - with `scene`, writes --p ("through") on itself, for its own scene.
+ * Only those two are written (each write re-styles a whole subtree).
  * Scrolling stays native: nothing is pinned here and no wheel or touch input
  * is handled. Without rich motion nothing is written and the sections simply
  * stack. Children stay server-rendered.
@@ -28,7 +31,7 @@ type LayeredSectionProps = ComponentPropsWithoutRef<"section"> & {
  * focused element, the page scrolls back to where the cover began, so the
  * element shows (WCAG 2.4.11, focus not obscured).
  */
-export function LayeredSection({ covers, children, ...rest }: LayeredSectionProps) {
+export function LayeredSection({ covers, scene = false, children, ...rest }: LayeredSectionProps) {
   const ref = useRef<HTMLElement>(null);
   const rich = useRichMotion();
 
@@ -42,10 +45,10 @@ export function LayeredSection({ covers, children, ...rest }: LayeredSectionProp
   useScrollProgress(ref, {
     enabled: rich,
     mode: "rise",
-    cssVar: "--rise",
+    cssVar: null,
     onProgress: (p) => covered()?.style.setProperty("--cover", String(p)),
   });
-  useScrollProgress(ref, { enabled: rich, mode: "through" });
+  useScrollProgress(ref, { enabled: rich && scene, mode: "through" });
 
   useEffect(() => {
     const el = ref.current;
