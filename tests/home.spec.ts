@@ -82,15 +82,77 @@ test.describe("Home page", () => {
     }
   });
 
-  /* ──── Pillar index ──── */
+  /* ──── The Dipali Experience (below the hero) ──── */
 
-  test("the welcome index links to sections that exist on the page", async ({ page }) => {
-    const index = page.getByRole("navigation", { name: "Explore the hotel" });
-    const hrefs = await index.locator("a").evaluateAll((els) =>
-      els.map((e) => e.getAttribute("href") ?? ""),
+  test("the section below the hero pairs the statement with a real photograph", async ({
+    page,
+  }) => {
+    const section = page.locator("#welcome");
+    await expect(
+      section.getByRole("heading", { level: 2, name: "More Than a Stay. A Feeling to Remember." }),
+    ).toBeAttached();
+
+    const image = await section.locator(".experience-photo img").evaluate((img: HTMLImageElement) => ({
+      src: img.currentSrc || img.src,
+      srcset: img.srcset,
+      alt: img.alt,
+      width: img.getAttribute("width"),
+      height: img.getAttribute("height"),
+    }));
+    // The optimised portrait crop, never a placeholder or a camera original;
+    // explicit dimensions so it cannot shift the layout.
+    expect(image.src).toMatch(/\/images\/hotel\/reception-atrium-portrait-\d+\.webp$/);
+    expect(image.srcset).toContain("reception-atrium-portrait-480.webp 480w");
+    expect(image.alt.length).toBeGreaterThan(0);
+    expect([image.width, image.height]).toEqual(["1200", "1500"]);
+
+    // The call to action leads somewhere real on this page.
+    const cta = section.getByRole("link", { name: "Discover Our Story" });
+    await expect(cta).toHaveAttribute("href", "#explore");
+    await expect(page.locator("#explore")).toBeAttached();
+  });
+
+  /* ──── A World Within Dipali ──── */
+
+  test("A World Within Dipali: four experiences, each a real photograph and a real destination", async ({
+    page,
+  }) => {
+    const section = page.locator("#explore");
+    await expect(section).toHaveAttribute("data-theme", "emerald");
+    await expect(section.getByRole("heading", { level: 2, name: "A World Within Dipali" })).toBeAttached();
+
+    const items = section.locator(".world-item");
+    await expect(items).toHaveCount(4);
+    // Celebrate leads; the order follows the layout's reading order.
+    await expect(section.locator(".world-label")).toHaveText(["Celebrate", "Stay", "Unwind", "Dine"]);
+
+    const hrefs = await section
+      .locator(".world-link, .world-aside")
+      .evaluateAll((els) => els.map((e) => e.getAttribute("href") ?? ""));
+    expect(hrefs.sort()).toEqual(["#unwind", "/dining/", "/events/", "/rooms/", "/weddings/"]);
+    await expect(page.locator("#unwind")).toBeAttached();
+
+    // Optimised hotel photographs with explicit dimensions (no placeholders).
+    const images = await section.locator(".world-frame img").evaluateAll((imgs) =>
+      (imgs as HTMLImageElement[]).map((img) => ({
+        src: img.getAttribute("src") ?? "",
+        srcset: img.srcset,
+        sized: Boolean(img.getAttribute("width") && img.getAttribute("height")),
+      })),
     );
-    expect(hrefs).toEqual(["#stay", "#celebrate", "#unwind", "#dine"]);
-    for (const href of hrefs) await expect(page.locator(href)).toBeAttached();
+    expect(images).toHaveLength(4);
+    for (const image of images) {
+      expect(image.src).toMatch(/^\/images\/hotel\/.+\.webp$/);
+      expect(image.srcset.length).toBeGreaterThan(0);
+      expect(image.sized).toBe(true);
+    }
+  });
+
+  test("each experience panel is one link, reachable by keyboard", async ({ page }) => {
+    const link = page.locator("#explore .world-link").first();
+    await link.focus();
+    await expect(link).toBeFocused();
+    await expect(link).toHaveAttribute("href", "/weddings/");
   });
 
   /* ──── Themed scopes carry text-ink ──── */

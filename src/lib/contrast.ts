@@ -96,6 +96,9 @@ const BODY_PAIRS: ReadonlyArray<PairSpec> = [
   // as a UI colour.
   ["accent", "surface", "small accent text (.field-error, current nav link)"],
   ["accent", "surface-alt", "small accent text on alt sections"],
+  // Buttons: the gold plaque (.btn-primary, .btn-secondary on hover) carries a
+  // deep emerald label in every scope.
+  ["brand", "highlight", ".btn-primary label; .btn-secondary hover"],
 ];
 
 // UI / large-text pairs (≥ 3:1) checked in both variants.
@@ -113,6 +116,12 @@ const PEACOCK_ONLY_UI_PAIRS: ReadonlyArray<PairSpec> = [
   ["highlight", "surface-alt", "brass rules and ornaments on Peacock"],
 ];
 
+// Pairs checked for the light variant only: on ivory, deep emerald is also
+// small text (the .btn-secondary label) and the script accent word.
+const LIGHT_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
+  ["brand", "surface", ".btn-secondary label on ivory; script accent word"],
+];
+
 /** The contrast pairs that must pass for a given variant. */
 export function pairsForVariant(variant: Variant): ContrastPair[] {
   const toPair =
@@ -122,6 +131,9 @@ export function pairsForVariant(variant: Variant): ContrastPair[] {
     ...BODY_PAIRS.map(toPair(BODY_MIN, "body")),
     ...UI_PAIRS.map(toPair(UI_MIN, "ui")),
   ];
+  if (variant === "light") {
+    pairs.push(...LIGHT_ONLY_BODY_PAIRS.map(toPair(BODY_MIN, "body")));
+  }
   if (variant === "peacock" || variant === "emerald") {
     pairs.push(...PEACOCK_ONLY_UI_PAIRS.map(toPair(UI_MIN, "ui")));
   }

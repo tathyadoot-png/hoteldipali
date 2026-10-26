@@ -12,6 +12,9 @@ import { EntranceHero } from "@/components/home/EntranceHero";
 import { IntroLoader } from "@/components/home/IntroLoader";
 import { RoomDiscovery, type RoomPreview } from "@/components/home/RoomDiscovery";
 import { DayJourney } from "@/components/home/DayJourney";
+import { DipaliExperience } from "@/components/home/DipaliExperience";
+import { WorldWithin, type WorldExperience } from "@/components/home/WorldWithin";
+import { LayeredSection } from "@/components/motion/LayeredSection";
 import { ScrollSection } from "@/components/motion/ScrollSection";
 import {
   getGallery,
@@ -77,98 +80,140 @@ export default async function HomePage() {
   const { pool, gym } = leisure;
   // "In pictures": the hospitality photographs with no section of their own —
   // reception, sitting areas, the portico and the lounges.
-  // Rooms have their own section, so room photographs are left out here.
+  // Rooms have their own section, so room photographs are left out here, as
+  // is the photograph "The Dipali Experience" already shows.
   const PICTURE_ORDER = ["property", "stay", "events"];
   const pictures = gallery
     .filter(
       (item) =>
         isPhoto(item.image) &&
         PICTURE_ORDER.includes(item.category) &&
-        !item.image.src.includes("/room-"),
+        !item.image.src.includes("/room-") &&
+        item.image.source !== site.homeExperience.source,
     )
     .sort((a, b) => PICTURE_ORDER.indexOf(a.category) - PICTURE_ORDER.indexOf(b.category) || a.order - b.order)
     .slice(0, 5)
     .map((item) => item.image);
 
-  // The four ways into the hotel, in the order the page tells them — each row
-  // grounded in what the content actually holds, with a photograph that peeks
-  // in on hover to tie the word to the place.
-  const pillars = [
-    { word: "Stay", href: "#stay", detail: "Rooms & suites", image: rooms[0]?.images[0] },
+  // "A World Within Dipali": the four experiences the hotel is (CLAUDE.md §A),
+  // each on a real photograph the sections further down do not already lead
+  // with, linking to its page (or, for the pool and gym, its section here).
+  // Celebrate is featured — weddings and events come first for the hotel —
+  // and the order matches the layout's reading order (a zig-zag on desktop).
+  const roomPhotos = rooms.flatMap((room) => room.images.filter(isPhoto));
+  const dinePhotos = restaurant?.images.filter(isPhoto) ?? [];
+  const poolPhotos = [
+    ...gallery.filter((item) => item.category === "pool-gym").map((item) => item.image),
+    ...pool.images,
+  ].filter(isPhoto);
+  const worldCandidates: (Omit<WorldExperience, "image"> & { image: WorldExperience["image"] | undefined })[] = [
     {
-      word: "Celebrate",
-      href: "#celebrate",
-      detail: "Lawns & banquet halls",
-      image: venuePhotos[1] ?? celebrateImage,
+      slot: "feature",
+      numeral: "I",
+      label: "Celebrate",
+      title: "Weddings on the lawns and in the banquet halls",
+      href: "/weddings/",
+      more: "Plan a wedding",
+      aside: { label: "Events & gatherings", href: "/events/" },
+      image: venuePhotos[1] ?? venuePhotos[0],
     },
-    { word: "Unwind", href: "#unwind", detail: "Pool & gym", image: pool.images[0] },
     {
-      word: "Dine",
-      href: "#dine",
-      detail: "Restaurant, bakery, sweets & bar",
-      image: restaurant?.images[0],
+      slot: "tall",
+      numeral: "II",
+      label: "Stay",
+      title: "Rooms made for unhurried rest",
+      href: "/rooms/",
+      more: "See the rooms",
+      image: roomPhotos[1] ?? roomPhotos[0],
+    },
+    {
+      slot: "panorama",
+      numeral: "III",
+      label: "Unwind",
+      title: "A swimming pool and a gym",
+      href: "#unwind",
+      more: "The pool & gym",
+      image: poolPhotos.find((image) => image.source !== pool.images[0]?.source) ?? poolPhotos[0],
+    },
+    {
+      slot: "wide",
+      numeral: "IV",
+      label: "Dine",
+      title: "The restaurant, Infinity Bar, Dipali Bakery and Dipali Sweets",
+      href: "/dining/",
+      more: "Explore dining",
+      image: dinePhotos[1] ?? dinePhotos[0],
     },
   ];
+  const worldItems = worldCandidates.flatMap((item) => (item.image ? [{ ...item, image: item.image }] : []));
 
   return (
     <>
       {/* ═══ ARRIVE — the lit entrance, framed by a gold arch ═══ */}
       <IntroLoader caption={`${site.address.value.city} · ${site.address.value.state}`} />
-      <EntranceHero
-        image={site.homeHero}
-        eyebrow="A Timeless Destination"
-        titlePrefix={`${site.name}, ${site.address.value.city}:`}
-        title={{ lead: "A Stay", accent: "Beyond", tail: "Ordinary" }}
-        subline="Comfort, Crafted with Care"
-        primary={{ label: "Explore the Experience", href: "#explore" }}
-        secondary={{ label: "Discover Hotel Dipali", href: "#welcome" }}
-      />
+      {/* The hero holds still while The Dipali Experience rises over it
+          (rich motion); the wrapper ends the hold once it is covered. */}
+      <div className="layers">
+        <EntranceHero
+          image={site.homeHero}
+          video={site.homeHeroVideo}
+          eyebrow="A Timeless Destination"
+          titlePrefix={`${site.name}, ${site.address.value.city}:`}
+          title={{ lead: "A Stay", accent: "Beyond", tail: "Ordinary" }}
+          subline="Comfort, Crafted with Care"
+          primary={{ label: "Explore the Experience", href: "#explore" }}
+          secondary={{ label: "Discover Hotel Dipali", href: "#welcome" }}
+        />
 
-      {/* ═══ WELCOME — an ivory arch rises over the hero ═══
-          It is also the element that turns the overlay header solid. */}
-      <section
-        id="welcome"
-        data-header-solid-from=""
-        aria-labelledby="home-intro"
-        className="threshold paper-grain scroll-mt-16 bg-surface pt-[calc(var(--arch)+2.5rem)] pb-20 md:pb-28"
+        {/* ═══ THE DIPALI EXPERIENCE — an ivory arch rises over the hero ═══
+            It is also the element that turns the overlay header solid. */}
+        <LayeredSection
+          id="welcome"
+          data-header-solid-from=""
+          aria-labelledby="home-intro"
+          className="threshold layer-rise paper-grain scroll-mt-16 bg-surface pt-[var(--arch)] pb-24 md:pb-36"
+        >
+          <div className="layer-content container-site relative">
+            <DipaliExperience
+              headingId="home-intro"
+              eyebrow="The Art of Hospitality"
+              title={{
+                first: "More Than a Stay.",
+                secondLead: "A Feeling to",
+                accent: "Remember",
+                secondTail: ".",
+              }}
+              lead="Discover thoughtful hospitality, inviting spaces and memorable moments at Hotel Dipali."
+              body={site.shortDescription.value}
+              // Provisional target: there is no About / story page yet, so this
+              // leads to A World Within Dipali, just below. Repoint it once one
+              // exists (docs/PLAN.md, open questions).
+              cta={{ label: "Discover Our Story", href: "#explore" }}
+              image={site.homeExperience}
+              caption={`The reception atrium · ${site.address.value.city}`}
+            />
+          </div>
+          {/* Deepens as A World Within Dipali covers this section (rich motion). */}
+          <div aria-hidden="true" className="layer-veil" />
+        </LayeredSection>
+      </div>
+
+      {/* ═══ A WORLD WITHIN DIPALI — an emerald panel rises over the ivory ═══ */}
+      <LayeredSection
+        id="explore"
+        covers="#welcome"
+        data-theme="emerald"
+        aria-labelledby="home-world"
+        className="world-section layer-rise scroll-mt-28 bg-surface text-ink"
       >
-        <div className="container-site relative">
-          <ScrollReveal>
-            <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-              {/* The gold logo washes out on ivory, so it sits on a deep green medallion. */}
-              <span aria-hidden="true" className="logo-medallion">
-                <Emblem className="h-15 w-auto md:h-18" sizes="(min-width: 768px) 3.75rem, 3.125rem" />
-              </span>
-            </div>
-          </ScrollReveal>
-          <ScrollReveal variant="mask" delay={60} className="mx-auto max-w-3xl text-center">
-            <h2 id="home-intro" className="heading-1 mt-8">
-              Step inside Hotel <em>Dipali</em>
-            </h2>
-          </ScrollReveal>
-          <ScrollReveal delay={140} className="mx-auto max-w-3xl text-center">
-            <p className="body-lg mt-6 text-ink-muted">{site.shortDescription.value}</p>
-          </ScrollReveal>
-
-          <nav id="explore" aria-label="Explore the hotel" className="mt-16 scroll-mt-28 md:mt-20">
-            <ul className="border-b border-line">
-              {pillars.map((pillar) => (
-                <li key={pillar.word}>
-                  <a href={pillar.href} className="pillar-row">
-                    <span className="pillar-word">{pillar.word}</span>
-                    <span className="caption text-right not-italic">{pillar.detail}</span>
-                    {pillar.image ? (
-                      <span aria-hidden="true" className="pillar-peek">
-                        <Picture image={pillar.image} ratio="4:3" decorative sizes="15rem" />
-                      </span>
-                    ) : null}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </section>
+        <WorldWithin
+          headingId="home-world"
+          eyebrow="Four experiences · One destination"
+          title={{ lead: "A World Within", accent: "Dipali" }}
+          intro={`To stay, to celebrate, to dine and to unwind — one address in ${site.address.value.city}, many ways to spend the day.`}
+          items={worldItems}
+        />
+      </LayeredSection>
 
       {/* ═══ STAY — rooms as an index with a following stage ═══ */}
       <section

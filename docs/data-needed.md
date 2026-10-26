@@ -2,7 +2,7 @@
 
 > Auto-generated — do not edit by hand; run `pnpm content:report`.
 
-Last generated: 2026-10-22
+Last generated: 2026-10-26
 
 Everything below is still **sample** (we invented it) or **public-unverified** (found online, not confirmed by the hotel). The hotel needs to confirm or replace each item before launch. See also `docs/public-data.md`.
 
@@ -12,7 +12,8 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 
 - [ ] **tagline** _(sample)_ — sample tagline — confirm the hotel's preferred line · `tagline`
 - [ ] **shortDescription** _(sample)_ — sample copy — rewrite with verified details · `shortDescription`
-- [ ] **home-hero-aerial** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10 · `homeHero`
+- [ ] **home-hero-entrance-night** _(public-unverified)_ — cropped below the rooftop sign; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24 · `homeHero`
+- [ ] **home-experience-reception** _(public-unverified)_ — portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10 · `homeExperience`
 - [ ] **address** _(public-unverified)_ — address conflicts across platforms — hotel must confirm one; see docs/public-data.md · source: GST public record (see docs/public-data.md) · `address`
 - [ ] **locationLine** _(public-unverified)_ — confirm spelling Makroniya vs Makronia · source: Hotel's own social posts · `locationLine`
 - [ ] **mapsUrl** _(sample)_ — generic Maps search link — replace with the hotel's verified Google Business profile URL · `mapsUrl`
@@ -207,4 +208,4 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 
 ---
 
-Totals: 129 items/facts to confirm · 25 photos to replace.
+Totals: 130 items/facts to confirm · 25 photos to replace.

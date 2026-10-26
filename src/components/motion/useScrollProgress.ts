@@ -5,7 +5,7 @@ import { useEffect, useRef, useSyncExternalStore, type RefObject } from "react";
 import { useSmoothScroll } from "@/components/motion/SmoothScroll";
 import { prefersRichMotion, RICH_MOTION_QUERY, syncRootMotionAttribute } from "@/lib/motion";
 
-export type ProgressMode = "pinned" | "through";
+export type ProgressMode = "pinned" | "through" | "rise";
 
 type Options = {
   /** When false nothing is observed and the CSS variable is never written. */
@@ -15,6 +15,8 @@ type Options = {
    * bottom reaches the viewport bottom — for sticky scenes in a tall runway.
    * "through": 0 when its top enters at the bottom, 1 when its bottom leaves
    * at the top — for elements that simply scroll past.
+   * "rise": 0 when its top enters at the bottom, 1 when its top reaches the
+   * top — for a section rising over the one before it (LayeredSection).
    */
   mode?: ProgressMode;
   /** Custom property written on the element, as a unitless 0–1 number. */
@@ -69,7 +71,11 @@ export function useScrollProgress<T extends HTMLElement>(
       frame = 0;
       const y = window.scrollY;
       const raw =
-        mode === "pinned" ? (y - top) / Math.max(1, height - vh) : (y + vh - top) / (vh + height);
+        mode === "pinned"
+          ? (y - top) / Math.max(1, height - vh)
+          : mode === "rise"
+            ? (y + vh - top) / vh
+            : (y + vh - top) / (vh + height);
       const p = Math.round(Math.min(1, Math.max(0, raw)) * 10000) / 10000;
       if (p === last) return;
       last = p;

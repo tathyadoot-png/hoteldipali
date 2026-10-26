@@ -132,7 +132,7 @@ export function MobileMenu({ bookingUrl }: { bookingUrl: string | null }) {
         </nav>
 
         <div className="menu-foot flex flex-col gap-4 pt-6 pb-[env(safe-area-inset-bottom)]">
-          <BookStayLink bookingUrl={bookingUrl} className="btn-royal btn-royal-arrow w-full" />
+          <BookStayLink bookingUrl={bookingUrl} className="btn-primary btn-cta w-full" />
           <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
             <CallLink className="link-royal" />
             <WhatsAppLink context="general" className="link-royal">

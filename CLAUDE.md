@@ -81,7 +81,8 @@ third-party script without asking.
   `.heading-1/2/3`, `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.big-number`,
   `.heading-page` (inner-page heroes), `.btn-primary`, `.btn-secondary`, `.btn-ghost`,
   `.btn-cta` (signature enquiry modifier), `.link-cta`, `.btn-icon`, `.btn-royal`,
-  `.btn-royal-arrow`, `.link-royal` (Emerald chamfered gold-line buttons), `.chip`,
+  `.btn-royal-arrow`, `.link-royal` (Emerald chamfered gold-line buttons),
+  `.btn-royal-solid` (an emerald-scoped `.btn-royal` filled for use on ivory), `.chip`,
   `.card`,
   `.link`,
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
@@ -89,7 +90,8 @@ third-party script without asking.
   `.field-hint`, `.visually-hidden`, `.hero-gradient`, `.hero-tint`, `.paper-grain`,
   `.frame-hairline`, `.frame-arch`, `.img-hover`, `.logo-medallion`, `.threshold`,
   `[data-reveal]` (`""` rise, `"mask"` headings, `"image"` frames), `.pictures-*`, plus
-  the home-experience scene classes `.entrance*`, `.pillar-*`, `.room-stage*`,
+  the home-experience scene classes `.entrance*`, `.experience*` (The Dipali
+  Experience, below the hero), `.pillar-*`, `.room-stage*`,
   `.celebrate-*`, `.journey*`, the opening-loader and ornament classes `.intro*`,
   `.arch-*`, `.ring-*`, `.sprig-line`, `.ribbon-*`, `.stop-*`, and the shell classes
   `.header-*` (incl. `.header-band*`), `.menu-*` (incl. `.menu-medallion`,

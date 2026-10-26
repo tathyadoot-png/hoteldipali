@@ -107,7 +107,7 @@
   /* The owner's palette textures, graded toward Deep Emerald (pnpm make:photos). */
   /* The stone is the home hero's largest paint: EntranceHero preloads this
      exact file, so keep the two in step. */
-  --texture-stone: url("/images/textures/emerald-stone-479.webp");
+  --texture-stone: url("/images/textures/emerald-stone-1024.webp");
   --texture-botanical: url("/images/textures/botanical-panel-736.webp");
 }
 
@@ -269,34 +269,59 @@
     color: var(--color-accent);
   }
 
-  /* ── Buttons: "architrave" language ──────────────────────────────────
-     Nearly square, confident type, a fill that sweeps up from the base on
-     hover/focus (transform only — nothing around the button moves). */
+  /* ── Buttons: one family, drawn for the hotel ──────────────────────────
+     A crisp, near-square plaque (2px radius): one height, Manrope small
+     capitals, one timing, colours from the surrounding scope's tokens —
+     gold is `highlight`, deep emerald is `brand` (each palette's deep green).
+     .btn-primary   the booking action: an antique-gold plaque with a deep
+                    emerald label; on hover an engraved hairline draws in.
+     .btn-secondary every other action: a fine gold outline — ivory label on
+                    emerald / Peacock, deep emerald label on ivory; on hover
+                    gold rises from the base and it becomes the plaque.
+     .btn-ghost     a quieter outline beside a primary (call, WhatsApp).
+     .btn-cta       adds an arrow that steps forward on hover.
+     .btn-compact   sentence case and tight padding for dense bars. */
   .btn-primary,
   .btn-secondary,
   .btn-ghost {
     --btn-sweep: transparent;
+    --btn-focus: var(--color-brand);
     position: relative;
     isolation: isolate;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.625rem;
+    gap: 0.75rem;
     min-height: 48px;
-    padding-inline: 1.375rem;
+    padding-inline: 1.5rem;
     overflow: hidden;
     border: 1px solid transparent;
     border-radius: var(--radius-sm);
-    font-family: var(--font-body);
+    font-family: var(--font-ui);
     font-weight: 600;
-    font-size: 0.9375rem;
-    letter-spacing: 0.02em;
-    line-height: 1;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
     text-align: center;
     cursor: pointer;
     transition:
       color var(--duration-base) var(--ease-out-soft),
-      border-color var(--duration-base) var(--ease-out-soft);
+      border-color var(--duration-base) var(--ease-out-soft),
+      box-shadow var(--duration-base) var(--ease-out-soft);
+  }
+
+  /* On the dark scopes the focus ring is gold (deep green would vanish). */
+  :is([data-theme="emerald"], [data-theme="peacock"]) :is(.btn-primary, .btn-secondary, .btn-ghost),
+  :is(.btn-primary, .btn-secondary, .btn-ghost):is([data-theme="emerald"], [data-theme="peacock"]) {
+    --btn-focus: var(--color-highlight);
+  }
+
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible,
+  .btn-ghost:focus-visible {
+    outline: 2px solid var(--btn-focus);
+    outline-offset: 3px;
   }
 
   .btn-primary::before,
@@ -347,36 +372,46 @@
     transform: scaleY(0);
   }
 
-  /* Primary: clay (gold on Peacock); the sweep deepens it. */
+  /* Primary: the gold plaque. Hover draws an engraved hairline 4px inside
+     its edge — the one corner detail in the family. */
   .btn-primary {
-    --btn-sweep: color-mix(in srgb, var(--color-accent) 72%, var(--color-ink));
-    background-color: var(--color-accent);
-    color: var(--color-accent-ink);
+    background-color: var(--color-highlight);
+    color: var(--color-brand);
+    box-shadow:
+      inset 0 0 0 4px var(--color-highlight),
+      inset 0 0 0 5px transparent;
   }
 
-  [data-theme="peacock"] .btn-primary,
-  [data-theme="peacock"].btn-primary {
-    --btn-sweep: color-mix(in srgb, var(--color-accent) 78%, var(--color-ink));
+  .btn-primary:hover,
+  .btn-primary:focus-visible {
+    box-shadow:
+      inset 0 0 0 4px var(--color-highlight),
+      inset 0 0 0 5px color-mix(in srgb, var(--color-brand) 55%, transparent);
   }
 
-  /* Secondary: outline in ink (pearl on Peacock); the sweep inverts it. */
+  /* Secondary: a fine gold line; gold rises into it on hover. */
   .btn-secondary {
-    --btn-sweep: var(--color-ink);
+    --btn-sweep: var(--color-highlight);
     background-color: transparent;
-    border-color: var(--color-ink);
+    border-color: var(--color-highlight);
+    color: var(--color-brand);
+  }
+
+  :is([data-theme="emerald"], [data-theme="peacock"]) .btn-secondary,
+  .btn-secondary:is([data-theme="emerald"], [data-theme="peacock"]) {
     color: var(--color-ink);
   }
 
   .btn-secondary:hover,
   .btn-secondary:focus-visible {
-    color: var(--color-surface);
+    color: var(--color-brand);
   }
 
-  /* Ghost: a quieter outline beside a primary; the sweep is a soft tint. */
+  /* Ghost: a quieter outline; the sweep is a soft tint. */
   .btn-ghost {
     --btn-sweep: color-mix(in srgb, var(--color-ink) 10%, transparent);
     background-color: transparent;
-    border-color: color-mix(in srgb, var(--color-ink) 55%, transparent);
+    border-color: color-mix(in srgb, var(--color-ink) 45%, transparent);
     color: var(--color-ink);
   }
 
@@ -385,20 +420,16 @@
     border-color: var(--color-ink);
   }
 
-  /* Signature CTA (the enquiry): an inset hairline "architrave" and an arrow
-     that steps forward on hover. The frame is an outline, so it stays drawn
-     above the sweep; the focus ring replaces it while focused. */
+  /* An arrow that steps forward on hover (takes the label colour). */
   .btn-cta {
     padding-inline: 1.5rem 1.25rem;
-    outline: 1px solid color-mix(in srgb, var(--color-accent-ink) 42%, transparent);
-    outline-offset: -5px;
   }
 
   .btn-cta::after {
     content: "";
     flex: none;
-    width: 1.05em;
-    height: 0.7em;
+    width: 1.35em;
+    height: 0.85em;
     background-color: currentColor;
     mask: var(--arrow) center / contain no-repeat;
     transition: transform var(--duration-base) var(--ease-out-soft);
@@ -409,9 +440,14 @@
     transform: translateX(0.25rem);
   }
 
-  .btn-cta:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
+  /* Dense bars (the phone sticky bar): sentence case, tight padding. */
+  .btn-compact {
+    gap: 0.5rem;
+    min-height: 44px;
+    padding-inline: 0.5rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.01em;
+    text-transform: none;
   }
 
   /* Text link with an arrow and an underline that draws in from the left. */
@@ -482,91 +518,8 @@
     background-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
   }
 
-  /* ── Royal buttons (Emerald: navigation, home hero, menu) ─────────────────
-     .btn-royal: a chamfered cartouche drawn in one antique-gold hairline. The
-     frame is an SVG nine-slice (border-image), so its corners stay crisp at
-     any size; a gold fill rises from the base on hover / focus (transform
-     only) and the label turns charcoal. .link-royal: a text link standing on
-     a gold rule that extends on hover. Used on Emerald surfaces only. */
-  .btn-royal {
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    min-height: 3.25rem;
-    padding: 0 1.125rem;
-    border: 9px solid transparent;
-    border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 27 27'%3E%3Cpath d='M8.5 .5h10l8 8v10l-8 8h-10l-8-8v-10z' fill='none' stroke='%23c5a15e'/%3E%3C/svg%3E")
-      9 / 9px stretch;
-    font-family: var(--font-ui);
-    font-weight: 700;
-    font-size: 0.6875rem;
-    letter-spacing: 0.24em;
-    line-height: 1;
-    text-transform: uppercase;
-    white-space: nowrap;
-    color: var(--color-ink);
-    cursor: pointer;
-    transition: color var(--duration-base) var(--ease-out-soft);
-  }
-
-  .btn-royal::before {
-    content: "";
-    position: absolute;
-    inset: -8px;
-    z-index: -1;
-    background-color: var(--color-highlight);
-    clip-path: polygon(
-      7px 0,
-      calc(100% - 7px) 0,
-      100% 7px,
-      100% calc(100% - 7px),
-      calc(100% - 7px) 100%,
-      7px 100%,
-      0 calc(100% - 7px),
-      0 7px
-    );
-    transform: scaleY(0);
-    transform-origin: 50% 100%;
-    transition: transform var(--duration-base) var(--ease-out-soft);
-  }
-
-  .btn-royal:hover,
-  .btn-royal:focus-visible {
-    color: var(--color-accent-ink);
-  }
-
-  .btn-royal:hover::before,
-  .btn-royal:focus-visible::before {
-    transform: scaleY(1);
-  }
-
-  .btn-royal:active {
-    transform: translateY(1px);
-  }
-
-  .btn-royal:focus-visible {
-    outline: 1px solid var(--color-highlight);
-    outline-offset: 6px;
-  }
-
-  .btn-royal-arrow::after {
-    content: "";
-    flex: none;
-    width: 1.35em;
-    height: 0.85em;
-    background-color: currentColor;
-    mask: var(--arrow) center / contain no-repeat;
-    transition: transform var(--duration-base) var(--ease-out-soft);
-  }
-
-  .btn-royal-arrow:hover::after,
-  .btn-royal-arrow:focus-visible::after {
-    transform: translateX(0.3rem);
-  }
-
+  /* ── .link-royal: a text link standing on a fine gold rule that extends on
+     hover (Emerald surfaces: the hero's quiet second action, the menu). */
   .link-royal {
     position: relative;
     display: inline-flex;
@@ -880,12 +833,16 @@
     display: none;
   }
 
+  /* The gold plaque, sized to the bar's end column (--end) so the
+     medallion stays on the centre line. */
   .header-book {
     grid-column: 5;
     justify-self: end;
     gap: 0;
     min-height: 2.75rem;
-    padding-inline: 0.625rem;
+    padding-inline: 0.875rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
   }
 
   @media (min-width: 480px) {
@@ -1410,16 +1367,55 @@
     transform: none;
   }
 
+  /* Wipes: a photograph's frame opens from one edge (or the centre) while
+     the photo settles from a slight zoom — A World Within Dipali. */
+  [data-reveal^="wipe"] {
+    opacity: 1;
+    transform: none;
+    transition: clip-path 380ms var(--ease-out-soft) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="wipe-up"] {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  [data-reveal="wipe-down"] {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  [data-reveal="wipe-left"] {
+    clip-path: inset(0 0 0 100%);
+  }
+
+  [data-reveal="wipe-centre"] {
+    clip-path: inset(0 50% 0 50%);
+  }
+
+  [data-reveal^="wipe"][data-revealed] {
+    clip-path: inset(0);
+  }
+
+  [data-reveal^="wipe"] img {
+    transform: scale(1.06);
+    transition: transform 380ms var(--ease-out-soft) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal^="wipe"]:where([data-revealed]) img {
+    transform: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     [data-reveal],
     [data-reveal="mask"],
-    [data-reveal="image"] {
+    [data-reveal="image"],
+    [data-reveal^="wipe"] {
       opacity: 1;
       clip-path: none;
       transform: none;
     }
 
-    [data-reveal="image"] img {
+    [data-reveal="image"] img,
+    [data-reveal^="wipe"] img {
       transform: none;
     }
   }
@@ -1458,8 +1454,8 @@
     --intro: 0s;
   }
 
-  /* The emerald canvas: Deep Emerald, the owner's watercolour stone (graded,
-     low-frequency, so it scales gracefully), a warm light behind the focal
+  /* The emerald canvas: Deep Emerald, the owner's folded stone (palette 3,
+     graded toward emerald; low-frequency, so it scales gracefully), a warm light behind the focal
      point, a charcoal vignette and a fine grain that keeps it crisp. */
   .entrance-canvas,
   .intro-canvas {
@@ -1813,14 +1809,56 @@
     }
   }
 
-  /* Scroll depth (rich motion): the window drifts a little slower than the
-     page as the hero leaves; the ribbon a little faster. */
-  [data-motion="rich"] .entrance-arch {
-    translate: 0 calc(max(0, var(--p, 0.5) - 0.5) * 16vh);
+  /* The hotel in motion (HeroVideo), over the photograph that is its
+     poster: the same framing and pointer depth; it fades in only once frames
+     play, so until then — or if it never plays — the photograph shows. */
+  .entrance-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.04) translate3d(calc(var(--mx, 0) * -6px), calc(var(--my, 0) * -5px), 0);
+    transition:
+      opacity 380ms var(--ease-out-soft),
+      transform 0.9s var(--ease-out-soft);
   }
 
-  [data-motion="rich"] .entrance-ribbon {
-    translate: 0 calc(max(0, var(--p, 0.5) - 0.5) * -10vh);
+  .entrance-video:not([data-playback="waiting"]) {
+    opacity: 1;
+  }
+
+  /* Pause / play (WCAG 2.2.2), at the foot of the arch, above its shading. */
+  .entrance-video-toggle {
+    position: absolute;
+    right: 0.875rem;
+    bottom: 0.875rem;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 65%, transparent);
+    border-radius: 50%;
+    background-color: color-mix(in srgb, var(--color-surface) 60%, transparent);
+    color: var(--color-ink);
+    opacity: 0.8;
+    cursor: pointer;
+    transition:
+      opacity var(--duration-fast) var(--ease-out-soft),
+      border-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .entrance-video-toggle:hover,
+  .entrance-video-toggle:focus-visible {
+    opacity: 1;
+    border-color: var(--color-highlight);
+  }
+
+  .entrance-video-toggle:focus-visible {
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 3px;
   }
 
   /* ── The loader ── */
@@ -2296,67 +2334,785 @@
     border-radius: 999px 999px var(--radius-sm) var(--radius-sm);
   }
 
-  /* ── The pillar index: oversized words that double as navigation ── */
-  .pillar-row {
+  /* ── The Dipali Experience: the section below the home hero ────────────
+     An editorial pair on the ivory threshold. The statement on one side; on
+     the other a photograph under a shallow lintel (the threshold's own
+     elliptical curve, not the hero's round arch), set against a tablet of
+     emerald stone and traced by one fine gold line that draws upward after
+     the photograph is revealed. Phones: statement → photograph → text. */
+  .experience {
+    --lintel: clamp(1.75rem, 6vw, 3.75rem);
+    --frame-gap: clamp(0.625rem, 1.4vw, 0.875rem);
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: baseline;
-    gap: 0.5rem 1.5rem;
-    padding-block: clamp(0.75rem, 1.6vw, 1.5rem);
-    border-top: 1px solid var(--color-line);
+    grid-template-areas: "head" "figure" "text";
+    row-gap: 3rem;
+    /* The section itself pads only the threshold's rise (--arch). */
+    padding-top: clamp(4rem, 2.5rem + 5vw, 7rem);
   }
 
-  .pillar-word {
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 1.25rem + 7.5vw, 8.5rem);
-    line-height: 0.9;
-    letter-spacing: -0.025em;
-    transition:
-      color var(--duration-base) var(--ease-out-soft),
-      transform var(--duration-base) var(--ease-out-soft);
+  /* The threshold's gold keystone continues as a short thread into the
+     section, fading before the first line of copy. */
+  .experience::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--arch) + 0.5rem);
+    left: 50%;
+    width: 1px;
+    height: calc(var(--arch) + clamp(2rem, 1rem + 3vw, 4rem));
+    background: linear-gradient(var(--color-highlight), transparent);
   }
 
-  .pillar-row:hover .pillar-word,
-  .pillar-row:focus-visible .pillar-word {
-    color: var(--color-accent);
+  .experience-head {
+    grid-area: head;
+  }
+
+  .experience-figure {
+    grid-area: figure;
+    justify-self: center;
+    position: relative;
+    width: min(100%, 34rem);
+    margin: 0;
+    /* Room for the emerald tablet to show to the right and below. */
+    padding: 0 12% 3.25rem 0;
+  }
+
+  .experience-text {
+    grid-area: text;
+  }
+
+  .experience-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .experience-eyebrow::before {
+    content: "";
+    flex: none;
+    width: 2.5rem;
+    height: 1px;
+    background-color: var(--color-highlight);
+  }
+
+  .experience-title {
+    margin-top: 1.5rem;
+    font-family: var(--font-royal);
+    font-weight: 400;
+    /* Sized so "More Than a Stay." holds one line in the 5/11 column. */
+    font-size: clamp(2.625rem, 0.9rem + 4vw, 4.125rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  .experience-line {
+    display: block;
+  }
+
+  .experience-script {
+    font-family: var(--font-script);
+    font-size: 1.14em;
+    line-height: 0.8;
+    letter-spacing: 0;
+    color: var(--color-brand);
+  }
+
+  /* A gold rule ending in a small diamond. */
+  .experience-rule {
+    display: flex;
+    align-items: center;
+    width: min(100%, 11rem);
+  }
+
+  .experience-rule::before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-highlight);
+  }
+
+  .experience-rule::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-highlight);
+    transform: rotate(45deg);
+  }
+
+  .experience-lead {
+    margin-top: 1.75rem;
+    max-width: 30rem;
+    font-family: var(--font-royal);
     font-style: italic;
-    transform: translate3d(0.06em, 0, 0);
+    font-size: clamp(1.375rem, 1.15rem + 0.7vw, 1.75rem);
+    line-height: 1.35;
+    color: var(--color-ink);
   }
 
-  /* A photograph tucked into the journal: settles into place on hover or
-     focus. Hover-capable screens only — touch gets the plain index. Revealed
-     with opacity + scale, not clip-path: a fully clipped image never counts as
-     "near the viewport", so lazy loading would wait for the first hover. */
-  .pillar-row {
+  .experience-body {
+    margin-top: 1rem;
+    max-width: 32rem;
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--color-ink-muted);
+  }
+
+  .experience-cta {
+    margin-top: 2.25rem;
+  }
+
+  .experience-plinth {
+    position: absolute;
+    top: 24%;
+    right: 0;
+    bottom: 0;
+    left: 30%;
+    background-color: var(--color-surface);
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--color-surface) 30%, transparent),
+        color-mix(in srgb, var(--color-surface) 30%, transparent)
+      ),
+      var(--texture-stone);
+    background-size: auto, cover;
+    background-position: center;
+    box-shadow: 0 28px 56px -40px rgba(8, 18, 15, 0.7);
+  }
+
+  .experience-window {
+    position: relative;
+    aspect-ratio: 4 / 5;
+  }
+
+  .experience-photo {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 50% 50% 0 0 / var(--lintel) var(--lintel) 0 0;
+    background-color: var(--color-surface-alt);
+  }
+
+  .experience-frame {
+    position: absolute;
+    inset: calc(-1 * var(--frame-gap));
+    border: 1px solid var(--color-highlight);
+    border-radius: 50% 50% 0 0 / calc(var(--lintel) + var(--frame-gap))
+      calc(var(--lintel) + var(--frame-gap)) 0 0;
+    pointer-events: none;
+    transition: clip-path 380ms var(--ease-out-soft) 220ms;
+  }
+
+  .experience-keystone {
+    position: absolute;
+    top: calc(-1 * var(--frame-gap) - 4px);
+    left: 50%;
+    width: 7px;
+    height: 7px;
+    background-color: var(--color-highlight);
+    transform: translateX(-50%) rotate(45deg);
+    transition: transform 260ms var(--ease-out-soft) 560ms;
+  }
+
+  /* Vertical caption on the tablet's exposed right edge. */
+  .experience-caption {
+    position: absolute;
+    right: 0;
+    bottom: 3.25rem;
+    display: flex;
+    justify-content: center;
+    width: 12%;
+    padding-block: 1.25rem;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.625rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-ink);
+  }
+
+  /* The line waits for the photograph (JS present, motion allowed). */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .experience-photo:not([data-revealed]) ~ .experience-frame {
+      clip-path: inset(100% 0 0 0);
+    }
+
+    .experience-photo:not([data-revealed]) ~ .experience-keystone {
+      transform: translateX(-50%) rotate(45deg) scale(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .experience-frame,
+    .experience-keystone {
+      transition: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .experience {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      grid-template-areas:
+        "head figure"
+        "text figure";
+      column-gap: clamp(3rem, 6vw, 7rem);
+      row-gap: 0;
+      align-items: center;
+    }
+
+    .experience-head {
+      align-self: end;
+    }
+
+    .experience-text {
+      align-self: start;
+      padding-top: 2.5rem;
+    }
+
+    .experience-figure {
+      justify-self: end;
+      width: min(100%, 38rem);
+    }
+  }
+
+  /* ── Layered sections: each panel rises over the one before ────────────
+     Rich motion only (html[data-motion="rich"]). The hero holds still —
+     sticky inside .layers, so the hold ends the moment it is fully covered —
+     while The Dipali Experience, an opaque ivory panel, rises over it; then A
+     World Within Dipali rises over the Experience. The covered section
+     recedes: its content eases back and a veil deepens, driven by --cover
+     (0 → 1), which the rising section writes (LayeredSection). Transform and
+     opacity only; scrolling stays native and no input is intercepted. Without
+     rich motion the sections simply stack, arched edges overlapping. */
+  .layers {
     position: relative;
   }
 
-  .pillar-peek {
-    display: none;
+  .layer-rise {
+    position: relative;
+    z-index: 10;
   }
 
-  @media (hover: hover) and (min-width: 768px) {
-    .pillar-peek {
-      position: absolute;
-      top: 50%;
-      right: 22%;
-      z-index: 1;
-      display: block;
-      width: clamp(9rem, 15vw, 15rem);
-      pointer-events: none;
-      box-shadow: var(--shadow-lift);
-      opacity: 0;
-      transform: translate3d(0, -42%, 0) rotate(-4deg) scale(0.9);
-      transition:
-        opacity var(--duration-base) var(--ease-out-soft),
-        transform var(--duration-base) var(--ease-out-soft);
+  .layer-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background-color: var(--veil-color, var(--color-brand));
+    opacity: 0;
+  }
+
+  .entrance > .layer-veil {
+    --veil-color: var(--color-accent-ink);
+  }
+
+  @media (min-height: 600px) {
+    [data-motion="rich"] .layers > .entrance {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  [data-motion="rich"] .entrance-inner {
+    transform-origin: 50% 35%;
+    transform: translate3d(0, calc(var(--cover, 0) * -6vh), 0)
+      scale(calc(1 - var(--cover, 0) * 0.06));
+    opacity: calc(1 - var(--cover, 0) * 0.4);
+  }
+
+  [data-motion="rich"] .entrance-ribbon {
+    translate: 0 calc(var(--cover, 0) * -5vh);
+    opacity: calc(1 - var(--cover, 0) * 0.9);
+  }
+
+  [data-motion="rich"] .layer-veil {
+    opacity: calc(var(--cover, 0) * var(--veil-max, 0.55));
+  }
+
+  [data-motion="rich"] .entrance > .layer-veil {
+    --veil-max: 0.85;
+  }
+
+  /* The covered Experience lags behind (it scrolls a little slower) and dims. */
+  [data-motion="rich"] .layer-rise > .layer-content {
+    transform-origin: 50% 0;
+    transform: translate3d(0, calc(var(--cover, 0) * 16vh), 0)
+      scale(calc(1 - var(--cover, 0) * 0.03));
+    opacity: calc(1 - var(--cover, 0) * 0.3);
+  }
+
+  /* The rising panel casts a soft shadow up onto the scene it covers. */
+  [data-motion="rich"] .layer-rise {
+    box-shadow: 0 -1.5rem 3.5rem -1.25rem rgba(4, 14, 11, 0.42);
+  }
+
+  /* ── A World Within Dipali: an editorial gallery on emerald stone ───────
+     A straight panel edge with a fine gold line and, at its centre, a small
+     doorway crown rising into the section above. Inside: an oversized
+     heading, a featured experience on an ivory plaque, supporting ones in
+     different proportions, each photograph opening from its own direction
+     (ScrollReveal wipe-*), fine gold rules drawing in after the captions. */
+  .world-section {
+    --crown-w: clamp(6rem, 10vw, 9rem);
+    --crown-h: clamp(3rem, 5vw, 4.5rem);
+    z-index: 11;
+    padding-block: clamp(5rem, 3rem + 6vw, 9rem) clamp(5rem, 3rem + 5vw, 8rem);
+    background-color: var(--color-surface);
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--color-surface) 38%, transparent),
+        color-mix(in srgb, var(--color-surface) 62%, transparent)
+      ),
+      var(--texture-stone);
+    background-size: auto, cover;
+    background-position: center;
+    border-top: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
+  }
+
+  .world-section::before,
+  .world-section::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    pointer-events: none;
+  }
+
+  /* The crown: a round-topped doorway head standing on the panel's edge. */
+  .world-section::before {
+    bottom: calc(100% - 1px);
+    width: var(--crown-w);
+    height: var(--crown-h);
+    translate: -50% 0;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+    background-color: var(--color-surface);
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--color-surface) 38%, transparent),
+        color-mix(in srgb, var(--color-surface) 38%, transparent)
+      ),
+      var(--texture-stone);
+    background-size: auto, 60rem auto;
+    background-position: center top;
+  }
+
+  .world-section::after {
+    top: calc(-1 * var(--crown-h) - 4px);
+    width: 7px;
+    height: 7px;
+    translate: -50% 0;
+    rotate: 45deg;
+    background-color: var(--color-highlight);
+  }
+
+  .world-head {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .world-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .world-eyebrow::before {
+    content: "";
+    flex: none;
+    width: 2.5rem;
+    height: 1px;
+    background-color: var(--color-highlight);
+  }
+
+  .world-title {
+    font-family: var(--font-royal);
+    font-weight: 400;
+    font-size: clamp(3.25rem, 0.9rem + 8vw, 9.5rem);
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  .world-title-line {
+    display: block;
+  }
+
+  .world-title-accent {
+    padding-left: 14%;
+    color: var(--color-accent);
+  }
+
+  .world-title-accent em {
+    font-style: italic;
+  }
+
+  .world-intro {
+    display: grid;
+    gap: 1rem;
+    max-width: 24rem;
+    font-family: var(--font-royal);
+    font-style: italic;
+    font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem);
+    line-height: 1.4;
+    color: var(--color-ink-muted);
+  }
+
+  .world-rule {
+    display: block;
+    width: 4rem;
+    height: 1px;
+    background-color: var(--color-highlight);
+    transform-origin: 0 50%;
+  }
+
+  .world-grid {
+    display: grid;
+    row-gap: 4rem;
+    margin-top: clamp(3.5rem, 2rem + 4vw, 6rem);
+    padding: 0;
+    list-style: none;
+  }
+
+  .world-item {
+    position: relative;
+  }
+
+  .world-item-tall,
+  .world-item-wide {
+    width: 84%;
+  }
+
+  .world-item-tall {
+    justify-self: end;
+  }
+
+  .world-frame {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: var(--ratio, 4 / 3);
+    background-color: var(--color-surface-alt);
+  }
+
+  .world-item-feature .world-frame {
+    --ratio: 4 / 5;
+  }
+
+  .world-item-tall .world-frame {
+    --ratio: 3 / 4;
+  }
+
+  .world-item-wide .world-frame {
+    --ratio: 4 / 3;
+  }
+
+  .world-item-panorama .world-frame {
+    --ratio: 16 / 10;
+  }
+
+  .world-frame img {
+    transition: scale 380ms var(--ease-out-soft);
+  }
+
+  .world-item:hover .world-frame img {
+    scale: 1.04;
+  }
+
+  /* Captions: numeral, label, title (the link) and a "more" affordance. */
+  .world-caption {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+  }
+
+  .world-caption::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--color-highlight),
+      color-mix(in srgb, var(--color-highlight) 10%, transparent)
+    );
+    transform-origin: 0 50%;
+  }
+
+  .world-numeral {
+    font-family: var(--font-royal);
+    font-style: italic;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-accent);
+  }
+
+  .world-label {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .world-item-title {
+    margin-top: 0.625rem;
+    font-family: var(--font-royal);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 1.2rem + 0.9vw, 2rem);
+    line-height: 1.15;
+    color: var(--color-ink);
+  }
+
+  /* The title's link covers the whole panel, photograph included. */
+  .world-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+
+  .world-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .world-more {
+    position: relative;
+    display: inline-flex;
+    padding-bottom: 0.5rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .world-more::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--color-highlight);
+    transform: scaleX(0.3);
+    transform-origin: 0 50%;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .world-item:hover .world-more::after,
+  .world-item:focus-within .world-more::after {
+    transform: scaleX(1);
+  }
+
+  /* A second destination, above the stretched link. */
+  .world-aside {
+    position: relative;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-highlight) 60%, transparent);
+    text-underline-offset: 0.45em;
+  }
+
+  .world-aside:hover {
+    color: var(--color-ink);
+  }
+
+  .world-link:focus-visible,
+  .world-aside:focus-visible {
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 4px;
+  }
+
+  /* The featured experience's caption: an ivory plaque over the photograph's
+     foot — Warm Ivory ground (--color-ink here) and Deep Emerald type
+     (--color-surface): the Emerald ink/surface pair, inverted (10.6:1). */
+  .world-item-feature .world-caption {
+    z-index: 2;
+    width: min(90%, 27rem);
+    margin: -4rem 0 0 auto;
+    padding: 1.75rem 1.75rem 1.5rem;
+    background-color: var(--color-ink);
+  }
+
+  .world-item-feature .world-caption::before {
+    top: 0.625rem;
+    left: 0.625rem;
+    right: 0.625rem;
+    bottom: 0.625rem;
+    height: auto;
+    background: none;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 75%, transparent);
+  }
+
+  .world-item-feature :is(.world-numeral, .world-label, .world-item-title, .world-more, .world-aside) {
+    color: var(--color-surface);
+  }
+
+  .world-item-feature :is(.world-link, .world-aside):focus-visible {
+    outline-color: var(--color-surface);
+  }
+
+  /* Reveals: rules draw once their caption is in (JS present, motion on). */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .world-caption:not([data-revealed])::before {
+      transform: scaleX(0);
     }
 
-    .pillar-row:hover .pillar-peek,
-    .pillar-row:focus-visible .pillar-peek {
-      opacity: 1;
-      transform: translate3d(0, -50%, 0) rotate(-2deg) scale(1);
+    .world-caption::before {
+      transition: transform 380ms var(--ease-out-soft) calc(var(--reveal-delay, 0ms) + 200ms);
     }
+
+    .world-intro:not([data-revealed]) .world-rule {
+      transform: scaleX(0);
+    }
+
+    .world-rule {
+      transition: transform 380ms var(--ease-out-soft) 260ms;
+    }
+
+    /* The heading's second line follows the first a beat later. */
+    .world-title-wrap:not([data-revealed]) .world-title-accent {
+      opacity: 0;
+      transform: translate3d(0, 0.35em, 0);
+    }
+
+    .world-title-accent {
+      transition:
+        opacity 380ms var(--ease-out-soft) 180ms,
+        transform 380ms var(--ease-out-soft) 180ms;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .world-head {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+      align-items: end;
+      column-gap: 3rem;
+    }
+
+    .world-eyebrow-wrap,
+    .world-title-wrap {
+      grid-column: 1 / -1;
+    }
+
+    .world-intro {
+      grid-column: 2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .world-head {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+    }
+
+    .world-title-wrap {
+      grid-column: 1;
+    }
+
+    .world-intro {
+      grid-row: 2;
+      padding-bottom: 0.75rem;
+    }
+
+    .world-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(1.25rem, 2.5vw, 2.5rem);
+      row-gap: clamp(3.5rem, 5vw, 6rem);
+    }
+
+    .world-item-tall,
+    .world-item-wide {
+      width: auto;
+    }
+
+    /* A zig-zag: the featured experience and Stay (aligned to the plaque's
+       foot), then the pool wide on the left and Dine staggered on the right. */
+    .world-item-feature {
+      grid-column: 1 / 8;
+      grid-row: 1;
+    }
+
+    .world-item-tall {
+      grid-column: 9 / 13;
+      grid-row: 1;
+      align-self: end;
+    }
+
+    .world-item-panorama {
+      grid-column: 1 / 8;
+      grid-row: 2;
+    }
+
+    .world-item-wide {
+      grid-column: 9 / 13;
+      grid-row: 2;
+      align-self: start;
+      padding-top: clamp(2rem, 5vw, 5rem);
+    }
+
+    .world-item-panorama .world-frame {
+      --ratio: 16 / 9;
+    }
+  }
+
+  /* Rich motion: the panels drift at slightly different rates as the section
+     passes (transform only, from the section's --p); the featured one rises
+     into place as the section arrives; the panorama's photograph slides
+     within its frame. */
+  [data-motion="rich"] .world-item-feature {
+    translate: 0 calc(max(0, 0.4 - var(--p, 0.4)) * 20vh);
+  }
+
+  [data-motion="rich"] .world-item-tall {
+    translate: 0 calc((0.5 - var(--p, 0.5)) * 10vh);
+  }
+
+  [data-motion="rich"] .world-item-wide {
+    translate: 0 calc((0.5 - var(--p, 0.5)) * 4vh);
+  }
+
+  [data-motion="rich"] .world-item-panorama .world-frame img {
+    scale: 1.12;
+    translate: 0 calc((0.5 - var(--p, 0.5)) * 8%);
+  }
+
+  [data-motion="rich"] .world-item-panorama:hover .world-frame img {
+    scale: 1.15;
   }
 
   /* ── Stay: the room discovery stage ── */

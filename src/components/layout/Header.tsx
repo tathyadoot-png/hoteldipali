@@ -119,7 +119,7 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
           <CallLink labelClassName="header-call-label" />
         </span>
 
-        <BookStayLink bookingUrl={bookingUrl} className="header-book btn-royal">
+        <BookStayLink bookingUrl={bookingUrl} className="header-book btn-primary">
           {/* One flex item, so the space before "a Stay" survives. */}
           <span>
             Book<span className="header-book-more"> a Stay</span>

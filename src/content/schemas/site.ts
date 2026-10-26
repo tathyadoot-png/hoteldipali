@@ -3,10 +3,30 @@ import { z } from "zod";
 import {
   imageSchema,
   slugSchema,
+  SOURCE_REQUIRED_MSG,
+  sourceRequiredForPublic,
   timeSchema,
   tracked,
   trackedMobile,
+  trustShape,
 } from "./common";
+
+// The home hero's moving image, played inside the arch over `homeHero` (its
+// poster) from tablet width up. It carries trust fields like an image entry:
+// a prototype or AI-generated clip is `sample`, so check:content reports it
+// and `pnpm release` blocks launch until original footage replaces it.
+const heroVideoSchema = z
+  .object({
+    id: slugSchema,
+    src: z.string().regex(/^\/video\/.+\.mp4$/, "src must be an .mp4 under /video/"),
+    shot: z.string().min(1, "describe the intended real footage"),
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+    /** Loop length in seconds. */
+    duration: z.number().positive(),
+    ...trustShape,
+  })
+  .refine(sourceRequiredForPublic, SOURCE_REQUIRED_MSG);
 
 export const departmentSchema = z.enum([
   "reservations",
@@ -34,6 +54,9 @@ export const siteSchema = z.object({
   // The home hero's full-bleed photograph (a labelled placeholder until the
   // hotel supplies an original).
   homeHero: imageSchema,
+  homeHeroVideo: heroVideoSchema,
+  // "The Dipali Experience", the section below the home hero.
+  homeExperience: imageSchema,
 
   address: tracked(
     z.object({

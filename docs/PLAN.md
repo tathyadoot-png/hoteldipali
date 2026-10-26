@@ -112,6 +112,10 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-24 | Home hero: emerald stone canvas; the lit entrance (DJI_…0042, cropped **below** the rooftop "DIPALI RESIDENCY" sign) inside an arched window with a double gold frame, botanical sprigs and one gold ribbon; copy per brief, "Beyond" in script; CTAs "Explore the Experience" → #explore, "Discover Hotel Dipali" → #welcome. Pointer depth (rich motion only) via `--mx/--my`. Supersedes the 2026-10-22 row for this photo: the sign is cropped out, so §G is respected — confirm the naming (open question). | Brief: one art direction, a real hotel photograph, choreographed entrance; no fictional building. |
 | 2026-10-24 | No Three.js / R3F / WebGL. The opening is SVG line art + CSS animations + one small pointer handler. | Brief: lightest approach; the focal point is a real photograph, and nothing in the design needs 3D. Saves ~150 KB+ of JS and a GPU context on phones. |
 | 2026-10-24 | SVG line drawing uses `pathLength={1}` + dash offset **without** `vector-effect: non-scaling-stroke`; stroke widths are set per breakpoint instead. | In Chromium the two combined compute dashes in screen space, so scaled-up frames drew only partly (even with animation off). |
+| 2026-10-26 | Palette texture swap: the owner saved a new stone under `public/palettes/3.jfif` (1024×576 landscape folded teal stone; the old framed watercolour stone is now `11.jfif`, unused). `make:photos` grades it toward emerald (`hue-rotate(-14deg) saturate(0.9) brightness(0.95)`, no crop) into `emerald-stone-1024.webp` (23 KB, was 56 KB); `--texture-stone` and the hero preload point at it; the stale `emerald-stone-479.webp` was deleted. | Owner's instruction: keep using the newly selected texture for now. Ungraded it read teal against the fixed Deep Emerald. |
+| 2026-10-26 | "The Dipali Experience" replaces the welcome block's logo medallion + "Step inside" heading (same `#welcome` section, threshold, `#home-intro` heading id; the pillar index `#explore` stays below it). Statement (eyebrow, two-line Cormorant heading with "Remember" in Great Vibes, gold rule, Cormorant italic lead, Manrope body = `site.shortDescription`, emerald-tablet `.btn-royal-solid` CTA) beside the reception atrium as a 4:5 portrait under a shallow lintel (the threshold's elliptical curve, not the hero's round arch), on an emerald stone tablet with a vertical caption, traced by one gold line that draws upward after the photo reveals; a gold thread continues down from the threshold keystone. Reveals reuse `ScrollReveal` (380 ms); no scroll-linked work. | Owner brief: editorial, architectural, emerald + ivory + gold, no repeat of the hero composition, lightweight. |
+| 2026-10-26 | New content image `site.homeExperience` (schema `imageSchema`): `reception-atrium-portrait-{480,720,960,1200}.webp`, a 4:5 crop of DSC_1632 below the ceiling band (36–146 KB; phones load 480 w). The "In pictures" mosaic skips the photo the section shows (matched on `source`). | A cover-crop of the landscape set made phones fetch 150–224 KB to show half of it; a dedicated crop keeps the trust fields and explicit dimensions. |
+| 2026-10-26 | Contrast gate: light-only large-text pair `brand`/`surface` (13.25:1) for the script accent word on ivory. | Every text/background pair is gated (CLAUDE.md §E). |
 | 2026-10-24 | Performance: the stone texture (the home page's largest paint, CSS-only) is preloaded from `EntranceHero`; the hero photo's `sizes` match the arch's CSS width; the botanical panel is the 480 w file below 768 px; the welcome/enquiry logos use the 7–20 KB emblem set instead of the 506 KB PNG. | Measured on a throttled phone (4× CPU, 150 ms RTT, 1.6 Mbps): LCP 3.0 s → 1.67 s, home weight 643 → 579 KB. |
 
 ## Brand assets
@@ -180,6 +184,10 @@ See CLAUDE.md section M:
     emerald hero — outside this phase; decide whether it joins the Emerald identity.
   - Measured in headless Chromium only (software raster). Check the opening on a
     real mid-range Android phone and on Safari/iOS.
+- **The Dipali Experience (2026-10-26):** "Discover Our Story" points at the pillar
+  index (`#explore`) until an About / story page exists. Its body copy is
+  `site.shortDescription`, still `sample` — replace with verified wording. Confirm the
+  caption "The reception atrium · Sagar" and `11.jfif` (now unused) can be removed.
 - Smooth scrolling was tuned with synthetic wheel input (100 px notches) in Chromium on
   Windows. Confirm the feel on real hardware: a notched mouse on Windows, a Mac
   trackpad (its own momentum + Lenis), a Magic Mouse, and Safari/Firefox. Touch was
@@ -682,3 +690,16 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     (mean 17.9 vs 17.5 ms), slightly worse at 4× (24.4 vs 20.9 ms). A trace shows
     the cost is rasterisation (software in headless), not main-thread work. Not
     measured on real devices, Safari or Firefox.
+- 2026-10-26: "The Dipali Experience" — the section below the home hero (not a numbered
+  step; current step stays 11; uncommitted per the brief).
+  - **Built:** `DipaliExperience` (server component) in the `#welcome` section; `.experience*`
+    and `.btn-royal-solid` in theme.css; `site.homeExperience` + schema; portrait crop job;
+    new palette-3 texture graded and wired; mosaic de-duplication; contrast pair.
+  - **Tests:** home spec — the section's heading, optimised portrait photo (srcset,
+    explicit 1200×1500) and CTA → `#explore`; entrance reduced-motion test — copy,
+    photo and gold frame complete with nothing clipped. **All 368 e2e tests pass**;
+    lint, typecheck, contrast gate, build clean.
+  - **Measured (headless Chromium, production build) at 360/390/768/1024/1280/1440/1920:**
+    no horizontal overflow, no console errors, CLS 0 from the section (home total
+    unchanged: 0.0095 at 1024, 0.0062 at 1440 from the hero font swap). Reduced motion:
+    everything visible at once; no JS: frame and photo shown unclipped.

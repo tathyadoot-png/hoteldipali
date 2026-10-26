@@ -18,13 +18,13 @@ export function StickyCtaBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] xl:hidden">
       <div className="grid grid-cols-3 gap-2 p-2">
-        <CallLink className="btn-ghost min-h-11 justify-center px-2 text-sm">
+        <CallLink className="btn-ghost min-h-11 btn-compact justify-center">
           Call
         </CallLink>
-        <WhatsAppLink context="availability" className="btn-ghost min-h-11 justify-center px-2 text-sm">
+        <WhatsAppLink context="availability" className="btn-ghost min-h-11 btn-compact justify-center">
           WhatsApp
         </WhatsAppLink>
-        <a href={enquireHref(pathname)} className="btn-primary min-h-11 justify-center px-2 text-sm">
+        <a href={enquireHref(pathname)} className="btn-primary min-h-11 btn-compact justify-center">
           {label}
         </a>
       </div>

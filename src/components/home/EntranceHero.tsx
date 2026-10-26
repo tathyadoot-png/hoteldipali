@@ -2,15 +2,17 @@ import { preload } from "react-dom";
 
 import { ArchFrame, Sprig } from "@/components/brand/Ornaments";
 import { HeroDepth } from "@/components/home/HeroDepth";
+import { HeroVideo } from "@/components/home/HeroVideo";
 import { Picture } from "@/components/media/Picture";
-import { ScrollSection } from "@/components/motion/ScrollSection";
-import type { Image } from "@/content";
+import type { Image, Site } from "@/content";
 
 type Cta = { label: string; href: string };
 
 type EntranceHeroProps = {
-  /** The hotel itself, seen through the arched window. */
+  /** The hotel itself, seen through the arched window — and the video's poster. */
   image: Image;
+  /** The same view in motion (tablet and up; see HeroVideo). */
+  video?: Pick<Site["homeHeroVideo"], "src" | "width" | "height">;
   eyebrow: string;
   /** Headline in three parts; `accent` is set in the script face. */
   title: { lead: string; accent: string; tail: string };
@@ -24,7 +26,7 @@ type EntranceHeroProps = {
 // The emerald canvas's stone texture (--texture-stone in theme.css) is this
 // page's largest paint, but only CSS refers to it; hinted from the document
 // head it loads alongside the photograph instead of after the stylesheet.
-const STONE_TEXTURE = "/images/textures/emerald-stone-479.webp";
+const STONE_TEXTURE = "/images/textures/emerald-stone-1024.webp";
 
 // The gold ribbon: two strands of one band crossing the emerald canvas. Wide
 // screens: it rises from the left edge above the headline, flows into the
@@ -81,10 +83,14 @@ function Ribbon({ variant }: { variant: "wide" | "narrow" }) {
  * flanked by botanical sprigs; one gold ribbon crossing the composition; and
  * the editorial headline. On first load the loader's arch flies onto this
  * arch (IntroLoader); everything here is also complete and legible with every
- * animation disabled. Server-rendered; HeroDepth adds the pointer response.
+ * animation disabled. Server-rendered; HeroDepth adds the pointer response
+ * and HeroVideo the moving image. Under rich motion the hero holds still
+ * (sticky) and recedes while The Dipali Experience rises over it — driven by
+ * --cover, which that section writes here (LayeredSection).
  */
 export function EntranceHero({
   image,
+  video,
   eyebrow,
   title,
   titlePrefix,
@@ -95,8 +101,7 @@ export function EntranceHero({
   preload(STONE_TEXTURE, { as: "image", fetchPriority: "high" });
 
   return (
-    <ScrollSection
-      mode="through"
+    <section
       data-theme="emerald"
       aria-labelledby="home-hero"
       className="entrance -mt-18 bg-surface text-ink md:-mt-22"
@@ -117,7 +122,7 @@ export function EntranceHero({
           </h1>
           <p className="entrance-subline">{subline}</p>
           <div className="entrance-actions">
-            <a href={primary.href} className="btn-royal btn-royal-arrow">
+            <a href={primary.href} className="btn-secondary btn-cta">
               {primary.label}
             </a>
             <a href={secondary.href} className="link-royal">
@@ -136,6 +141,7 @@ export function EntranceHero({
               priority
               sizes="(min-width: 1024px) min(49vh, 32rem), min(58vw, 20rem)"
             />
+            {video ? <HeroVideo src={video.src} width={video.width} height={video.height} /> : null}
           </div>
           <ArchFrame className="entrance-arch-frame" />
           <Sprig className="entrance-sprig entrance-sprig-l" />
@@ -143,7 +149,9 @@ export function EntranceHero({
         </figure>
       </div>
 
+      {/* Deepens as the next section covers the hero (rich motion only). */}
+      <div aria-hidden="true" className="layer-veil" />
       <HeroDepth />
-    </ScrollSection>
+    </section>
   );
 }

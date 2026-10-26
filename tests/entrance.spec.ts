@@ -2,21 +2,30 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 // The home page's opening, hero and scroll-driven scenes. The hero (Emerald,
-// 2026-10-24) frames the hotel's lit entrance in a gold arch; a short opening
-// loader plays on a full page load only. Scenes run under "rich motion"
-// (>=1024px, fine pointer, no reduced-motion request — the same query the
-// boot script uses).
+// 2026-10-24) frames the hotel's lit entrance in a gold arch — a photograph,
+// and from tablet width up the same view in motion (2026-10-26); a short
+// opening loader plays on a full page load only. Scenes run under "rich
+// motion" (>=1024px, fine pointer, no reduced-motion request — the same query
+// the boot script uses).
 
 const DESKTOP = { width: 1280, height: 800 };
 const PHONE = { width: 360, height: 780 };
 const EXIT_AT = 1450; // IntroLoader: ms after navigation start
+const CLIP = "/video/entrance-night-arch-532.mp4";
+
+/** Every request for a file under /video/ while `page` is open. */
+function trackVideo(page: Page) {
+  const requests: string[] = [];
+  page.on("request", (req) => {
+    const path = new URL(req.url()).pathname;
+    if (path.startsWith("/video/")) requests.push(path);
+  });
+  return requests;
+}
 
 /** The hero: headline, photograph and calls to action in one viewport. */
 async function expectHero(page: Page) {
-  const videoRequests: string[] = [];
-  page.on("request", (req) => {
-    if (req.url().includes("/video/")) videoRequests.push(req.url());
-  });
+  const videoRequests = trackVideo(page);
   await page.goto("/");
   await page.waitForLoadState("load");
 
@@ -47,10 +56,10 @@ async function expectHero(page: Page) {
   );
   expect(ratio).toBeLessThan(1.15);
 
-  // CSS and SVG only: no film, no canvas / WebGL layer.
-  await expect(page.locator("video, canvas")).toHaveCount(0);
-  expect(videoRequests).toEqual([]);
-  return image;
+  // No canvas / WebGL layer, and never the 13 MB source video.
+  await expect(page.locator("canvas")).toHaveCount(0);
+  expect(videoRequests.filter((path) => path !== CLIP)).toEqual([]);
+  return { image, videoRequests };
 }
 
 test.describe("Home hero", () => {
@@ -61,10 +70,154 @@ test.describe("Home hero", () => {
     await expectHero(page);
   });
 
-  test("phone: the same photograph, at a phone-sized width", async ({ page }) => {
+  test("phone: the same photograph, at a phone-sized width, and no video", async ({ page }) => {
     await page.setViewportSize(PHONE);
-    const image = await expectHero(page);
+    const { image, videoRequests } = await expectHero(page);
     expect(Number(/-(\d+)\.webp$/.exec(image.src)?.[1])).toBeLessThanOrEqual(720);
+    // CLAUDE.md §K: no autoplay video on phones — not even a download.
+    await page.waitForTimeout(4_500);
+    await expect(page.locator(".entrance-video")).toHaveCount(0);
+    expect(videoRequests).toEqual([]);
+  });
+});
+
+test.describe("Hero video", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("plays muted and inline inside the arch, after the page has loaded", async ({ page }) => {
+    const requests = trackVideo(page);
+    let loadedAt = 0;
+    page.on("load", () => (loadedAt = Date.now()));
+    await page.goto("/");
+    const video = page.locator(".entrance-arch-window video");
+    await expect(video).toHaveAttribute("data-playback", "playing", { timeout: 10_000 });
+    expect(requests).toEqual([CLIP]);
+    expect(loadedAt).toBeGreaterThan(0);
+    const state = await video.evaluate((v: HTMLVideoElement) => ({
+      muted: v.muted,
+      inline: v.playsInline,
+      loop: v.loop,
+      paused: v.paused,
+      hidden: v.getAttribute("aria-hidden"),
+    }));
+    expect(state).toEqual({ muted: true, inline: true, loop: true, paused: false, hidden: "true" });
+    // The photograph — its poster — is still there underneath.
+    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
+  });
+
+  test("the pause control stops and restarts it (WCAG 2.2.2)", async ({ page }) => {
+    await page.goto("/");
+    const video = page.locator(".entrance-arch-window video");
+    await expect(video).toHaveAttribute("data-playback", "playing", { timeout: 10_000 });
+    const pause = page.getByRole("button", { name: "Pause the hotel video" });
+    await pause.click();
+    await expect(page.getByRole("button", { name: "Play the hotel video" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
+    await page.getByRole("button", { name: "Play the hotel video" }).click();
+    await expect(video).toHaveAttribute("data-playback", "playing");
+  });
+
+  test("if autoplay is refused, the photograph stays and nothing breaks", async ({ page }) => {
+    await page.addInitScript(() => {
+      HTMLMediaElement.prototype.play = () => Promise.reject(new DOMException("blocked", "NotAllowedError"));
+    });
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(String(e)));
+    await page.goto("/");
+    await page.waitForTimeout(5_000);
+    await expect(page.locator(".entrance-video")).toHaveCount(0);
+    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test("if the video cannot load, the photograph stays", async ({ page }) => {
+    await page.route("**/video/**", (route) => route.abort());
+    await page.goto("/");
+    await page.waitForTimeout(5_000);
+    await expect(page.locator(".entrance-video")).toHaveCount(0);
+    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
+  });
+});
+
+test.describe("Hero video — reduced motion", () => {
+  test.use({ viewport: DESKTOP, reducedMotion: "reduce" });
+
+  test("never plays (or downloads) the video", async ({ page }) => {
+    const requests = trackVideo(page);
+    await page.goto("/");
+    await page.waitForTimeout(4_500);
+    await expect(page.locator(".entrance-video")).toHaveCount(0);
+    expect(requests).toEqual([]);
+  });
+});
+
+test.describe("Layered sections — rich motion (desktop)", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("the hero holds while The Dipali Experience rises over it, then scrolls away", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "rich");
+    const hero = page.locator(".entrance");
+    await expect(hero).toHaveCSS("position", "sticky");
+    // Half a viewport in: the hero has not moved, and it is half covered.
+    await page.evaluate(() => window.scrollTo({ top: innerHeight / 2, behavior: "instant" }));
+    await expect.poll(() => hero.evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBe(0);
+    await expect
+      .poll(() => hero.evaluate((el) => Number(el.style.getPropertyValue("--cover"))))
+      .toBeGreaterThan(0.3);
+    // Well past it: covered, and gone with its wrapper.
+    await page.evaluate(() => window.scrollTo({ top: innerHeight * 2.5, behavior: "instant" }));
+    await expect
+      .poll(() => hero.evaluate((el) => Number(el.style.getPropertyValue("--cover"))))
+      .toBe(1);
+    expect(await hero.evaluate((el) => el.getBoundingClientRect().bottom)).toBeLessThanOrEqual(0);
+  });
+
+  test("A World Within Dipali rises over The Dipali Experience", async ({ page }) => {
+    await page.goto("/");
+    const top = await page.evaluate(
+      () => document.querySelector("#explore")!.getBoundingClientRect().top + window.scrollY,
+    );
+    await page.evaluate((y) => window.scrollTo({ top: y - innerHeight / 2, behavior: "instant" }), top);
+    await expect
+      .poll(() => page.evaluate(() => Number(document.querySelector<HTMLElement>("#welcome")!.style.getPropertyValue("--cover"))))
+      .toBeGreaterThan(0.3);
+  });
+
+  test("keyboard focus never lands on a covered hero link", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => window.scrollTo({ top: innerHeight * 0.8, behavior: "instant" }));
+    await page.waitForTimeout(300);
+    await page.locator(".entrance-actions").getByRole("link", { name: "Explore the Experience" }).focus();
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const link = document.activeElement!.getBoundingClientRect();
+          const cover = document.querySelector("#welcome")!.getBoundingClientRect();
+          return link.bottom <= cover.top;
+        }),
+      )
+      .toBe(true);
+  });
+});
+
+test.describe("Layered sections — reduced motion", () => {
+  test.use({ viewport: DESKTOP, reducedMotion: "reduce" });
+
+  test("sections simply stack: nothing holds and nothing recedes", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(".entrance")).not.toHaveCSS("position", "sticky");
+    await page.evaluate(() => window.scrollTo({ top: innerHeight / 2, behavior: "instant" }));
+    await page.waitForTimeout(300);
+    expect(await page.locator(".entrance").evaluate((el) => el.style.getPropertyValue("--cover"))).toBe("");
+    expect(
+      await page.locator(".entrance").evaluate((el) => Math.round(el.getBoundingClientRect().top)),
+    ).toBeLessThan(0);
   });
 });
 
@@ -81,7 +234,7 @@ test.describe("Opening loader", () => {
     await expect(intro).toHaveAttribute("data-state", "done", { timeout: 4_000 });
     await expect(intro).toBeHidden();
     // The hero beneath is complete.
-    await expect(page.locator(".entrance-actions .btn-royal")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".entrance-actions .btn-secondary")).toHaveCSS("opacity", "1");
   });
 
   test("a key press during the opening ends it early", async ({ page }) => {
@@ -139,7 +292,7 @@ test.describe("Opening loader — no JavaScript", () => {
   test("the CSS-only opening still leaves and the hero is complete", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".intro")).toBeHidden({ timeout: 4_000 });
-    await expect(page.locator(".entrance-actions .btn-royal")).toHaveCSS("opacity", "1", {
+    await expect(page.locator(".entrance-actions .btn-secondary")).toHaveCSS("opacity", "1", {
       timeout: 4_000,
     });
   });
@@ -235,6 +388,13 @@ test.describe("Home scenes — reduced motion", () => {
       await expect(page.locator(selector).first()).toBeVisible();
       await expect(page.locator(selector).first()).toHaveCSS("opacity", "1");
     }
+
+    // The Dipali Experience: copy, photograph and its gold frame are all
+    // there at once, with nothing left clipped.
+    await page.locator("#welcome").scrollIntoViewIfNeeded();
+    await expect(page.locator(".experience-text")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".experience-frame")).toHaveCSS("clip-path", "none");
+    await expect(page.locator(".experience-photo img")).toHaveCSS("transform", "none");
 
     // The Celebrate window is already fully open.
     const clip = await page.evaluate(

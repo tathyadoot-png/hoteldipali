@@ -34,6 +34,34 @@
     "source": "Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
     "note": "cropped below the rooftop sign; confirm usage rights and caption with the hotel"
   },
+  "homeHeroVideo": {
+    "id": "home-hero-entrance-night-video",
+    "src": "/video/entrance-night-arch-532.mp4",
+    "shot": "Night, frontal: a slow push-in toward the lit entrance porch, framed by the hero's arched window, with no signage in view; original footage at least 1080 px tall",
+    "width": 532,
+    "height": 740,
+    "duration": 7,
+    "status": "sample",
+    "note": "AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from public/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch"
+  },
+  "homeExperience": {
+    "id": "home-experience-reception",
+    "src": "/images/hotel/reception-atrium-portrait-1200.webp",
+    "alt": "The double-height reception atrium: the front desk between carved wooden screens, with lounge seating in front",
+    "shot": "Reception atrium, portrait 4:5 crop centred on the front desk, full height of the atrium",
+    "aspect": "4:5",
+    "width": 1200,
+    "height": 1500,
+    "widths": [
+      480,
+      720,
+      960,
+      1200
+    ],
+    "status": "public-unverified",
+    "source": "Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10",
+    "note": "portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel"
+  },
   "address": {
     "status": "public-unverified",
     "source": "GST public record (see docs/public-data.md)",

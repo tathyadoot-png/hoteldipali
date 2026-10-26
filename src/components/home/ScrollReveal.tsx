@@ -2,13 +2,22 @@
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
-type RevealVariant = "rise" | "mask" | "image";
+type RevealVariant =
+  | "rise"
+  | "mask"
+  | "image"
+  // Photographs revealed through a clipping mask that opens in one direction.
+  | "wipe-up"
+  | "wipe-down"
+  | "wipe-left"
+  | "wipe-centre";
 
 type ScrollRevealProps = {
   children: ReactNode;
   className?: string;
   /** "rise" (default) fades content up; "mask" lifts a heading out of a
-   * mask; "image" opens a frame from its base while the photo settles. */
+   * mask; "image" opens a frame from its base while the photo settles;
+   * "wipe-*" open a photograph's frame from one edge (or the centre). */
   variant?: RevealVariant;
   /** Stagger after the element enters, in ms (applied in CSS, not a timer). */
   delay?: number;

@@ -101,6 +101,16 @@ const JOBS: Job[] = [
     widths: [480, 720, 960, 1200, 1515],
     quality: 0.8,
   },
+  // "The Dipali Experience" (home): the reception atrium as a 4:5 portrait,
+  // centred on the front desk between the carved screens, below the ceiling.
+  {
+    src: "hotel/DSC_1632.JPG",
+    out: "images/hotel",
+    slug: "reception-atrium-portrait",
+    rect: { x: 0.26, y: 0.1, w: 0.4801, h: 0.9 },
+    widths: [480, 720, 960, 1200],
+    quality: QUALITY,
+  },
   // The real logo, trimmed to its artwork (alpha kept) for the loader and
   // the navigation medallion — instead of the 506 KB 1080 px PNG.
   {
@@ -112,15 +122,15 @@ const JOBS: Job[] = [
     quality: 0.86,
   },
   // Palette textures, graded toward Deep Emerald (#073B30) / Botanical Green.
-  // Emerald watercolour stone (palette 3, inside its baked-in gold frame).
+  // Emerald folded stone (palette 3, the owner's selection of 2026-10-26: a
+  // landscape teal texture, nudged from teal onto the emerald family).
   {
-    src: "palettes/3.jfif",
+    src: "palettes/3.png",
     out: "images/textures",
     slug: "emerald-stone",
-    rect: { x: 0.075, y: 0.085, w: 0.85, h: 0.86 },
-    widths: [480],
-    quality: 0.82,
-    filter: "hue-rotate(-8deg) saturate(0.86) brightness(0.74) contrast(1.1)",
+    widths: [1024],
+    quality: 0.8,
+    filter: "hue-rotate(-14deg) saturate(0.9) brightness(0.95)",
   },
   // Gold foliage around an open centre (palette 9) — the loader's panel.
   {
