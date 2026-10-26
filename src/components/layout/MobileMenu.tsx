@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 import { Logo } from "@/components/brand/Logo";
+import { MedallionRing } from "@/components/brand/Ornaments";
+import { BookStayLink } from "@/components/links/BookStayLink";
 import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
@@ -28,7 +30,7 @@ function CloseIcon() {
   );
 }
 
-export function MobileMenu() {
+export function MobileMenu({ bookingUrl }: { bookingUrl: string | null }) {
   const { site } = useSiteData();
   const pathname = usePathname();
   const { open, setOpen, triggerRef } = useMobileMenu();
@@ -81,14 +83,14 @@ export function MobileMenu() {
     };
   }, [open]);
 
-  // The hall behind the gates is peacock; data-theme needs its own text-ink (see
-  // CLAUDE.md §E) so colour re-resolves inside it.
+  // The hall behind the gates is Emerald (the royal identity); data-theme needs
+  // its own text-ink (see CLAUDE.md §E) so colour re-resolves inside it.
   return (
     <dialog
       ref={dialogRef}
       id="mobile-menu"
       aria-label="Site menu"
-      data-theme="peacock"
+      data-theme="emerald"
       data-lenis-prevent=""
       className="menu-dialog m-0 h-dvh max-h-none w-screen max-w-none bg-surface p-0 text-ink"
     >
@@ -109,7 +111,10 @@ export function MobileMenu() {
               Close
             </span>
           </button>
-          <Logo variant="reverse" imgClassName="h-15" />
+          <div className="menu-medallion">
+            <MedallionRing className="header-ring" />
+            <Logo variant="reverse" imgClassName="header-emblem" sizes="3rem" />
+          </div>
         </div>
 
         <nav aria-label="Mobile" className="menu-arch mt-6 flex flex-1 flex-col overflow-y-auto">
@@ -126,14 +131,15 @@ export function MobileMenu() {
           ))}
         </nav>
 
-        <div className="flex flex-col gap-3 pt-6 pb-[env(safe-area-inset-bottom)]">
-          <div className="flex flex-col gap-3 md:flex-row">
-            <CallLink className="btn-ghost justify-center md:flex-1" />
-            <WhatsAppLink context="general" className="btn-primary justify-center md:flex-1">
+        <div className="menu-foot flex flex-col gap-4 pt-6 pb-[env(safe-area-inset-bottom)]">
+          <BookStayLink bookingUrl={bookingUrl} className="btn-royal btn-royal-arrow w-full" />
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+            <CallLink className="link-royal" />
+            <WhatsAppLink context="general" className="link-royal">
               WhatsApp us
             </WhatsAppLink>
           </div>
-          <p className="caption">{site.locationLine.value}</p>
+          <p className="menu-address">{site.locationLine.value}</p>
         </div>
       </div>
     </dialog>

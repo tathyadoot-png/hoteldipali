@@ -27,9 +27,9 @@ test.describe("Home page", () => {
     await expect(page.locator("#home-enquire")).toBeVisible();
   });
 
-  test("hero section has peacock theme", async ({ page }) => {
+  test("hero section has the emerald theme", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    await expect(hero).toHaveAttribute("data-theme", "peacock");
+    await expect(hero).toHaveAttribute("data-theme", "emerald");
   });
 
   test("enquiry section has peacock theme and anchor id", async ({ page }) => {
@@ -39,9 +39,14 @@ test.describe("Home page", () => {
 
   /* ──── Navigation & links ──── */
 
-  test("'Enquire now' hero button links to #enquire", async ({ page }) => {
-    const btn = page.locator("section").filter({ has: page.locator("#home-hero") }).getByText("Enquire now");
-    await expect(btn).toHaveAttribute("href", "#enquire");
+  test("the hero's two calls to action lead to sections on this page", async ({ page }) => {
+    const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
+    const primary = hero.getByRole("link", { name: "Explore the Experience" });
+    const secondary = hero.getByRole("link", { name: "Discover Hotel Dipali" });
+    await expect(primary).toHaveAttribute("href", "#explore");
+    await expect(secondary).toHaveAttribute("href", "#welcome");
+    await expect(page.locator("#explore")).toBeAttached();
+    await expect(page.locator("#welcome")).toBeAttached();
   });
 
   test("has at least one link to /rooms/", async ({ page }) => {
@@ -88,7 +93,7 @@ test.describe("Home page", () => {
     for (const href of hrefs) await expect(page.locator(href)).toBeAttached();
   });
 
-  /* ──── Peacock sections carry text-ink ──── */
+  /* ──── Themed scopes carry text-ink ──── */
 
   test("all peacock-themed sections carry text-ink class", async ({ page }) => {
     const peacockSections = page.locator('section[data-theme="peacock"]');
@@ -96,6 +101,18 @@ test.describe("Home page", () => {
     expect(count).toBeGreaterThanOrEqual(2);
     for (let i = 0; i < count; i++) {
       const classes = await peacockSections.nth(i).getAttribute("class");
+      expect(classes).toContain("text-ink");
+    }
+  });
+
+  // Header, opening loader, hero and menu: every Emerald scope re-declares its
+  // colour (inherited `color` would not re-resolve --color-ink).
+  test("every emerald-themed element carries text-ink class", async ({ page }) => {
+    const scopes = page.locator('[data-theme="emerald"]');
+    const count = await scopes.count();
+    expect(count).toBeGreaterThanOrEqual(4);
+    for (let i = 0; i < count; i++) {
+      const classes = await scopes.nth(i).getAttribute("class");
       expect(classes).toContain("text-ink");
     }
   });

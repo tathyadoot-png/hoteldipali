@@ -3,7 +3,7 @@
 
 export type Rgb = { r: number; g: number; b: number };
 
-export type Variant = "light" | "peacock";
+export type Variant = "light" | "peacock" | "emerald";
 
 export type ThemeTokens = Record<string, string>;
 
@@ -61,6 +61,7 @@ export function contrastRatio(hex1: string, hex2: string): number {
 export function parseThemeTokens(css: string): Record<Variant, ThemeTokens> {
   const lightBlock = /@theme\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
   const peacockBlock = /\[data-theme="peacock"\]\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
+  const emeraldBlock = /\[data-theme="emerald"\]\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
 
   const parse = (block: string): ThemeTokens => {
     const tokens: ThemeTokens = {};
@@ -74,7 +75,7 @@ export function parseThemeTokens(css: string): Record<Variant, ThemeTokens> {
     return tokens;
   };
 
-  return { light: parse(lightBlock), peacock: parse(peacockBlock) };
+  return { light: parse(lightBlock), peacock: parse(peacockBlock), emerald: parse(emeraldBlock) };
 }
 
 export const BODY_MIN = 4.5;
@@ -121,6 +122,17 @@ export function pairsForVariant(variant: Variant): ContrastPair[] {
     ...BODY_PAIRS.map(toPair(BODY_MIN, "body")),
     ...UI_PAIRS.map(toPair(UI_MIN, "ui")),
   ];
-  if (variant === "peacock") pairs.push(...PEACOCK_ONLY_UI_PAIRS.map(toPair(UI_MIN, "ui")));
+  if (variant === "peacock" || variant === "emerald") {
+    pairs.push(...PEACOCK_ONLY_UI_PAIRS.map(toPair(UI_MIN, "ui")));
+  }
+  if (variant === "emerald") {
+    // Antique Gold reads as small text on Deep Emerald (5.1:1) but not on
+    // Botanical Green (3.8:1): there it is a UI / large-text colour only.
+    return pairs.map((p) =>
+      p.fg === "accent" && p.bg === "surface-alt" && p.kind === "body"
+        ? { ...p, min: UI_MIN, kind: "ui" as const, use: "gold on Botanical Green: large text / UI only" }
+        : p,
+    );
+  }
   return pairs;
 }

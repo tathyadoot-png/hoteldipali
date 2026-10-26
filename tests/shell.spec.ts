@@ -14,23 +14,25 @@ test.describe("Desktop (1280px)", () => {
     await expect(page.getByRole("link", { name: "Call" })).toBeHidden();
   });
 
-  // On the home page the header stays transparent for the whole entrance film
-  // and turns solid when the ivory arch that follows it reaches the top.
-  test("home header is transparent over the entrance and solid once past it", async ({
+  // The header is always Emerald; on the home page it stays transparent over
+  // the hero and turns solid (emerald stone) when the ivory arch that follows
+  // it reaches the top.
+  test("home header is transparent over the hero and solid once past it", async ({
     page,
   }) => {
     await page.goto("/");
     const header = page.locator("header");
 
-    await expect(header).toHaveAttribute("data-theme", "peacock");
+    await expect(header).toHaveAttribute("data-theme", "emerald");
+    await expect(header).toHaveAttribute("data-state", "overlay");
     const transparentBg = await header.evaluate(
       (el) => getComputedStyle(el).backgroundColor,
     );
     expect(transparentBg).toBe("rgba(0, 0, 0, 0)");
 
-    // Still inside the pinned film: still transparent.
+    // Still over the hero: still transparent.
     await page.evaluate(() => window.scrollTo(0, 200));
-    await expect(header).toHaveAttribute("data-theme", "peacock");
+    await expect(header).toHaveAttribute("data-state", "overlay");
 
     // One-frame jump well past the arch (anchor link, End key, fling): solid.
     await page.evaluate(() => {
@@ -38,20 +40,21 @@ test.describe("Desktop (1280px)", () => {
       if (!arch) throw new Error("missing [data-header-solid-from]");
       window.scrollTo({ top: arch.getBoundingClientRect().top + window.scrollY + 600, behavior: "instant" });
     });
-    await expect(header).not.toHaveAttribute("data-theme", "peacock");
+    await expect(header).toHaveAttribute("data-state", "solid");
     await expect
       .poll(async () => header.evaluate((el) => getComputedStyle(el).backgroundColor))
       .not.toBe("rgba(0, 0, 0, 0)");
 
     // One-frame jump back to the top: transparent again.
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-    await expect(header).toHaveAttribute("data-theme", "peacock");
+    await expect(header).toHaveAttribute("data-state", "overlay");
+    await expect(header).toHaveAttribute("data-theme", "emerald");
   });
 
   test("the logo keystone is centred between the two nav wings", async ({ page }) => {
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Primary" });
-    await expect(nav.getByRole("link")).toHaveCount(7);
+    await expect(nav.getByRole("link")).toHaveCount(6);
 
     const keystone = await page.locator(".header-keystone").boundingBox();
     const wings = await page.locator(".header-wing").evaluateAll((els) =>
@@ -93,12 +96,14 @@ test.describe("Desktop (1280px)", () => {
       return box!.x + box!.width / 2;
     };
 
+    // /rooms/ is "Stay", in the left wing (Stay, Weddings, Events | Dining,
+    // Experiences, Gallery).
     await expect(leftWing).toHaveAttribute("data-glide", "on");
     await expect(rightWing).toHaveAttribute("data-glide", "off");
-    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Rooms")))).toBeLessThan(2);
+    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Stay")))).toBeLessThan(2);
 
-    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Dining" }).hover();
-    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Dining")))).toBeLessThan(2);
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Events" }).hover();
+    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Events")))).toBeLessThan(2);
 
     await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Gallery" }).focus();
     await expect(rightWing).toHaveAttribute("data-glide", "on");
@@ -107,7 +112,21 @@ test.describe("Desktop (1280px)", () => {
 
   test("header is solid on a page without an overlay hero", async ({ page }) => {
     await page.goto("/rooms/");
-    await expect(page.locator("header")).not.toHaveAttribute("data-theme", "peacock");
+    await expect(page.locator("header")).toHaveAttribute("data-state", "solid");
+  });
+
+  test("the primary nav only links to routes and anchors that exist", async ({ page }) => {
+    await page.goto("/rooms/");
+    const hrefs = await page
+      .getByRole("navigation", { name: "Primary" })
+      .getByRole("link")
+      .evaluateAll((els) => els.map((el) => el.getAttribute("href") ?? ""));
+    for (const href of hrefs) {
+      const [path, hash] = href.split("#");
+      const response = await page.goto(path || "/");
+      expect(response?.status(), href).toBe(200);
+      if (hash) await expect(page.locator(`#${hash}`), href).toBeAttached();
+    }
   });
 });
 
@@ -166,11 +185,11 @@ test.describe("Mobile (360px)", () => {
     await expect(menuButton).toBeFocused();
   });
 
-  test("the menu opens like gates onto a peacock hall", async ({ page }) => {
+  test("the menu opens like gates onto an emerald hall", async ({ page }) => {
     await page.goto("/rooms/");
     await page.getByRole("button", { name: "Menu" }).click();
     const dialog = page.locator("#mobile-menu");
-    await expect(dialog).toHaveAttribute("data-theme", "peacock");
+    await expect(dialog).toHaveAttribute("data-theme", "emerald");
     await expect(dialog).toHaveClass(/text-ink/);
 
     // Both leaves end fully outside the viewport, and never block taps.
@@ -185,7 +204,8 @@ test.describe("Mobile (360px)", () => {
       .toBe(true);
     await expect(page.locator(".menu-gate-l")).toHaveCSS("pointer-events", "none");
 
-    const current = dialog.getByRole("link", { name: "Rooms" });
+    // exact: "Book a Stay" is in the menu too.
+    const current = dialog.getByRole("link", { name: "Stay", exact: true });
     await expect(current).toHaveAttribute("aria-current", "page");
     await dialog.getByRole("link", { name: "Weddings" }).click();
     await expect(page).toHaveURL(/\/weddings\/$/);

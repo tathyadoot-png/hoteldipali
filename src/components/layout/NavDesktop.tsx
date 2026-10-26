@@ -1,15 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, type FocusEvent, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  type CSSProperties,
+  type FocusEvent,
+  type PointerEvent,
+} from "react";
 
 type NavLink = { label: string; href: string };
 
 /**
- * One wing of the primary nav. A hairline slides beneath — and takes the width
- * of — whichever link is pointed at or focused, and rests under the current page's link (or
- * fades away if that page lives in the other wing). Positions are measured
- * only on pointer/focus events and on resize — never while scrolling.
+ * One wing of the primary nav, set inside the header's engraved band. A small
+ * gold bead slides along the band's lower rule to whichever link is pointed at
+ * or focused, and rests under the current page's link (or fades away if that
+ * page lives in the other wing). Positions are measured only on pointer/focus
+ * events and on resize — never while scrolling.
  */
 function NavWing({ links, pathname, side }: { links: NavLink[]; pathname: string; side: "l" | "r" }) {
   const listRef = useRef<HTMLUListElement>(null);
@@ -54,10 +62,11 @@ function NavWing({ links, pathname, side }: { links: NavLink[]; pathname: string
       onFocus={toLink}
       onBlur={rest}
     >
-      {links.map((link) => {
+      {links.map((link, index) => {
         const isActive = pathname === link.href;
         return (
-          <li key={link.href}>
+          // --i staggers the links' entrance on the home page's first load.
+          <li key={link.href} style={{ "--i": index + (side === "r" ? 3 : 0) } as CSSProperties}>
             {/* prefetch=false: keep the static export from prefetching every
                 route on every page load. */}
             <Link
@@ -77,8 +86,8 @@ function NavWing({ links, pathname, side }: { links: NavLink[]; pathname: string
 }
 
 /**
- * The primary nav, split into two wings that flank the logo keystone. The
- * keystone itself sits over the empty centre column (see Header).
+ * The primary nav, split into two wings that flank the medallion. The
+ * medallion itself sits in the empty centre column (see Header).
  */
 export function NavDesktop({ links, pathname }: { links: NavLink[]; pathname: string }) {
   const split = Math.ceil(links.length / 2);

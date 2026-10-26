@@ -1,52 +1,149 @@
-import { CallLink } from "@/components/links/CallLink";
+import { preload } from "react-dom";
+
+import { ArchFrame, Sprig } from "@/components/brand/Ornaments";
+import { HeroDepth } from "@/components/home/HeroDepth";
 import { Picture } from "@/components/media/Picture";
 import { ScrollSection } from "@/components/motion/ScrollSection";
 import type { Image } from "@/content";
 
+type Cta = { label: string; href: string };
+
 type EntranceHeroProps = {
+  /** The hotel itself, seen through the arched window. */
   image: Image;
-  /** e.g. "Sagar, Madhya Pradesh" */
   eyebrow: string;
-  /** The hotel name: the lead word, then the emphasised rest. */
-  title: { lead: string; emphasis: string };
-  tagline: string;
+  /** Headline in three parts; `accent` is set in the script face. */
+  title: { lead: string; accent: string; tail: string };
+  /** Read before the visible headline by assistive tech and search engines. */
+  titlePrefix: string;
+  subline: string;
+  primary: Cta;
+  secondary: Cta;
 };
 
+// The emerald canvas's stone texture (--texture-stone in theme.css) is this
+// page's largest paint, but only CSS refers to it; hinted from the document
+// head it loads alongside the photograph instead of after the stylesheet.
+const STONE_TEXTURE = "/images/textures/emerald-stone-479.webp";
+
+// The gold ribbon: two strands of one band crossing the emerald canvas. Wide
+// screens: it rises from the left edge above the headline, flows into the
+// arched doorway at its shoulder (passing behind the photograph) and leaves
+// through the far side above the sprig. Narrow screens: a shorter curve that
+// threads behind the arch.
+const RIBBON_WIDE = {
+  a: "M-80 300C160 170 420 130 640 175C820 212 930 262 1060 236C1170 214 1300 214 1400 320C1440 362 1480 400 1540 420C1600 440 1650 440 1700 432",
+  b: "M-80 330C162 200 424 160 644 205C822 242 934 292 1064 266C1176 244 1304 244 1404 350C1444 392 1484 430 1544 450C1604 470 1654 470 1700 462",
+};
+const RIBBON_NARROW = {
+  a: "M460 140C360 110 320 190 280 260C240 330 150 350 80 370C30 384 0 400 -40 430",
+  b: "M460 168C366 138 334 214 296 282C256 352 162 374 90 394C40 408 8 424 -40 456",
+};
+
+function Ribbon({ variant }: { variant: "wide" | "narrow" }) {
+  const paths = variant === "wide" ? RIBBON_WIDE : RIBBON_NARROW;
+  const id = `ribbon-gold-${variant}`;
+  return (
+    <svg
+      aria-hidden="true"
+      className={`entrance-ribbon entrance-ribbon-${variant}`}
+      viewBox={variant === "wide" ? "0 0 1600 1000" : "0 0 400 900"}
+      preserveAspectRatio="xMidYMid slice"
+      fill="none"
+    >
+      <defs>
+        <linearGradient
+          id={id}
+          gradientUnits="userSpaceOnUse"
+          x1="0"
+          y1="0"
+          x2={variant === "wide" ? 1600 : 400}
+          y2={variant === "wide" ? 1000 : 900}
+        >
+          <stop offset="0" className="stop-shade" />
+          <stop offset="0.38" className="stop-gold" />
+          <stop offset="0.52" className="stop-glint" />
+          <stop offset="0.66" className="stop-gold" />
+          <stop offset="1" className="stop-shade" />
+        </linearGradient>
+      </defs>
+      <path className="ribbon-strand ribbon-b" pathLength={1} d={paths.b} stroke={`url(#${id})`} />
+      <path className="ribbon-strand ribbon-a" pathLength={1} d={paths.a} stroke={`url(#${id})`} />
+      {/* A single light that runs along the band once it has drawn. */}
+      <path className="ribbon-glint" pathLength={1} d={paths.a} />
+    </svg>
+  );
+}
+
 /**
- * The home page's hero: the hotel's own aerial photograph, full bleed, with
- * the name and the calls to action on a forest-green gradient. The copy rises
- * in on load (CSS only, so it runs before hydration and without JS); with rich
- * motion the photograph drifts a little slower than the page as you scroll
- * away. Complete and legible with every animation disabled.
+ * The home page's opening statement (Emerald). A textured emerald canvas; the
+ * hotel's lit entrance seen through an arched window in a double gold frame,
+ * flanked by botanical sprigs; one gold ribbon crossing the composition; and
+ * the editorial headline. On first load the loader's arch flies onto this
+ * arch (IntroLoader); everything here is also complete and legible with every
+ * animation disabled. Server-rendered; HeroDepth adds the pointer response.
  */
-export function EntranceHero({ image, eyebrow, title, tagline }: EntranceHeroProps) {
+export function EntranceHero({
+  image,
+  eyebrow,
+  title,
+  titlePrefix,
+  subline,
+  primary,
+  secondary,
+}: EntranceHeroProps) {
+  preload(STONE_TEXTURE, { as: "image", fetchPriority: "high" });
+
   return (
     <ScrollSection
       mode="through"
-      data-theme="peacock"
+      data-theme="emerald"
       aria-labelledby="home-hero"
       className="entrance -mt-18 bg-surface text-ink md:-mt-22"
     >
-      <div aria-hidden="true" className="entrance-media">
-        <Picture image={image} fill priority decorative sizes="100vw" />
-      </div>
-      <div aria-hidden="true" className="entrance-scrim absolute inset-0" />
+      <div aria-hidden="true" className="entrance-canvas" />
+      <Ribbon variant="wide" />
+      <Ribbon variant="narrow" />
 
-      <div className="entrance-content container-site">
-        <p className="entrance-rise eyebrow entrance-eyebrow">{eyebrow}</p>
-        <h1 id="home-hero" className="entrance-rise heading-hero mt-5">
-          {title.lead}
-          <br />
-          <em>{title.emphasis}</em>
-        </h1>
-        <p className="entrance-rise entrance-tagline">{tagline}</p>
-        <div className="entrance-rise entrance-actions mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
-          <a href="#enquire" className="btn-primary btn-cta">
-            Enquire now
-          </a>
-          <CallLink className="btn-ghost" />
+      <div className="entrance-inner container-site">
+        <div className="entrance-copy">
+          <p className="entrance-eyebrow">{eyebrow}</p>
+          <h1 id="home-hero" className="entrance-title">
+            <span className="visually-hidden">{titlePrefix} </span>
+            <span className="entrance-line">
+              {title.lead} <span className="entrance-script">{title.accent}</span>
+            </span>{" "}
+            <span className="entrance-line">{title.tail}</span>
+          </h1>
+          <p className="entrance-subline">{subline}</p>
+          <div className="entrance-actions">
+            <a href={primary.href} className="btn-royal btn-royal-arrow">
+              {primary.label}
+            </a>
+            <a href={secondary.href} className="link-royal">
+              {secondary.label}
+            </a>
+          </div>
         </div>
+
+        <figure className="entrance-arch">
+          <div className="entrance-arch-window">
+            {/* The arch's CSS width: min(58vw, 20rem); from 1024px, 0.72 × its
+                height of min(68svh, 44rem). */}
+            <Picture
+              image={image}
+              fill
+              priority
+              sizes="(min-width: 1024px) min(49vh, 32rem), min(58vw, 20rem)"
+            />
+          </div>
+          <ArchFrame className="entrance-arch-frame" />
+          <Sprig className="entrance-sprig entrance-sprig-l" />
+          <Sprig className="entrance-sprig entrance-sprig-r" flip />
+        </figure>
       </div>
+
+      <HeroDepth />
     </ScrollSection>
   );
 }

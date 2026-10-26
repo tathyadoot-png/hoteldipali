@@ -15,34 +15,24 @@
     "value": "A welcoming hotel in Sagar with comfortable rooms, lawns and banquet halls for weddings and events, a multi-cuisine restaurant, the Infinity Bar, Dipali Sweets, a swimming pool and a gym."
   },
   "homeHero": {
-    "id": "home-hero-aerial",
-    "src": "/images/hotel/aerial-pool-grounds-2560.webp",
-    "alt": "Aerial view of Hotel Dipali's curved swimming pool, gardens and thatched pavilion",
-    "shot": "Aerial, daylight: the curved pool, landscaped gardens and thatched pavilion",
-    "aspect": "4:3",
-    "width": 2560,
-    "height": 1920,
+    "id": "home-hero-entrance-night",
+    "src": "/images/hotel/entrance-night-arch-1515.webp",
+    "alt": "Hotel Dipali's entrance tower lit at night, above a garden of yellow cannas",
+    "shot": "Night, frontal: the lit entrance tower and porch with the garden in front, cropped to an arched window below the rooftop signage",
+    "aspect": "3:4",
+    "width": 1515,
+    "height": 2103,
     "widths": [
       480,
+      720,
       960,
-      1440,
-      1920,
-      2560
+      1200,
+      1515
     ],
-    "focus": "62% 60%",
-    "small": {
-      "src": "/images/hotel/aerial-pool-grounds-portrait-1080.webp",
-      "widths": [
-        480,
-        720,
-        1080
-      ],
-      "width": 1080,
-      "height": 1929
-    },
+    "focus": "50% 45%",
     "status": "public-unverified",
-    "source": "Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10",
-    "note": "confirm usage rights and caption with the hotel"
+    "source": "Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
+    "note": "cropped below the rooftop sign; confirm usage rights and caption with the hotel"
   },
   "address": {
     "status": "public-unverified",
@@ -209,7 +199,7 @@
   "navigation": {
     "main": [
       {
-        "label": "Rooms",
+        "label": "Stay",
         "href": "/rooms/"
       },
       {
@@ -225,16 +215,12 @@
         "href": "/dining/"
       },
       {
-        "label": "Pool & Gym",
-        "href": "/pool-and-gym/"
+        "label": "Experiences",
+        "href": "/#unwind"
       },
       {
         "label": "Gallery",
-        "href": "/gallery/"
-      },
-      {
-        "label": "Contact",
-        "href": "/contact/"
+        "href": "/#gallery"
       }
     ],
     "footer": [

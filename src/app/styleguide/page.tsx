@@ -61,6 +61,8 @@ const SWATCH_ORDER = [
 const VARIANT_LABEL: Record<Variant, string> = {
   light: "Ivory — the light default. Terracotta clay for actions, antique gold for ornament only.",
   peacock: "Peacock — the dark forest-peacock variant ([data-theme=\"peacock\"]). Antique gold for actions and ornament.",
+  emerald:
+    "Emerald — the royal identity (loader, navigation, home hero): Deep Emerald, Warm Ivory, Muted Sage, Antique Gold.",
 };
 
 const PLANNING_CHIPS = [

@@ -27,7 +27,10 @@ Next.js App Router, static export (`output: 'export'`), TypeScript strict, Tailw
 pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height): the hotel's
 camera originals live in `public/hotel/` (never renamed, moved or edited by code, never
 referenced by pages) and `pnpm make:photos` writes WebP width sets to
-`public/images/hotel/` (Playwright's Chromium — no image library). Animation:
+`public/images/hotel/` (Playwright's Chromium — no image library); the same script
+writes the trimmed logo emblem (`public/images/brand/`, from `public/brand/`) and the
+graded palette textures (`public/images/textures/`, from `public/palettes/`).
+Animation:
 CSS + IntersectionObserver first. Smooth wheel scrolling: Lenis (approved 2026-10-19),
 only through `src/lib/smooth-scroll.ts`.
 
@@ -54,7 +57,9 @@ The hotel HAS a third-party booking engine (name/URL to be confirmed). We never 
 booking. Every "Book Now" / "Check availability" goes through `src/lib/booking.ts` →
 `getBookingUrl({ roomSlug?, checkIn?, checkOut?, guests? })`. If no booking URL is
 configured it returns `null` and the UI falls back to a prefilled WhatsApp "Check
-availability" link. Never embed a booking widget or third-party script without asking.
+availability" link. "Book a Stay" (header, menu) is `BookStayLink`, which the root
+layout feeds with `getBookingUrl()`'s result. Never embed a booking widget or
+third-party script without asking.
 
 ## E. Theming (most important technical rule)
 
@@ -62,7 +67,9 @@ availability" link. Never embed a booking widget or third-party script without a
   `src/styles/theme.css`. Changing that file must re-theme the whole site.
 - Tokens use Tailwind `@theme` (NOT `@theme inline`) with semantic names: `surface`,
   `surface-alt`, `ink`, `ink-muted`, `brand`, `brand-ink`, `accent`, `accent-ink`,
-  `highlight`, `line`, `font-display`, `font-body` (more may be added in `theme.css`
+  `highlight`, `line`, `font-display`, `font-body`, plus `font-royal` (Cormorant
+  Garamond), `font-ui` (Manrope) and `font-script` (Great Vibes — one accent word in
+  the home hero only) for the opening experience (more may be added in `theme.css`
   only). `pop` was retired on 2026-10-21 — do not reintroduce it without asking.
 - `src/app/fonts.ts` is the only file besides `theme.css` allowed to contain font
   names.
@@ -73,7 +80,9 @@ availability" link. Never embed a booking widget or third-party script without a
   `font-display`…) and component classes defined in `theme.css` (`.heading-hero`,
   `.heading-1/2/3`, `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.big-number`,
   `.heading-page` (inner-page heroes), `.btn-primary`, `.btn-secondary`, `.btn-ghost`,
-  `.btn-cta` (signature enquiry modifier), `.link-cta`, `.btn-icon`, `.chip`, `.card`,
+  `.btn-cta` (signature enquiry modifier), `.link-cta`, `.btn-icon`, `.btn-royal`,
+  `.btn-royal-arrow`, `.link-royal` (Emerald chamfered gold-line buttons), `.chip`,
+  `.card`,
   `.link`,
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
   `.rule-ornament`, `.label`, `.input`, `.select`, `.textarea`, `.field-error`,
@@ -81,12 +90,20 @@ availability" link. Never embed a booking widget or third-party script without a
   `.frame-hairline`, `.frame-arch`, `.img-hover`, `.logo-medallion`, `.threshold`,
   `[data-reveal]` (`""` rise, `"mask"` headings, `"image"` frames), `.pictures-*`, plus
   the home-experience scene classes `.entrance*`, `.pillar-*`, `.room-stage*`,
-  `.celebrate-*`, `.journey*`, and the shell classes `.header-*`, `.menu-*`). Never
+  `.celebrate-*`, `.journey*`, the opening-loader and ornament classes `.intro*`,
+  `.arch-*`, `.ring-*`, `.sprig-line`, `.ribbon-*`, `.stop-*`, and the shell classes
+  `.header-*` (incl. `.header-band*`), `.menu-*` (incl. `.menu-medallion`,
+  `.menu-address`)). Never
   raw hex, never raw Tailwind palette colours
   (`bg-amber-700`), never font names in components.
-- Theme variants via `[data-theme="…"]` redefining the same tokens (a dark "Peacock"
-  variant for weddings, the bar, the Unwind band and the home hero). Every element
-  that sets `data-theme="peacock"`
+- Theme variants via `[data-theme="…"]` redefining the same tokens: a dark "Peacock"
+  variant (weddings, the bar, the Unwind band, the enquiry close) and "Emerald" — the
+  owner's fixed palette (2026-10-24: Deep Emerald #073B30, Botanical Green #0D5145,
+  Antique Gold #C5A15E, Warm Ivory #F4EBDD, Muted Sage #B7C2A5, Soft Charcoal #252B26;
+  do not change) — for the opening loader, the header, the mobile menu and the home
+  hero, with the palette textures as `--texture-stone` / `--texture-botanical`. Gold
+  small text belongs on Deep Emerald only (3.8:1 on Botanical Green: UI/large text).
+  Every element that sets `data-theme="peacock"` or `"emerald"`
   MUST also carry an explicit `text-ink` (or other colour utility) on that same
   element — `color` inherits the ancestor's already-resolved value, it does not
   re-evaluate `var(--color-ink)` per scope, so without this the Peacock subtree
@@ -176,6 +193,12 @@ transform/opacity/clip-path only, everything disabled under `prefers-reduced-mot
 Scrolling: wheel input on mouse/trackpad devices is smoothed by Lenis — never slowed
 (wheelMultiplier 1) and never locked except under a modal; touch, keyboard, reduced
 motion and Lenis-failure all stay native. Breakpoints 360, 768, 1024, 1280, 1536.
+Exception (owner's brief, 2026-10-24): the home page's opening — `IntroLoader` plus the
+hero/header entrance — may run sequenced draws and reveals of ~1.5–2.5 s, once per full
+page load, never looping. It never blocks input (pointer-events none; any input ends
+it), never replays on client-side navigation (`src/lib/app-boot.ts`), is hidden under
+reduced motion, and is skipped on data saver / 2G–3G (`html[data-intro="off"]`, set by
+the boot script in `src/lib/motion.ts`). No WebGL/Three.js.
 
 Scroll-driven scenes (no animation library): `useScrollProgress` writes a unitless
 `--p` (0–1) and CSS does the animating; with Lenis running it updates from Lenis's

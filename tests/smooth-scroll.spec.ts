@@ -143,17 +143,17 @@ test.describe("Smooth scrolling — mouse / trackpad", () => {
     page,
   }) => {
     await page.goto("/");
-    await page.locator(".entrance-actions").getByRole("link", { name: "Enquire now" }).click();
-    await expect(page).toHaveURL(/#enquire$/);
+    await page.locator(".entrance-actions").getByRole("link", { name: "Explore the Experience" }).click();
+    await expect(page).toHaveURL(/#explore$/);
     await expect
       .poll(
         () =>
-          page.evaluate(() => Math.round(document.getElementById("enquire")!.getBoundingClientRect().top)),
+          page.evaluate(() => Math.round(document.getElementById("explore")!.getBoundingClientRect().top)),
         { timeout: 4_000 },
       )
-      .toBe(96); // scroll-mt-24
+      .toBe(112); // scroll-mt-28
     await page.goBack();
-    await expect(page).not.toHaveURL(/#enquire$/);
+    await expect(page).not.toHaveURL(/#explore$/);
   });
 
   test("the keyboard takes over a glide in progress", async ({ page }) => {

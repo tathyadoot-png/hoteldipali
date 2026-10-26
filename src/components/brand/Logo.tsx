@@ -2,14 +2,25 @@ import Link from "next/link";
 
 export type LogoVariant = "default" | "reverse";
 
+type LogoFile = { src: string; srcSet?: string; width: number; height: number };
+
 // Which logo image file exists for each variant today. The supplied artwork is
 // gold on a transparent ground, so the one asset serves both variants: it reads
-// on the ivory surface and on the dark grounds "reverse" is used for (the hero
-// overlay header and the brand band footer). Point "reverse" at a dedicated
-// logo-reverse.png here if one is supplied later.
-const LOGO_FILES: Record<LogoVariant, { src: string; width: number; height: number } | null> = {
-  default: { src: "/brand/logo-primary.png", width: 1080, height: 1080 },
-  reverse: { src: "/brand/logo-primary.png", width: 1080, height: 1080 },
+// on the ivory surface and on the dark grounds "reverse" is used for (the
+// header and the brand band footer). Served as the optimised emblem — the
+// artwork trimmed of its padding, WebP with alpha, 7–54 KB (pnpm make:photos)
+// — instead of the 506 KB 1080 px PNG. Point "reverse" at a dedicated
+// logo-reverse file here if one is supplied later.
+const EMBLEM: LogoFile = {
+  src: "/images/brand/logo-emblem-240.webp",
+  srcSet:
+    "/images/brand/logo-emblem-120.webp 120w, /images/brand/logo-emblem-240.webp 240w, /images/brand/logo-emblem-360.webp 360w, /images/brand/logo-emblem-480.webp 480w",
+  width: 480,
+  height: 577,
+};
+const LOGO_FILES: Record<LogoVariant, LogoFile | null> = {
+  default: EMBLEM,
+  reverse: EMBLEM,
 };
 
 function Wordmark({ variant }: { variant: LogoVariant }) {
@@ -28,11 +39,41 @@ function Wordmark({ variant }: { variant: LogoVariant }) {
 
 type LogoProps = {
   variant?: LogoVariant;
-  /** Image size classes; the header keystone sets its own. */
+  /** Image size classes; the header medallion sets its own. */
   imgClassName?: string;
+  /** Rendered width hint for the srcset (CSS px). */
+  sizes?: string;
 };
 
-export function Logo({ variant = "default", imgClassName = "h-14 md:h-18" }: LogoProps) {
+type EmblemProps = {
+  className?: string;
+  /** Rendered width hint for the srcset (CSS px). */
+  sizes: string;
+  /** Above the fold: fetch early instead of lazily. */
+  priority?: boolean;
+};
+
+/** The emblem alone, as ornament (alt=""): medallions, the opening loader. */
+export function Emblem({ className, sizes, priority = false }: EmblemProps) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation in Phase 1
+    <img
+      src={EMBLEM.src}
+      srcSet={EMBLEM.srcSet}
+      sizes={sizes}
+      alt=""
+      width={EMBLEM.width}
+      height={EMBLEM.height}
+      decoding="async"
+      loading={priority ? undefined : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
+      className={className}
+    />
+  );
+}
+
+// The default height matches the old padded PNG's visible artwork (≈43/55 px).
+export function Logo({ variant = "default", imgClassName = "h-11 md:h-14", sizes = "4rem" }: LogoProps) {
   const file = LOGO_FILES[variant];
 
   return (
@@ -41,11 +82,11 @@ export function Logo({ variant = "default", imgClassName = "h-14 md:h-18" }: Log
         // eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation in Phase 1
         <img
           src={file.src}
+          srcSet={file.srcSet}
+          sizes={file.srcSet ? sizes : undefined}
           alt="Hotel Dipali"
           width={file.width}
           height={file.height}
-          // Square canvas with generous internal padding, so the box runs a
-          // little larger than the mark it renders. w-auto keeps the ratio.
           className={`w-auto object-contain ${imgClassName}`}
         />
       ) : (

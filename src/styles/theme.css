@@ -18,6 +18,12 @@
   /* Fonts */
   --font-display: var(--font-instrument), "Times New Roman", Georgia, serif;
   --font-body: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* The royal identity (opening experience: loader, navigation, home hero —
+     2026-10-24). Editorial serif, a UI sans, and a script used for one or two
+     words only. */
+  --font-royal: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-ui: var(--font-manrope), "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-script: var(--font-great-vibes), "Great Vibes", cursive;
 
   /* Colours — Light (default, "Ivory"). */
   --color-surface: #f8f4ec;
@@ -74,6 +80,43 @@
   --color-accent-ink: #0a211e;
   --color-highlight: #cda866;
   --color-line: rgba(246, 241, 231, 0.16);
+}
+
+/* Colours — Emerald variant: the owner's final brand palette (2026-10-24), used
+   by the opening experience (loader, navigation, home hero).
+   Deep Emerald #073B30 · Botanical Green #0D5145 · Antique Gold #C5A15E ·
+   Warm Ivory #F4EBDD · Muted Sage #B7C2A5 · Soft Charcoal #252B26.
+   Gold small text belongs on Deep Emerald only — on Botanical Green it is a UI /
+   large-text colour (3.8:1), and the contrast gate checks exactly that. */
+[data-theme="emerald"] {
+  color-scheme: dark;
+  --color-surface: #073b30;
+  --color-surface-alt: #0d5145;
+  --color-ink: #f4ebdd;
+  --color-ink-muted: #b7c2a5;
+  --color-brand: #073b30;
+  --color-brand-ink: #f4ebdd;
+  --color-accent: #c5a15e;
+  --color-accent-ink: #252b26;
+  --color-highlight: #c5a15e;
+  --color-line: rgba(197, 161, 94, 0.34);
+  /* Metallic gold, derived from Antique Gold only: a glint (toward ivory) and a
+     shade (toward charcoal) for gradients on fine lines. */
+  --gold-glint: color-mix(in srgb, var(--color-highlight) 45%, var(--color-ink));
+  --gold-shade: color-mix(in srgb, var(--color-highlight) 58%, var(--color-accent-ink));
+  /* The owner's palette textures, graded toward Deep Emerald (pnpm make:photos). */
+  /* The stone is the home hero's largest paint: EntranceHero preloads this
+     exact file, so keep the two in step. */
+  --texture-stone: url("/images/textures/emerald-stone-479.webp");
+  --texture-botanical: url("/images/textures/botanical-panel-736.webp");
+}
+
+/* Phones: the botanical panel at its smaller width (half the bytes; it always
+   sits under a dark veil). */
+@media (max-width: 767.98px) {
+  [data-theme="emerald"] {
+    --texture-botanical: url("/images/textures/botanical-panel-480.webp");
+  }
 }
 
 /* Non-colour design constants shared by component classes. */
@@ -439,6 +482,127 @@
     background-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
   }
 
+  /* ── Royal buttons (Emerald: navigation, home hero, menu) ─────────────────
+     .btn-royal: a chamfered cartouche drawn in one antique-gold hairline. The
+     frame is an SVG nine-slice (border-image), so its corners stay crisp at
+     any size; a gold fill rises from the base on hover / focus (transform
+     only) and the label turns charcoal. .link-royal: a text link standing on
+     a gold rule that extends on hover. Used on Emerald surfaces only. */
+  .btn-royal {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0 1.125rem;
+    border: 9px solid transparent;
+    border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 27 27'%3E%3Cpath d='M8.5 .5h10l8 8v10l-8 8h-10l-8-8v-10z' fill='none' stroke='%23c5a15e'/%3E%3C/svg%3E")
+      9 / 9px stretch;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: color var(--duration-base) var(--ease-out-soft);
+  }
+
+  .btn-royal::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    z-index: -1;
+    background-color: var(--color-highlight);
+    clip-path: polygon(
+      7px 0,
+      calc(100% - 7px) 0,
+      100% 7px,
+      100% calc(100% - 7px),
+      calc(100% - 7px) 100%,
+      7px 100%,
+      0 calc(100% - 7px),
+      0 7px
+    );
+    transform: scaleY(0);
+    transform-origin: 50% 100%;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .btn-royal:hover,
+  .btn-royal:focus-visible {
+    color: var(--color-accent-ink);
+  }
+
+  .btn-royal:hover::before,
+  .btn-royal:focus-visible::before {
+    transform: scaleY(1);
+  }
+
+  .btn-royal:active {
+    transform: translateY(1px);
+  }
+
+  .btn-royal:focus-visible {
+    outline: 1px solid var(--color-highlight);
+    outline-offset: 6px;
+  }
+
+  .btn-royal-arrow::after {
+    content: "";
+    flex: none;
+    width: 1.35em;
+    height: 0.85em;
+    background-color: currentColor;
+    mask: var(--arrow) center / contain no-repeat;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .btn-royal-arrow:hover::after,
+  .btn-royal-arrow:focus-visible::after {
+    transform: translateX(0.3rem);
+  }
+
+  .link-royal {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .link-royal::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.625rem;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--color-highlight),
+      color-mix(in srgb, var(--color-highlight) 15%, transparent)
+    );
+    transform: scaleX(0.32);
+    transform-origin: 0 50%;
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .link-royal:hover::after,
+  .link-royal:focus-visible::after {
+    transform: scaleX(1);
+  }
+
   /* Chips */
   .chip {
     display: inline-flex;
@@ -552,58 +716,51 @@
     background-color: var(--color-highlight);
   }
 
-  /* ── Header: the doorway in the architrave ─────────────────────────────
-     A hairline runs along the base of the bar and, at the centre, rises into
-     an arched niche that holds the logo on a deep green ground. Everything
-     sits inside the bar, so nothing hangs over page content. */
+  /* ── Header: the engraved band (Emerald) ───────────────────────────────
+     Two antique-gold rules run from either end of the bar to a medallion
+     holding the emblem; the links sit inside the band and a small gold bead
+     slides along its lower rule to the link under the pointer, the focused
+     link, or the current page. Ends: the call link (xl) and Book a Stay; below
+     xl the menu takes the left end. Transparent over the home hero; solid
+     emerald stone elsewhere and once the hero has passed. */
   .header-shell {
     background-color: transparent;
     transition:
       background-color var(--duration-base) var(--ease-out-soft),
-      box-shadow var(--duration-base) var(--ease-out-soft),
-      color var(--duration-base) var(--ease-out-soft);
+      box-shadow var(--duration-base) var(--ease-out-soft);
   }
 
-  /* Scrolled / light pages: near-opaque ivory (no backdrop blur — blurring
-     behind a sticky bar repaints on every scroll frame). */
   .header-shell[data-state="solid"] {
-    background-color: color-mix(in srgb, var(--color-surface) 95%, transparent);
-    box-shadow: 0 12px 30px -28px rgba(8, 24, 21, 0.5);
+    background-color: var(--color-surface);
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--color-surface) 58%, transparent),
+        color-mix(in srgb, var(--color-surface) 58%, transparent)
+      ),
+      var(--texture-stone);
+    background-size: auto, 100% auto;
+    background-position: center 30%;
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-highlight) 30%, transparent),
+      0 18px 36px -28px rgba(8, 18, 15, 0.7);
   }
 
   .header-bar {
-    --keystone: 5.25rem;
-    --rule: color-mix(in srgb, var(--color-ink) 28%, transparent);
+    --medallion: 3.5rem;
+    --band: 2.125rem;
+    /* Both ends share one minimum width (≥ the wider of menu/call and Book a
+       Stay), so the medallion sits on the page's centre line. */
+    --end: 5rem;
+    --rule-top: color-mix(in srgb, var(--color-highlight) 64%, transparent);
+    --rule-bottom: color-mix(in srgb, var(--color-highlight) 30%, transparent);
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--keystone) minmax(0, 1fr);
+    grid-template-columns:
+      minmax(var(--end), auto) minmax(0.75rem, 1fr) var(--medallion) minmax(0.75rem, 1fr)
+      minmax(var(--end), auto);
     align-items: center;
+    column-gap: 0.625rem;
     height: 100%;
-  }
-
-  .header-shell[data-state="solid"] .header-bar {
-    --rule: color-mix(in srgb, var(--color-highlight) 75%, transparent);
-  }
-
-  /* The architrave: two hairline segments meeting the niche's sides. */
-  .header-bar::before,
-  .header-bar::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    height: 1px;
-    background-color: var(--rule);
-    transition: background-color var(--duration-base) var(--ease-out-soft);
-  }
-
-  .header-bar::before {
-    left: var(--gutter);
-    right: calc(50% + var(--keystone) / 2);
-  }
-
-  .header-bar::after {
-    left: calc(50% + var(--keystone) / 2);
-    right: var(--gutter);
   }
 
   .header-bar > * {
@@ -621,56 +778,135 @@
     cursor: pointer;
   }
 
+  .header-menu-button svg {
+    color: var(--color-highlight);
+  }
+
   .header-menu-label {
-    font-family: var(--font-body);
+    font-family: var(--font-ui);
     font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
+    font-size: 0.6875rem;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
   }
 
-  /* The niche: an arched doorway rising from the hairline, deep green inside
-     so the gold logo always reads (5–8:1 on green, under 2:1 on ivory). */
-  .header-keystone {
-    grid-column: 2;
-    align-self: end;
+  /* The band: an engraved double rule, a small diamond at its outer end. */
+  .header-band {
     position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    height: calc(100% - 0.75rem);
-    padding-bottom: 0.25rem;
-    border: 1px solid var(--rule);
-    border-bottom: 0;
-    border-radius: 999px 999px 0 0;
-    background-color: var(--color-brand);
-    transition: border-color var(--duration-base) var(--ease-out-soft);
+    height: var(--band);
+    border-top: 1px solid var(--rule-top);
+    border-bottom: 1px solid var(--rule-bottom);
   }
 
-  /* A brass keystone mark at the crown of the arch. */
-  .header-keystone::before {
+  .header-band-l {
+    grid-column: 2;
+  }
+
+  .header-band-r {
+    grid-column: 4;
+  }
+
+  .header-band::before {
     content: "";
     position: absolute;
-    top: -0.25rem;
-    left: 50%;
-    width: 0.5rem;
-    height: 0.5rem;
+    top: 50%;
+    width: 5px;
+    height: 5px;
     background-color: var(--color-highlight);
-    transform: translateX(-50%) rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
   }
 
-  .header-nav {
+  .header-band-l::before {
+    left: 0;
+  }
+
+  .header-band-r::before {
+    left: 100%;
+  }
+
+  /* The medallion: a double gold ring (with beads at its crown and foot)
+     around the real emblem, on a deep emerald disc. */
+  .header-keystone,
+  .menu-medallion {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--medallion, 3.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 32%,
+      var(--color-surface-alt),
+      var(--color-surface) 72%
+    );
+    box-shadow: 0 12px 26px -16px rgba(8, 18, 15, 0.9);
+  }
+
+  .header-keystone {
+    grid-column: 3;
+    justify-self: center;
+  }
+
+  .header-ring {
+    position: absolute;
+    inset: -5px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .ring-line {
+    fill: none;
+    stroke: var(--color-highlight);
+    stroke-width: 1.4;
+    stroke-dasharray: 1;
+  }
+
+  .ring-inner {
+    opacity: 0.5;
+  }
+
+  .ring-bead {
+    fill: var(--color-highlight);
+  }
+
+  .header-emblem {
+    height: calc(var(--medallion, 3.5rem) * 0.66);
+  }
+
+  .header-nav,
+  .header-call {
     display: none;
   }
 
-  .header-call {
-    grid-column: 3;
+  .header-book {
+    grid-column: 5;
     justify-self: end;
-    justify-content: center;
+    gap: 0;
+    min-height: 2.75rem;
+    padding-inline: 0.625rem;
   }
 
-  /* The number stays the link's name everywhere; it is shown from 1440px. */
+  @media (min-width: 480px) {
+    .header-bar {
+      --end: 8.75rem;
+    }
+  }
+
+  /* Phones: "Book" — the full name stays in the accessible name. */
+  @media (max-width: 479.98px) {
+    .header-book-more {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  /* The number stays the call link's name everywhere; shown from 1440px. */
   .header-call-label {
     position: absolute;
     width: 1px;
@@ -680,37 +916,45 @@
     white-space: nowrap;
   }
 
-  .header-enquire {
-    display: none;
-  }
-
   @media (min-width: 768px) {
     .header-bar {
-      --keystone: 6.25rem;
+      --medallion: 4rem;
+      --band: 2.375rem;
+      column-gap: 1rem;
     }
   }
 
   @media (min-width: 1280px) {
-    .header-nav {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) var(--keystone) minmax(0, 1fr);
-      align-items: center;
+    .header-bar {
+      --medallion: 4.75rem;
+      --band: 2.5rem;
+      column-gap: 1.25rem;
     }
 
     .header-call {
       grid-column: 1;
       justify-self: start;
+      display: inline-flex;
+      font-family: var(--font-ui);
+      font-weight: 500;
+      font-size: 0.8125rem;
+      letter-spacing: 0.04em;
+      color: var(--color-ink);
+    }
+
+    .header-call a {
       gap: 0.625rem;
     }
 
-    .header-enquire {
-      grid-column: 3;
-      justify-self: end;
-      display: inline-flex;
-      min-height: 44px;
-      padding-inline: 1.125rem 1rem;
-      font-size: 0.875rem;
+    .header-call svg {
+      color: var(--color-highlight);
+    }
+
+    .header-nav {
+      grid-column: 2 / 5;
+      display: grid;
+      grid-template-columns: subgrid;
+      align-items: center;
     }
   }
 
@@ -721,61 +965,57 @@
       height: auto;
       overflow: visible;
       clip-path: none;
-      font-weight: 500;
-      font-size: 0.875rem;
-      letter-spacing: 0.04em;
     }
   }
 
   .header-wing {
     position: relative;
     display: flex;
-    gap: 1.75rem;
+    align-items: center;
+    justify-content: space-evenly;
+    height: var(--band);
+    padding-inline: 0.75rem;
   }
 
   .header-wing-l {
     grid-column: 1;
-    justify-self: end;
-    padding-right: 2.25rem;
   }
 
   .header-wing-r {
     grid-column: 3;
-    justify-self: start;
-    padding-left: 2.25rem;
   }
 
   .header-link {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    font-family: var(--font-body);
-    font-weight: 500;
-    font-size: 0.875rem;
-    letter-spacing: 0.06em;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
+    color: var(--color-ink);
     transition: color var(--duration-fast) var(--ease-out-soft);
   }
 
   .header-link:hover,
   .header-link:focus-visible,
   .header-link[aria-current="page"] {
-    color: var(--color-accent);
+    color: var(--color-highlight);
   }
 
-  /* A hairline that slides to — and takes the width of — the pointed-at or
-     focused link, resting under the current page. Transform only. */
+  /* The bead on the lower rule. Transform only; positions come from
+     NavDesktop (--x = the link's left, --w = its width). */
   .header-glide {
     position: absolute;
-    bottom: 0.5rem;
     left: 0;
-    width: 1px;
-    height: 1px;
-    background-color: var(--color-accent);
+    bottom: -3.5px;
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-highlight);
     pointer-events: none;
     opacity: 0;
-    transform: translate3d(var(--x, 0), 0, 0) scaleX(var(--w, 0));
-    transform-origin: 0 50%;
+    transform: translate3d(calc(var(--x, 0px) + var(--w, 0) * 0.5px - 3px), 0, 0) rotate(45deg);
     transition:
       transform var(--duration-base) var(--ease-out-soft),
       opacity var(--duration-fast) var(--ease-out-soft);
@@ -790,11 +1030,20 @@
     opacity: 1;
   }
 
-  /* ── MobileMenu: two gate leaves part to reveal a Peacock hall ── */
+  /* ── MobileMenu: emerald gate leaves part onto a botanical hall ──────── */
   .menu-dialog {
     overflow: hidden;
     overflow: clip;
     opacity: 0;
+    /* Darkened botanical panel (the owner's palette 9) behind the hall. */
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--color-surface) 74%, transparent),
+        color-mix(in srgb, var(--color-surface) 82%, transparent)
+      ),
+      var(--texture-botanical);
+    background-size: auto, cover;
+    background-position: center;
     transition:
       opacity 240ms var(--ease-out-soft),
       display 240ms allow-discrete,
@@ -812,6 +1061,8 @@
     z-index: 2;
     width: 50.5%;
     background-color: var(--color-brand);
+    background-image: var(--texture-stone);
+    background-size: cover;
     pointer-events: none;
     transition: transform 240ms var(--ease-out-soft);
   }
@@ -821,7 +1072,7 @@
     content: "";
     position: absolute;
     inset: 12vh 1.25rem 8vh;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 60%, transparent);
   }
 
   .menu-gate-l {
@@ -880,43 +1131,57 @@
     }
   }
 
-  /* The links stand inside a doorway: a hairline arch filling the hall. */
+  .menu-medallion {
+    --medallion: 3.75rem;
+  }
+
+  /* The links stand inside a doorway: a hairline arch filling the hall,
+     numbered like the chapters of an invitation. */
   .menu-arch {
-    padding: clamp(3.5rem, 12vh, 6rem) 1.5rem 1.5rem;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 40%, transparent);
+    counter-reset: menu;
+    padding: clamp(3rem, 10vh, 5.5rem) 1.25rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 42%, transparent);
     border-bottom: 0;
     border-radius: 50% 50% 0 0 / 7rem 7rem 0 0;
   }
 
   .menu-link {
+    counter-increment: menu;
     display: flex;
-    align-items: center;
-    gap: 0.875rem;
+    align-items: baseline;
+    gap: 1rem;
     min-height: 44px;
-    padding-block: 0.375rem;
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem);
-    line-height: 1.05;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-highlight) 18%, transparent);
+    font-family: var(--font-royal);
+    font-size: clamp(1.875rem, 1.35rem + 2.6vw, 2.75rem);
+    line-height: 1.1;
     color: var(--color-ink);
     transition: color var(--duration-fast) var(--ease-out-soft);
   }
 
-  .menu-link:hover {
-    color: var(--color-accent);
-  }
-
-  /* Where you are: a small brass arch (the menu hall is Peacock). */
   .menu-link::before {
-    content: "";
+    content: counter(menu, upper-roman);
     flex: none;
-    width: 0.625rem;
-    height: 0.375rem;
-    border-radius: 0.375rem 0.375rem 0 0;
-    background-color: var(--color-line);
+    min-width: 2.25rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    color: var(--color-highlight);
   }
 
-  .menu-link[aria-current="page"]::before {
-    background-color: var(--color-accent);
+  .menu-link:hover,
+  .menu-link[aria-current="page"] {
+    color: var(--color-highlight);
+  }
+
+  .menu-address {
+    font-family: var(--font-royal);
+    font-style: italic;
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    color: var(--color-ink-muted);
   }
 
   .menu-dialog::backdrop {
@@ -1167,113 +1432,773 @@
      that applies when JS or motion is absent.
      ═════════════════════════════════════════════════════════════════════ */
 
-  /* ── The home hero: the hotel's aerial photograph, full bleed ── */
+  /* ═══ OPENING EXPERIENCE: the loader and the home hero (Emerald) ═══════
+     The intro choreography is the one place allowed timelines longer than
+     400 ms (owner's brief, 2026-10-24): sequenced draws and reveals lasting
+     ~1.5–2.5 s, each element once, never looping. --intro is when the hero
+     and navigation begin their entrance: after the loader on the home page's
+     first load, immediately otherwise. */
+  :root {
+    --intro: 0s;
+    --ease-draw: cubic-bezier(0.6, 0.05, 0.25, 1);
+    --ease-rise: cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  body:has(.intro) {
+    --intro: 1.45s;
+  }
+
+  /* Data saver or a slow connection (set by the boot script, src/lib/motion.ts):
+     no loader, so it never adds to a slow load. */
+  [data-intro="off"] .intro {
+    display: none;
+  }
+
+  [data-intro="off"] body {
+    --intro: 0s;
+  }
+
+  /* The emerald canvas: Deep Emerald, the owner's watercolour stone (graded,
+     low-frequency, so it scales gracefully), a warm light behind the focal
+     point, a charcoal vignette and a fine grain that keeps it crisp. */
+  .entrance-canvas,
+  .intro-canvas {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-surface);
+    background-image:
+      radial-gradient(
+        ellipse 48% 52% at var(--glow-x, 50%) var(--glow-y, 30%),
+        color-mix(in srgb, var(--color-highlight) 16%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 130% 95% at 50% 42%,
+        transparent 50%,
+        color-mix(in srgb, var(--color-accent-ink) 74%, transparent) 100%
+      ),
+      var(--texture-stone);
+    background-size: auto, auto, cover;
+    background-position: center;
+  }
+
+  .entrance-canvas::after,
+  .intro-canvas::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--noise);
+    background-size: 180px 180px;
+    opacity: 0.09;
+    mix-blend-mode: overlay;
+  }
+
+  /* Gold lines shared by the arch frame, the sprigs and the ribbon. All are
+     drawn with pathLength=1, so a dashoffset of 1 → 0 draws them on. */
+  /* No vector-effect: non-scaling-stroke here — Chromium then measures the
+     pathLength-normalised dash in screen space, so on any up-scaled SVG the
+     "full" dash covers only part of the line. Stroke widths are instead set
+     in viewBox units per context and breakpoint to render at about 1 px. */
+  .arch-line,
+  .sprig-line,
+  .ribbon-strand {
+    fill: none;
+    stroke-dasharray: 1;
+  }
+
+  .arch-line {
+    stroke: var(--color-highlight);
+    stroke-width: var(--arch-stroke, 1);
+  }
+
+  .arch-line-inner {
+    opacity: 0.7;
+  }
+
+  .arch-key {
+    fill: var(--color-highlight);
+  }
+
+  .sprig-line {
+    stroke: var(--color-highlight);
+    stroke-width: var(--sprig-stroke, 1.8);
+    stroke-linecap: round;
+    opacity: 0.85;
+  }
+
+  /* ── The home hero ── */
   .entrance {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    display: grid;
     min-height: 100svh;
     overflow: hidden;
     overflow: clip;
   }
 
-  /* The photograph's frame. With rich motion it drifts down at a fraction of
-     the scroll speed as the hero leaves (--p runs 0.5 → 1 over that span),
-     so it is taller than the hero to never reveal an edge. */
-  .entrance-media {
+  .entrance-ribbon {
     position: absolute;
     inset: 0;
-  }
-
-  [data-motion="rich"] .entrance-media {
-    inset: -6% 0 auto;
-    height: 112%;
-    will-change: transform;
-    transform: translate3d(0, calc(max(0, var(--p, 0.5) - 0.5) * 36vh), 0);
-  }
-
-  /* Contrast only where the copy and the header sit: a top band for the
-     header, a column for the title and a floor for the actions. The centre
-     and right of the photograph stay clear. */
-  .entrance-scrim {
-    background:
-      linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--color-surface-alt) 62%, transparent) 0%,
-        transparent 22%
-      ),
-      linear-gradient(
-        to right,
-        color-mix(in srgb, var(--color-surface-alt) 78%, transparent) 0%,
-        color-mix(in srgb, var(--color-surface-alt) 40%, transparent) 38%,
-        transparent 62%
-      ),
-      linear-gradient(
-        to top,
-        color-mix(in srgb, var(--color-surface-alt) 88%, transparent) 0%,
-        color-mix(in srgb, var(--color-surface-alt) 30%, transparent) 38%,
-        transparent 58%
-      );
-  }
-
-  /* Clear of the overlay header above and the arch that rises below. */
-  .entrance-content {
-    position: relative;
     z-index: 1;
-    padding-top: 7rem;
-    padding-bottom: calc(var(--arch) + clamp(2.5rem, 7vh, 4.5rem));
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transform: translate3d(calc(var(--mx, 0) * 10px), calc(var(--my, 0) * 8px), 0);
+    transition: transform 0.9s var(--ease-out-soft);
+  }
+
+  .entrance-ribbon-wide {
+    display: none;
+  }
+
+  .ribbon-strand {
+    stroke-linecap: round;
+  }
+
+  .ribbon-a {
+    stroke-width: 1.7;
+  }
+
+  .ribbon-b {
+    stroke-width: 0.9;
+    opacity: 0.5;
+  }
+
+  .ribbon-glint {
+    fill: none;
+    stroke: var(--gold-glint);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-dasharray: 0.06 1.2;
+    stroke-dashoffset: 0.06;
+    opacity: 0;
+  }
+
+  .stop-shade {
+    stop-color: var(--gold-shade);
+  }
+
+  .stop-gold {
+    stop-color: var(--color-highlight);
+  }
+
+  .stop-glint {
+    stop-color: var(--gold-glint);
+  }
+
+  .entrance-inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 2.75rem;
+    padding-top: 6.5rem;
+    padding-bottom: calc(var(--arch) + 2.5rem);
+    text-align: center;
+  }
+
+  .entrance-copy {
+    max-width: 36rem;
   }
 
   .entrance-eyebrow {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.875rem;
-    color: var(--color-ink);
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
   }
 
-  /* A short antique-gold rule before the location. */
-  .entrance-eyebrow::before {
+  .entrance-eyebrow::before,
+  .entrance-eyebrow::after {
     content: "";
-    width: 2.5rem;
+    width: 2.25rem;
     height: 1px;
     background-color: var(--color-highlight);
   }
 
-  /* Colour lives here, not in a utility, alongside the other hero rules. */
-  .entrance-tagline {
+  .entrance-eyebrow::before {
+    transform-origin: 100% 50%;
+  }
+
+  .entrance-eyebrow::after {
+    transform-origin: 0 50%;
+  }
+
+  .entrance-title {
     margin-top: 1.5rem;
-    max-width: 34rem;
-    text-wrap: balance;
-    font-family: var(--font-body);
-    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
-    line-height: 1.6;
+    font-family: var(--font-royal);
+    font-weight: 400;
+    font-size: clamp(3rem, 1.6rem + 4.4vw, 7rem);
+    line-height: 1;
+    letter-spacing: -0.005em;
     color: var(--color-ink);
   }
 
-  /* Load-in: eyebrow, title, copy and actions rise in sequence. CSS only, so
-     it plays from first paint (no JS, no layout shift). */
-  @keyframes entrance-rise {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 1.25rem, 0);
+  .entrance-line {
+    display: block;
+  }
+
+  /* One word in script — the only Great Vibes on the page. */
+  .entrance-script {
+    display: inline-block;
+    padding-inline: 0.04em 0.12em;
+    font-family: var(--font-script);
+    font-weight: 400;
+    font-size: 1.14em;
+    line-height: 0.5;
+    letter-spacing: 0;
+    color: var(--color-highlight);
+  }
+
+  .entrance-subline {
+    margin-top: 1.25rem;
+    font-family: var(--font-royal);
+    font-style: italic;
+    font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.75rem);
+    line-height: 1.3;
+    color: var(--color-ink-muted);
+  }
+
+  .entrance-actions {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 2rem;
+  }
+
+  /* The arched window onto the hotel (aspect 0.72, a true semicircle). */
+  .entrance-arch {
+    order: -1;
+    position: relative;
+    width: min(58vw, 20rem);
+    aspect-ratio: 18 / 25;
+    margin: 0;
+  }
+
+  .entrance-arch-window {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 50% 50% 0 0 / 36% 36% 0 0;
+    background-color: var(--color-surface-alt);
+    box-shadow: 0 50px 90px -50px rgba(4, 14, 11, 0.95);
+  }
+
+  .entrance-arch-window img {
+    transform: scale(1.04) translate3d(calc(var(--mx, 0) * -6px), calc(var(--my, 0) * -5px), 0);
+    transition: transform 0.9s var(--ease-out-soft);
+  }
+
+  /* Ground the photograph in the canvas: deepen its foot and crown. */
+  .entrance-arch-window::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        to top,
+        color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
+        transparent 34%
+      ),
+      radial-gradient(
+        ellipse 90% 55% at 50% 0%,
+        color-mix(in srgb, var(--color-surface) 38%, transparent),
+        transparent 70%
+      );
+  }
+
+  /* The frame overhangs the window by 30 viewBox units (see ArchFrame). */
+  .entrance-arch-frame,
+  .intro-arch-frame {
+    position: absolute;
+    inset: -6% -8.334% 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* ~1 px at each rendered size (viewBox 420 wide). */
+  .entrance-arch-frame {
+    --arch-stroke: 1.6;
+  }
+
+  .intro-arch-frame {
+    --arch-stroke: 1.35;
+  }
+
+  @media (min-width: 768px) {
+    .entrance-arch-frame {
+      --arch-stroke: 1.15;
+    }
+
+    .entrance-sprig {
+      --sprig-stroke: 1.2;
     }
   }
 
-  .entrance-rise {
-    animation: entrance-rise 380ms var(--ease-out-soft) both;
+  /* Sprigs rise from the arch's foot on either side. */
+  .entrance-sprig {
+    position: absolute;
+    bottom: -1%;
+    width: 30%;
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
   }
 
-  .entrance-rise:nth-child(2) {
-    animation-delay: 90ms;
+  .entrance-sprig-l {
+    right: 104%;
   }
 
-  .entrance-rise:nth-child(3) {
-    animation-delay: 180ms;
+  .entrance-sprig-r {
+    left: 104%;
   }
 
-  .entrance-rise:nth-child(4) {
-    animation-delay: 260ms;
+  @media (min-width: 1024px) {
+    .entrance-arch-frame {
+      --arch-stroke: 0.8;
+    }
+
+    .entrance-sprig {
+      --sprig-stroke: 1;
+    }
+
+    .entrance-canvas {
+      --glow-x: 71%;
+      --glow-y: 48%;
+    }
+
+    .entrance-ribbon-wide {
+      display: block;
+    }
+
+    .entrance-ribbon-narrow {
+      display: none;
+    }
+
+    .entrance-inner {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      align-items: center;
+      justify-items: start;
+      column-gap: 4vw;
+      padding-top: 7.5rem;
+      text-align: left;
+    }
+
+    .entrance-eyebrow {
+      justify-content: flex-start;
+    }
+
+    .entrance-eyebrow::after {
+      display: none;
+    }
+
+    .entrance-actions {
+      justify-content: flex-start;
+    }
+
+    .entrance-arch {
+      order: 0;
+      justify-self: center;
+      width: auto;
+      height: min(68svh, 44rem);
+    }
+  }
+
+  /* Scroll depth (rich motion): the window drifts a little slower than the
+     page as the hero leaves; the ribbon a little faster. */
+  [data-motion="rich"] .entrance-arch {
+    translate: 0 calc(max(0, var(--p, 0.5) - 0.5) * 16vh);
+  }
+
+  [data-motion="rich"] .entrance-ribbon {
+    translate: 0 calc(max(0, var(--p, 0.5) - 0.5) * -10vh);
+  }
+
+  /* ── The loader ── */
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .intro[data-state="done"] {
+    display: none;
+  }
+
+  /* The botanical panel (palette 9) at close to its native size, framed in
+     a double gold rule like an invitation card, fading into the stone. */
+  .intro-panel {
+    position: absolute;
+    inset-block: 0;
+    left: 50%;
+    width: min(100vw, calc(100svh * 0.6667));
+    background: var(--texture-botanical) center / cover;
+    opacity: 0.92;
+    transform: translateX(-50%);
+    mask-image: linear-gradient(to right, transparent, black 13%, black 87%, transparent);
+  }
+
+  .intro-panel::before,
+  .intro-panel::after {
+    content: "";
+    position: absolute;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
+  }
+
+  .intro-panel::before {
+    inset: 2.25rem 14%;
+  }
+
+  .intro-panel::after {
+    inset: 2.75rem calc(14% + 0.5rem);
+    border-color: color-mix(in srgb, var(--color-highlight) 26%, transparent);
+  }
+
+  .intro-stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+  }
+
+  .intro-arch {
+    position: relative;
+    height: min(42svh, 24rem);
+    aspect-ratio: 18 / 25;
+  }
+
+  .intro-emblem {
+    position: absolute;
+    left: 50%;
+    top: 56%;
+    width: 46%;
+    height: auto;
+    transform: translate(-50%, -50%);
+  }
+
+  /* A soft light that passes once across the emblem — masked to its alpha. */
+  .intro-sweep {
+    position: absolute;
+    left: 50%;
+    top: 56%;
+    width: 46%;
+    aspect-ratio: 480 / 577;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(
+      100deg,
+      transparent 38%,
+      color-mix(in srgb, var(--color-ink) 75%, transparent) 50%,
+      transparent 62%
+    );
+    background-size: 260% 100%;
+    background-position: 130% 0;
+    mask: url("/images/brand/logo-emblem-240.webp") center / contain no-repeat;
+    opacity: 0.8;
+  }
+
+  .intro-base {
+    width: min(100vw, 64rem);
+    height: 1px;
+    margin-top: -1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in srgb, var(--color-highlight) 70%, transparent) 30%,
+      color-mix(in srgb, var(--color-highlight) 70%, transparent) 70%,
+      transparent
+    );
+  }
+
+  .intro-caption {
+    margin-top: 1.25rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  /* Leaving (JS): the canvas dissolves while the arch flies onto the hero's
+     arch — transform and opacity only. */
+  .intro[data-state="leave"]
+    :is(.intro-canvas, .intro-panel, .intro-emblem, .intro-sweep, .intro-base, .intro-caption) {
+    animation: none;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out-soft);
+  }
+
+  .intro[data-state="leave"] .intro-emblem,
+  .intro[data-state="leave"] .intro-sweep {
+    transition-duration: 0.22s;
+  }
+
+  .intro[data-state="leave"] .intro-arch {
+    transform: translate3d(var(--fx, 0px), var(--fy, 0px), 0) scale(var(--fs, 1));
+    transition: transform 0.78s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .intro[data-state="leave"] .intro-arch-frame {
+    opacity: 0;
+    transition: opacity 0.16s linear 0.66s;
+  }
+
+  .intro[data-state="leave"] .intro-arch :is(.arch-line, .arch-key) {
+    animation: none;
+  }
+
+  @keyframes intro-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes intro-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.9rem, 0);
+    }
+  }
+
+  @keyframes intro-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  @keyframes intro-scale-x {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes intro-reveal-up {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+  }
+
+  @keyframes intro-zoom {
+    from {
+      scale: 1.14;
+    }
+  }
+
+  @keyframes intro-write {
+    from {
+      clip-path: inset(-0.6em 100% -0.6em -0.3em);
+    }
+
+    to {
+      clip-path: inset(-0.6em -0.3em -0.6em -0.3em);
+    }
+  }
+
+  @keyframes intro-emblem {
+    from {
+      opacity: 0;
+      clip-path: inset(100% 0 0 0);
+      translate: 0 0.5rem;
+    }
+  }
+
+  @keyframes intro-sweep {
+    from {
+      background-position: 130% 0;
+    }
+
+    to {
+      background-position: -30% 0;
+    }
+  }
+
+  @keyframes intro-glint {
+    0% {
+      stroke-dashoffset: 0.06;
+      opacity: 0;
+    }
+
+    10%,
+    88% {
+      opacity: 1;
+    }
+
+    100% {
+      stroke-dashoffset: -1.1;
+      opacity: 0;
+    }
+  }
+
+  @keyframes intro-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Loader timeline (from first paint; JS leaves at 1.45 s). Without JS it
+       fades itself out at 1.9 s. */
+    .intro:not([data-state]) {
+      animation: intro-out 0.45s ease 1.9s forwards;
+    }
+
+    .intro-panel {
+      animation: intro-fade 1s ease 0.05s both;
+    }
+
+    .intro-arch .arch-line {
+      animation: intro-draw 1.05s var(--ease-draw) 0.12s both;
+    }
+
+    .intro-arch .arch-line-inner {
+      animation-delay: 0.24s;
+    }
+
+    .intro-arch :is(.arch-impost, .arch-plinth) {
+      animation-duration: 0.7s;
+      animation-delay: 0.55s;
+    }
+
+    .intro-arch .arch-key {
+      animation: intro-fade 0.4s ease 0.2s both;
+    }
+
+    .intro-emblem {
+      animation: intro-emblem 0.8s var(--ease-rise) 0.42s both;
+    }
+
+    .intro-sweep {
+      animation: intro-sweep 0.95s ease-in-out 0.95s both;
+    }
+
+    .intro-base {
+      animation: intro-scale-x 1s var(--ease-draw) 0.3s both;
+    }
+
+    .intro-caption {
+      animation: intro-rise 0.6s var(--ease-rise) 0.75s both;
+    }
+
+    /* Hero entrance — starts at --intro. */
+    .entrance-eyebrow {
+      animation: intro-rise 0.7s var(--ease-rise) calc(var(--intro) + 0.15s) both;
+    }
+
+    .entrance-eyebrow::before,
+    .entrance-eyebrow::after {
+      animation: intro-scale-x 0.8s var(--ease-draw) calc(var(--intro) + 0.25s) both;
+    }
+
+    .entrance-line {
+      animation: intro-rise 0.8s var(--ease-rise) calc(var(--intro) + 0.25s) both;
+    }
+
+    .entrance-line + .entrance-line {
+      animation-delay: calc(var(--intro) + 0.37s);
+    }
+
+    .entrance-script {
+      animation: intro-write 1s cubic-bezier(0.45, 0, 0.2, 1) calc(var(--intro) + 0.6s) both;
+    }
+
+    .entrance-subline {
+      animation: intro-rise 0.7s var(--ease-rise) calc(var(--intro) + 0.62s) both;
+    }
+
+    .entrance-actions {
+      animation: intro-rise 0.7s var(--ease-rise) calc(var(--intro) + 0.74s) both;
+    }
+
+    .entrance-arch-window {
+      animation: intro-reveal-up 1s var(--ease-draw) calc(var(--intro) + 0.42s) both;
+    }
+
+    .entrance-arch-window img {
+      animation: intro-zoom 1.6s var(--ease-rise) calc(var(--intro) + 0.42s) both;
+    }
+
+    .entrance-arch-frame .arch-line {
+      animation: intro-draw 1.1s var(--ease-draw) calc(var(--intro) + 0.2s) both;
+    }
+
+    .entrance-arch-frame .arch-key {
+      animation: intro-fade 0.4s ease calc(var(--intro) + 0.55s) both;
+    }
+
+    /* After the loader, the flying arch lands on this frame: it appears
+       whole at the moment of landing instead of drawing again. */
+    body:has(.intro) .entrance-arch-frame {
+      animation: intro-fade 0.01s linear calc(var(--intro) + 0.76s) both;
+    }
+
+    body:has(.intro) .entrance-arch-frame :is(.arch-line, .arch-key) {
+      animation: none;
+    }
+
+    .entrance-sprig .sprig-line {
+      animation: intro-draw 1.6s cubic-bezier(0.45, 0, 0.2, 1) calc(var(--intro) + 0.85s) both;
+    }
+
+    .ribbon-strand {
+      animation: intro-draw 1.9s var(--ease-draw) calc(var(--intro) + 0.5s) both;
+    }
+
+    .ribbon-b {
+      animation-delay: calc(var(--intro) + 0.62s);
+    }
+
+    .ribbon-glint {
+      animation: intro-glint 2.4s ease-in-out calc(var(--intro) + 2.2s) both;
+    }
+
+    /* Navigation entrance — the home page's first load only. Scoped to the
+       header: the menu dialog reuses some of these classes, and its content
+       is only displayed (so would only start these delays) when opened. */
+    body:has(.intro) .header-shell .header-band-l {
+      transform-origin: 100% 50%;
+      animation: intro-scale-x 0.9s var(--ease-draw) calc(var(--intro) + 0.25s) both;
+    }
+
+    body:has(.intro) .header-shell .header-band-r {
+      transform-origin: 0 50%;
+      animation: intro-scale-x 0.9s var(--ease-draw) calc(var(--intro) + 0.25s) both;
+    }
+
+    body:has(.intro) .header-shell .header-ring .ring-line {
+      animation: intro-draw 1s var(--ease-draw) calc(var(--intro) + 0.1s) both;
+    }
+
+    body:has(.intro) .header-shell .header-keystone .header-emblem {
+      animation: intro-fade 0.6s ease calc(var(--intro) + 0.35s) both;
+    }
+
+    body:has(.intro) .header-shell .header-wing li {
+      animation: intro-rise 0.5s var(--ease-rise) calc(var(--intro) + 0.45s + var(--i, 0) * 60ms)
+        both;
+    }
+
+    body:has(.intro) .header-shell :is(.header-call, .header-book, .header-menu-button) {
+      animation: intro-fade 0.6s ease calc(var(--intro) + 0.6s) both;
+    }
   }
 
   /* 1024–1279px gets rich motion AND the fixed StickyCtaBar (hidden from xl):
@@ -1285,15 +2210,23 @@
   }
 
   /* An arched peacock ground for the gold logo on light surfaces, where the
-     logo's paler golds wash out (under 2:1 on ivory, 7–8:1 on the deep green). */
+     logo's paler golds wash out (under 2:1 on ivory, 7–8:1 on the deep green).
+     Padded for the trimmed emblem (no built-in margin), keeping the proportions
+     the padded 1080 px PNG gave it. */
   .logo-medallion {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 1.25rem 1.5rem 1rem;
+    padding: 1.75rem 2.4375rem;
     border: 1px solid color-mix(in srgb, var(--color-highlight) 70%, transparent);
     border-radius: 999px 999px var(--radius-sm) var(--radius-sm);
     background-color: var(--color-brand);
+  }
+
+  @media (min-width: 768px) {
+    .logo-medallion {
+      padding: 1.875rem 2.625rem;
+    }
   }
 
   /* ── In pictures: an editorial mosaic of the hotel's interiors ── */
@@ -1342,6 +2275,18 @@
     border-top: 1px solid color-mix(in srgb, var(--color-highlight) 60%, transparent);
     border-top-left-radius: 50% var(--arch);
     border-top-right-radius: 50% var(--arch);
+  }
+
+  /* A small gold keystone at the crown of the threshold's curve. */
+  .threshold::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    width: 7px;
+    height: 7px;
+    background-color: var(--color-highlight);
+    transform: translateX(-50%) rotate(45deg);
   }
 
   /* Arched-top image mask: a true semicircle on portrait frames — the

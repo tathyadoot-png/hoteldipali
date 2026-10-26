@@ -1,6 +1,6 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-22
+Last updated: 2026-10-26
 Current step: 11 — Pool & Gym, Gallery + Lightbox
 
 ## Status legend
@@ -103,6 +103,16 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-22 | Buttons = "architrave": 2px radius, a fill that sweeps up on hover/focus (transform only), `.btn-cta` (inset hairline + stepping arrow) for the enquiry CTA (replaces the dome-topped `.btn-arch`); `.link-cta`, `.btn-icon` added. | Owner: pill/dome shapes looked generic and inconsistent. |
 | 2026-10-22 | Motion: one shared IntersectionObserver for reveals (earlier trigger, −8% bottom margin), variants rise / mask (headings) / image (frames), CSS-applied stagger; `<noscript>` shows reveal content without JS; hero copy rises on load in CSS; hero photo parallax under rich motion only (transform via `--p`). No custom cursor. | Short (380 ms), consistent patterns; a cursor follower would add a pointermove/rAF loop for no information gain. |
 | 2026-10-22 | `.heading-1` back to clamp(2.5rem, 1.25rem + 3.4vw, 5rem); new `.heading-page` for inner-page heroes; headings get `overflow-wrap: break-word`. | At the 2026-10-21 scale, "conversation" overflowed its 5-column cell over the enquiry form at 1920 px. |
+| 2026-10-24 | **Emerald** variant (`[data-theme="emerald"]`) = the owner's fixed palette: Deep Emerald #073B30 (surface/brand), Botanical Green #0D5145 (surface-alt), Antique Gold #C5A15E (accent/highlight), Warm Ivory #F4EBDD (ink), Muted Sage #B7C2A5 (ink-muted), Soft Charcoal #252B26 (accent-ink). Used by the opening loader, header (always), mobile menu and home hero; the rest of the site keeps Ivory/Peacock. Contrast gate gains the variant: ink 10.60 / 7.80, muted 6.72 / 4.94, accent-ink on gold 5.95, gold on Deep Emerald 5.15; gold on Botanical Green 3.79 is gated as UI/large text only. | Owner brief ("Do not change the palette"). Scoping it to the opening keeps every inner page and its tested contrast pairs untouched. |
+| 2026-10-24 | Palette textures: `public/palettes/3` (watercolour stone, frame cropped off) → `--texture-stone`; `/9` (botanical panel) → `--texture-botanical` (loader panel, menu), both graded toward Deep Emerald by `make:photos`. 1 (gold ribbon), 6 (ring) and 7 (line leaves) are references only — redrawn as SVG line art; 2, 5, 8 unused. | Brief: textured emerald canvas, not flat green, and no full-page reference screenshot as a background. |
+| 2026-10-24 | Fonts (self-hosted OFL woff2, latin): Cormorant Garamond 400 + italic (display), Manrope variable (UI), Great Vibes (one script word). Bodoni Moda rejected (hairline serifs break up at the small, tracked sizes and fight the fine gold lines); Birthstone rejected (thin, low-contrast script that reads poorly over texture). | Brief's shortlist; evaluated at hero and nav sizes on the emerald canvas. |
+| 2026-10-24 | Opening loader (`IntroLoader`): server-rendered, CSS-only timeline from first paint — gold arch draws around the real emblem on the botanical panel, a light sweep, caption — then JS (after hydration) flies the arch onto the hero's arch (FLIP, transform/opacity) at 1.45 s. Ends early on any input (and fast-forwards the hero's `intro-*` animations), fades itself at 1.9 s without JS, hidden under reduced motion, never replays on client navigation (`app-boot.ts` / `BootMarker`), skipped on data saver or 2G/3G (`html[data-intro="off"]`). No spinner, no progress bar. | Brief: short, branded, non-blocking, no replay, no hydration errors or CLS. |
+| 2026-10-24 | Header = "engraved band": two gold double rules from each end meet a medallion (double ring, beads) holding the emblem; links sit inside the band (3 + 3) with a gold bead sliding on the lower rule; ends: call link (xl) / menu (below xl) and a chamfered gold-line "Book a Stay" (`BookStayLink` → booking URL or WhatsApp availability). End columns share a minimum width so the medallion is on the centre line at every width. Transparent over the home hero, emerald stone when solid. | Brief: distinctive, not a centred-logo bar with a rounded CTA; fine gold outlines. |
+| 2026-10-24 | Nav mapping (no invented routes): Stay → /rooms/, Weddings → /weddings/, Events → /events/, Dining → /dining/, Experiences → /#unwind, Gallery → /#gallery. "Celebrations" is split into the existing Weddings/Events pages; **About** has no page and is not linked. Experiences and Gallery are provisional anchors until those pages exist (step 11). | Brief: no dead links; mark unresolved destinations. The old nav linked to /pool-and-gym/, /gallery/ and /contact/, which do not exist. |
+| 2026-10-24 | Home hero: emerald stone canvas; the lit entrance (DJI_…0042, cropped **below** the rooftop "DIPALI RESIDENCY" sign) inside an arched window with a double gold frame, botanical sprigs and one gold ribbon; copy per brief, "Beyond" in script; CTAs "Explore the Experience" → #explore, "Discover Hotel Dipali" → #welcome. Pointer depth (rich motion only) via `--mx/--my`. Supersedes the 2026-10-22 row for this photo: the sign is cropped out, so §G is respected — confirm the naming (open question). | Brief: one art direction, a real hotel photograph, choreographed entrance; no fictional building. |
+| 2026-10-24 | No Three.js / R3F / WebGL. The opening is SVG line art + CSS animations + one small pointer handler. | Brief: lightest approach; the focal point is a real photograph, and nothing in the design needs 3D. Saves ~150 KB+ of JS and a GPU context on phones. |
+| 2026-10-24 | SVG line drawing uses `pathLength={1}` + dash offset **without** `vector-effect: non-scaling-stroke`; stroke widths are set per breakpoint instead. | In Chromium the two combined compute dashes in screen space, so scaled-up frames drew only partly (even with animation off). |
+| 2026-10-24 | Performance: the stone texture (the home page's largest paint, CSS-only) is preloaded from `EntranceHero`; the hero photo's `sizes` match the arch's CSS width; the botanical panel is the 480 w file below 768 px; the welcome/enquiry logos use the 7–20 KB emblem set instead of the 506 KB PNG. | Measured on a throttled phone (4× CPU, 150 ms RTT, 1.6 Mbps): LCP 3.0 s → 1.67 s, home weight 643 → 579 KB. |
 
 ## Brand assets
 
@@ -115,9 +125,9 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
   `default` logo on the light/ivory surface and — since `ef0580e` — as the `reverse`
   variant on the dark overlay header and the brand-band footer too. The typographic
   wordmark remains only as the fallback for a variant without an asset.
-- The PNG is 506 KB and is loaded on every page (header, plus the home keystone marks,
-  which reuse the cached file). A resized derivative (e.g. a ~320px WebP) would help
-  the Lighthouse budget — see Open questions.
+- Since 2026-10-24 pages load the trimmed emblem instead (`public/images/brand/
+  logo-emblem-{120,240,360,480}.webp`, 7–54 KB, made by `pnpm make:photos` from the
+  PNG); the 506 KB PNG is no longer requested by any page.
 - `public/video/entry.mp4` (prototype) and the frames `entry-poster.webp` (first frame,
   desktop) / `entry-still.webp` (mobile & reduced motion), regenerated with
   `pnpm make:video-frames`.
@@ -151,8 +161,25 @@ See CLAUDE.md section M:
 - Original photos needed before step 6 (Home) — see docs/data-needed.md.
 - Need `logo-reverse.png` (a light/gold mark legible on dark backgrounds) and a proper
   logo mark (square monogram) for the favicon — see "Brand assets" above.
-- Optimise the 506 KB logo PNG into a small derivative for the header (not done in the
-  creative overhaul to avoid touching brand assets without sign-off).
+- ~~Optimise the 506 KB logo PNG~~ — done 2026-10-24 (emblem WebP set; the PNG itself
+  is untouched).
+- **Opening experience (2026-10-24):**
+  - The brief called the hero photo "Hotel Dipali Residency", and DJI_…0042/0038 show
+    "DIPALI RESIDENCY" / "HOTEL DEEPALI" signage. Is Dipali Residency the same property
+    and brand? The hero crops the sign out until this is confirmed (CLAUDE.md §G).
+  - Usage rights for `public/palettes/` (they look like downloaded reference images,
+    ~736 px): may their textures ship on the site? Two are used as graded textures.
+  - The three night originals were placed in `public/images/hotel/` (8 MB each) — that
+    folder is deployed. Move them next to the other originals (`public/hotel/`, or a
+    non-public source folder) before deploying; not done (originals are never moved by
+    code without sign-off).
+  - Navigation: "About" has no page; "Experiences" (/#unwind) and "Gallery" (/#gallery)
+    are provisional anchors until the Pool & Gym and Gallery pages exist. The footer
+    still links to /pool-and-gym/, /gallery/ and /contact/, which do not exist yet.
+  - The phone sticky bar (Call · WhatsApp · Enquire) is ivory/terracotta over the
+    emerald hero — outside this phase; decide whether it joins the Emerald identity.
+  - Measured in headless Chromium only (software raster). Check the opening on a
+    real mid-range Android phone and on Safari/iOS.
 - Smooth scrolling was tuned with synthetic wheel input (100 px notches) in Chromium on
   Windows. Confirm the feel on real hardware: a notched mouse on Windows, a Mac
   trackpad (its own momentum + Lenis), a Magic Mouse, and Safari/Firefox. Touch was
@@ -166,11 +193,10 @@ See CLAUDE.md section M:
 
 The layouts are built so originals drop in by replacing files — no redesign needed.
 
-- **Home hero photo** (replaces `public/sample/property-home-hero.svg`, `site.homeHero`):
-  the hotel's front entrance and drive at golden hour, landscape, ≥2400×1350; calm sky
-  in the top third for the transparent header, a quieter left third for the title.
-  (The scroll-scrubbed entrance film was removed on 2026-10-21; prompt 4 redesigns
-  the hero.)
+- **Home hero photo** (`site.homeHero`, now the lit entrance DJI_…0042, portrait crop
+  3:4 below the rooftop sign): a portrait (3:4) view of the main entrance — evening or
+  blue hour, warm lights on — with no signage in frame, ≥1600×2130, would make the
+  crop unnecessary.
 - **Stills**: every shot listed in `docs/data-needed.md` (rooms, venues, outlets, pool,
   gym, gallery). Most impactful for the home page: the Main Lawn wide at dusk (the
   Celebrate window opens to full-bleed), each room's wide shot (the room stage), the
@@ -628,3 +654,31 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     originals requested, every photo has a `srcset`); shell spec adds logo-niche
     containment (desktop + phone); "Sandstone" → "Ivory" toggle label in three helpers.
     All 352 e2e tests pass; lint, typecheck, contrast gate and build clean.
+- 2026-10-24 → 26: Premium royal experience, phase 1 — opening loader, navigation and
+  home hero (not a numbered step; current step stays 11; uncommitted per the brief).
+  - **Built:** Emerald variant + contrast pairs; fonts (Cormorant Garamond, Manrope,
+    Great Vibes, self-hosted); `make:photos` generalised (entrance crop, logo emblem,
+    stone + botanical textures); `IntroLoader` + `app-boot.ts`/`BootMarker`; engraved-band
+    `Header`, `NavDesktop` (6 links, 3 + 3), emerald `MobileMenu` (roman-numbered links,
+    Book a Stay, call, WhatsApp, address); `BookStayLink`; `Ornaments` (arch frame,
+    medallion ring, sprig); `EntranceHero` rewritten + `HeroDepth`; `.btn-royal` family;
+    `site.homeHero` → the night entrance; `site.navigation.main` remapped; boot script
+    skips the loader on data saver / 2G–3G.
+  - **Tests:** shell (6 links, `data-state` overlay/solid, Stay/Events/Gallery bead,
+    emerald menu, new "primary nav only links to routes and anchors that exist"); home
+    (emerald hero, the two CTAs, new "every emerald scope carries text-ink"); entrance
+    (night-entrance photo + srcset, CTAs, phone width ≤ 720 w; new loader tests: plays
+    and leaves without blocking the pointer, a key ends it early, slow connection skips
+    it, client navigation never replays it, CSS-only exit without JS; reduced motion
+    checks `.entrance-subline`); smooth-scroll hash test uses "Explore the Experience"
+    → #explore (112 px, scroll-mt-28). **All 366 e2e tests pass**; lint, typecheck,
+    contrast gate (light/peacock/emerald), build clean.
+  - **Measured (headless Chromium, production build):** no horizontal overflow on 5
+    routes at 360–1920; no console errors; CLS 0 except the home page at 1024/1440/1536
+    (0.006–0.0095: the headline's web-font swap at ~250 ms, under the loader). Throttled
+    phone (4× CPU, 150 ms RTT, 1.6 Mbps): FCP 1.58–1.83 s, LCP 1.67–1.86 s, CLS 0,
+    531–579 KB. Wheel scrolling during the hero entrance (1440×900, Lenis): first scroll
+    frame 77 ms after the wheel vs 32 ms at rest; frame pacing unchanged at 1× CPU
+    (mean 17.9 vs 17.5 ms), slightly worse at 4× (24.4 vs 20.9 ms). A trace shows
+    the cost is rasterisation (software in headless), not main-thread work. Not
+    measured on real devices, Safari or Firefox.

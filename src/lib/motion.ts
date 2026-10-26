@@ -8,13 +8,17 @@ export const RICH_MOTION_QUERY =
   "(min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
 /**
- * Inline script for the root layout. It sets <html data-motion="rich"> before
- * first paint so CSS lays the scroll scenes out from the very first frame —
- * switching layouts after hydration would make the hero jump (CLS).
+ * Inline script for the root layout, run before first paint:
+ * - <html data-motion="rich"> so CSS lays the scroll scenes out from the very
+ *   first frame — switching layouts after hydration would make the hero jump
+ *   (CLS);
+ * - <html data-intro="off"> on data saver or a slow connection (effective type
+ *   2G/3G): the home page's opening loader is skipped there, so it never adds
+ *   to a slow load (see IntroLoader).
  */
-export const RICH_MOTION_BOOT_SCRIPT = `(function(){try{var c=navigator.connection;if(c&&c.saveData)return;if(window.matchMedia(${JSON.stringify(
+export const MOTION_BOOT_SCRIPT = `(function(){try{var c=navigator.connection,d=document.documentElement;if(c&&(c.saveData||/2g|3g/.test(c.effectiveType||"")))d.setAttribute("data-intro","off");if(c&&c.saveData)return;if(window.matchMedia(${JSON.stringify(
   RICH_MOTION_QUERY,
-)}).matches)document.documentElement.setAttribute("data-motion","rich")}catch(e){}})();`;
+)}).matches)d.setAttribute("data-motion","rich")}catch(e){}})();`;
 
 export function prefersRichMotion(): boolean {
   if (typeof window === "undefined") return false;

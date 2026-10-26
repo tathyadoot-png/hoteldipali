@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+import { Emblem } from "@/components/brand/Logo";
 import { Botanical } from "@/components/decor/Botanical";
 import { Picture } from "@/components/media/Picture";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
@@ -8,6 +9,7 @@ import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { ScrollReveal } from "@/components/home/ScrollReveal";
 import { EntranceHero } from "@/components/home/EntranceHero";
+import { IntroLoader } from "@/components/home/IntroLoader";
 import { RoomDiscovery, type RoomPreview } from "@/components/home/RoomDiscovery";
 import { DayJourney } from "@/components/home/DayJourney";
 import { ScrollSection } from "@/components/motion/ScrollSection";
@@ -54,7 +56,6 @@ export default async function HomePage() {
     getOutlet("infinity-bar"),
   ]);
 
-  const [titleLead = site.name, ...titleRest] = site.name.split(" ");
   const roomPreviews: RoomPreview[] = rooms.flatMap((room) =>
     room.images[0]
       ? [
@@ -111,34 +112,32 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ═══ ARRIVE — the hotel from the air ═══ */}
+      {/* ═══ ARRIVE — the lit entrance, framed by a gold arch ═══ */}
+      <IntroLoader caption={`${site.address.value.city} · ${site.address.value.state}`} />
       <EntranceHero
         image={site.homeHero}
-        eyebrow={`${site.address.value.city}, ${site.address.value.state}`}
-        title={{ lead: titleLead, emphasis: titleRest.join(" ") }}
-        tagline={site.tagline.value}
+        eyebrow="A Timeless Destination"
+        titlePrefix={`${site.name}, ${site.address.value.city}:`}
+        title={{ lead: "A Stay", accent: "Beyond", tail: "Ordinary" }}
+        subline="Comfort, Crafted with Care"
+        primary={{ label: "Explore the Experience", href: "#explore" }}
+        secondary={{ label: "Discover Hotel Dipali", href: "#welcome" }}
       />
 
       {/* ═══ WELCOME — an ivory arch rises over the hero ═══
           It is also the element that turns the overlay header solid. */}
       <section
+        id="welcome"
         data-header-solid-from=""
         aria-labelledby="home-intro"
-        className="threshold paper-grain bg-surface pt-[calc(var(--arch)+2.5rem)] pb-20 md:pb-28"
+        className="threshold paper-grain scroll-mt-16 bg-surface pt-[calc(var(--arch)+2.5rem)] pb-20 md:pb-28"
       >
         <div className="container-site relative">
           <ScrollReveal>
             <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
               {/* The gold logo washes out on ivory, so it sits on a deep green medallion. */}
               <span aria-hidden="true" className="logo-medallion">
-                {/* eslint-disable-next-line @next/next/no-img-element -- the header already loads this exact file */}
-                <img
-                  src="/brand/logo-primary.png"
-                  alt=""
-                  width={1080}
-                  height={1080}
-                  className="h-20 w-auto md:h-24"
-                />
+                <Emblem className="h-15 w-auto md:h-18" sizes="(min-width: 768px) 3.75rem, 3.125rem" />
               </span>
             </div>
           </ScrollReveal>
@@ -151,7 +150,7 @@ export default async function HomePage() {
             <p className="body-lg mt-6 text-ink-muted">{site.shortDescription.value}</p>
           </ScrollReveal>
 
-          <nav aria-label="Explore the hotel" className="mt-16 md:mt-20">
+          <nav id="explore" aria-label="Explore the hotel" className="mt-16 scroll-mt-28 md:mt-20">
             <ul className="border-b border-line">
               {pillars.map((pillar) => (
                 <li key={pillar.word}>
@@ -355,7 +354,11 @@ export default async function HomePage() {
 
       {/* ═══ IN PICTURES — a look around the hotel ═══ */}
       {pictures.length >= 3 ? (
-        <section aria-labelledby="home-pictures" className="bg-surface py-20 md:py-28">
+        <section
+          id="gallery"
+          aria-labelledby="home-pictures"
+          className="scroll-mt-24 bg-surface py-20 md:py-28"
+        >
           <div className="container-site">
             <ScrollReveal>
               <p className="eyebrow">In pictures</p>
@@ -397,15 +400,7 @@ export default async function HomePage() {
         <div className="container-site relative">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             <ScrollReveal className="lg:col-span-5">
-              {/* eslint-disable-next-line @next/next/no-img-element -- the header already loads this exact file */}
-              <img
-                src="/brand/logo-primary.png"
-                alt=""
-                aria-hidden="true"
-                width={1080}
-                height={1080}
-                className="h-20 w-auto"
-              />
+              <Emblem className="mb-3 h-15 w-auto" sizes="3.125rem" />
               <h2 id="home-enquire" className="heading-1 mt-8">
                 Every visit begins with a <em>conversation</em>
               </h2>

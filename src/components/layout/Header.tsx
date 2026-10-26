@@ -4,11 +4,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Logo } from "@/components/brand/Logo";
+import { MedallionRing } from "@/components/brand/Ornaments";
+import { BookStayLink } from "@/components/links/BookStayLink";
 import { CallLink } from "@/components/links/CallLink";
 import { NavDesktop } from "@/components/layout/NavDesktop";
 import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
-import { enquireHref, overlayHeaderRoutes } from "@/lib/routes";
+import { overlayHeaderRoutes } from "@/lib/routes";
 
 function MenuIcon() {
   return (
@@ -22,7 +24,7 @@ function MenuIcon() {
       strokeLinecap="round"
       aria-hidden="true"
     >
-      <path d="M3 8h18M9 16h12" />
+      <path d="M3 8.5h18M9 15.5h12" />
     </svg>
   );
 }
@@ -32,7 +34,7 @@ function MenuIcon() {
 // never a scroll listener.
 const SCROLL_THRESHOLD_PX = 80;
 
-export function Header() {
+export function Header({ bookingUrl }: { bookingUrl: string | null }) {
   const { site } = useSiteData();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -74,20 +76,17 @@ export function Header() {
 
   return (
     <header
-      data-theme={isOverlay ? "peacock" : undefined}
+      data-theme="emerald"
       data-state={isOverlay ? "overlay" : "solid"}
-      className={
-        // text-ink re-declares `color` on this element so it re-resolves
-        // against the (possibly peacock-scoped) --color-ink custom property —
-        // inherited `color` only carries the already-resolved parent value.
-        // Background lives in .header-shell[data-state] (theme.css).
-        "header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22"
-      }
+      // text-ink re-declares `color` on this element so it re-resolves against
+      // the emerald-scoped --color-ink (inherited `color` would not).
+      // Background lives in .header-shell[data-state] (theme.css).
+      className="header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22"
     >
-      {/* Three columns around a centred arched niche: the nav's two wings
-          flank the logo; the outer edges hold the call link and the enquiry
-          (below xl: the menu and the call link). A hairline along the base
-          rises into the niche. */}
+      {/* The engraved band: two gold rules run from either end to a medallion
+          holding the emblem; the links sit inside the band and a small gold
+          bead slides along its lower rule. Ends: the call link (left, xl) and
+          Book a Stay (right); below xl the menu takes the left end. */}
       <div className="container-site header-bar">
         <button
           ref={triggerRef}
@@ -104,20 +103,28 @@ export function Header() {
           </span>
         </button>
 
+        <span aria-hidden="true" className="header-band header-band-l" />
+        <span aria-hidden="true" className="header-band header-band-r" />
+
         <NavDesktop links={site.navigation.main} pathname={pathname} />
 
         <div className="header-keystone">
-          <Logo
-            variant={isOverlay ? "reverse" : "default"}
-            imgClassName="h-13 md:h-16"
-          />
+          <MedallionRing className="header-ring" />
+          <Logo variant="reverse" imgClassName="header-emblem" sizes="3rem" />
         </div>
 
-        <CallLink className="header-call" labelClassName="header-call-label" />
+        {/* The wrapper owns the display rule (the link carries inline-flex
+            utilities, which would outrank a component-layer display:none). */}
+        <span className="header-call">
+          <CallLink labelClassName="header-call-label" />
+        </span>
 
-        <a href={enquireHref(pathname)} className="header-enquire btn-primary btn-cta">
-          Enquire
-        </a>
+        <BookStayLink bookingUrl={bookingUrl} className="header-book btn-royal">
+          {/* One flex item, so the space before "a Stay" survives. */}
+          <span>
+            Book<span className="header-book-more"> a Stay</span>
+          </span>
+        </BookStayLink>
       </div>
     </header>
   );

@@ -15,7 +15,7 @@ const themePath = join(here, "..", "src", "styles", "theme.css");
 const css = readFileSync(themePath, "utf8");
 const tokens = parseThemeTokens(css);
 
-const variants: Variant[] = ["light", "peacock"];
+const variants: Variant[] = ["light", "peacock", "emerald"];
 let failures = 0;
 
 console.log("\nWCAG AA contrast check — src/styles/theme.css\n");
