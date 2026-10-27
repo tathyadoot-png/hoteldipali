@@ -84,40 +84,35 @@ test.describe("Smooth scrolling — mouse / trackpad", () => {
     expect(trace[firstUp]![0] - reverseAt).toBeLessThan(120);
   });
 
-  test("a pinned scene's progress stays in step with a glide, forward and back", async ({
+  test("a scroll scene's progress stays in step with a glide, forward and back", async ({
     page,
   }) => {
     await page.goto("/");
     await page.mouse.move(640, 400);
-    // The dining walk sizes its runway after hydration.
+    // The Grand Reveal's stage: a ScrollScene, "through" progress.
     await expect
       .poll(() =>
-        page.evaluate(() =>
-          Number.parseFloat(
-            document.querySelector<HTMLElement>("#dine")!.style.getPropertyValue("--journey-travel"),
-          ) || 0,
-        ),
+        page.evaluate(() => document.querySelector<HTMLElement>(".grand-reveal-stage")!.style.getPropertyValue("--p")),
       )
-      .toBeGreaterThan(0);
+      .not.toBe("");
     const geo = await page.evaluate(() => {
-      const s = document.querySelector<HTMLElement>("#dine")!;
-      return {
-        top: s.getBoundingClientRect().top + window.scrollY,
-        travel: s.offsetHeight - window.innerHeight,
-      };
+      const s = document.querySelector<HTMLElement>(".grand-reveal-stage")!;
+      const r = s.getBoundingClientRect();
+      return { top: r.top + window.scrollY, height: r.height };
     });
-    await jumpTo(page, geo.top + 200);
+    await jumpTo(page, geo.top - 600);
 
     // Every frame: the progress written for the frame vs. the scroll position
     // actually rendered in it.
     await page.evaluate((g) => {
       const w = window as Window & { __gap?: number[]; __on?: boolean };
-      const dine = document.querySelector<HTMLElement>("#dine")!;
+      const stage = document.querySelector<HTMLElement>(".grand-reveal-stage")!;
       w.__gap = [];
       w.__on = true;
       const loop = () => {
-        const expected = Math.min(1, Math.max(0, (window.scrollY - g.top) / g.travel));
-        const written = Number(dine.style.getPropertyValue("--p"));
+        const vh = window.innerHeight;
+        const expected = Math.min(1, Math.max(0, (window.scrollY + vh - g.top) / (vh + g.height)));
+        const written = Number(stage.style.getPropertyValue("--p"));
         w.__gap!.push(Math.abs(expected - written));
         if (w.__on) requestAnimationFrame(loop);
       };

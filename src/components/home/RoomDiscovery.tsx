@@ -27,7 +27,8 @@ function facts(room: RoomPreview): string {
  * it — a photograph under a shallow lintel, standing on emerald stone in a fine
  * gold line — follows whichever room is hovered or keyboard-focused, the next
  * photograph sweeping in from the side. On small screens there is no hover to
- * rely on, so each room simply carries its own photograph inline.
+ * rely on, so each room simply carries its own photograph inline (beside it
+ * on tablets).
  */
 export function RoomDiscovery({ rooms }: { rooms: RoomPreview[] }) {
   const [active, setActive] = useState(0);
@@ -53,7 +54,7 @@ export function RoomDiscovery({ rooms }: { rooms: RoomPreview[] }) {
               </span>
             </Link>
             <div className="stay-room-photo">
-              <Picture image={room.image} ratio="3:2" sizes="(min-width: 768px) 76vw, 92vw" />
+              <Picture image={room.image} ratio="3:2" sizes="(min-width: 768px) 46vw, 92vw" />
             </div>
           </li>
         ))}

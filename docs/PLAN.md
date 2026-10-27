@@ -1,6 +1,6 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-26
+Last updated: 2026-10-27
 Current step: 11 — Pool & Gym, Gallery + Lightbox
 
 ## Status legend
@@ -129,6 +129,11 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-26 | The Living Experiences = Stay, Weddings & Events, Dining and Pool & Gym as four asymmetrical compositions on ivory, under the threshold's arch rising over the night: each photograph on an emerald stone tablet with an offset gold frame line behind it, alternating sides and proportions (3:2 / 4:3 / 16:10 / 3:4; desktop columns 1–7, 7–12, 2–7, 8–11); Dining layers an Infinity Bar photograph over its corner. Its motion is horizontal, unlike the Grand Reveal's opening: photographs open sideways from their text (`wipe-left` / new `wipe-right`), the text slides toward its photograph (new `slide-left` / `slide-right`) and the frame lines extend along the same line. Rich motion adds each composition's own `--p` (`ScrollScene`): tablet, photograph, frame line and inset drift sideways at different rates, and an ivory veil (max 0.45) lifts from the photograph as it reaches the viewport's centre — text is never dimmed. | Brief: an asymmetrical, layered photographic composition with directional reveals, subtle horizontal movement and controlled shifts of focus; no card grid, no pinned scene. |
 | 2026-10-26 | The Living Experiences' photographs: for each experience, the first real photograph of its kind that no other section of the page shows (`room-double-3`, `banquet-hall-wide`, `food-serving` with `cocktail-blue` over it); a reused one only when none is left. The pool's two aerials are both shown elsewhere, so its pool-centred portrait crop (`aerial-pool-grounds-portrait`, already made by `make:photos`, unused) is now the pool's second content image (`leisure.pool.images[1]`, `public-unverified`). The copy is display copy in `page.tsx`, as for World Within: it describes the photographs and the facilities in CLAUDE.md §A only. | No repeated, stock or fabricated imagery. There is no gym photograph, so "Pool & Gym" shows the pool only. |
 | 2026-10-26 | `node_modules.npm-backup/` (the npm-built tree kept during the switch to pnpm) is excluded in `.gitignore`, `tsconfig.json` and the ESLint ignores. | It sits in the project root: TypeScript's `**/*.ts` include picked up 3,832 of its files, ESLint and Tailwind's source scan would read it, and `git add -A` would have committed it. |
+| 2026-10-27 | **Homepage evolution — each experience told once.** Retired from the home page: A World Within Dipali, the 2026-10-13 Stay / Celebrate / Unwind / Dine sections (incl. the pinned horizontal dining walk) and the 2026-10-26 Living compositions. Their unique content now lives in the four chapters of The Living Experiences: every room with its link, every venue, "Plan your wedding" + Events, the five outlets with their menu links, the pool and gym summaries and the membership enquiry. Order: hero → The Dipali Experience → The Grand Reveal (now rising over the Experience) → The Living Experiences (index, I Stay, II Weddings & Events, III Dining, IV Pool & Gym) → In pictures → the enquiry close. Anchors kept: `#welcome`, `#reveal`, `#explore`, `#stay`, `#celebrate`, `#dine`, `#unwind` (nav "Experiences"), `#gallery` (nav "Gallery"), `#enquire`. No photograph appears twice on the page (tested). | Owner brief: the four experiences appeared three times, in three design languages. One telling, one identity (emerald, antique gold, ivory, stone). `WorldWithin.tsx` and `DayJourney.tsx` are no longer imported; kept until the owner confirms deleting them. |
+| 2026-10-27 | **Signature moment — through the portal.** The Grand Reveal's doorway is now architecture (SVG, rich motion only): stone jambs, an archivolt carved with "HOTEL DIPALI · SAGAR" (gold on Deep Emerald), a keystone. Passing through it, the arch grows past the viewer (×6.5, fading) faster than the photograph settles (from 12% closer) — two planes at different rates — over p 0.14–0.50 (ease-in); the frame draws over 0.38–0.54 and its ornaments set over 0.50–0.60. The section rises over The Dipali Experience with a doorway crown and keystone on its edge. | Brief: architectural depth and one signature moment, from real imagery, without pinning or wheel handling. |
+| 2026-10-27 | **Chapter scenes, each moving its own way** (all from a ScrollScene's `--p`, transform / opacity / clip-path only, complete static layouts): *Stay* — the rooms as an index beside a lintel-topped stage on emerald stone that follows hover / focus (phones: inline photographs; tablets: room beside photograph). *Weddings & Events* — typography as scene: a giant "Celebrate" outlined in gold over the hall; under rich motion its letters are windows onto the same photograph (new client `TypeFill` copies the `<img>`'s `currentSrc`, so the srcset still decides what loads) around a band (38–62%) that opens to the whole room; venues on an ivory programme card. *Dining* — the hand-off between experiences: the five places as a menu in the order of a day beside one frame; dusk is drawn down it, the Infinity Bar over the restaurant behind a gold horizon, and each marker lights as the evening reaches it; the frame is sticky in its column, nothing pinned (static: the bar as an inset over the day's corner, its tag hanging below). *Pool & Gym* — the aerial pool opens in a widening circle from the plunge pools as gold rings spread; the copy on an emerald plaque. *In pictures* — five photographs converge from their own edges into the mosaic. *Close* — medallion, royal-type heading, contacts as gold-ruled links beside the form. | Brief: original scroll interactions (images assembling, typography as scene, a distinctive transition between experiences), varied rather than one reveal repeated; mobile simplified. |
+| 2026-10-27 | **3D investigated, not used.** Three.js / R3F are not installed; no 3D model, depth map or scan of the hotel exists, and modelling the building would fabricate its architecture. Layered CSS planes (the portal, the stage tablets, the inset frame) give the depth the brief asks for at ~0 KB of JS; R3F + Three.js would add ~150 KB+ gzipped and a GPU context on phones for the same effect. What would unlock a real 3D upgrade: a depth map (or LiDAR / photogrammetry scan) of the entrance façade, for a parallax-displaced photograph. CLAUDE.md §K ("No WebGL/Three.js") stands. | Brief: decide on evidence; never add a dependency only to claim 3D. |
+| 2026-10-27 | Without JavaScript the home header's transparent overlay state is `position: relative` (one structural rule in the root layout's `<noscript>` style): it stays over the hero instead of floating, unreadable, over the ivory sections. Only the home page has that state; other pages and JS visitors are unchanged. | The no-JS check of this pass (closes the 2026-10-26 open question). |
 
 ## Brand assets
 
@@ -196,8 +201,8 @@ See CLAUDE.md section M:
     emerald hero — outside this phase; decide whether it joins the Emerald identity.
   - Measured in headless Chromium only (software raster). Check the opening on a
     real mid-range Android phone and on Safari/iOS.
-- **The Dipali Experience (2026-10-26):** "Discover Our Story" points at A World Within
-  Dipali (`#explore`) until an About / story page exists. Its body copy is
+- **The Dipali Experience (2026-10-26):** "Discover Our Story" points at The Living
+  Experiences (`#explore`) until an About / story page exists. Its body copy is
   `site.shortDescription`, still `sample` — replace with verified wording. Confirm the
   caption "The reception atrium · Sagar" and `11.jfif` (now unused) can be removed.
 - **Hero video (2026-10-26):** it is AI-generated (Veo) and marked `sample`; launch is
@@ -207,21 +212,30 @@ See CLAUDE.md section M:
   to alter it).
 - **Buttons (2026-10-26):** the shared `.btn-primary` is now gold on every page (it was
   clay on ivory pages) — confirm this is wanted site-wide.
-- **A World Within Dipali:** "Unwind" links to the home section `#unwind` until a Pool &
-  Gym page exists; the room, venue and outlet facts behind the four experiences are
-  still `sample` content.
+- **The four experiences (2026-10-27):** the nav's "Experiences" links to the Pool & Gym
+  chapter (`#unwind`) until a Pool & Gym page exists; the room, venue and outlet facts
+  behind the chapters are still `sample` content.
 - **The Grand Reveal (2026-10-26):** the tower on the far left of DJI_…0038 carries a
   "HOTEL DEEPALI" sign; tablet and up frame it out (CSS zoom) and phones never show it
   (portrait crop) — confirm with the hotel, with the usage rights and the caption "The
   façade at night · Sagar". The forecourt is wet in this photograph: a dry, blue-hour
   version of the same view would serve better.
-- **The Living Experiences (2026-10-26):** it covers the same four experiences as A
-  World Within Dipali and as the older Stay / Celebrate / Unwind / Dine sections below
-  it, which are still in the 2026-10-13 design language. Decide whether to retire or
-  restyle those (not done: this run preserved every completed section). "Pool & Gym"
-  shows the pool only until a gym photograph is supplied. Confirm the display copy.
-- **No JavaScript (pre-existing):** the header keeps its transparent overlay state, so its
-  links barely show over ivory sections. Not changed here (the navbar was preserved).
+- **The Living Experiences (2026-10-27):** the overlap with A World Within Dipali and the
+  older sections is resolved — they were folded into its chapters (decision row). Still
+  open: "Pool & Gym" shows the pool only until a gym photograph is supplied; confirm the
+  display copy (chapter headings and leads, the "Celebrate" word, the dining moods
+  "Through the day / Something to take home / By the water / Evening"). The home page no
+  longer shows the pool's portrait crop (`leisure.pool.images[1]`) or the photographs the
+  retired sections led with; they stay in the content, inner pages are unchanged.
+- **Unused components (2026-10-27):** `src/components/home/WorldWithin.tsx` and
+  `DayJourney.tsx` are imported nowhere since this pass — delete them once the owner
+  agrees (not deleted: deletions are confirmed first). `ScrollSection` stays (motion
+  architecture, CLAUDE.md §K).
+- ~~**No JavaScript:** the header keeps its transparent overlay state~~ — resolved
+  2026-10-27: without JS it no longer floats over the content (decision row).
+- **Console (pre-existing, header):** from 768px Chromium warns that the preloaded
+  `logo-emblem-120.webp` was not used within a few seconds of load (the emblem picks
+  another width from its srcset). Harmless; review with the header's image sizes.
 - Smooth scrolling was tuned with synthetic wheel input (100 px notches) in Chromium on
   Windows. Confirm the feel on real hardware: a notched mouse on Windows, a Mac
   trackpad (its own momentum + Lenis), a Magic Mouse, and Safari/Firefox. Touch was
@@ -240,10 +254,12 @@ The layouts are built so originals drop in by replacing files — no redesign ne
   blue hour, warm lights on — with no signage in frame, ≥1600×2130, would make the
   crop unnecessary.
 - **Stills**: every shot listed in `docs/data-needed.md` (rooms, venues, outlets, pool,
-  gym, gallery). Most impactful for the home page: the Main Lawn wide at dusk (the
-  Celebrate window opens to full-bleed), each room's wide shot (the room stage), the
-  restaurant, bakery and sweets counters, Poolside at dusk and Infinity Bar at night
-  (the dining walk runs day → evening), and the pool wide in portrait (the sage band).
+  gym, gallery). Most impactful for the home page: a celebration at the Main Lawn or a
+  hall, wide and landscape (the "Celebrate" stage is full-bleed, 48vw tall), each
+  room's wide shot (the room stage), the restaurant by day and the Infinity Bar at
+  night from similar angles (the Dining frame hands one to the other), the bakery and
+  sweets counters, a gym photograph (Pool & Gym shows the pool only), and a depth map
+  or scan of the entrance façade if a 3D treatment is ever wanted.
 
 ### Pre-launch cleanup (step 18)
 
@@ -802,3 +818,47 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     e2e run failed 12 enquiry-form tests only because the reused preview build lacked the
     test form endpoint (Playwright sets it just for a server it starts itself); built with
     it, all 36 pass.
+- 2026-10-27: Cinematic homepage evolution (not a numbered step; current step stays 11).
+  The in-progress work was snapshotted by the owner in `73e2721`; the rest is
+  uncommitted.
+  - **Audit:** the four experiences were told three times — A World Within Dipali, the
+    2026-10-26 Living compositions and the 2026-10-13 Stay / Celebrate / Unwind / Dine
+    sections (with the pinned dining walk) — in three design languages. Folded into the
+    chapters of The Living Experiences, each keeping everything only it said (decision
+    rows); the Grand Reveal now rises over The Dipali Experience.
+  - **Built:** `ChapterHead`, `CelebrateScene` + `TypeFill`, `DineHandoff`, `UnwindRipple`,
+    `PicturesAssemble`; `LivingExperiences` (heading, index, chapters), the Grand
+    Reveal's portal, `RoomDiscovery` and the enquiry close restyled; theme.css blocks for
+    each, the retired `.world*` / `.journey*` / old `.living*` rules removed. No new
+    dependency, no 3D asset (decision row).
+  - **Fixed in the browser review:** on phones the Dining labels collided (the day's
+    moves to the top, the evening's hangs below its inset); on tablets each room now sits
+    beside its photograph (four rooms took ~2,200 px); at 1024 without rich motion the
+    Dining inset touched the screen edge (the frame keeps 88% of its column); the Pool &
+    Gym rings were too faint over the aerial (lighter gold, 1.5 px); without JS the home
+    header floated over the content (decision row).
+  - **Tests:** the World Within, old Living and dining-walk tests are replaced. Home: the
+    chapter index and sections, every venue, the five outlets and their menu links, the
+    pool and gym summaries and membership enquiry, real sized photographs, no photograph
+    shown twice, the portal's inscription. Entrance: rich motion — the passage through
+    the portal, the Celebrate band and type fill, dusk across the Dining frame and its
+    markers, the Pool & Gym circle and rings, the pictures converging; phone — the Dining
+    inset and its tag, no overflow; reduced motion — every scene still and unclipped; no
+    JS — the chapters complete, the header not floating. Smooth scrolling now checks a
+    ScrollScene (the Grand Reveal's stage) against a glide. The opening loader's
+    key-press test no longer hangs when hydration lands after the loader's natural exit
+    (CPU contention between parallel workers here; standalone the page hydrates at
+    0.5–1.0 s): it skips, as it already did when hydration came too close, and still
+    requires the loader to leave. **All 412 e2e tests pass** (final `pnpm test:e2e`);
+    lint, typecheck, contrast gate, content report and build clean.
+  - **Checked in headless Chromium (production build):** 360 and 390 (touch), 768
+    (touch), 1024×768 (rich) and 1024×1366 (touch), 1280×800, 1440×900 and 1920×1080;
+    reduced motion (1440) and no JS (1440, 360): no horizontal overflow, no broken
+    images, no console errors (one pre-existing header preload warning from 768 px).
+    Every link on the home page resolves except the footer's legal pages (step 13).
+    Frame timing (new-headless Chromium, ANGLE D3D11 on this machine's integrated Intel
+    HD 530, 1440×900, images warm, 100 px wheel notches down and back): Stay, Weddings &
+    Events, Dining, Pool & Gym, In pictures and the close hold p95 16.8 ms with no frame
+    over 33 ms; the Grand Reveal drops 4–5 of ~345 frames to two vsyncs after its arch got
+    `will-change` (14 before; worst 51 → 34 ms), on a par with the unchanged hero →
+    Experience segment (18 of 392). Not checked on Safari, Firefox or real devices.

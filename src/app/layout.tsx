@@ -45,11 +45,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             frame one, and the opening loader is skipped on a slow connection
             (see src/lib/motion.ts). Static string, no user input. */}
         <script dangerouslySetInnerHTML={{ __html: MOTION_BOOT_SCRIPT }} />
-        {/* Without JS nothing would reveal: show scroll-reveal content as-is. */}
+        {/* Without JS nothing would reveal: show scroll-reveal content as-is.
+            Nor would the home page's transparent header ever turn solid, so it
+            stays at the top of the page instead of floating over the content. */}
         <noscript
           dangerouslySetInnerHTML={{
             __html:
-              "<style>[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}[data-reveal] img{transform:none!important}</style>",
+              "<style>[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}[data-reveal] img{transform:none!important}.header-shell[data-state=overlay]{position:relative}</style>",
           }}
         />
       </head>

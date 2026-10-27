@@ -96,22 +96,24 @@ third-party script without asking.
   `[data-reveal]` (`""` rise, `"mask"` headings, `"image"` frames, `"wipe-*"`
   photographs opening from one edge, `"slide-*"` sideways text), `.pictures-*`, plus
   the home-experience scene classes `.entrance*` (incl. `.entrance-video*`),
-  `.experience*` (The Dipali Experience), `.world*` (A World Within Dipali),
-  `.grand-reveal*` (The Grand Reveal), `.living*` (The Living Experiences), the
+  `.experience*` (The Dipali Experience), `.grand-reveal*` and `.portal-*` (The Grand
+  Reveal), `.living*` and `.chapter*` (The Living Experiences and its chapter heads),
+  the chapters' `.stay-*`, `.room-stage*`, `.room-marker`, `.celebrate-*`, `.dine-*`
+  and `.unwind-*`, `.close-*` (the enquiry close), the
   layered-section classes `.layers`, `.layer-rise`, `.layer-content`, `.layer-veil`,
-  `.room-stage*`,
-  `.celebrate-*`, `.journey*`, the opening-loader and ornament classes `.intro*`,
+  the opening-loader and ornament classes `.intro*`,
   `.arch-*`, `.ring-*`, `.sprig-line`, `.ribbon-*`, `.stop-*`, `.corner-*`, and the shell classes
   `.header-*` (incl. `.header-band*`), `.menu-*` (incl. `.menu-medallion`,
   `.menu-address`)). Never
   raw hex, never raw Tailwind palette colours
   (`bg-amber-700`), never font names in components.
 - Theme variants via `[data-theme="…"]` redefining the same tokens: a dark "Peacock"
-  variant (weddings, the bar, the Unwind band, the enquiry close) and "Emerald" — the
+  variant (weddings, the bar, the enquiry close) and "Emerald" — the
   owner's fixed palette (2026-10-24: Deep Emerald #073B30, Botanical Green #0D5145,
   Antique Gold #C5A15E, Warm Ivory #F4EBDD, Muted Sage #B7C2A5, Soft Charcoal #252B26;
-  do not change) — for the opening loader, the header, the mobile menu and the home
-  hero, with the palette textures as `--texture-stone` / `--texture-botanical`. Gold
+  do not change) — for the opening loader, the header, the mobile menu, the home
+  hero and the home page's emerald stone (the Grand Reveal, the Stay tablet, the
+  Unwind plaque), with the palette textures as `--texture-stone` / `--texture-botanical`. Gold
   small text belongs on Deep Emerald only (3.8:1 on Botanical Green: UI/large text).
   Every element that sets `data-theme="peacock"` or `"emerald"`
   MUST also carry an explicit `text-ink` (or other colour utility) on that same

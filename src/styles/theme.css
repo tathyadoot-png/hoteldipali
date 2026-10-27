@@ -3121,6 +3121,7 @@
   [data-motion="rich"] .portal-arch {
     transform: translateX(calc(var(--open) * -13cqw)) scale(calc(1 + var(--open) * 5.5));
     opacity: calc(1 - var(--open) * 1.6);
+    will-change: transform, opacity;
   }
 
   /* The doorway's opening, in the same geometry (cqw = 1% of the stage's
@@ -3549,7 +3550,25 @@
     color: var(--color-ink-muted);
   }
 
+  /* Tablets: each room beside its photograph, not above it. */
+  @media (min-width: 768px) {
+    .stay-index > li {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+      column-gap: 2rem;
+    }
+
+    .stay-room-photo {
+      padding-block: 1.25rem;
+    }
+  }
+
   @media (min-width: 1024px) {
+    .stay-index > li {
+      display: block;
+    }
+
     .stay {
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
       grid-template-rows: auto auto 1fr;
@@ -3965,7 +3984,6 @@
       position: sticky;
       top: 7.5rem;
       align-self: start;
-      width: 100%;
     }
   }
 
@@ -4001,6 +4019,7 @@
 
   /* The labels trade places as the evening arrives. */
   [data-motion="rich"] .dine-stage {
+    width: 100%;
     margin-bottom: 0;
   }
 

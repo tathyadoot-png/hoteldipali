@@ -1,7 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import leisureData from "../content/leisure.json" with { type: "json" };
+import outletsData from "../content/outlets.json" with { type: "json" };
 import roomsData from "../content/rooms.json" with { type: "json" };
+import venuesData from "../content/venues.json" with { type: "json" };
 
 test.describe("Home page", () => {
   test.beforeEach(async ({ page }) => {
@@ -112,49 +115,6 @@ test.describe("Home page", () => {
     await expect(page.locator("#explore")).toBeAttached();
   });
 
-  /* ──── A World Within Dipali ──── */
-
-  test("A World Within Dipali: four experiences, each a real photograph and a real destination", async ({
-    page,
-  }) => {
-    const section = page.locator("#explore");
-    await expect(section).toHaveAttribute("data-theme", "emerald");
-    await expect(section.getByRole("heading", { level: 2, name: "A World Within Dipali" })).toBeAttached();
-
-    const items = section.locator(".world-item");
-    await expect(items).toHaveCount(4);
-    // Celebrate leads; the order follows the layout's reading order.
-    await expect(section.locator(".world-label")).toHaveText(["Celebrate", "Stay", "Unwind", "Dine"]);
-
-    const hrefs = await section
-      .locator(".world-link, .world-aside")
-      .evaluateAll((els) => els.map((e) => e.getAttribute("href") ?? ""));
-    expect(hrefs.sort()).toEqual(["#unwind", "/dining/", "/events/", "/rooms/", "/weddings/"]);
-    await expect(page.locator("#unwind")).toBeAttached();
-
-    // Optimised hotel photographs with explicit dimensions (no placeholders).
-    const images = await section.locator(".world-frame img").evaluateAll((imgs) =>
-      (imgs as HTMLImageElement[]).map((img) => ({
-        src: img.getAttribute("src") ?? "",
-        srcset: img.srcset,
-        sized: Boolean(img.getAttribute("width") && img.getAttribute("height")),
-      })),
-    );
-    expect(images).toHaveLength(4);
-    for (const image of images) {
-      expect(image.src).toMatch(/^\/images\/hotel\/.+\.webp$/);
-      expect(image.srcset.length).toBeGreaterThan(0);
-      expect(image.sized).toBe(true);
-    }
-  });
-
-  test("each experience panel is one link, reachable by keyboard", async ({ page }) => {
-    const link = page.locator("#explore .world-link").first();
-    await link.focus();
-    await expect(link).toBeFocused();
-    await expect(link).toHaveAttribute("href", "/weddings/");
-  });
-
   /* ──── The Grand Reveal ──── */
 
   test("The Grand Reveal: the façade at night, a real photograph in a gold frame", async ({ page }) => {
@@ -187,65 +147,107 @@ test.describe("Home page", () => {
     await expect(section.locator(".grand-reveal-corner svg")).toHaveCount(4);
     await expect(section.locator(".grand-reveal-key")).toHaveCount(1);
 
+    // The portal the visitor passes through (rich motion): decorative, its
+    // archivolt carved with the hotel's name.
+    await expect(section.locator(".grand-reveal-portal")).toHaveAttribute("aria-hidden", "true");
+    await expect(section.locator(".portal-name textPath")).toHaveText("HOTEL DIPALI · SAGAR");
+
     await expect(section.getByRole("link", { name: "Plan your visit" })).toHaveAttribute("href", "#enquire");
   });
 
   /* ──── The Living Experiences ──── */
 
-  test("The Living Experiences: Stay, Weddings & Events, Dining and Pool & Gym, each a real photograph", async ({
+  // The four experiences are told once, here — A World Within Dipali and the
+  // separate Stay / Celebrate / Dine / Unwind sections were folded into these
+  // chapters (2026-10-27), each keeping everything only it said.
+  test("The Living Experiences: an index of four chapters, each a section on this page", async ({
     page,
   }) => {
-    const section = page.locator("#living");
-    await expect(section.getByRole("heading", { level: 2, name: "The Living Experiences" })).toBeVisible();
+    const section = page.locator("#explore");
+    await expect(section.getByRole("heading", { level: 2, name: "The Living Experiences" })).toBeAttached();
 
-    await expect(section.locator(".living-item")).toHaveCount(4);
-    await expect(section.locator(".living-label")).toHaveText([
-      /Stay$/,
-      /Weddings & Events$/,
-      /Dining$/,
-      /Pool & Gym$/,
-    ]);
-    await expect(section.locator(".living-item-title")).toHaveCount(4);
+    const index = section.getByRole("navigation", { name: "The four experiences" });
+    const links = index.getByRole("link");
+    await expect(links).toHaveText([/Stay$/, /Weddings & Events$/, /Dining$/, /Pool & Gym$/]);
+    const hrefs = await links.evaluateAll((els) => els.map((e) => e.getAttribute("href") ?? ""));
+    expect(hrefs).toEqual(["#stay", "#celebrate", "#dine", "#unwind"]);
 
-    const hrefs = await section
-      .locator(".living-links a")
-      .evaluateAll((els) => els.map((e) => e.getAttribute("href") ?? ""));
-    expect(hrefs.sort()).toEqual(["#unwind", "/dining/", "/events/", "/rooms/", "/weddings/"]);
-
-    const images = await section.locator(".living-frame img").evaluateAll((imgs) =>
-      (imgs as HTMLImageElement[]).map((img) => ({
-        src: img.getAttribute("src") ?? "",
-        srcset: img.srcset,
-        alt: img.alt,
-        sized: Boolean(img.getAttribute("width") && img.getAttribute("height")),
-      })),
-    );
-    expect(images).toHaveLength(4);
-    for (const image of images) {
-      expect(image.src).toMatch(/^\/images\/hotel\/.+\.webp$/);
-      expect(image.srcset.length).toBeGreaterThan(0);
-      expect(image.alt.length).toBeGreaterThan(0);
-      expect(image.sized).toBe(true);
+    // Each chapter is its own labelled section inside The Living Experiences.
+    for (const href of hrefs) {
+      const chapter = section.locator(`section${href}`);
+      await expect(chapter).toHaveCount(1);
+      const labelledBy = await chapter.getAttribute("aria-labelledby");
+      await expect(chapter.locator(`h3#${labelledBy}`)).toHaveCount(1);
     }
-    expect(new Set(images.map((image) => image.src)).size).toBe(4);
+  });
 
-    // Layered: every photograph stands on an emerald stone tablet with a gold
-    // frame line behind it; Dining adds a second photograph over its corner.
-    await expect(section.locator(".living-tablet")).toHaveCount(4);
-    await expect(section.locator(".living-line")).toHaveCount(4);
-    await expect(section.locator(".living-item-dine .living-inset img")).toHaveAttribute(
-      "src",
-      /^\/images\/hotel\/.+\.webp$/,
+  test("Weddings & Events: every venue on the programme card, and the ways in", async ({ page }) => {
+    const chapter = page.locator("#celebrate");
+    await expect(chapter).toHaveAttribute("data-theme", "peacock");
+    await expect(chapter.locator(".celebrate-venue-name")).toHaveText(venuesData.map((venue) => venue.name));
+    await expect(chapter.getByRole("link", { name: "Plan your wedding" })).toHaveAttribute("href", "/weddings/");
+    await expect(chapter.getByRole("link", { name: "Events & gatherings" })).toHaveAttribute("href", "/events/");
+    // The giant word is part of the picture; the heading carries the meaning.
+    await expect(chapter.locator(".celebrate-word")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  test("Dining: the five places in the order of a day, each linking to its menu", async ({ page }) => {
+    const chapter = page.locator("#dine");
+    const order = ["restaurant", "bakery", "sweets", "poolside-restaurant", "infinity-bar"];
+    const outlets = order.map((slug) => outletsData.find((outlet) => outlet.slug === slug)!);
+    const names = chapter.locator(".dine-name");
+    await expect(names).toHaveText(outlets.map((outlet) => outlet.name));
+    expect(await names.evaluateAll((els) => els.map((e) => e.getAttribute("href")))).toEqual(
+      order.map((slug) => `/dining/#${slug}`),
+    );
+    await expect(chapter.getByRole("link", { name: "Explore dining" })).toHaveAttribute("href", "/dining/");
+  });
+
+  test("Pool & Gym: both summaries and the membership enquiry", async ({ page }) => {
+    const chapter = page.locator("#unwind");
+    await expect(chapter).toContainText(leisureData.pool.summary);
+    await expect(chapter).toContainText(leisureData.gym.summary);
+    await expect(chapter.getByRole("link", { name: "Ask about memberships" })).toHaveAttribute(
+      "href",
+      "#enquire",
     );
   });
 
-  test("The Living Experiences show photographs the rest of the page does not", async ({ page }) => {
-    const srcs = (selector: string) =>
-      page.locator(selector).evaluateAll((imgs) => imgs.map((img) => img.getAttribute("src") ?? ""));
-    const living = await srcs("#living img");
-    const elsewhere = new Set(await srcs("main img:not(#living img)"));
-    expect(living.length).toBeGreaterThanOrEqual(4);
-    expect(living.filter((src) => elsewhere.has(src))).toEqual([]);
+  test("the chapters' photographs are the hotel's own, optimised and sized", async ({ page }) => {
+    const images = await page
+      .locator(".celebrate-photo img, .dine-photo img, .unwind-photo img, .pictures-figure img")
+      .evaluateAll((imgs) =>
+        (imgs as HTMLImageElement[]).map((img) => ({
+          src: img.getAttribute("src") ?? "",
+          srcset: img.srcset,
+          sized: Boolean(img.getAttribute("width") && img.getAttribute("height")),
+        })),
+      );
+    // Celebrate, Dining by day and after dark, Unwind, and at least three in pictures.
+    expect(images.length).toBeGreaterThanOrEqual(7);
+    for (const image of images) {
+      expect(image.src).toMatch(/^\/images\/hotel\/.+\.webp$/);
+      expect(image.srcset.length).toBeGreaterThan(0);
+      expect(image.sized).toBe(true);
+    }
+    // In pictures: the photographs are decorative, their captions describe them.
+    const captions = await page.locator(".pictures-caption").allTextContents();
+    expect(captions.every((caption) => caption.trim().length > 0)).toBe(true);
+  });
+
+  // The Stay chapter carries each room's photograph twice by design — inline
+  // for phones, on the stage for wide screens — and shows one or the other.
+  test("no photograph appears twice on the page", async ({ page }) => {
+    const shown = await page.locator("main img").evaluateAll((imgs) =>
+      imgs
+        .filter((img) => img.getClientRects().length > 0)
+        .map((img) => img.getAttribute("src") ?? "")
+        .filter((src) => src.startsWith("/images/hotel/") || src.startsWith("/sample/"))
+        // One photograph, whatever width or crop of it is served.
+        .map((src) => src.replace(/-(portrait-)?\d+\.webp$/, "")),
+    );
+    expect(shown.length).toBeGreaterThanOrEqual(10);
+    expect(shown.filter((src, i) => shown.indexOf(src) !== i)).toEqual([]);
   });
 
   /* ──── Themed scopes carry text-ink ──── */
