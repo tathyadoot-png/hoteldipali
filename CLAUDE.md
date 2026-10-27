@@ -49,7 +49,9 @@ CMS, database, auth, localStorage features.
   pass the result down — either as plain props, or, for data many client leaves need
   (e.g. site/outlets in the shell), via a client context provider that the server
   layout instantiates with the already-fetched data. See
-  `src/components/providers/SiteDataProvider.tsx`.
+  `src/components/providers/SiteDataProvider.tsx`. The footer (`Footer`) is a server
+  component the root layout feeds with props (site, outlets, booking URL); its client
+  islands are `FooterStage` (motion) and the link components.
 - All form submissions go through ONE function: `src/lib/submit-enquiry.ts`.
 - Any code that only works because of static export gets a `// STATIC-ONLY:` comment
   saying what changes when dynamic.
@@ -99,7 +101,9 @@ third-party script without asking.
   `.experience*` (The Dipali Experience), `.grand-reveal*` and `.portal-*` (The Grand
   Reveal), `.living*` and `.chapter*` (The Living Experiences and its chapter heads),
   the chapters' `.stay-*`, `.room-stage*`, `.room-marker`, `.celebrate-*`, `.dine-*`
-  and `.unwind-*`, `.close-*` (the enquiry close), the
+  and `.unwind-*`, `.close-*` (the enquiry close), `.finale*` and `.lamp*` (the footer
+  finale), `.enquiry*` (the enquiry tablet — every enquiry form), `.lines*` (the
+  contact lines) and `.contact-*` (the contact page), the
   layered-section classes `.layers`, `.layer-rise`, `.layer-content`, `.layer-veil`,
   the opening-loader and ornament classes `.intro*`,
   `.arch-*`, `.ring-*`, `.sprig-line`, `.ribbon-*`, `.stop-*`, `.corner-*`, and the shell classes
@@ -113,7 +117,10 @@ third-party script without asking.
   Antique Gold #C5A15E, Warm Ivory #F4EBDD, Muted Sage #B7C2A5, Soft Charcoal #252B26;
   do not change) — for the opening loader, the header, the mobile menu, the home
   hero and the home page's emerald stone (the Grand Reveal, the Stay tablet, the
-  Unwind plaque), with the palette textures as `--texture-stone` / `--texture-botanical`. Gold
+  Unwind plaque), the footer finale, the enquiry tablet and the contact page's front
+  desk, with the palette textures as `--texture-stone` / `--texture-botanical`. Stone
+  that carries text sits under a 75% Deep Emerald veil (gold small text ≥ 4.6:1 on the
+  texture's brightest pixel, measured 2026-10-27). Gold
   small text belongs on Deep Emerald only (3.8:1 on Botanical Green: UI/large text).
   Every element that sets `data-theme="peacock"` or `"emerald"`
   MUST also carry an explicit `text-ink` (or other colour utility) on that same
@@ -164,6 +171,11 @@ third-party script without asking.
 - Never invent awards, star ratings or quotes attributed to real people. Never copy
   review text from Google/Tripadvisor/OTAs. Placeholder phone for sample data:
   `+91 00000 00000` (allowed only when the fact's status is `sample`).
+- What the shell shows from content (footer, contact page, contact lines): a contact
+  whose phone is `sample` is never offered as a number to call (`reachableContacts`,
+  `src/lib/contacts.ts`); social links render only when `verified`; a content-driven
+  link renders only when its page exists (`isBuiltRoute` / `BUILT_PAGES` in
+  `src/lib/routes.ts` — add each route there as its page is built).
 
 ## G. Brand & scope
 
@@ -213,6 +225,15 @@ page load, never looping. It never blocks input (pointer-events none; any input 
 it), never replays on client-side navigation (`src/lib/app-boot.ts`), is hidden under
 reduced motion, and is skipped on data saver / 2G–3G (`html[data-intro="off"]`, set by
 the boot script in `src/lib/motion.ts`). No WebGL/Three.js.
+The footer finale (2026-10-27) plays one sequence when it arrives (`FooterStage` →
+`data-revealed`): every step < 400 ms, staggered over ~1.4 s, once; complete at once
+under reduced motion, without JS, or as soon as keyboard focus enters it
+(`data-revealed="instant"`). The enquiry form's sending line eases over 1.6 s while a
+submission is in flight — progress feedback, not decoration, never looping. Below-the-
+fold stone surfaces whose serif is not needed at load (`.finale`, `.enquiry`) use
+`content-visibility: auto` with a block-size placeholder only (an inline size would
+widen the page); `.finale` is `overflow: clip`, so nothing moving inside it can
+lengthen or widen the page.
 
 Scroll-driven scenes (no animation library): `useScrollProgress` writes a unitless
 `--p` (0–1) — on a whole section via `ScrollSection`, on a scene inside one via

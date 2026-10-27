@@ -23,7 +23,13 @@ export function stickyCtaConfig(pathname: string): { label: string } {
  * Routes whose own page will render an #enquire section (added as each page is
  * built in later steps). Everywhere else falls back to the contact page's form.
  */
-const PAGES_WITH_OWN_ENQUIRE_ANCHOR: string[] = ["/", "/weddings/", "/events/", "/dining/"];
+const PAGES_WITH_OWN_ENQUIRE_ANCHOR: string[] = [
+  "/",
+  "/weddings/",
+  "/events/",
+  "/dining/",
+  "/contact/",
+];
 
 /**
  * Route shapes whose every page renders its own #enquire section. Room detail
@@ -37,6 +43,21 @@ export function enquireHref(pathname: string): string {
     PAGES_WITH_OWN_ENQUIRE_ANCHOR.includes(pathname) ||
     ROUTES_WITH_OWN_ENQUIRE_ANCHOR.some((pattern) => pattern.test(pathname));
   return hasOwnAnchor ? "#enquire" : "/contact/#enquire";
+}
+
+/**
+ * Pages that exist in this build. Links that come from content (the footer's
+ * groups: About, FAQ, the policies) render only once their page is listed
+ * here, so a planned page never shows as a dead link. Add each route as its
+ * page is built.
+ */
+const BUILT_PAGES: string[] = ["/", "/rooms/", "/weddings/", "/events/", "/dining/", "/contact/"];
+const BUILT_ROUTE_PATTERNS: RegExp[] = [/^\/rooms\/[^/]+\/$/];
+
+/** Whether a site-relative href leads to a page in this build (anchors included). */
+export function isBuiltRoute(href: string): boolean {
+  const path = href.split("#")[0] || "/";
+  return BUILT_PAGES.includes(path) || BUILT_ROUTE_PATTERNS.some((pattern) => pattern.test(path));
 }
 
 // Canonical URLs for content entities. Kept here so pages and cards never

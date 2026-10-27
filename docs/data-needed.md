@@ -2,7 +2,7 @@
 
 > Auto-generated — do not edit by hand; run `pnpm content:report`.
 
-Last generated: 2026-10-26
+Last generated: 2026-10-27
 
 Everything below is still **sample** (we invented it) or **public-unverified** (found online, not confirmed by the hotel). The hotel needs to confirm or replace each item before launch. See also `docs/public-data.md`.
 
@@ -22,13 +22,13 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **phone** _(public-unverified)_ · source: Hotel's own social posts, Jul 2026 · `contacts[0].phone`
 - [ ] **whatsapp** _(public-unverified)_ — assumed WhatsApp, confirm · source: Hotel's own social posts, Jul 2026 · `contacts[0].whatsapp`
 - [ ] **phone** _(public-unverified)_ · source: Hotel's own social posts, Jul 2026 · `contacts[1].phone`
-- [ ] **phone** _(sample)_ — no public number — confirm restaurant line · `contacts[2].phone`
-- [ ] **phone** _(sample)_ — no public number — confirm bakery/sweets line · `contacts[3].phone`
-- [ ] **phone** _(sample)_ — no public number — confirm bar line · `contacts[4].phone`
-- [ ] **phone** _(sample)_ — no public number — confirm pool/gym line · `contacts[5].phone`
-- [ ] **phone** _(sample)_ — no public number — confirm reception line · `contacts[6].phone`
+- [ ] **phone** _(sample)_ — no public number — confirm restaurant line (hidden on the site until confirmed) · `contacts[2].phone`
+- [ ] **phone** _(sample)_ — no public number — confirm bakery/sweets line (hidden on the site until confirmed) · `contacts[3].phone`
+- [ ] **phone** _(sample)_ — no public number — confirm bar line (hidden on the site until confirmed) · `contacts[4].phone`
+- [ ] **phone** _(sample)_ — no public number — confirm pool/gym line (hidden on the site until confirmed) · `contacts[5].phone`
+- [ ] **phone** _(sample)_ — no public number — confirm reception line (hidden on the site until confirmed) · `contacts[6].phone`
 - [ ] **email** _(sample)_ — sample email — confirm the hotel's address · `contacts[6].email`
-- [ ] **url** _(public-unverified)_ · source: Public profile · `socials[0].url`
+- [ ] **url** _(public-unverified)_ — confirm this is the hotel's own page — the footer shows social links only once verified · source: Public profile · `socials[0].url`
 - [ ] **checkInTime** _(sample)_ — sample check-in time — confirm · `checkInTime`
 - [ ] **checkOutTime** _(sample)_ — sample check-out time — confirm · `checkOutTime`
 - [ ] **legalName** _(public-unverified)_ · source: GST public record · `legal.legalName`
@@ -209,6 +209,18 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 - [ ] Hall, corporate seating arrangement — aspect 4:5 · `/sample/gallery-events-3.svg`
 - [ ] Gym, cardio equipment detail — aspect 1:1 · `/sample/gallery-pool-gym-2.svg`
 
+## Also needed (not yet in /content)
+
+### Footer & Contact page
+
+- [ ] **Department phone lines** — Restaurant, Bakery & Sweets, Infinity Bar, Pool & Gym and Reception are sample placeholders, so the footer and the contact page leave them out (only Reservations and Weddings & Events show). Supply the real numbers and they appear automatically.
+- [ ] **Reception email** — sample; not shown anywhere until confirmed.
+- [ ] **Social profiles** — the footer shows a social link only once it is `verified`. Confirm that facebook.com/hoteldeepalisagar is the hotel's own page, and supply the Instagram handle (and any others).
+- [ ] **Legal pages** — Privacy Policy, Terms, Booking & Cancellation: the footer links them only once their pages exist (`isBuiltRoute` in `src/lib/routes.ts`). Supply the texts (or approve drafts) — step 13.
+- [ ] **Hosted form endpoint** — `NEXT_PUBLIC_FORM_ENDPOINT` (+ access key) for production. Without it every enquiry form shows "Online enquiries aren't connected yet" with Call / WhatsApp instead.
+- [ ] **Copy approval** — the footer invitation ("We look forward to welcoming you", "Book a stay, or tell us what you are planning."), the contact page's lead and enquiry copy, and the enquiry choices ("A stay, A wedding, An event, Dining, Pool & gym, Something else").
+- [ ] **The lamps** — the footer's row of oil lamps is a decorative motif (Dipali/Deepali evokes a row of lamps). Confirm the hotel is happy with it; no claim about the name is made on the site.
+
 ---
 
-Totals: 133 items/facts to confirm · 25 photos to replace.
+Totals: 133 items/facts to confirm · 25 photos to replace · 7 further items above.

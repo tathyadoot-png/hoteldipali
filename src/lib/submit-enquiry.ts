@@ -1,26 +1,26 @@
 // STATIC-ONLY: posts directly from the browser to a third-party hosted form
 // endpoint (Web3Forms/Formspree-style) because there is no server in Phase 2.
 // This is the ONE function all form submissions go through (CLAUDE.md §C).
+//
+// Where enquiries are delivered is decided by the provider, not by this code:
+// with Web3Forms the recipient is the address the access key was created for;
+// with Formspree it is set in the form's dashboard; with FormSubmit it is part
+// of the endpoint URL. The current setup routes to tathyadoot@gmail.com — see
+// .env.example. Until NEXT_PUBLIC_FORM_ENDPOINT is set, nothing is sent and the
+// form offers call / WhatsApp instead (never a pretend success).
 
+/** The page context an enquiry comes from — no longer asked of the visitor;
+ * the page supplies it ("wedding" on /weddings/, "general" elsewhere). */
 export type EnquiryType = "rooms" | "wedding" | "event" | "dining" | "pool-gym" | "general";
-
-export const ENQUIRY_TYPE_OPTIONS: ReadonlyArray<{ value: EnquiryType; label: string }> = [
-  { value: "rooms", label: "Rooms" },
-  { value: "wedding", label: "Wedding" },
-  { value: "event", label: "Event" },
-  { value: "dining", label: "Dining" },
-  { value: "pool-gym", label: "Pool & Gym" },
-  { value: "general", label: "General" },
-];
 
 export type EnquiryFormInput = {
   name: string;
   phone: string;
   email?: string;
-  enquiryType: EnquiryType;
-  preferredDate?: string;
-  guests?: number;
   message?: string;
+  enquiryType: EnquiryType;
+  /** The page path it was sent from, so the hotel sees which room or page. */
+  page?: string;
 };
 
 export type SubmitEnquiryResult =
@@ -52,10 +52,10 @@ export async function submitEnquiry(input: EnquiryFormInput): Promise<SubmitEnqu
     enquiry_type: input.enquiryType,
     subject: `Hotel Dipali website enquiry — ${input.enquiryType}`,
   };
+  // `email` doubles as the reply-to address with Web3Forms and Formspree.
   if (input.email) payload.email = input.email;
-  if (input.preferredDate) payload.preferred_date = input.preferredDate;
-  if (input.guests) payload.guests = String(input.guests);
   if (input.message) payload.message = input.message;
+  if (input.page) payload.page = input.page;
   if (accessKey) payload.access_key = accessKey;
 
   let response: Response;

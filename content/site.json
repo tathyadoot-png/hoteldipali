@@ -148,7 +148,7 @@
       "label": "Restaurant",
       "phone": {
         "status": "sample",
-        "note": "no public number — confirm restaurant line",
+        "note": "no public number — confirm restaurant line (hidden on the site until confirmed)",
         "value": "+91 00000 00000"
       }
     },
@@ -157,7 +157,7 @@
       "label": "Bakery & Sweets",
       "phone": {
         "status": "sample",
-        "note": "no public number — confirm bakery/sweets line",
+        "note": "no public number — confirm bakery/sweets line (hidden on the site until confirmed)",
         "value": "+91 00000 00000"
       }
     },
@@ -166,7 +166,7 @@
       "label": "Infinity Bar",
       "phone": {
         "status": "sample",
-        "note": "no public number — confirm bar line",
+        "note": "no public number — confirm bar line (hidden on the site until confirmed)",
         "value": "+91 00000 00000"
       }
     },
@@ -175,7 +175,7 @@
       "label": "Pool & Gym",
       "phone": {
         "status": "sample",
-        "note": "no public number — confirm pool/gym line",
+        "note": "no public number — confirm pool/gym line (hidden on the site until confirmed)",
         "value": "+91 00000 00000"
       }
     },
@@ -184,7 +184,7 @@
       "label": "Reception",
       "phone": {
         "status": "sample",
-        "note": "no public number — confirm reception line",
+        "note": "no public number — confirm reception line (hidden on the site until confirmed)",
         "value": "+91 00000 00000"
       },
       "email": {
@@ -202,6 +202,7 @@
       "url": {
         "status": "public-unverified",
         "source": "Public profile",
+        "note": "confirm this is the hotel's own page — the footer shows social links only once verified",
         "value": "https://facebook.com/hoteldeepalisagar"
       }
     }

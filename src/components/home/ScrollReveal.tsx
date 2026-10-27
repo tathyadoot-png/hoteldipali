@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode, type RefObject } from "react";
 
 type RevealVariant =
   | "rise"
@@ -48,13 +48,11 @@ function observe(el: HTMLElement) {
 }
 
 /**
- * Reveals its children once as they approach the viewport. Reduced-motion
- * visitors and no-JS visitors (see the <noscript> rule in the root layout)
- * get the content immediately.
+ * Marks the element `data-revealed` once as it approaches the viewport (at
+ * once under reduced motion), for CSS to reveal from — the hook behind
+ * ScrollReveal, for components that reveal an element of their own.
  */
-export function ScrollReveal({ children, className, variant = "rise", delay = 0 }: ScrollRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
+export function useReveal(ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -63,7 +61,17 @@ export function ScrollReveal({ children, className, variant = "rise", delay = 0 
       return;
     }
     return observe(el);
-  }, []);
+  }, [ref]);
+}
+
+/**
+ * Reveals its children once as they approach the viewport. Reduced-motion
+ * visitors and no-JS visitors (see the <noscript> rule in the root layout)
+ * get the content immediately.
+ */
+export function ScrollReveal({ children, className, variant = "rise", delay = 0 }: ScrollRevealProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  useReveal(ref);
 
   const style = delay ? ({ "--reveal-delay": `${delay}ms` } as CSSProperties) : undefined;
 

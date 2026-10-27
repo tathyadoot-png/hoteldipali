@@ -27,12 +27,101 @@ test("renders with proper labels and all enquiry-type categories", async ({ page
   await expect(form.getByLabel("Number of guests (optional)")).toBeVisible();
   await expect(form.getByLabel("Message (optional)")).toBeVisible();
 
-  const select = form.getByLabel("Enquiry type");
-  await expect(select).toBeVisible();
-  const values = await select.locator("option").evaluateAll((opts) =>
-    opts.map((o) => (o as HTMLOptionElement).value),
-  );
+  // The enquiry type (2026-10-27): a group of choices instead of a select —
+  // the same field, values and default, one tap each.
+  const group = form.getByRole("group", { name: "What are you planning?" });
+  await expect(group).toBeVisible();
+  const values = await group
+    .getByRole("radio")
+    .evaluateAll((radios) => radios.map((r) => (r as HTMLInputElement).value));
   expect(values).toEqual(["rooms", "wedding", "event", "dining", "pool-gym", "general"]);
+  await expect(group.getByRole("radio", { name: "A stay" })).toBeChecked();
+});
+
+test("the enquiry type is chosen from the keyboard, and the choice is what gets sent", async ({
+  page,
+}) => {
+  let requestBody: Record<string, string> | undefined;
+  await page.route(FORM_ENDPOINT, async (route) => {
+    requestBody = route.request().postDataJSON() as Record<string, string>;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true }),
+    });
+  });
+
+  const form = await openForm(page);
+  await form.getByRole("radio", { name: "A stay" }).focus();
+  await page.keyboard.press("ArrowRight");
+  const wedding = form.getByRole("radio", { name: "A wedding" });
+  await expect(wedding).toBeChecked();
+  await expect(wedding).toBeFocused();
+
+  await fillValidFields(form);
+  await form.getByRole("button", { name: "Send enquiry" }).click();
+  await expect(page).toHaveURL(/\/thank-you\/?$/);
+  expect(requestBody?.enquiry_type).toBe("wedding");
+});
+
+test("a field checks itself when the visitor leaves it, and the message goes once it is right", async ({
+  page,
+}) => {
+  const form = await openForm(page);
+
+  // Tabbing through an empty field says nothing yet.
+  await form.getByLabel("Name").focus();
+  await page.keyboard.press("Tab");
+  await expect(form.getByText("Please enter your name.")).toHaveCount(0);
+
+  // A wrong number is flagged on leaving the field, tied to it for screen readers…
+  const phone = form.getByLabel("Phone");
+  await phone.fill("12345");
+  await phone.blur();
+  await expect(form.getByText("Please enter a valid 10-digit Indian mobile number.")).toBeVisible();
+  await expect(phone).toHaveAttribute("aria-invalid", "true");
+  await expect(phone).toHaveAttribute("aria-describedby", "light-ef-phone-error");
+
+  // …and the message goes as soon as the number is right.
+  await phone.fill("98765 43210");
+  await expect(form.getByText("Please enter a valid 10-digit Indian mobile number.")).toHaveCount(0);
+  await expect(phone).toHaveAttribute("aria-invalid", "false");
+});
+
+test("while sending, the form says so and holds; once sent, it confirms before the thank-you page", async ({
+  page,
+}) => {
+  let release: () => void = () => {};
+  const confirmed = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route(FORM_ENDPOINT, async (route) => {
+    await confirmed;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true }),
+    });
+  });
+
+  const form = await openForm(page);
+  await fillValidFields(form);
+  await form.getByRole("button", { name: "Send enquiry" }).click();
+
+  // Sending: the button says so, nothing can be changed or sent twice, and
+  // screen readers hear it.
+  const button = form.locator(".enquiry-send");
+  await expect(button).toHaveText("Sending…");
+  await expect(button).toBeDisabled();
+  await expect(form.getByLabel("Name")).toBeDisabled();
+  await expect(form.getByRole("status")).toHaveText("Sending your enquiry…");
+  await expect(page).toHaveURL(/\/styleguide\/?$/);
+
+  // The endpoint confirms: "Enquiry sent", then the thank-you page.
+  release();
+  await expect(button).toHaveText("Enquiry sent");
+  await expect(form.getByRole("status")).toHaveText("Enquiry sent. Opening your confirmation.");
+  await expect(page).toHaveURL(/\/thank-you\/?$/);
 });
 
 test("required validation blocks submission and focuses the first invalid field", async ({

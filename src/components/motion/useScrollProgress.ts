@@ -5,7 +5,7 @@ import { useEffect, useRef, useSyncExternalStore, type RefObject } from "react";
 import { useSmoothScroll } from "@/components/motion/SmoothScroll";
 import { prefersRichMotion, RICH_MOTION_QUERY, syncRootMotionAttribute } from "@/lib/motion";
 
-export type ProgressMode = "pinned" | "through" | "rise";
+export type ProgressMode = "pinned" | "through" | "rise" | "enter";
 
 type Options = {
   /** When false nothing is observed and the CSS variable is never written. */
@@ -17,6 +17,9 @@ type Options = {
    * at the top — for elements that simply scroll past.
    * "rise": 0 when its top enters at the bottom, 1 when its top reaches the
    * top — for a section rising over the one before it (LayeredSection).
+   * "enter": 0 when its top enters at the bottom, 1 once it is wholly in view
+   * (or, if taller than the viewport, when its top reaches the top) — for the
+   * last element on a page, whose top may never reach the top (the footer).
    */
   mode?: ProgressMode;
   /**
@@ -79,7 +82,9 @@ export function useScrollProgress<T extends HTMLElement>(
           ? (y - top) / Math.max(1, height - vh)
           : mode === "rise"
             ? (y + vh - top) / vh
-            : (y + vh - top) / (vh + height);
+            : mode === "enter"
+              ? (y + vh - top) / Math.max(1, Math.min(vh, height))
+              : (y + vh - top) / (vh + height);
       const p = Math.round(Math.min(1, Math.max(0, raw)) * 10000) / 10000;
       if (p === last) return;
       last = p;

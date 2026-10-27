@@ -128,12 +128,14 @@ test.describe("Events page", () => {
     // this event-focused page defaults the selection to "event".
     const section = page.locator("#enquire");
     await expect(section).toBeAttached();
-    const select = section.locator("form").getByLabel("Enquiry type");
-    const values = await select.locator("option").evaluateAll((opts) =>
-      opts.map((o) => (o as HTMLOptionElement).value),
+    // The enquiry type is a group of choices (it was a select until 2026-10-27).
+    const form = section.locator("form");
+    const choices = form.getByRole("group", { name: "What are you planning?" }).getByRole("radio");
+    const values = await choices.evaluateAll((radios) =>
+      radios.map((r) => (r as HTMLInputElement).value),
     );
     expect(new Set(values)).toEqual(new Set(["event", "wedding"]));
-    await expect(select).toHaveValue("event");
+    await expect(form.getByRole("radio", { name: "An event" })).toBeChecked();
   });
 
   test("shows no price, booking, or availability UI", async ({ page }) => {

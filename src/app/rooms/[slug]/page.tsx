@@ -220,11 +220,7 @@ export default async function RoomPage({ params }: RoomPageProps) {
             </div>
 
             <div className="lg:col-span-7">
-              <EnquiryForm
-                enquiryTypes={["rooms"]}
-                defaultEnquiryType="rooms"
-                idPrefix={`room-${room.slug}`}
-              />
+              <EnquiryForm enquiryType="rooms" idPrefix={`room-${room.slug}`} />
             </div>
           </div>
         </div>

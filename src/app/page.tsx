@@ -3,9 +3,8 @@ import type { Metadata } from "next";
 
 import { Emblem } from "@/components/brand/Logo";
 import { MedallionRing } from "@/components/brand/Ornaments";
+import { ContactLines } from "@/components/contact/ContactLines";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
-import { CallLink } from "@/components/links/CallLink";
-import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { ScrollReveal } from "@/components/home/ScrollReveal";
 import { EntranceHero } from "@/components/home/EntranceHero";
 import { IntroLoader } from "@/components/home/IntroLoader";
@@ -358,11 +357,8 @@ export default async function HomePage() {
               Tell us what you are planning — a stay, a wedding, a meal or a membership — with
               your dates, and we will reply with the details.
             </p>
-            <div className="close-contacts">
-              <CallLink className="link-royal" />
-              <WhatsAppLink context="general" className="link-royal" />
-              <p className="close-location">{site.locationLine.value}</p>
-            </div>
+            {/* The same lines as the contact page's front desk. */}
+            <ContactLines variant="list" className="close-contacts" />
           </ScrollReveal>
 
           <div className="close-form">

@@ -43,6 +43,9 @@ type LogoProps = {
   imgClassName?: string;
   /** Rendered width hint for the srcset (CSS px). */
   sizes?: string;
+  /** Below the fold (the footer): fetched as it nears the viewport, and not
+   * preloaded with the page's first content. */
+  lazy?: boolean;
 };
 
 type EmblemProps = {
@@ -73,7 +76,12 @@ export function Emblem({ className, sizes, priority = false }: EmblemProps) {
 }
 
 // The default height matches the old padded PNG's visible artwork (≈43/55 px).
-export function Logo({ variant = "default", imgClassName = "h-11 md:h-14", sizes = "4rem" }: LogoProps) {
+export function Logo({
+  variant = "default",
+  imgClassName = "h-11 md:h-14",
+  sizes = "4rem",
+  lazy = false,
+}: LogoProps) {
   const file = LOGO_FILES[variant];
 
   return (
@@ -87,6 +95,8 @@ export function Logo({ variant = "default", imgClassName = "h-11 md:h-14", sizes
           alt="Hotel Dipali"
           width={file.width}
           height={file.height}
+          loading={lazy ? "lazy" : undefined}
+          decoding={lazy ? "async" : undefined}
           className={`w-auto object-contain ${imgClassName}`}
         />
       ) : (

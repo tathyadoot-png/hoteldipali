@@ -55,7 +55,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           }}
         />
       </head>
-      <body className="pb-24 xl:pb-0">
+      {/* The phone sticky bar's clearance is the footer's own (.finale), so
+          the emerald finale runs under the bar instead of an ivory strip. */}
+      <body>
         <a href="#main" className="skip-link">
           Skip to main content
         </a>
@@ -68,7 +70,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <SiteDataProvider site={site} outlets={outlets}>
             <Header bookingUrl={bookingUrl} />
             <main id="main">{children}</main>
-            <Footer />
+            <Footer site={site} outlets={outlets} bookingUrl={bookingUrl} />
             <StickyCtaBar />
             <MobileMenu bookingUrl={bookingUrl} />
           </SiteDataProvider>

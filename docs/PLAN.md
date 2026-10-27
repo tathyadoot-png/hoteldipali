@@ -28,7 +28,8 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 - [x] 9. Events & Celebrations
 - [x] 10. Dining hub
 - [ ] 11. Pool & Gym, Gallery + Lightbox
-- [ ] 12. About, Contact, FAQ
+- [~] 12. About, Contact, FAQ — Contact built 2026-10-27 (with the footer finale);
+      About and FAQ still to do
 - [ ] 13. Wedding campaign LP, legal pages, 404
 - [ ] 14. SEO layer (metadata, sitemap, robots, llms.txt, JSON-LD, OG)
 - [ ] 15. Analytics + consent
@@ -134,6 +135,14 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-27 | **Chapter scenes, each moving its own way** (all from a ScrollScene's `--p`, transform / opacity / clip-path only, complete static layouts): *Stay* — the rooms as an index beside a lintel-topped stage on emerald stone that follows hover / focus (phones: inline photographs; tablets: room beside photograph). *Weddings & Events* — typography as scene: a giant "Celebrate" outlined in gold over the hall; under rich motion its letters are windows onto the same photograph (new client `TypeFill` copies the `<img>`'s `currentSrc`, so the srcset still decides what loads) around a band (38–62%) that opens to the whole room; venues on an ivory programme card. *Dining* — the hand-off between experiences: the five places as a menu in the order of a day beside one frame; dusk is drawn down it, the Infinity Bar over the restaurant behind a gold horizon, and each marker lights as the evening reaches it; the frame is sticky in its column, nothing pinned (static: the bar as an inset over the day's corner, its tag hanging below). *Pool & Gym* — the aerial pool opens in a widening circle from the plunge pools as gold rings spread; the copy on an emerald plaque. *In pictures* — five photographs converge from their own edges into the mosaic. *Close* — medallion, royal-type heading, contacts as gold-ruled links beside the form. | Brief: original scroll interactions (images assembling, typography as scene, a distinctive transition between experiences), varied rather than one reveal repeated; mobile simplified. |
 | 2026-10-27 | **3D investigated, not used.** Three.js / R3F are not installed; no 3D model, depth map or scan of the hotel exists, and modelling the building would fabricate its architecture. Layered CSS planes (the portal, the stage tablets, the inset frame) give the depth the brief asks for at ~0 KB of JS; R3F + Three.js would add ~150 KB+ gzipped and a GPU context on phones for the same effect. What would unlock a real 3D upgrade: a depth map (or LiDAR / photogrammetry scan) of the entrance façade, for a parallax-displaced photograph. CLAUDE.md §K ("No WebGL/Three.js") stands. | Brief: decide on evidence; never add a dependency only to claim 3D. |
 | 2026-10-27 | Without JavaScript the home header's transparent overlay state is `position: relative` (one structural rule in the root layout's `<noscript>` style): it stays over the hero instead of floating, unreadable, over the ivory sections. Only the home page has that state; other pages and JS visitors are unchanged. | The no-JS check of this pass (closes the 2026-10-26 open question). |
+| 2026-10-27 | **Footer = "the lamp-lit gate"** (`Footer`, `FooterStage`, `.finale*`, `.lamp*`). An emerald stone band whose centre is a gateway: its crown rises above the band's straight top edge over the end of every page (the footer box starts just above the crown and overlaps the last section by `--rise` + 0.5rem ≤ 4.25rem — under every page's last-section bottom padding; transparent beside the crown, `pointer-events` pass through), the emblem in its medallion in the arched head, then inside a lit opening (a Botanical Green glow) the invitation "We look forward to welcoming you", Book a Stay (the gold plaque; WhatsApp availability while no engine is configured) and Send an enquiry (`enquireHref`). Oil lamps (bowl, flame, glow; SVG + CSS, `Lamp`) stand on the string course either side — one per side on phones, two on tablets, four from 1024px. Beside the gate (1024+) or below it: Find us (location line, Get directions), Call or message (full-width rows on phones), Explore and Eat & drink; the legal line on the charcoal foot. | Owner brief: one coherent finale, recognisably Hotel Dipali, a distinctive silhouette and focal point. The arch bookends the hero's arched window; Dipali evokes a row of lamps (a motif only — no claim about the name is made). |
+| 2026-10-27 | Footer sequence: `FooterStage` marks it `data-revealed` once its top is a fifth of the way up the viewport, and CSS plays cornice + string course drawing outward → the gateway's two gold lines drawing up (clip-path) → keystone, medallion ring (dash) and emblem → the lamps lighting nearest first (90 ms apart) → the title's two lines rising from masks → lead and actions → one glint across the gold plaque (1.34 s) → the legal line (fade, 1.4 s). Every step < 400 ms. Side groups use `ScrollReveal`. Rich motion only: `--p` (new `useScrollProgress` mode `"enter"`: 0 when the top enters, 1 once wholly in view) on the gateway (rises 8vh → 0 over the first 60%, smoothstep) and the stone (lags 12vh). Keyboard focus entering the footer completes everything at once (`data-revealed="instant"`). Reduced motion / no JS: complete and still. | Brief's seven-step choreography, without scroll-jacking or pinning; a focused link is never transparent (WCAG 2.4.7). |
+| 2026-10-27 | Footer content rules: a number to call only for contacts whose phone is not `sample` (`reachableContacts`, new `src/lib/contacts.ts` — the old footer showed five `+91 00000 00000` lines); social links only when `verified` (the Facebook URL is public-unverified, so hidden); content links only when their page exists (`isBuiltRoute` / `BUILT_PAGES`, `src/lib/routes.ts` — the three policy links pointed at missing pages and are hidden until step 13). The footer is now a server component fed by the root layout. The phone sticky bar's clearance moved from `body` (`pb-24 xl:pb-0`) into the footer, so the finale runs on under the bar instead of ending on an ivory strip. `.finale` is `overflow: clip`. | Brief: no invented or dead destinations; keep the real contacts, booking action and navigation. `overflow: clip` because content waiting to reveal (24px down) lengthened the page at 1920 px and left an ivory strip under the footer (found in the browser review). |
+| 2026-10-27 | `/contact/` built (step 12's Contact): an emerald "front desk" — breadcrumb, H1 "Contact Hotel Dipali", an italic lead, and a register of the lines a visitor can use, set large in Cormorant on gold rules ending in diamonds (Reservations + WhatsApp, Weddings & Events, Visit + Get directions; a gold rule between the columns from 1024px); then, on ivory, "Tell us what you are planning" (sticky beside the form from 1024px) and the enquiry tablet (`#enquire`, all six types). `/contact/` joins the pages with their own `#enquire`. | The footer's Contact link, the sticky bar's fallback and the rooms hub's "Make an enquiry" pointed at `/contact/#enquire`, which did not exist; no competing contact route existed. |
+| 2026-10-27 | `EnquiryForm` redesigned as the enquiry tablet, on every page that has a form: emerald stone in a fine gold frame (corner ornaments; edges draw from their centres when it comes into view); "What are you planning?" — the enquiry type as radio chips (it was a select: same `name`, values, default and payload; the radio is laid over its chip, so every click lands on the input), "Your details" (Name, Phone, Email optional) and "About your visit" (date, guests, message — optional); fields on a fine rule (≥ 3:1) with a gold line drawn on focus; checks on leaving a field (an untouched empty field waits for the submit; a shown message goes as soon as the value is right) — deferred while a pointer is held, because a message appearing mid-press moved "Send enquiry" out from under the click and the click was lost (caught by the existing invalid-phone test); sending: "Sending…", the fields hold, a gold line eases along the frame's foot, a polite live status; sent: "Enquiry sent" with a check for 0.9 s, then `/thank-you/`; errors beside the button. Not configured (no endpoint — today's production state): the call / WhatsApp notice first, the form disabled. Choice labels "A stay, A wedding, An event, Dining, Pool & gym, Something else" (display only). Unchanged: the endpoint, payload, validation rules and messages, honeypot, `submitEnquiry()`, the thank-you redirect. | Brief: a custom, legible, accessible form that keeps the backend contract. |
+| 2026-10-27 | Shared `ContactLines` ("register" on the contact page, "list" in the home page's enquiry close, replacing its call / WhatsApp pair and location line): every usable line, WhatsApp on the line that takes it, the location with Get directions (new `DirectionsLink`, `directions_click`). Links are named "Call Reservations, +91 …". | Brief: the home enquiry and the contact page share components, each keeping its own copy. |
+| 2026-10-27 | `content-visibility: auto` with a block-size placeholder only on `.finale` and `.enquiry`; the footer emblem is `lazy` (new `Logo` prop — no React image preload). | Measured on a throttled phone: the footer's and tablet's Cormorant text fetched both serif files (46 KB) at load on pages that never used them — /rooms/ LCP 2.89 → 3.09 s. With it, 2.83 → 2.86 s (within run-to-run noise), +8 KB. An inline-size placeholder widened the page at 360 px (caught by the overflow tests). |
+| 2026-10-27 | Contrast gate: Emerald-only pairs for the footer's charcoal foot — ink / accent-ink 12.24, ink-muted / accent-ink 7.76, accent / accent-ink 5.95. Stone that carries text is veiled at 75% Deep Emerald: on the texture's brightest pixel (#2a5c50) gold stays ≥ 4.60:1 and sage ≥ 6.01:1. | Every text/background pair is gated (CLAUDE.md §E). |
 
 ## Brand assets
 
@@ -195,8 +204,9 @@ See CLAUDE.md section M:
     non-public source folder) before deploying; not done (originals are never moved by
     code without sign-off).
   - Navigation: "About" has no page; "Experiences" (/#unwind) and "Gallery" (/#gallery)
-    are provisional anchors until the Pool & Gym and Gallery pages exist. The footer
-    still links to /pool-and-gym/, /gallery/ and /contact/, which do not exist yet.
+    are provisional anchors until the Pool & Gym and Gallery pages exist. ~~The footer
+    still links to /pool-and-gym/, /gallery/ and /contact/~~ — resolved 2026-10-27: the
+    footer links only to pages that exist (`isBuiltRoute`), and /contact/ now exists.
   - The phone sticky bar (Call · WhatsApp · Enquire) is ivory/terracotta over the
     emerald hero — outside this phase; decide whether it joins the Emerald identity.
   - Measured in headless Chromium only (software raster). Check the opening on a
@@ -235,7 +245,34 @@ See CLAUDE.md section M:
   2026-10-27: without JS it no longer floats over the content (decision row).
 - **Console (pre-existing, header):** from 768px Chromium warns that the preloaded
   `logo-emblem-120.webp` was not used within a few seconds of load (the emblem picks
-  another width from its srcset). Harmless; review with the header's image sizes.
+  another width from its srcset). Harmless; review with the header's image sizes. (The
+  footer's emblem no longer adds a second preload — it is lazy since 2026-10-27.)
+- **Footer finale & contact (2026-10-27):**
+  - Copy to approve: "We look forward to welcoming you", "Book a stay, or tell us what
+    you are planning.", the contact page's lead and enquiry copy, and the enquiry
+    choices "A stay / A wedding / An event / Dining / Pool & gym / Something else".
+  - The lamps: a decorative motif (Dipali evokes a row of lamps) — confirm the hotel is
+    happy with it. No claim about the name is made anywhere.
+  - Real lines needed for Restaurant, Bakery & Sweets, Infinity Bar, Pool & Gym and
+    Reception (+ the reception email): hidden while `sample`, they appear by themselves
+    once supplied. Confirm the Facebook page is the hotel's own (hidden until
+    `verified`) and supply Instagram.
+  - The policy pages (step 13): the footer links them as soon as their routes are added
+    to `BUILT_PAGES` in `src/lib/routes.ts`.
+  - "Send an enquiry" goes to the page's own form where it has one, otherwise to
+    `/contact/#enquire` — confirm that rather than always the contact page.
+  - After a successful enquiry the form shows "Enquiry sent" for 0.9 s before the
+    thank-you page — confirm the pause. The thank-you page itself was not restyled in
+    this phase.
+  - Production still has no form endpoint (`NEXT_PUBLIC_FORM_ENDPOINT`): every form
+    shows the call / WhatsApp notice and is disabled until one is configured.
+  - Checked in Chromium only (headed for screenshots, headless for tests and timings).
+    `content-visibility` and `@media (scripting)` need Safari 18 / Firefox 125+ for the
+    font deferral and the pre-reveal states; older browsers simply show everything at
+    once. Check Safari/iOS and Firefox, and a real phone.
+  - One throttled-phone run of /weddings/ (1 of 15 after the change) recorded CLS 0.27;
+    it did not reproduce (14 runs at 0.0002, the same as before the change). Watch for
+    it in field data.
 - Smooth scrolling was tuned with synthetic wheel input (100 px notches) in Chromium on
   Windows. Confirm the feel on real hardware: a notched mouse on Windows, a Mac
   trackpad (its own momentum + Lenis), a Magic Mouse, and Safari/Firefox. Touch was
@@ -862,3 +899,72 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     over 33 ms; the Grand Reveal drops 4–5 of ~345 frames to two vsyncs after its arch got
     `will-change` (14 before; worst 51 → 34 ms), on a par with the unchanged hero →
     Experience segment (18 of 392). Not checked on Safari, Firefox or real devices.
+- 2026-10-27: Signature footer ("the lamp-lit gate") and the contact experience (not a
+  numbered step; current step stays 11; step 12's Contact page is done — About and FAQ
+  remain). Uncommitted per the brief ("do not commit, push or deploy").
+  - **Audit:** there was no contact page, API route or database — enquiries post from
+    the browser through `submitEnquiry()` to a hosted endpoint set by
+    `NEXT_PUBLIC_FORM_ENDPOINT`, which production does not have yet. Dead links found:
+    the footer's three policy links, and `/contact/#enquire` (sticky-bar fallback, rooms
+    hub). The footer showed five `+91 00000 00000` placeholder lines and an unverified
+    Facebook link.
+  - **Built:** `Footer` (server component, rewritten) + `FooterStage` (sequence, focus,
+    rich-motion depth) + `Lamp`; `/contact/` (`src/app/contact/page.tsx`);
+    `ContactLines`; `EnquiryForm` rewritten as the enquiry tablet; `DirectionsLink`,
+    `EnquireLink`; `reachableContacts` (`src/lib/contacts.ts`); `isBuiltRoute` /
+    `BUILT_PAGES` and `/contact/` with its own `#enquire` (`src/lib/routes.ts`);
+    `useScrollProgress` mode `"enter"`; `useReveal` (from `ScrollReveal`); `Logo`
+    `lazy`; `WhatsAppLink` `labelClassName`; enquiry choice labels; `--check` glyph;
+    `.finale*`, `.lamp*`, `.lines*`, `.contact-*`, `.enquiry*` in theme.css (the old
+    `.close-location` removed); Emerald contrast pairs; the home close uses
+    `ContactLines`; the body's sticky-bar padding moved into the footer;
+    `content:report` gains an "Also needed (not yet in /content)" section and the
+    sample contact notes say they are hidden. No new dependency; no WebGL.
+  - **Fixed while verifying in the browser:** the invitation broke into four lines with
+    "you" alone at 1440 (wider gate, smaller title); the "Prefer to talk?" links were
+    italic; a lamp's glow widened the page by 1px at 360; content waiting to reveal
+    lengthened the page by 24px at 1920 and left an ivory strip under the footer, and the
+    legal line never revealed there (box restructured, `overflow: clip`, the legal line
+    joins the footer's own sequence); the keystone was half clipped; a click on "Send
+    enquiry" just after typing a wrong number was lost (inline checks wait for the
+    pointer); a keyboard user could focus footer links still transparent (focus completes
+    the sequence); the footer's serif loaded at page load (`content-visibility`); a
+    content-visibility placeholder width widened phones (block size only).
+  - **Tests:** 21 new × 2 projects. `enquiry-form.spec` — the choice group and its values;
+    choosing from the keyboard and the chosen value sent; checks on leaving a field and
+    clearing once right; sending (button, fields held, live status) → sent → thank-you.
+    `shell.spec` — the gateway (emerald + text-ink, emblem, heading, Book a Stay to
+    WhatsApp with its accessible name, Send an enquiry to `/contact/#enquire` from the
+    rooms hub); only real numbers, no unverified social or unbuilt policy links; every
+    footer link resolves (status 200 and anchor); the sequence (unlit before, eight lamps
+    lit and the gate drawn after); keyboard focus completes it at once; reduced motion
+    and no JS complete and still; the page is never lengthened or widened (360, 1280);
+    phones (the gate fits, a lamp either side, rows ≥ 44px, the legal line clears the
+    sticky bar). New `contact.spec` — title and H1, the front desk's lines (only usable
+    ones; WhatsApp; directions to `mapsUrl`), the form with six choices on an Emerald
+    tablet, Enquire actions staying on the page, the rooms hub's enquiry landing on the
+    form, no overflow at 360/390/768/1024/1440, no console errors, axe at 360 and 1280.
+    Changed (same assertions, new markup): the enquiry type in `enquiry-form`, `weddings`
+    and `events` specs reads radios instead of a select; `shell.spec`'s hidden "Call"
+    link check is `exact` (the close's lines are named "Call Reservations, …"). **All 454
+    e2e tests pass** (412 before + 42); lint, typecheck, contrast gate (all pairs incl.
+    the three new) and build clean; `check:content` report runs.
+  - **Checked in Chromium (production build):** 360, 390, 768, 1024, 1280, 1440 and 1920
+    on /, /contact/, /dining/, /rooms/ and /weddings/ — no horizontal overflow, nothing
+    below the footer, no console errors from the pages. Footer sequence frame by frame at
+    1440; reduced motion; no JS; Tab order through the footer (19 stops, each with a 2px
+    gold outline, never under the sticky header). Form states with the endpoint
+    intercepted (reserved `form-endpoint.test`; nothing was sent anywhere): focus, a
+    check on leaving the phone field, clearing, sending, sent → thank-you, failure (alert,
+    button re-enabled, values kept), keyboard choice; payload unchanged (name, phone,
+    enquiry_type, subject, guests, access_key). Production build without an endpoint:
+    the notice with call / WhatsApp first, the form disabled; no test endpoint in the
+    bundle.
+  - **Measured (headless Chromium, production builds without an endpoint; phone =
+    390×844, 4× CPU, 150 ms RTT, 1.6 Mbps; medians of 3 alternating runs against the
+    last commit):** / LCP 1.73 → 1.66 s, 522 → 510 KB; /rooms/ LCP 2.83 → 2.86 s (the
+    featured room photograph; over 2.5 s before this phase too), 397 → 405 KB; /weddings/
+    LCP 1.30 → 1.23 s, 399 → 409 KB; CLS 0 / 0 / 0.0002 before and after. /contact/: FCP
+    1.18 s, LCP 2.01 s, CLS 0, 398 KB. Wheel-scrolling to the end of /, /contact/ and
+    /rooms/: CLS 0, 0 and 0.0004. Not measured: frame timing of the footer's scroll-linked
+    depth, Safari, Firefox, real devices.

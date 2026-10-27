@@ -122,6 +122,15 @@ const LIGHT_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
   ["brand", "surface", ".btn-secondary label on ivory; script accent word"],
 ];
 
+// Pairs checked for Emerald only: the footer finale deepens from Deep
+// Emerald to Soft Charcoal (accent-ink) at its foot, where the legal line,
+// its links and their hover sit.
+const EMERALD_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
+  ["ink", "accent-ink", "footer foot (Soft Charcoal): legal and social links"],
+  ["ink-muted", "accent-ink", "footer foot: the legal line"],
+  ["accent", "accent-ink", "footer foot: link hover"],
+];
+
 /** The contrast pairs that must pass for a given variant. */
 export function pairsForVariant(variant: Variant): ContrastPair[] {
   const toPair =
@@ -138,6 +147,7 @@ export function pairsForVariant(variant: Variant): ContrastPair[] {
     pairs.push(...PEACOCK_ONLY_UI_PAIRS.map(toPair(UI_MIN, "ui")));
   }
   if (variant === "emerald") {
+    pairs.push(...EMERALD_ONLY_BODY_PAIRS.map(toPair(BODY_MIN, "body")));
     // Antique Gold reads as small text on Deep Emerald (5.1:1) but not on
     // Botanical Green (3.8:1): there it is a UI / large-text colour only.
     return pairs.map((p) =>

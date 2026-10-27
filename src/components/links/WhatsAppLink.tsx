@@ -29,10 +29,12 @@ type WhatsAppLinkProps = {
   context: WhatsAppContext;
   roomName?: string;
   className?: string;
+  /** Classes for the label next to the icon. */
+  labelClassName?: string;
   children?: ReactNode;
 };
 
-export function WhatsAppLink({ context, roomName, className, children }: WhatsAppLinkProps) {
+export function WhatsAppLink({ context, roomName, className, labelClassName, children }: WhatsAppLinkProps) {
   const { site } = useSiteData();
   const pathname = usePathname();
 
@@ -51,7 +53,7 @@ export function WhatsAppLink({ context, roomName, className, children }: WhatsAp
       onClick={() => track("whatsapp_click", { context, page: pathname })}
     >
       <ChatIcon />
-      <span>{children ?? "WhatsApp us"}</span>
+      <span className={labelClassName}>{children ?? "WhatsApp us"}</span>
     </a>
   );
 }

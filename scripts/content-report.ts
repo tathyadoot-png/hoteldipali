@@ -91,10 +91,36 @@ for (const page of pageOrder) {
   lines.push("");
 }
 
+// Needed by pages and features but not (yet) a field in /content, so the
+// audit above cannot see them. Keep in step with docs/PLAN.md open questions.
+const ALSO_NEEDED: ReadonlyArray<{ group: string; items: string[] }> = [
+  {
+    group: "Footer & Contact page",
+    items: [
+      "**Department phone lines** — Restaurant, Bakery & Sweets, Infinity Bar, Pool & Gym and Reception are sample placeholders, so the footer and the contact page leave them out (only Reservations and Weddings & Events show). Supply the real numbers and they appear automatically.",
+      "**Reception email** — sample; not shown anywhere until confirmed.",
+      "**Social profiles** — the footer shows a social link only once it is `verified`. Confirm that facebook.com/hoteldeepalisagar is the hotel's own page, and supply the Instagram handle (and any others).",
+      "**Legal pages** — Privacy Policy, Terms, Booking & Cancellation: the footer links them only once their pages exist (`isBuiltRoute` in `src/lib/routes.ts`). Supply the texts (or approve drafts) — step 13.",
+      "**Hosted form endpoint** — `NEXT_PUBLIC_FORM_ENDPOINT` (+ access key) for production. Without it every enquiry form shows \"Online enquiries aren't connected yet\" with Call / WhatsApp instead.",
+      "**Copy approval** — the footer invitation (\"We look forward to welcoming you\", \"Book a stay, or tell us what you are planning.\"), the contact page's lead and enquiry copy, and the enquiry choices (\"A stay, A wedding, An event, Dining, Pool & gym, Something else\").",
+      "**The lamps** — the footer's row of oil lamps is a decorative motif (Dipali/Deepali evokes a row of lamps). Confirm the hotel is happy with it; no claim about the name is made on the site.",
+    ],
+  },
+];
+
+lines.push("## Also needed (not yet in /content)");
+lines.push("");
+for (const { group, items } of ALSO_NEEDED) {
+  lines.push(`### ${group}`);
+  lines.push("");
+  for (const item of items) lines.push(`- [ ] ${item}`);
+  lines.push("");
+}
+
 lines.push("---");
 lines.push("");
 lines.push(
-  `Totals: ${unverified.length} items/facts to confirm · ${result.placeholderImages.length} photos to replace.`,
+  `Totals: ${unverified.length} items/facts to confirm · ${result.placeholderImages.length} photos to replace · ${ALSO_NEEDED.reduce((n, g) => n + g.items.length, 0)} further items above.`,
 );
 lines.push("");
 

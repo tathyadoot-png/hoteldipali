@@ -72,12 +72,13 @@ test.describe("Weddings page", () => {
     const form = section.locator("form");
     await expect(form).toBeAttached();
 
-    const select = form.getByLabel("Enquiry type");
-    const values = await select.locator("option").evaluateAll((opts) =>
-      opts.map((o) => (o as HTMLOptionElement).value),
+    // The enquiry type is a group of choices (it was a select until 2026-10-27).
+    const choices = form.getByRole("group", { name: "What are you planning?" }).getByRole("radio");
+    const values = await choices.evaluateAll((radios) =>
+      radios.map((r) => (r as HTMLInputElement).value),
     );
     expect(values).toEqual(["wedding", "event"]);
-    await expect(select).toHaveValue("wedding");
+    await expect(form.getByRole("radio", { name: "A wedding" })).toBeChecked();
   });
 
   test("occasions are derived from venue data and name their spaces", async ({ page }) => {

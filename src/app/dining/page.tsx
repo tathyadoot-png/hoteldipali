@@ -307,11 +307,7 @@ export default async function DiningPage() {
             </div>
 
             <div className="lg:col-span-7">
-              <EnquiryForm
-                enquiryTypes={["dining"]}
-                defaultEnquiryType="dining"
-                idPrefix="dining"
-              />
+              <EnquiryForm enquiryType="dining" idPrefix="dining" />
             </div>
           </div>
         </div>

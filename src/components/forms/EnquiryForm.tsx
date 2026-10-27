@@ -1,38 +1,98 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 
+import { CornerOrnament } from "@/components/brand/Ornaments";
+import { useReveal } from "@/components/home/ScrollReveal";
 import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { track } from "@/lib/analytics";
-import {
-  ENQUIRY_TYPE_OPTIONS,
-  isFormEndpointConfigured,
-  submitEnquiry,
-  type EnquiryType,
-} from "@/lib/submit-enquiry";
+import { isFormEndpointConfigured, submitEnquiry, type EnquiryType } from "@/lib/submit-enquiry";
 import { isValidEmail, isValidIndianMobile } from "@/lib/validation";
 
-type FieldName = "name" | "phone" | "email" | "guests";
+type FieldName = "name" | "phone" | "email";
 type Errors = Partial<Record<FieldName, string>>;
-type Status = "idle" | "submitting" | "error";
+type Status = "idle" | "submitting" | "sent" | "error";
+
+// The checked fields in the order they appear, so a failed submission focuses
+// the first one that needs attention.
+const FIELD_ORDER: FieldName[] = ["name", "phone", "email"];
+
+// How long the "Enquiry sent" confirmation shows before the thank-you page.
+const SENT_HOLD_MS = 900;
+
+const CORNERS = ["tl", "tr", "br", "bl"] as const;
+
+/** The form's rules: returns what to fix in a field, or undefined if it is fine. */
+function validate(field: FieldName, value: string): string | undefined {
+  switch (field) {
+    case "name":
+      return value.trim().length < 2 ? "Please enter your name." : undefined;
+    case "phone":
+      return isValidIndianMobile(value)
+        ? undefined
+        : "Please enter a valid 10-digit Indian mobile number.";
+    case "email":
+      return value.trim().length > 0 && !isValidEmail(value)
+        ? "Please enter a valid email address, or leave it blank."
+        : undefined;
+  }
+}
+
+/** A labelled field on a fine rule; a gold line draws along it on focus. */
+function Field({
+  id,
+  label,
+  error,
+  className,
+  children,
+}: {
+  id: string;
+  label: ReactNode;
+  error?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`enquiry-field ${className ?? ""}`}>
+      <label htmlFor={id} className="enquiry-label">
+        {label}
+      </label>
+      <div className="enquiry-control">
+        {children}
+        <span aria-hidden="true" className="enquiry-rule" />
+      </div>
+      {error ? (
+        <p id={`${id}-error`} className="field-error enquiry-error">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 type EnquiryFormProps = {
-  /** Restrict the enquiry-type choices for a specific context (e.g. a room detail
-   * page). Defaults to all categories. When exactly one is given, the select is
-   * replaced with a plain label instead of duplicating the component per use case. */
-  enquiryTypes?: readonly EnquiryType[];
-  defaultEnquiryType?: EnquiryType;
+  /** The page's context, sent with the enquiry (never asked): "wedding" on the
+   * weddings page, "rooms" on a room's page; "general" by default. */
+  enquiryType?: EnquiryType;
   /** Namespaces element ids. Only needed if a page ever renders the form more
    * than once (e.g. shown in both the Light and Peacock styleguide panes). */
   idPrefix?: string;
   className?: string;
 };
 
+/**
+ * The one enquiry form, on every page that has one: four fields — name and
+ * phone (all we need), email and a message (optional) — on an emerald stone
+ * tablet in a fine gold frame that draws as it comes into view. Fields check
+ * themselves when the visitor leaves them; a submission shows a sending line
+ * and an "Enquiry sent" confirmation before the thank-you page. The page's
+ * context and path travel with it as hidden fields. Everything posts through
+ * submitEnquiry() (src/lib/submit-enquiry.ts).
+ */
 export function EnquiryForm({
-  enquiryTypes = ENQUIRY_TYPE_OPTIONS.map((o) => o.value),
-  defaultEnquiryType,
+  enquiryType = "general",
   idPrefix = "ef",
   className,
 }: EnquiryFormProps) {
@@ -40,17 +100,11 @@ export function EnquiryForm({
   const pathname = usePathname();
   const configured = isFormEndpointConfigured();
 
-  const options = ENQUIRY_TYPE_OPTIONS.filter((o) => enquiryTypes.includes(o.value));
-  const lockedType = options.length === 1 ? options[0]!.value : undefined;
-
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [enquiryType, setEnquiryType] = useState<EnquiryType>(
-    defaultEnquiryType ?? lockedType ?? options[0]?.value ?? "general",
-  );
-  const [preferredDate, setPreferredDate] = useState("");
-  const [guests, setGuests] = useState("");
+  const [fields, setFields] = useState<Record<FieldName, string>>({
+    name: "",
+    phone: "",
+    email: "",
+  });
   const [message, setMessage] = useState("");
   const [honeypot, setHoneypot] = useState(""); // must stay empty
 
@@ -64,11 +118,74 @@ export function EnquiryForm({
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
-  const guestsRef = useRef<HTMLInputElement>(null);
+
+  // The frame draws once the tablet comes into view.
+  const tabletRef = useRef<HTMLDivElement>(null);
+  useReveal(tabletRef);
+
+  const holdTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(holdTimer.current), []);
+
+  // A field left by pressing a pointer (e.g. on "Send enquiry") is checked
+  // only once the pointer is released: a message appearing mid-press would
+  // move the button out from under the click, and the click would be lost.
+  const pointerDown = useRef(false);
+  const pendingChecks = useRef(new Set<FieldName>());
+
+  function update(field: FieldName, value: string) {
+    setFields((previous) => ({ ...previous, [field]: value }));
+    // A message already shown goes as soon as the value is right.
+    if (errors[field]) setErrors((previous) => ({ ...previous, [field]: validate(field, value) }));
+  }
+
+  // On leaving a field, check what was typed; an untouched empty field waits
+  // for the submit, so nobody is told off for tabbing through. Values are
+  // read from the inputs, so a deferred check sees what is there now.
+  function checkFields(queued: FieldName[]) {
+    const refByField = { name: nameRef, phone: phoneRef, email: emailRef };
+    const values = queued.map((field) => [field, refByField[field].current?.value ?? ""] as const);
+    setErrors((previous) => {
+      const next = { ...previous };
+      for (const [field, value] of values) {
+        if (value.trim().length === 0 && !previous[field]) continue;
+        next[field] = validate(field, value);
+      }
+      return next;
+    });
+  }
+
+  function check(field: FieldName) {
+    if (pointerDown.current) pendingChecks.current.add(field);
+    else checkFields([field]);
+  }
+
+  useEffect(() => {
+    const press = () => {
+      pointerDown.current = true;
+    };
+    // After the release, once the click it completes has been handled.
+    const release = () => {
+      if (!pointerDown.current) return;
+      pointerDown.current = false;
+      window.setTimeout(() => {
+        const queued = [...pendingChecks.current];
+        pendingChecks.current.clear();
+        if (queued.length > 0) checkFields(queued);
+      }, 0);
+    };
+    window.addEventListener("pointerdown", press, true);
+    window.addEventListener("pointerup", release, true);
+    window.addEventListener("pointercancel", release, true);
+    return () => {
+      window.removeEventListener("pointerdown", press, true);
+      window.removeEventListener("pointerup", release, true);
+      window.removeEventListener("pointercancel", release, true);
+    };
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!configured || status === "submitting") return;
+    if (!configured || status === "submitting" || status === "sent") return;
 
     // Honeypot: a real visitor never fills this (it's visually hidden and out
     // of the tab order). A bot that blindly fills every field does. Silently
@@ -79,25 +196,15 @@ export function EnquiryForm({
     }
 
     const nextErrors: Errors = {};
-    if (name.trim().length < 2) {
-      nextErrors.name = "Please enter your name.";
+    for (const field of FIELD_ORDER) {
+      const problem = validate(field, fields[field]);
+      if (problem) nextErrors[field] = problem;
     }
-    if (!isValidIndianMobile(phone)) {
-      nextErrors.phone = "Please enter a valid 10-digit Indian mobile number.";
-    }
-    if (email.trim().length > 0 && !isValidEmail(email)) {
-      nextErrors.email = "Please enter a valid email address, or leave it blank.";
-    }
-    const guestsNum = guests.trim().length > 0 ? Number(guests) : undefined;
-    if (guestsNum !== undefined && (!Number.isInteger(guestsNum) || guestsNum < 1)) {
-      nextErrors.guests = "Please enter a whole number of guests, or leave it blank.";
-    }
-
     setErrors(nextErrors);
 
-    const firstInvalid = (Object.keys(nextErrors) as FieldName[])[0];
+    const firstInvalid = FIELD_ORDER.find((field) => nextErrors[field]);
     if (firstInvalid) {
-      const refByField = { name: nameRef, phone: phoneRef, email: emailRef, guests: guestsRef };
+      const refByField = { name: nameRef, phone: phoneRef, email: emailRef };
       refByField[firstInvalid].current?.focus();
       return;
     }
@@ -106,18 +213,18 @@ export function EnquiryForm({
     setSubmitMessage(null);
 
     const result = await submitEnquiry({
-      name: name.trim(),
-      phone: phone.trim(),
-      email: email.trim() || undefined,
-      enquiryType,
-      preferredDate: preferredDate || undefined,
-      guests: guestsNum,
+      name: fields.name.trim(),
+      phone: fields.phone.trim(),
+      email: fields.email.trim() || undefined,
       message: message.trim() || undefined,
+      enquiryType,
+      page: pathname ?? undefined,
     });
 
     if (result.ok) {
       track("enquiry_submit", { enquiryType, page: pathname ?? "" });
-      router.push("/thank-you/");
+      setStatus("sent");
+      holdTimer.current = window.setTimeout(() => router.push("/thank-you/"), SENT_HOLD_MS);
       return;
     }
 
@@ -125,25 +232,58 @@ export function EnquiryForm({
     setSubmitMessage(result.message);
   }
 
+  const describedBy = (field: FieldName) =>
+    errors[field] ? `${idPrefix}-${field}-error` : undefined;
+  const busy = status === "submitting" || status === "sent";
+
   return (
-    <div className={className}>
+    // text-ink re-declares `color` so it resolves against the emerald tokens.
+    <div
+      ref={tabletRef}
+      data-theme="emerald"
+      data-status={status}
+      className={`enquiry text-ink ${className ?? ""}`}
+    >
+      <div aria-hidden="true" className="enquiry-frame">
+        <span className="enquiry-edge enquiry-edge-top" />
+        <span className="enquiry-edge enquiry-edge-right" />
+        <span className="enquiry-edge enquiry-edge-bottom" />
+        <span className="enquiry-edge enquiry-edge-left" />
+        {CORNERS.map((corner) => (
+          <span key={corner} className={`enquiry-corner enquiry-corner-${corner}`}>
+            <CornerOrnament className="enquiry-ornament" />
+          </span>
+        ))}
+      </div>
+
       {!configured ? (
-        <div className="card mb-6 p-4">
-          <p className="body">
-            Online enquiries aren&rsquo;t connected yet. Please call or WhatsApp us
-            directly below — we read every message.
+        <div className="enquiry-offline">
+          <p>
+            Online enquiries aren&rsquo;t connected yet. Please call or WhatsApp us — we read every
+            message.
           </p>
+          <div className="enquiry-offline-actions">
+            <CallLink className="link-royal" />
+            <WhatsAppLink context="general" className="link-royal">
+              WhatsApp us
+            </WhatsAppLink>
+          </div>
         </div>
       ) : null}
 
-      {status === "error" && submitMessage ? (
-        <p role="alert" className="field-error mb-6">
-          {submitMessage}
-        </p>
-      ) : null}
+      <form
+        noValidate
+        onSubmit={(e) => void handleSubmit(e)}
+        aria-busy={status === "submitting"}
+        className="enquiry-form"
+      >
+        {configured ? (
+          <p className="enquiry-intro">
+            A name and a phone number are all we need to reply to you.
+          </p>
+        ) : null}
 
-      <form noValidate onSubmit={(e) => void handleSubmit(e)} className="flex flex-col gap-5">
-        <fieldset disabled={!configured || status === "submitting"} className="contents">
+        <fieldset disabled={!configured || busy} className="contents">
           {/* Honeypot — hidden from sighted/AT users, left for bots to fill. */}
           <div className="visually-hidden" aria-hidden="true">
             <label htmlFor={`${idPrefix}-company`}>Company</label>
@@ -157,171 +297,128 @@ export function EnquiryForm({
               onChange={(e) => setHoneypot(e.target.value)}
             />
           </div>
+          <input type="hidden" name="enquiry_type" value={enquiryType} />
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor={`${idPrefix}-name`} className="label">
-              Name
-            </label>
-            <input
-              ref={nameRef}
-              id={`${idPrefix}-name`}
-              name="name"
-              type="text"
-              required
-              autoComplete="name"
-              className="input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              aria-invalid={Boolean(errors.name)}
-              aria-describedby={errors.name ? `${idPrefix}-name-error` : undefined}
-            />
-            {errors.name ? (
-              <p id={`${idPrefix}-name-error`} className="field-error">
-                {errors.name}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label htmlFor={`${idPrefix}-phone`} className="label">
-              Phone
-            </label>
-            <input
-              ref={phoneRef}
-              id={`${idPrefix}-phone`}
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              required
-              autoComplete="tel"
-              className="input"
-              placeholder="98765 43210"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              aria-invalid={Boolean(errors.phone)}
-              aria-describedby={errors.phone ? `${idPrefix}-phone-error` : undefined}
-            />
-            {errors.phone ? (
-              <p id={`${idPrefix}-phone-error`} className="field-error">
-                {errors.phone}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label htmlFor={`${idPrefix}-email`} className="label">
-              Email <span className="field-hint">(optional)</span>
-            </label>
-            <input
-              ref={emailRef}
-              id={`${idPrefix}-email`}
-              name="email"
-              type="email"
-              autoComplete="email"
-              className="input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? `${idPrefix}-email-error` : undefined}
-            />
-            {errors.email ? (
-              <p id={`${idPrefix}-email-error`} className="field-error">
-                {errors.email}
-              </p>
-            ) : null}
-          </div>
-
-          {lockedType ? (
-            <input type="hidden" name="enquiry_type" value={lockedType} />
-          ) : (
-            <div className="flex flex-col gap-2">
-              <label htmlFor={`${idPrefix}-enquiry-type`} className="label">
-                Enquiry type
-              </label>
-              <select
-                id={`${idPrefix}-enquiry-type`}
-                name="enquiry_type"
+          <div className="enquiry-fields">
+            <Field id={`${idPrefix}-name`} label="Name" error={errors.name}>
+              <input
+                ref={nameRef}
+                id={`${idPrefix}-name`}
+                name="name"
+                type="text"
                 required
-                className="select"
-                value={enquiryType}
-                onChange={(e) => setEnquiryType(e.target.value as EnquiryType)}
-              >
-                {options.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              <label htmlFor={`${idPrefix}-date`} className="label">
-                Preferred date <span className="field-hint">(optional)</span>
-              </label>
-              <input
-                id={`${idPrefix}-date`}
-                name="preferred_date"
-                type="date"
-                className="input"
-                value={preferredDate}
-                onChange={(e) => setPreferredDate(e.target.value)}
+                autoComplete="name"
+                className="enquiry-input"
+                value={fields.name}
+                onChange={(e) => update("name", e.target.value)}
+                onBlur={() => check("name")}
+                aria-invalid={Boolean(errors.name)}
+                aria-describedby={describedBy("name")}
               />
-            </div>
+            </Field>
 
-            <div className="flex flex-col gap-2">
-              <label htmlFor={`${idPrefix}-guests`} className="label">
-                Number of guests <span className="field-hint">(optional)</span>
-              </label>
+            <Field id={`${idPrefix}-phone`} label="Phone" error={errors.phone}>
               <input
-                ref={guestsRef}
-                id={`${idPrefix}-guests`}
-                name="guests"
-                type="number"
-                inputMode="numeric"
-                min={1}
-                step={1}
-                className="input"
-                value={guests}
-                onChange={(e) => setGuests(e.target.value)}
-                aria-invalid={Boolean(errors.guests)}
-                aria-describedby={errors.guests ? `${idPrefix}-guests-error` : undefined}
+                ref={phoneRef}
+                id={`${idPrefix}-phone`}
+                name="phone"
+                type="tel"
+                inputMode="tel"
+                required
+                autoComplete="tel"
+                className="enquiry-input"
+                placeholder="98765 43210"
+                value={fields.phone}
+                onChange={(e) => update("phone", e.target.value)}
+                onBlur={() => check("phone")}
+                aria-invalid={Boolean(errors.phone)}
+                aria-describedby={describedBy("phone")}
               />
-              {errors.guests ? (
-                <p id={`${idPrefix}-guests-error`} className="field-error">
-                  {errors.guests}
-                </p>
-              ) : null}
-            </div>
-          </div>
+            </Field>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor={`${idPrefix}-message`} className="label">
-              Message <span className="field-hint">(optional)</span>
-            </label>
-            <textarea
+            <Field
+              id={`${idPrefix}-email`}
+              label={
+                <>
+                  Email <span className="enquiry-optional">(optional)</span>
+                </>
+              }
+              error={errors.email}
+              className="enquiry-field-wide"
+            >
+              <input
+                ref={emailRef}
+                id={`${idPrefix}-email`}
+                name="email"
+                type="email"
+                autoComplete="email"
+                className="enquiry-input"
+                value={fields.email}
+                onChange={(e) => update("email", e.target.value)}
+                onBlur={() => check("email")}
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={describedBy("email")}
+              />
+            </Field>
+
+            <Field
               id={`${idPrefix}-message`}
-              name="message"
-              maxLength={1000}
-              className="textarea"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
+              label={
+                <>
+                  Message <span className="enquiry-optional">(optional)</span>
+                </>
+              }
+              className="enquiry-field-wide"
+            >
+              <textarea
+                id={`${idPrefix}-message`}
+                name="message"
+                rows={3}
+                maxLength={1000}
+                className="enquiry-input enquiry-textarea"
+                placeholder="Your dates, the occasion, anything we should know"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            </Field>
           </div>
 
-          <button type="submit" className="btn-primary self-start">
-            {status === "submitting" ? "Sending…" : "Send enquiry"}
-          </button>
+          <div className="enquiry-submit">
+            {status === "error" && submitMessage ? (
+              <p role="alert" className="field-error enquiry-alert">
+                {submitMessage}
+              </p>
+            ) : null}
+            <button type="submit" className="btn-primary btn-cta enquiry-send">
+              {status === "submitting"
+                ? "Sending…"
+                : status === "sent"
+                  ? "Enquiry sent"
+                  : "Send enquiry"}
+            </button>
+          </div>
         </fieldset>
+
+        {/* Progress for screen readers; the sending line is its visual twin. */}
+        <p role="status" className="visually-hidden">
+          {status === "submitting"
+            ? "Sending your enquiry…"
+            : status === "sent"
+              ? "Enquiry sent. Opening your confirmation."
+              : ""}
+        </p>
       </form>
 
-      <p className="body mt-6">
-        Prefer to talk? <CallLink className="link" /> ·{" "}
-        <WhatsAppLink context="general" className="link">
-          WhatsApp us
-        </WhatsAppLink>
-      </p>
+      {configured ? (
+        <p className="enquiry-alt">
+          Prefer to talk? <CallLink className="link-royal" />
+          <WhatsAppLink context="general" className="link-royal">
+            WhatsApp us
+          </WhatsAppLink>
+        </p>
+      ) : null}
+
+      <span aria-hidden="true" className="enquiry-progress" />
     </div>
   );
 }
