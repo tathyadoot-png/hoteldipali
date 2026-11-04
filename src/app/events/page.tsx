@@ -7,7 +7,7 @@ import { Picture } from "@/components/media/Picture";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
 import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { EventFinder, type EventType } from "@/components/events/EventFinder";
 import { featureImage } from "@/lib/images";
 import { getVenues } from "@/content";

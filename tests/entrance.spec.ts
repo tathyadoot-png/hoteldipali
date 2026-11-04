@@ -1,156 +1,150 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-// The home page's opening, hero and scroll-driven scenes. The hero (deep,
-// 2026-10-24) frames the hotel's lit entrance in a gold arch — a photograph,
-// and from tablet width up the same view in motion (2026-10-26); a short
-// opening loader plays on a full page load only. Scenes run under "rich
-// motion" (>=1024px, fine pointer, no reduced-motion request — the same query
-// the boot script uses).
+// The home page's opening, hero and scroll-driven scenes. The hero (R1,
+// 2026-11-04) sets the hotel's name very large on ivory beside the lit
+// entrance in an arch window; on desktop rich motion the photograph gains
+// depth from the pointer (WebGL) and the arch opens as the next section
+// covers the hero. A short opening loader ("First lamp") plays on a full page
+// load only. Scenes run under "rich motion" (>=1024px, fine pointer, no
+// reduced-motion request — the same query the boot script uses).
 
 const DESKTOP = { width: 1280, height: 800 };
 const PHONE = { width: 360, height: 780 };
-const EXIT_AT = 1450; // IntroLoader: ms after navigation start
-const CLIP = "/video/entrance-night-arch-532.mp4";
+const EXIT_AT = 1150; // IntroLoader: ms after navigation start
+const DEPTH_MAP = "/images/hotel/entrance-night-arch-depth.webp";
+const BRAND_PLUM = "rgb(72, 9, 80)";
 
-/** Every request for a file under /video/ while `page` is open. */
-function trackVideo(page: Page) {
+/** Requests for video files and the depth map while `page` is open. */
+function trackRequests(page: Page) {
   const requests: string[] = [];
   page.on("request", (req) => {
     const path = new URL(req.url()).pathname;
-    if (path.startsWith("/video/")) requests.push(path);
+    if (path.startsWith("/video/") || path === DEPTH_MAP) requests.push(path);
   });
   return requests;
 }
 
-/** The hero: headline, photograph and calls to action in one viewport. */
+/** The hero: the name, the line, the two calls to action and the photograph. */
 async function expectHero(page: Page) {
-  const videoRequests = trackVideo(page);
   await page.goto("/");
   await page.waitForLoadState("load");
+  const hero = page.locator(".home-hero");
 
-  const hero = page.locator(".entrance");
-  await expect(hero.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(hero.getByRole("link", { name: "Explore the Experience" })).toHaveAttribute(
-    "href",
-    "#explore",
-  );
-  await expect(hero.getByRole("link", { name: "Discover Hotel Dipali" })).toHaveAttribute(
-    "href",
-    "#welcome",
+  const h1 = hero.getByRole("heading", { level: 1 });
+  await expect(h1).toBeVisible();
+  await expect(h1).toHaveAccessibleName(/^Hotel Dipali, Sagar$/);
+  await expect(hero.locator(".home-hero-dipali")).toHaveCSS("color", BRAND_PLUM);
+  await expect(hero.locator(".home-hero-line")).toHaveText(
+    "Gardens, gatherings and warm hospitality in the heart of Sagar",
   );
 
-  const image = await hero.locator("img").evaluate((img: HTMLImageElement) => ({
+  const book = hero.getByRole("link", { name: /^Book a Stay/ });
+  await expect(book).toHaveClass(/btn-primary/);
+  await expect(book).toHaveAttribute("href", /^https:\/\/wa\.me\/91\d{10}\?text=/);
+  const wedding = hero.getByRole("link", { name: "Plan a Wedding" });
+  await expect(wedding).toHaveClass(/btn-secondary/);
+  await expect(wedding).toHaveAttribute("href", "/weddings/");
+
+  // The photograph in its arch window, with the halo and the double frame.
+  const image = await hero.locator(".arch-window img").evaluate((img: HTMLImageElement) => ({
     src: img.currentSrc,
     srcset: img.srcset,
     loaded: img.complete && img.naturalWidth > 0,
   }));
-  // A real, responsive photograph — not a placeholder, not the camera original.
   expect(image.src).toMatch(/\/images\/hotel\/entrance-night-arch-\d+\.webp$/);
   expect(image.srcset).toContain("entrance-night-arch-960.webp 960w");
   expect(image.loaded).toBe(true);
-
-  // No runway: the hero is one viewport tall.
-  const ratio = await page.evaluate(
-    () => document.querySelector<HTMLElement>(".entrance")!.offsetHeight / window.innerHeight,
-  );
-  expect(ratio).toBeLessThan(1.15);
-
-  // No canvas / WebGL layer, and never the 13 MB source video.
-  await expect(page.locator("canvas")).toHaveCount(0);
-  expect(videoRequests.filter((path) => path !== CLIP)).toEqual([]);
-  return { image, videoRequests };
+  await expect(hero.locator(".home-hero-halo")).toBeAttached();
+  await expect(hero.locator(".home-hero-frame")).toHaveCount(2);
+  // No video in the hero for now.
+  await expect(page.locator("video")).toHaveCount(0);
+  return { image, hero };
 }
 
 test.describe("Home hero", () => {
-  test("desktop: the lit entrance in its arch, headline and calls to action", async ({
+  test("desktop: the name, the line, both actions and the lit entrance in its arch", async ({
     page,
   }) => {
     await page.setViewportSize(DESKTOP);
-    await expectHero(page);
+    const requests = trackRequests(page);
+    const { hero } = await expectHero(page);
+    // Copy on the left, the arch on the right, in one screen.
+    const copy = await hero.locator(".home-hero-copy").boundingBox();
+    const art = await hero.locator(".home-hero-art").boundingBox();
+    expect(art!.x).toBeGreaterThan(copy!.x + copy!.width - 1);
+    const ratio = await hero.evaluate((el) => el.getBoundingClientRect().height / window.innerHeight);
+    expect(ratio).toBeLessThan(1.15);
+    await page.waitForTimeout(1_500);
+    expect(requests.filter((path) => path.startsWith("/video/"))).toEqual([]);
   });
 
-  test("phone: the same photograph, at a phone-sized width, and no video", async ({ page }) => {
+  test("phone: one column, a phone-sized photograph, no WebGL and no video", async ({ page }) => {
     await page.setViewportSize(PHONE);
-    const { image, videoRequests } = await expectHero(page);
+    const requests = trackRequests(page);
+    const { image, hero } = await expectHero(page);
     expect(Number(/-(\d+)\.webp$/.exec(image.src)?.[1])).toBeLessThanOrEqual(720);
-    // CLAUDE.md §K: no autoplay video on phones — not even a download.
-    await page.waitForTimeout(4_500);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    expect(videoRequests).toEqual([]);
+    // Stacked: the name and actions first, then the photograph.
+    const actions = await hero.locator(".home-hero-actions").boundingBox();
+    const art = await hero.locator(".home-hero-art").boundingBox();
+    expect(art!.y).toBeGreaterThan(actions!.y + actions!.height);
+    await page.waitForTimeout(2_000);
+    await expect(page.locator("canvas")).toHaveCount(0);
+    expect(requests).toEqual([]);
   });
 });
 
-test.describe("Hero video", () => {
+test.describe("Hero scroll — rich motion", () => {
   test.use({ viewport: DESKTOP });
 
-  test("plays muted and inline inside the arch, after the page has loaded", async ({ page }) => {
-    const requests = trackVideo(page);
-    let loadedAt = 0;
-    page.on("load", () => (loadedAt = Date.now()));
+  test("as the next section covers it, the arch opens toward a full frame and the copy rises away", async ({
+    page,
+  }) => {
     await page.goto("/");
-    const video = page.locator(".entrance-arch-window video");
-    await expect(video).toHaveAttribute("data-playback", "playing", { timeout: 10_000 });
-    expect(requests).toEqual([CLIP]);
-    expect(loadedAt).toBeGreaterThan(0);
-    const state = await video.evaluate((v: HTMLVideoElement) => ({
-      muted: v.muted,
-      inline: v.playsInline,
-      loop: v.loop,
-      paused: v.paused,
-      hidden: v.getAttribute("aria-hidden"),
-    }));
-    expect(state).toEqual({ muted: true, inline: true, loop: true, paused: false, hidden: "true" });
-    // The photograph — its poster — is still there underneath.
-    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
-  });
-
-  test("the pause control stops and restarts it (WCAG 2.2.2)", async ({ page }) => {
-    await page.goto("/");
-    const video = page.locator(".entrance-arch-window video");
-    await expect(video).toHaveAttribute("data-playback", "playing", { timeout: 10_000 });
-    const pause = page.getByRole("button", { name: "Pause the hotel video" });
-    await pause.click();
-    await expect(page.getByRole("button", { name: "Play the hotel video" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
-    await page.getByRole("button", { name: "Play the hotel video" }).click();
-    await expect(video).toHaveAttribute("data-playback", "playing");
-  });
-
-  test("if autoplay is refused, the photograph stays and nothing breaks", async ({ page }) => {
-    await page.addInitScript(() => {
-      HTMLMediaElement.prototype.play = () => Promise.reject(new DOMException("blocked", "NotAllowedError"));
-    });
-    const errors: string[] = [];
-    page.on("pageerror", (e) => errors.push(String(e)));
-    await page.goto("/");
-    await page.waitForTimeout(5_000);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
-    expect(errors).toEqual([]);
-  });
-
-  test("if the video cannot load, the photograph stays", async ({ page }) => {
-    await page.route("**/video/**", (route) => route.abort());
-    await page.goto("/");
-    await page.waitForTimeout(5_000);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
+    await expect(page.locator(".intro")).toHaveAttribute("data-state", "done", { timeout: 4_000 });
+    const arch = page.locator(".home-hero-art .arch-window");
+    const copy = page.locator(".home-hero-copy");
+    // At rest (its opening animation done): a whole arch.
+    const clipAtRest = "inset(0px round 50% 50% 0px 0px / 36% 36% 0px 0px)";
+    await expect.poll(() => arch.evaluate((el) => getComputedStyle(el).clipPath)).toBe(clipAtRest);
+    await page.evaluate(() => window.scrollTo({ top: innerHeight * 0.4, behavior: "instant" }));
+    await expect
+      .poll(() => arch.evaluate((el) => getComputedStyle(el).clipPath))
+      .not.toBe(clipAtRest);
+    await expect.poll(async () => Number(await copy.evaluate((el) => getComputedStyle(el).opacity))).toBeLessThan(0.9);
+    // Back at the top: the arch whole again.
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await expect.poll(() => arch.evaluate((el) => getComputedStyle(el).clipPath)).toBe(clipAtRest);
   });
 });
 
-test.describe("Hero video — reduced motion", () => {
-  test.use({ viewport: DESKTOP, reducedMotion: "reduce" });
-
-  test("never plays (or downloads) the video", async ({ page }) => {
-    const requests = trackVideo(page);
+test.describe("Gold thread", () => {
+  test("desktop rich motion: one gold line, drawn further as the page scrolls", async ({ page }) => {
+    await page.setViewportSize(DESKTOP);
     await page.goto("/");
-    await page.waitForTimeout(4_500);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    expect(requests).toEqual([]);
+    const thread = page.locator("svg.thread");
+    await expect(thread).toHaveAttribute("data-ready", "");
+    await expect(thread).toBeVisible();
+    await expect(thread).toHaveAttribute("aria-hidden", "true");
+    const progress = () => thread.evaluate((el) => Number((el as SVGElement).style.getPropertyValue("--p") || 0));
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.3, behavior: "instant" }));
+    await expect.poll(progress).toBeGreaterThan(0);
+    const early = await progress();
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
+    await expect.poll(progress).toBeGreaterThan(early);
+    await expect.poll(progress).toBeGreaterThan(0.95);
+    await expect(thread.locator(".thread-flame")).toBeAttached();
+  });
+
+  test("phones: no thread, short static gold rules between sections instead", async ({ page }) => {
+    await page.setViewportSize(PHONE);
+    await page.goto("/");
+    await expect(page.locator("svg.thread")).toHaveCount(0);
+    const stops = page.locator(".thread-stop");
+    expect(await stops.count()).toBeGreaterThanOrEqual(3);
+    const box = await stops.first().boundingBox();
+    expect(box!.height).toBeGreaterThan(20);
+    await expect(stops.first()).toBeVisible();
   });
 });
 
@@ -162,7 +156,7 @@ test.describe("Layered sections — rich motion (desktop)", () => {
   }) => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-motion", "rich");
-    const hero = page.locator(".entrance");
+    const hero = page.locator(".home-hero");
     await expect(hero).toHaveCSS("position", "sticky");
     // Half a viewport in: the hero has not moved, and it is half covered.
     await page.evaluate(() => window.scrollTo({ top: innerHeight / 2, behavior: "instant" }));
@@ -193,7 +187,7 @@ test.describe("Layered sections — rich motion (desktop)", () => {
     await page.goto("/");
     await page.evaluate(() => window.scrollTo({ top: innerHeight * 0.8, behavior: "instant" }));
     await page.waitForTimeout(300);
-    await page.locator(".entrance-actions").getByRole("link", { name: "Explore the Experience" }).focus();
+    await page.locator(".home-hero-actions").getByRole("link", { name: "Plan a Wedding" }).focus();
     await expect
       .poll(() =>
         page.evaluate(() => {
@@ -211,12 +205,12 @@ test.describe("Layered sections — reduced motion", () => {
 
   test("sections simply stack: nothing holds and nothing recedes", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator(".entrance")).not.toHaveCSS("position", "sticky");
+    await expect(page.locator(".home-hero")).not.toHaveCSS("position", "sticky");
     await page.evaluate(() => window.scrollTo({ top: innerHeight / 2, behavior: "instant" }));
     await page.waitForTimeout(300);
-    expect(await page.locator(".entrance").evaluate((el) => el.style.getPropertyValue("--cover"))).toBe("");
+    expect(await page.locator(".home-hero").evaluate((el) => el.style.getPropertyValue("--cover"))).toBe("");
     expect(
-      await page.locator(".entrance").evaluate((el) => Math.round(el.getBoundingClientRect().top)),
+      await page.locator(".home-hero").evaluate((el) => Math.round(el.getBoundingClientRect().top)),
     ).toBeLessThan(0);
   });
 });
@@ -234,7 +228,7 @@ test.describe("Opening loader", () => {
     await expect(intro).toHaveAttribute("data-state", "done", { timeout: 4_000 });
     await expect(intro).toBeHidden();
     // The hero beneath is complete.
-    await expect(page.locator(".entrance-actions .btn-secondary")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".home-hero-actions .btn-secondary")).toHaveCSS("opacity", "1");
   });
 
   test("a key press during the opening ends it early", async ({ page }) => {
@@ -285,7 +279,7 @@ test.describe("Opening loader", () => {
 
   test("client-side navigation back home does not replay it", async ({ page }) => {
     await page.goto("/rooms/");
-    await page.locator(".header-keystone").getByRole("link", { name: /home/ }).click();
+    await page.locator("header").getByRole("link", { name: /home/ }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator("#home-hero")).toBeVisible();
     await expect(page.locator(".intro")).toHaveCount(0);
@@ -302,7 +296,7 @@ test.describe("Opening loader — no JavaScript", () => {
   test("the CSS-only opening still leaves and the hero is complete", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".intro")).toBeHidden({ timeout: 4_000 });
-    await expect(page.locator(".entrance-actions .btn-secondary")).toHaveCSS("opacity", "1", {
+    await expect(page.locator(".home-hero-actions .btn-secondary")).toHaveCSS("opacity", "1", {
       timeout: 4_000,
     });
   });
@@ -432,7 +426,7 @@ test.describe("Home scenes — reduced motion", () => {
     // No opening loader; the headline, subline and calls to action are all
     // there at once.
     await expect(page.locator(".intro")).toBeHidden();
-    for (const selector of ["#home-hero", ".entrance-line", ".entrance-subline", ".entrance-actions"]) {
+    for (const selector of ["#home-hero", ".home-hero-line", ".home-hero-actions", ".home-hero-art"]) {
       await expect(page.locator(selector).first()).toBeVisible();
       await expect(page.locator(selector).first()).toHaveCSS("opacity", "1");
     }
@@ -454,7 +448,7 @@ test.describe("Home scenes — reduced motion", () => {
   test("passes axe-core with no serious or critical violations", async ({ page }) => {
     await page.goto("/");
     const results = await new AxeBuilder({ page })
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     const serious = results.violations.filter(
       (v) => v.impact === "serious" || v.impact === "critical",

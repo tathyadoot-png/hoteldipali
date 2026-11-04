@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 export type LogoVariant = "default" | "reverse";
 
@@ -102,6 +103,42 @@ export function Logo({
       ) : (
         <Wordmark variant={variant} />
       )}
+    </Link>
+  );
+}
+
+type BrandLinkProps = {
+  className?: string;
+  /** Rendered width hint for the emblem's srcset (CSS px). */
+  sizes?: string;
+  /** Below the fold (the footer): fetched as it nears the viewport. */
+  lazy?: boolean;
+  /** A wordmark beside the medallion (the header from xl). */
+  children?: ReactNode;
+};
+
+/**
+ * The logo as the shell shows it: the gold emblem inside a small plum
+ * medallion (.logo-medallion) — the logo never sits on a light or lavender
+ * ground — linking home. The link carries the name; the image is ornament.
+ */
+export function BrandLink({ className, sizes = "3rem", lazy = false, children }: BrandLinkProps) {
+  return (
+    <Link href="/" aria-label="Hotel Dipali — home" className={className}>
+      <span className="logo-medallion">
+        {/* eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation in Phase 1 */}
+        <img
+          src={EMBLEM.src}
+          srcSet={EMBLEM.srcSet}
+          sizes={sizes}
+          alt=""
+          width={EMBLEM.width}
+          height={EMBLEM.height}
+          loading={lazy ? "lazy" : undefined}
+          decoding="async"
+        />
+      </span>
+      {children}
     </Link>
   );
 }

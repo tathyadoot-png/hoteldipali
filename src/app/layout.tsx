@@ -12,7 +12,7 @@ import { SiteDataProvider } from "@/components/providers/SiteDataProvider";
 import { getOutlets, getSite } from "@/content";
 import { getBookingUrl } from "@/lib/booking";
 import { MOTION_BOOT_SCRIPT } from "@/lib/motion";
-import { cormorant, figtree, greatVibes, instrumentSerif, manrope } from "./fonts";
+import { cormorant, greatVibes, manrope } from "./fonts";
 // Lenis's structural rules (stopped state, data-lenis-prevent); no theming.
 import "lenis/dist/lenis.css";
 import "@/styles/theme.css";
@@ -37,13 +37,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     // <html> before React hydrates. One level deep — children still checked.
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${figtree.variable} ${cormorant.variable} ${manrope.variable} ${greatVibes.variable}`}
+      className={`${cormorant.variable} ${manrope.variable} ${greatVibes.variable}`}
       suppressHydrationWarning
     >
       <head>
         {/* Runs before first paint so scroll scenes are laid out correctly from
             frame one, and the opening loader is skipped on a slow connection
-            (see src/lib/motion.ts). Static string, no user input. */}
+            (see src/lib/motion/index.ts). Static string, no user input. */}
         <script dangerouslySetInnerHTML={{ __html: MOTION_BOOT_SCRIPT }} />
         {/* Without JS nothing would reveal: show scroll-reveal content as-is.
             Nor would the home page's transparent header ever turn solid, so it
@@ -51,12 +51,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <noscript
           dangerouslySetInnerHTML={{
             __html:
-              "<style>[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}[data-reveal] img{transform:none!important}.header-shell[data-state=overlay]{position:relative}</style>",
+              "<style>[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}[data-reveal] img,.reveal-line>span{transform:none!important}.header-shell[data-state=overlay]{position:relative}</style>",
           }}
         />
       </head>
-      {/* The phone sticky bar's clearance is the footer's own (.finale), so
-          the deep finale runs under the bar instead of an ivory strip. */}
+      {/* The phone bar's clearance is the footer's own (.footer-base), so the
+          footer's foot runs on under the bar instead of an ivory strip. */}
       <body>
         <a href="#main" className="skip-link">
           Skip to main content

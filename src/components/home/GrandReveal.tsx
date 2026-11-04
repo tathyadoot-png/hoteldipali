@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { CornerOrnament } from "@/components/brand/Ornaments";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { Picture } from "@/components/media/Picture";
 import { ScrollScene } from "@/components/motion/ScrollScene";
 import type { Image } from "@/content";

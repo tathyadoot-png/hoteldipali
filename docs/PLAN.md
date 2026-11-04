@@ -1,8 +1,8 @@
 # Hotel Dipali Website — Project Plan
 
 Last updated: 2026-11-04
-Current step: P-1b — Palette swap (Phase P, branch `theme/plum`; Phase 1A resumes with
-step 11 in P-2)
+Current step: R2 — Redesign of the home page's other sections (Phase R, branch
+`theme/plum`)
 
 ## Status legend
 
@@ -46,16 +46,31 @@ P-4, P-5 and P-6 carry Phase 1A's remaining steps (noted in brackets).
 - [x] P-1a. Role-based theme variants (peacock → `dark`, emerald → `deep`) with no colour
       change; pnpm only (`packageManager`, one lockfile); source media out of `public/`
       into `media-source/`; unused components and placeholders removed (owner-approved)
-- [ ] P-1b. Palette swap: plum values; role-named new tokens (gold text, decorative
-      tint), an error token; `deep` accent-ink step; token-derived shadows; our own
-      generated stone texture; botanical panel dropped or redrawn; placeholders and
-      favicon regenerated; gate pairs added (audit §D); reference-image check (audit §E)
+- [x] P-1b. Palette swap — done as part of R1 (2026-11-04): plum values, new tokens,
+      danger, surface-foot, token-derived shadows, generated textures, placeholders and
+      favicon, gate pairs, reference-image check
+- The remaining P steps continue under Phase R (below): P-2 → R3, P-3 → R1's hero depth
+  (the Grand Reveal keeps its CSS portal), P-4 → R2/R4, P-5 and P-6 unchanged.
 - [ ] P-2. Remaining pages [steps 11, 12 (About, FAQ), 13 (wedding LP, 404)]
 - [ ] P-3. 3D signature: depth-parallax façade in the Grand Reveal — only after the
       CLAUDE.md §K WebGL decision (audit §G)
 - [ ] P-4. Scroll choreography [step 16]; fix the near-budget scenes
 - [ ] P-5. Legal pages, SEO, analytics [steps 13-legal, 14, 15]
 - [ ] P-6. QA and deploy [steps 17, 18]
+
+### Phase R — Redesign: "A Thousand Lamps" (2026-11, branch `theme/plum`)
+
+The owner's direction: start the visual design fresh in plum & gold; keep the engine
+(content, loaders, routes, links, booking, analytics, the enquiry logic, the image
+pipeline, Lenis and the scroll hooks). One step per prompt, a commit per step.
+
+- [x] R1. Design system (palette, gold rules, typography, textures), motion kit, shell
+      (opening loader, header, menu, phone bar, footer), the home hero, /styleguide/
+- [ ] R2. The home page's other sections, redesigned in the new system
+- [ ] R3. Inner pages (rooms, weddings, events, dining, contact) and the pages still to
+      build [steps 11, 12 (About, FAQ), 13]
+- [ ] R4. Polish and QA of the redesign: scroll choreography across pages, real devices,
+      Safari / Firefox, performance budgets
 
 ### Phase 1B — More pages
 
@@ -170,6 +185,15 @@ P-4, P-5 and P-6 carry Phase 1A's remaining steps (noted in brackets).
 | 2026-11-04 | **Source media out of the deploy:** `public/hotel/` (27 originals), the three night originals from `public/images/hotel/`, `public/video/1.mp4` and `public/palettes/` moved to `media-source/` with `git mv` (42 files, 488 MB; still tracked, no history rewrite). `make:photos` / `make:video` read from there (outputs still in `public/`); content `source` provenance paths updated to match. | Export 515 MB / 359 files → 28 MB / 288 files; largest file 24.6 MiB → 2.3 MB (`brand/lawn.png`). Regenerated: 145 photo/logo/texture WebPs byte-identical; the clip re-encodes visually identical (167 frames, mean difference 1.44/255) — the committed clip was kept. |
 | 2026-11-04 | **pnpm only:** `package-lock.json` deleted; `"packageManager": "pnpm@12.8.1"` (the installed version) and `engines.node` `^24.19.0` (`.nvmrc`'s version, same major). pnpm 12 records the package manager in the lockfile, so `pnpm-lock.yaml` gained a 158-line environment section (pnpm 12.8.1 and its platform binaries); the dependency section is unchanged. `pnpm install --frozen-lockfile` passes. | Two lockfiles let a CI pick npm, which once resolved a different `playwright-core` and broke typecheck (2026-10-26). |
 | 2026-11-04 | Deleted with the owner's approval: `CustomCursor.tsx` and its `html[data-cursor="on"]` rules, `WorldWithin.tsx`, `DayJourney.tsx`, and 28 placeholder SVGs whose slots show real photographs. `make:placeholders` now writes placeholders only for image entries still under `/sample/` (it wrote one per entry, which would have restored them); `credits.json` lists the 25 in use. `public/brand/lawn.png` (unreferenced, 2.3 MB) is kept by the owner's choice. | None was imported or referenced; the cursor contradicted the 2026-10-22 "no custom cursor" decision. |
+| 2026-11-04 | **Phase R — "A Thousand Lamps" (R1).** The owner restarts the visual design in plum & gold, keeping the engine. Dipali means a row of lamps: night is plum velvet, light is gold lamplight, day is ivory and lavender. The lamp (a small flame over a glow) is the one recurring mark. | Owner's brief; supersedes the emerald/peacock UI decisions above. One signature idea per section. |
+| 2026-11-04 | **Palette, sampled from `docs/reference/palette-plum.png`.** Brand plum `#3E0F4A` → **`#480950`** (reference letters `#4F0356`, buttons `#3C0141`: hue 295°, saturation 93–97% — the proposal's 66% read visibly duller; moved halfway, lightness kept). Lavender `#DCC7E2` → **`#DFC7E2`** (reference `#E1CBE2`, 297°; the proposal sat 10° bluer). Ivory `#FAF6F4` (reference `#F6F1EF`) and ink `#1C1220` (reference `#110215`, darker but too saturated for body text) kept; the golds kept (the reference's 1–2 px rules sample as blends with the ivory). New tokens `gold-text` / `gold-text-tint` (`#6D5222` on lavender), `lavender`, `danger` (`#A3343A` light, `#F0A3A8` on plum), `surface-foot` (deep `#0F0515`), `logo-gold` (`#ECAE33`, the logo's measured median — gate reference only). The gate now checks 77 pairs (all pass) and that `danger` differs in hue from headings and links (≥ 30°). | Owner's palette, adjusted minimally where it drifted from the reference. |
+| 2026-11-04 | **Fonts: Cormorant Garamond (display), Manrope (UI and body), Great Vibes (one word per page).** `--font-display` / `--font-body` now point at them; Instrument Serif and Figtree are retired (63 KB of font files deleted). Cormorant is preloaded (the hero's name). | Owner's typography: three families. |
+| 2026-11-04 | **Textures generated in CSS.** `--texture-velvet` (dark / deep) and `--texture-paper` (light): neutral SVG noise under 1 KB each, tiled, laid over the surface colour so they follow the palette. The palette-derived WebPs and their `make:photos` jobs are gone; `--texture-stone` now points at the velvet. A slow "mottle" layer was tried and removed: repeated with the 240 px tile it read as vertical banding. | No rights question; follows any future palette. |
+| 2026-11-04 | **Motion kit** (`src/lib/motion/`, `src/components/motion/`): `ScrollReveal` (moved here) gains `mask-line` (+ `RevealLines`), `clip-arch` and `foil`; `ArchWindow`, `GoldThread` + `ThreadStop`, `Tilt3D`, `.lamplight`, `DepthPhoto`. `useScrollProgress` accepts SVG elements. **No GSAP** (nothing needed it). | Brief: reuse the engine; native first. |
+| 2026-11-04 | **WebGL for the hero's depth only:** raw WebGL (no library), one quad and one fragment shader, 1.6 KB gzip, lazy-loaded after `load`, desktop rich motion only; the pointer shifts near and far planes by ≤ 8 px around the focal plane (the porch); it draws only while the offset eases. Its depth map is hand-authored per photograph (`pnpm make:depth`: SVG planes over the photo, blurred; 2.4 KB WebP) — no model, no new tool. Fallback: the plain photograph (no WebGL, a failure, a lost context, phones, reduced motion). CLAUDE.md §K updated. | Brief: WebGL for the hero depth only, ≤ 25 KB, lazy; no Three.js. |
+| 2026-11-04 | **Shell.** Loader "First lamp" (≤ 1.6 s: 17 lamps trace an arch, the logo appears on plum, the arch flies onto the hero's window; exit/skip engine unchanged). Header light: transparent over the hero, then ivory with a gold hairline; the logo always on its plum medallion (`BrandLink`); 7 links (Contact added in code via `primaryNav()` — content unchanged — filtered by `isBuiltRoute`); gold underline drawn from the centre on hover, a gold flame under the current page; below xl the medallion is exactly centred (the old 6 px offset is gone with the old layout). Menu: full-screen plum, numbered Cormorant links, a row of lamps lit as it opens. Phone bar: plum with gold text. Footer: plum velvet, 13 lamps (7 on phones) lighting in sequence, invitation, four columns, the legal line on `surface-foot`. | Owner's brief. |
+| 2026-11-04 | **Home hero.** Light: "Welcome to", HOTEL / DIPALI in Cormorant (DIPALI in plum with one pass of gold foil), `site.tagline`, Book a Stay + Plan a Wedding; the lit entrance (`site.homeHero`) in an `ArchWindow` with a lavender halo and a gold double frame; "A stay to remember" along the left edge from 1280 px. Rich motion: depth from the pointer, and as The Dipali Experience covers the hero the arch opens toward a full frame while the copy rises away. The hero video is not shown for now (clip and content entry kept, `sample`); `EntranceHero`, `HeroDepth` and `HeroVideo` were removed. | Owner's brief. |
+| 2026-11-04 | **Tests.** The 20 inherited failures (the lost 27-Oct form/footer UI) and the tests of the replaced UI are deleted; new: `palette.spec` (tokens, gate pairs, no green/teal/yellow gold), `hero-depth.spec` (SwiftShader WebGL: depth on desktop rich motion, fallback, none on phones / reduced motion), the shell spec rewritten (header, menu, phone bar, footer lamps, axe on /, /styleguide/, /contact/, overflow 360–1920), the hero, loader and gold thread in `entrance.spec`. | Brief: test what is built; keep behaviour, accessibility, overflow and link tests. |
 
 ## Brand assets
 
@@ -294,7 +318,7 @@ See CLAUDE.md section M:
     is a WhatsApp image beside it) — sample it in P-1b (audit §E was blocked).
   - P-3 needs the owner's decision on CLAUDE.md §K ("No WebGL/Three.js") — wording
     proposed in the audit, §G.
-- **20 e2e failures inherited from `3f30fac` (found 2026-11-04):** that commit added the
+- ~~**20 e2e failures inherited from `3f30fac` (found 2026-11-04):**~~ — resolved 2026-11-04 (R1): the owner had the tests of the lost UI deleted. that commit added the
   tests for the enquiry choice chips (radios), the date / guests fields and the footer's
   lamps, but not the code — at HEAD there is no `Lamp` component, no `.lamp` CSS and no
   radio inputs in `EnquiryForm`. 10 tests × 2 projects fail identically on untouched
@@ -302,6 +326,30 @@ See CLAUDE.md section M:
   choice), events and weddings (enquiry types), shell (keystone centred within 2 px —
   6 px off; the finale's sequence, reduced motion, phones, no-JS). Is the rest of the
   2026-10-27 work uncommitted on the office machine? Decide: commit it, or bring the
+- **Redesign R1 (2026-11-04):**
+  - **Vector logo:** the client's master artwork (AI/EPS/PDF/SVG with curves) is still
+    needed — the traced SVG in `brand-source/traced/` is a pixel trace; a crisp large
+    mark or a favicon from the real emblem needs it. The favicon is a plum disc with a
+    gold "D" placeholder.
+  - **Real night footage** for the hero (the AI clip stays `sample` and is not shown).
+  - **Photo rights and captions** for every placed photograph (unchanged).
+  - **Contact in the main nav:** added in code (`primaryNav()`), the content's
+    `site.navigation.main` is unchanged — confirm, then move it into the content.
+  - **Display copy to approve:** "Welcome to", "A stay to remember", "We look forward to
+    welcoming you", "Book a stay, or tell us what you are planning."; the hero's line is
+    `site.tagline` (still `sample`).
+  - **Phone LCP and the sections below the hero (for R2):** the hero photograph shares a
+    slow link with the next section's Great Vibes font (42 KB) and its reception photo
+    (102 KB, started by Chrome's lazy-load distance at ~1.4 s). R1 met 1.74 s by capping
+    the phone photo at the 720 w file; R2 should keep below-the-fold weight off the first
+    seconds. Measured over local HTTP/1.1 (`serve`); Cloudflare's HTTP/2 prioritisation
+    should only help.
+  - **`npm install` ran in this checkout on 2026-11-04 (12:46),** outside these sessions:
+    it recreated `package-lock.json` and an npm-layout `node_modules` (playwright-core
+    1.64.1), which broke typecheck. Restored from `pnpm-lock.yaml`; the npm lockfile was
+    moved aside, not committed. Use `pnpm` only (`packageManager` is set).
+  - Checked in Chromium only (headless, SwiftShader / hardware ANGLE). Safari, Firefox and
+    real phones are still to check (R4), including WebGL depth on Safari.
   tests in line with the code.
 - ~~**No JavaScript:** the header keeps its transparent overlay state~~ — resolved
   2026-10-27: without JS it no longer floats over the content (decision row).
@@ -1069,3 +1117,39 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     (open question). The new styleguide toggle test passes on both projects. A first
     e2e attempt reused a stray preview server without the test form endpoint and was
     discarded.
+- 2026-11-04: **Phase R, step R1** — "A Thousand Lamps": plum & gold design system,
+  motion kit, shell and the home hero (branch `theme/plum`). See the decision rows of
+  2026-11-04.
+  - **Built:** tokens (light / dark / deep; `gold-text`, `gold-text-tint`, `lavender`,
+    `danger`, `surface-foot`, `logo-gold`), the gate (77 pairs + hue checks), CSS-generated
+    velvet and paper textures, the button family and eyebrow, fonts down to three
+    families; the motion kit (`ScrollReveal` + `mask-line` / `clip-arch` / `foil`,
+    `ArchWindow`, `GoldThread` / `ThreadStop`, `Tilt3D`, `.lamplight`, `DepthPhoto` +
+    `src/lib/motion/depth-gl.ts`, `src/lib/motion/thread.ts`; `src/lib/motion.ts` moved to
+    `src/lib/motion/index.ts`); `IntroLoader`, `Header` / `NavDesktop`, `MobileMenu`,
+    `StickyCtaBar`, `Footer` / `FooterStage`, `BrandLink`, `primaryNav()`; `HomeHero` +
+    `pnpm make:depth` (`scripts/make-depth.ts`); /styleguide/ rebuilt (the system, gold,
+    type, textures, motion demos; Light / Dark / Deep previews with contrast, buttons,
+    chips, fields incl. the danger state). Placeholders and favicon recoloured; palette
+    textures and their `make:photos` jobs removed; `lawn.png` → `media-source/brand/`.
+  - **Removed:** `EntranceHero`, `HeroDepth`, `HeroVideo` (the clip file and
+    `site.homeHeroVideo` stay), `ArchFrame`, `Sprig`, Instrument Serif and Figtree, the
+    old header / menu / loader / hero / footer CSS (theme.css 5,814 → 5,276 lines).
+  - **Measured (Chromium, production build, local `serve`):** phone (390×844, 4× CPU,
+    150 ms RTT, 1.6 Mbps; median of 3) LCP **1.74 s** (1.74 / 1.74 / 1.78; the hero photo),
+    FCP 1.47 s, CLS 0, 528 KB. Before the phone `sizes` cap the photo was the 960 w file
+    and LCP 2.73 s — bandwidth, not script (image done at 2.70 s, no long task before
+    LCP). Desktop (1440×900, GTX 1660 SUPER via ANGLE D3D11, WebGL depth on, wheel
+    through the hero and back, 2 passes): p95 16.7 ms, 0 frames over 33 ms (max 33.3 /
+    16.8 ms). JS: home 190.9 KB gzip (191.2 KB at `3f30fac`, audit) + the lazy WebGL
+    chunk 1.6 KB gzip (not in the initial HTML); CSS 20.9 KB gzip (was 22.8); no new
+    dependency. Not measured: Safari, Firefox, real devices.
+  - **Tests:** **472 pass** (`pnpm test:e2e`); lint, typecheck, contrast gate and build
+    clean. Deleted: the 20 inherited failures and the tests of the replaced UI (hero
+    video, keystone, gate menu, finale). New or rewritten: `palette.spec`,
+    `hero-depth.spec`, `shell.spec`, the hero / loader / gold thread tests in
+    `entrance.spec`, the hero tests in `home.spec`, the styleguide toggle test.
+  - **Environment:** an `npm install` (not run from these sessions) had re-laid
+    `node_modules` in npm's layout at 12:46 and recreated `package-lock.json`, which broke
+    typecheck (playwright-core 1.64.1); restored with `pnpm install --frozen-lockfile`, the
+    npm lockfile moved aside.

@@ -68,3 +68,18 @@ export const venueHref = (slug: string): string => `/events/venues/${slug}/`;
 // Outlets are sections on the dining hub (see Footer), not standalone pages yet.
 export const outletHref = (slug: string): string => `/dining/#${slug}`;
 export const offerHref = (slug: string): string => `/offers/${slug}/`;
+
+type NavLink = { label: string; href: string };
+
+/**
+ * The primary navigation: the site's main links plus Contact, keeping only
+ * links whose page (and anchor's page) exists in this build — so the header,
+ * the menu and the footer never offer a dead link.
+ */
+export function primaryNav(main: ReadonlyArray<NavLink>): NavLink[] {
+  const links = [...main];
+  if (!links.some((link) => link.href === "/contact/")) {
+    links.push({ label: "Contact", href: "/contact/" });
+  }
+  return links.filter((link) => isBuiltRoute(link.href));
+}

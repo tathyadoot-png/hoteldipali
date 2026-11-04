@@ -81,7 +81,7 @@ test.describe("Rooms hub", () => {
 
   test("passes axe-core with no serious or critical violations", async ({ page }) => {
     const results = await new AxeBuilder({ page })
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     const serious = results.violations.filter(
       (v) => v.impact === "serious" || v.impact === "critical",
@@ -160,7 +160,7 @@ for (const room of rooms) {
 
     test("passes axe-core with no serious or critical violations", async ({ page }) => {
       const results = await new AxeBuilder({ page })
-        .exclude(".fixed.bottom-0.z-30")
+        .exclude(".sticky-bar")
         .analyze();
       const serious = results.violations.filter(
         (v) => v.impact === "serious" || v.impact === "critical",

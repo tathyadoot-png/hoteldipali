@@ -3,12 +3,26 @@
 /*
  * Design tokens and component classes. Never put colours or font names anywhere else.
  * Fonts are named here and in src/app/fonts.ts only.
- * Palette (2026-10-22; variants named by role since 2026-11-03): a warm near-white
- * ivory light default, a deep forest-green `dark` variant for weddings, the bar and
- * dark bands, and a `deep` variant for the opening experience and the stone
- * surfaces; terracotta clay for actions and antique gold for ornament.
- * Tuned against the hotel's photographs: warm wood and cream walls, teal upholstery,
- * green lawns and the blue pool.
+ *
+ * "A Thousand Lamps" — Plum & Gold (2026-11-04). Dipali is a row of lamps:
+ * night is deep plum velvet, light is gold lamplight, day is ivory and
+ * lavender pages set in near-black plum. Variants are role-based — light
+ * (default), dark (weddings, the bar, dark bands) and deep (the opening
+ * loader, the menu, the footer, the phone bar, the stone surfaces) — so a
+ * palette change edits the values below and regenerates graded assets; no
+ * code renames.
+ *
+ * Gold is one family in three shades, never a yellow gold:
+ * - champagne (#C9A45C / #D8B56E) — accent and ornament on plum grounds;
+ * - antique (#B8924F, `highlight` on light) — ornament only: rules,
+ *   hairlines, frames; never text on a light ground;
+ * - deep (`gold-text` #7E5F27; `gold-text-tint` #6D5222 on lavender) — gold
+ *   when it must be read on a light ground.
+ * "Gold foil" is a token-built sheen — a narrow moving highlight — on
+ * ornaments, rules and display headings only, played once.
+ * The client's logo (median #ECAE33, `logo-gold`, a reference value for the
+ * contrast gate) sits on brand, dark or deep grounds only — never on light or
+ * lavender.
  */
 
 @theme {
@@ -16,38 +30,39 @@
   --color-*: initial;
   --breakpoint-*: initial;
 
-  /* Fonts */
-  --font-display: var(--font-instrument), "Times New Roman", Georgia, serif;
-  --font-body: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* The royal identity (opening experience: loader, navigation, home hero —
-     2026-10-24). Editorial serif, a UI sans, and a script used for one or two
-     words only. */
+  /* Fonts: Cormorant Garamond for display, Manrope for interface and body,
+     Great Vibes for at most one script word per page. */
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-body: var(--font-manrope), "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-royal: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
   --font-ui: var(--font-manrope), "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-script: var(--font-great-vibes), "Great Vibes", cursive;
 
-  /* Colours — Light (default, "Ivory"). */
-  --color-surface: #f8f4ec;
-  --color-surface-alt: #efe7da;
-  --color-ink: #13221e;
-  --color-ink-muted: #4a5752;
-  --color-brand: #0f2e2a;
-  --color-brand-ink: #f8f4ec;
-  /* Terracotta clay: buttons, links, small emphasis — passes as small text on
-     both light surfaces (5.88 / 5.26:1). */
-  --color-accent: #9a4527;
+  /* Colours — light (default): ivory and lavender pages, plum type. */
+  --color-surface: #faf6f4;
+  --color-surface-alt: #f1e8ee;
+  --color-surface-foot: #ece1e9;
+  --color-ink: #1c1220;
+  --color-ink-muted: #5a4a5e;
+  --color-brand: #480950;
+  --color-brand-ink: #faf6f4;
+  --color-accent: #480950;
   --color-accent-ink: #ffffff;
-  /* Antique gold: decorative only on light grounds (rules, hairlines) — never text. */
-  --color-highlight: #b89a5e;
-  --color-line: rgba(19, 34, 30, 0.14);
+  --color-gold-text: #7e5f27;
+  --color-gold-text-tint: #6d5222;
+  --color-highlight: #b8924f;
+  --color-lavender: #dfc7e2;
+  --color-danger: #a3343a;
+  --color-line: rgba(28, 18, 32, 0.14);
+  --color-logo-gold: #ecae33;
 
   /* Radius — buttons and frames stay architectural: nearly square. */
   --radius-none: 0;
   --radius-sm: 2px;
 
-  /* Shadows */
+  /* Shadows (ink-tinted, so they follow the palette). */
   --shadow-hairline: 0 0 0 1px var(--color-line);
-  --shadow-lift: 0 18px 40px -24px rgba(8, 24, 21, 0.45);
+  --shadow-lift: 0 18px 40px -24px color-mix(in srgb, var(--color-ink) 45%, transparent);
 
   /* Breakpoints */
   --breakpoint-xs: 360px;
@@ -61,75 +76,91 @@
   --gutter: clamp(1rem, 4vw, 2.5rem);
   --space-section: clamp(4rem, 3rem + 5vw, 8rem);
 
-  /* Motion */
+  /* Motion: every animation ≤ 600 ms (scroll-mapped scenes exempt). */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 180ms;
   --duration-base: 320ms;
+  --duration-reveal: 560ms;
 }
 
-/* Colours — dark variant (deep forest green). Redefines the same
-   tokens; utilities resolve per-element. */
+/* Colours — dark: plum velvet for weddings, the bar and dark bands. Redefines
+   the same tokens; utilities resolve per element. */
 [data-theme="dark"] {
   color-scheme: dark;
-  --color-surface: #0f2e2a;
-  --color-surface-alt: #0a211e;
-  --color-ink: #f6f1e7;
-  --color-ink-muted: #c5cec8;
-  --color-brand: #0a211e;
-  --color-brand-ink: #f6f1e7;
-  --color-accent: #cda866;
-  --color-accent-ink: #0a211e;
-  --color-highlight: #cda866;
-  --color-line: rgba(246, 241, 231, 0.16);
-}
-
-/* Colours — deep variant: the owner's brand palette of 2026-10-24, used
-   by the opening experience (loader, navigation, home hero).
-   Surface #073B30 · surface-alt #0D5145 · antique gold #C5A15E ·
-   Warm Ivory #F4EBDD · Muted Sage #B7C2A5 · Soft Charcoal #252B26.
-   Gold small text belongs on the surface only — on surface-alt it is a UI /
-   large-text colour (3.8:1), and the contrast gate checks exactly that. */
-[data-theme="deep"] {
-  color-scheme: dark;
-  --color-surface: #073b30;
-  --color-surface-alt: #0d5145;
-  --color-ink: #f4ebdd;
-  --color-ink-muted: #b7c2a5;
-  --color-brand: #073b30;
-  --color-brand-ink: #f4ebdd;
-  --color-accent: #c5a15e;
-  --color-accent-ink: #252b26;
-  --color-highlight: #c5a15e;
-  --color-line: rgba(197, 161, 94, 0.34);
-  /* Metallic gold, derived from Antique Gold only: a glint (toward ivory) and a
-     shade (toward charcoal) for gradients on fine lines. */
+  --color-surface: #1f0b26;
+  --color-surface-alt: #2b1233;
+  --color-surface-foot: #170820;
+  --color-ink: #f6efe9;
+  --color-ink-muted: #cdbfd0;
+  --color-brand: #480950;
+  --color-brand-ink: #f6efe9;
+  --color-accent: #c9a45c;
+  --color-accent-ink: #1f0b26;
+  --color-gold-text: #c9a45c;
+  --color-gold-text-tint: #c9a45c;
+  --color-highlight: #d8b56e;
+  --color-lavender: #3b1a47;
+  --color-danger: #f0a3a8;
+  --color-line: rgba(246, 239, 233, 0.15);
   --gold-glint: color-mix(in srgb, var(--color-highlight) 45%, var(--color-ink));
   --gold-shade: color-mix(in srgb, var(--color-highlight) 58%, var(--color-accent-ink));
-  /* The owner's palette textures, graded toward the deep surface (pnpm make:photos). */
-  /* The stone is the home hero's largest paint: EntranceHero preloads this
-     exact file, so keep the two in step. */
-  --texture-stone: url("/images/textures/texture-stone-deep-1024.webp");
-  --texture-botanical: url("/images/textures/botanical-panel-736.webp");
+  --texture-stone: var(--texture-velvet);
+  --shade: #0a030e;
 }
 
-/* Phones: the botanical panel at its smaller width (half the bytes; it always
-   sits under a dark veil). */
-@media (max-width: 767.98px) {
-  [data-theme="deep"] {
-    --texture-botanical: url("/images/textures/botanical-panel-480.webp");
-  }
+/* Colours — deep: the night itself (loader, menu, footer, phone bar, the
+   stone surfaces); surface-foot is the darker step at the foot. */
+[data-theme="deep"] {
+  color-scheme: dark;
+  --color-surface: #170820;
+  --color-surface-alt: #22102b;
+  --color-surface-foot: #0f0515;
+  --color-ink: #f6efe9;
+  --color-ink-muted: #cdbfd0;
+  --color-brand: #480950;
+  --color-brand-ink: #f6efe9;
+  --color-accent: #c9a45c;
+  --color-accent-ink: #0f0515;
+  --color-gold-text: #c9a45c;
+  --color-gold-text-tint: #c9a45c;
+  --color-highlight: #d8b56e;
+  --color-lavender: #34163f;
+  --color-danger: #f0a3a8;
+  --color-line: rgba(246, 239, 233, 0.15);
+  --gold-glint: color-mix(in srgb, var(--color-highlight) 45%, var(--color-ink));
+  --gold-shade: color-mix(in srgb, var(--color-highlight) 58%, var(--color-accent-ink));
+  --texture-stone: var(--texture-velvet);
+  --shade: #0a030e;
 }
 
 /* Non-colour design constants shared by component classes. */
 :root {
+  /* Shadow colour of each scope: plum-black (redefined in dark / deep). */
+  --shade: #1c1220;
+  /* Light's gold sheen points, derived from the antique gold. */
+  --gold-glint: color-mix(in srgb, var(--color-highlight) 40%, white);
+  --gold-shade: color-mix(in srgb, var(--color-highlight) 62%, var(--color-ink));
   /* Rise of the arched section thresholds — a gentle curve, not a dome. */
   --arch: clamp(1.75rem, 4.5vw, 4.5rem);
   /* Arrow glyph, used as a mask (so it takes currentColor) by .btn-cta / .link-cta. */
   --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath d='M0 8h21M15 2l6 6-6 6' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
   /* Check glyph, same box as the arrow: the enquiry button once sent. */
   --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath d='M5 8.5l4.5 4.5L19 2.5' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
-  /* Fractal-noise tile used for paper grain and film grain. */
+  /* A lamp flame, as a mask (takes currentColor): the current-page mark, the
+     thread's end, the lamps. */
+  --flame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 18'%3E%3Cpath d='M6 0C7.5 4 11 6.5 11 11.2A5 5 0 0 1 1 11.2C1 8 3.4 6.6 4.2 3.6C5 5.8 5.6 6.4 6 7.2C6.6 5.2 6.6 2.6 6 0Z' fill='black'/%3E%3C/svg%3E");
+  /* Fractal-noise tile used for grain on photographs and cards. */
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Our own generated textures (no image files, no rights question). Both are
+     neutral grain — luminance only — laid over a surface colour, so they
+     follow the palette. Velvet: a fine light pile for dark and deep grounds
+     (its depth comes from a token-built sheen where it is used). Paper: a
+     fine dark tooth for light pages. */
+  --texture-velvet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.075 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23p)'/%3E%3C/svg%3E");
+  --texture-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23t)'/%3E%3C/svg%3E");
+  /* Tile sizes for the textures (they repeat; never stretched). */
+  --texture-size: 240px;
+  --texture-stone: var(--texture-paper);
 }
 
 @layer base {
@@ -142,8 +173,8 @@
   }
 
   ::selection {
-    background-color: var(--color-accent);
-    color: var(--color-accent-ink);
+    background-color: var(--color-brand);
+    color: var(--color-brand-ink);
   }
 
   :focus-visible {
@@ -163,12 +194,12 @@
     scroll-behavior: auto;
   }
 
-  /* The page's scrollbar: a slim antique-gold thumb in a deep green channel
-     edged with a gold hairline — part of the frame beside ivory and deep green
-     alike. Chromium and Safari draw it from ::-webkit-scrollbar; Firefox,
-     which has no such pseudo-elements, from scrollbar-color (kept away from
-     Chromium, where the standard properties switch the drawn one off). The
-     gutter is reserved, so nothing shifts when the menu locks scrolling. */
+  /* The page's scrollbar: a slim gold thumb in a plum channel edged with a
+     gold hairline. Chromium and Safari draw it from ::-webkit-scrollbar;
+     Firefox, which has no such pseudo-elements, from scrollbar-color (kept
+     away from Chromium, where the standard properties switch the drawn one
+     off). The gutter is reserved, so nothing shifts when the menu locks
+     scrolling. */
   html {
     scrollbar-gutter: stable;
   }
@@ -190,32 +221,15 @@
     box-shadow: inset 1px 0 0 color-mix(in srgb, var(--color-highlight) 45%, transparent);
   }
 
-  /* A burnished pill (≥ 5:1 against the channel), inset by its border. */
   html::-webkit-scrollbar-thumb {
     min-height: 3.5rem;
     border: 3px solid transparent;
     border-radius: 999px;
-    background: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--color-highlight) 60%, var(--color-surface)),
-        var(--color-highlight) 40%,
-        color-mix(in srgb, var(--color-highlight) 72%, var(--color-brand))
-      )
-      padding-box;
+    background: var(--color-highlight) padding-box;
   }
 
   html::-webkit-scrollbar-thumb:hover {
     border-width: 2px;
-    background: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--color-highlight) 45%, var(--color-surface)),
-        var(--color-highlight)
-      )
-      padding-box;
-  }
-
-  html::-webkit-scrollbar-thumb:active {
-    background: var(--color-highlight) padding-box;
   }
 
   html::-webkit-scrollbar-corner {
@@ -235,12 +249,12 @@
 }
 
 @layer components {
-  /* Typography */
-  /* Editorial scale: the hero runs to ~12vw on desktop and ~15–16vw on phones. */
+  /* Typography — Cormorant for display, Manrope for everything read or
+     pressed. Display sizes are fluid; tracking tightens as they grow. */
   .heading-hero {
     font-family: var(--font-display);
-    font-size: clamp(3.25rem, 1rem + 11vw, 11.5rem);
-    line-height: 0.95;
+    font-size: clamp(3.25rem, 1rem + 11vw, 11rem);
+    line-height: 0.92;
     letter-spacing: -0.02em;
   }
 
@@ -248,35 +262,33 @@
      layouts so headings break into phrases, not single words. */
   .heading-page {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 1rem + 7vw, 8.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
+    font-size: clamp(3rem, 1rem + 7vw, 8rem);
+    line-height: 1;
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
 
   .heading-1 {
     font-family: var(--font-display);
-    /* ~4.4vw at 1440px: large, but sized for the split (5/7-column) layouts
-       most sections use, so long words stay inside their column. */
     font-size: clamp(2.5rem, 1.25rem + 3.4vw, 5rem);
     line-height: 1;
+    letter-spacing: -0.01em;
   }
 
   .heading-2 {
     font-family: var(--font-display);
-    /* ~4.8vw at 1440px. */
     font-size: clamp(2rem, 0.75rem + 4vw, 5rem);
     line-height: 1.02;
+    letter-spacing: -0.01em;
   }
 
   .heading-3 {
     font-family: var(--font-body);
     font-weight: 600;
-    font-size: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
-    line-height: 1.25;
+    font-size: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+    line-height: 1.3;
   }
 
-  /* One emphasised word per heading: display italic in accent. */
   /* Safety net: a heading may never spill out of its column. */
   .heading-hero,
   .heading-page,
@@ -296,31 +308,45 @@
     color: var(--color-accent);
   }
 
+  /* Eyebrow: Manrope small capitals, widely tracked, closed by a short gold
+     rule (antique gold on light, champagne on plum — ornament, not text). */
   .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
     font-family: var(--font-body);
-    font-weight: 500;
-    font-size: 0.75rem;
+    font-weight: 600;
+    font-size: 0.6875rem;
+    line-height: 1.4;
     text-transform: uppercase;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.26em;
     color: var(--color-ink-muted);
+  }
+
+  .eyebrow::after {
+    content: "";
+    flex: none;
+    width: 2.25rem;
+    height: 1px;
+    background-color: var(--color-highlight);
   }
 
   .body-lg {
     font-family: var(--font-body);
     font-size: 1.125rem;
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
   .body {
     font-family: var(--font-body);
     font-size: 1rem;
-    line-height: 1.65;
+    line-height: 1.7;
   }
 
   .caption {
     font-family: var(--font-display);
     font-style: italic;
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--color-ink-muted);
   }
 
@@ -331,23 +357,22 @@
     color: var(--color-accent);
   }
 
-  /* ── Buttons: one family, drawn for the hotel ──────────────────────────
-     A crisp, near-square plaque (2px radius): one height, Manrope small
-     capitals, one timing, colours from the surrounding scope's tokens —
-     gold is `highlight`, deep green is `brand` (each palette's deep green).
-     .btn-primary   the booking action: an antique-gold plaque with a deep
-                    deep green label; on hover an engraved hairline draws in.
-     .btn-secondary every other action: a fine gold outline — ivory label on
-                    deep / dark, deep green label on ivory; on hover
-                    gold rises from the base and it becomes the plaque.
+  /* ── Buttons: one family ───────────────────────────────────────────────
+     A near-square plaque (2px radius), one height, Manrope small capitals,
+     one timing; colours come from the surrounding scope.
+     .btn-primary   the booking action. Light: a plum plaque with a gold
+                    hairline inset. Dark / deep: a champagne plaque with a
+                    plum-black label. Hover: a flame dot lights at the start
+                    and one glint of foil crosses the plaque.
+     .btn-secondary every other action: a fine gold outline with a plum
+                    (light) or ivory (dark) label; hover warms its ground.
      .btn-ghost     a quieter outline beside a primary (call, WhatsApp).
      .btn-cta       adds an arrow that steps forward on hover.
      .btn-compact   sentence case and tight padding for dense bars. */
   .btn-primary,
   .btn-secondary,
   .btn-ghost {
-    --btn-sweep: transparent;
-    --btn-focus: var(--color-brand);
+    --btn-focus: var(--color-accent);
     position: relative;
     isolation: isolate;
     display: inline-flex;
@@ -355,7 +380,7 @@
     justify-content: center;
     gap: 0.75rem;
     min-height: 48px;
-    padding-inline: 1.5rem;
+    padding-inline: 1.75rem;
     overflow: hidden;
     border: 1px solid transparent;
     border-radius: var(--radius-sm);
@@ -369,14 +394,9 @@
     cursor: pointer;
     transition:
       color var(--duration-base) var(--ease-out-soft),
+      background-color var(--duration-base) var(--ease-out-soft),
       border-color var(--duration-base) var(--ease-out-soft),
       box-shadow var(--duration-base) var(--ease-out-soft);
-  }
-
-  /* On the dark scopes the focus ring is gold (deep green would vanish). */
-  :is([data-theme="deep"], [data-theme="dark"]) :is(.btn-primary, .btn-secondary, .btn-ghost),
-  :is(.btn-primary, .btn-secondary, .btn-ghost):is([data-theme="deep"], [data-theme="dark"]) {
-    --btn-focus: var(--color-highlight);
   }
 
   .btn-primary:focus-visible,
@@ -386,26 +406,32 @@
     outline-offset: 3px;
   }
 
-  .btn-primary::before,
-  .btn-secondary::before,
-  .btn-ghost::before {
+  /* The flame dot: lights in the start padding on hover / focus. */
+  .btn-primary::after,
+  .btn-secondary::after {
     content: "";
     position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-color: var(--btn-sweep);
-    transform: scaleY(0);
+    left: 0.8rem;
+    top: 50%;
+    width: 0.4rem;
+    height: 0.6rem;
+    margin-top: -0.3rem;
+    background-color: var(--btn-flame, var(--color-highlight));
+    mask: var(--flame) center / contain no-repeat;
+    opacity: 0;
+    transform: scale(0.4);
     transform-origin: 50% 100%;
-    transition: transform var(--duration-base) var(--ease-out-soft);
+    transition:
+      opacity var(--duration-base) var(--ease-out-soft),
+      transform var(--duration-base) var(--ease-out-soft);
   }
 
-  .btn-primary:hover::before,
-  .btn-secondary:hover::before,
-  .btn-ghost:hover::before,
-  .btn-primary:focus-visible::before,
-  .btn-secondary:focus-visible::before,
-  .btn-ghost:focus-visible::before {
-    transform: scaleY(1);
+  .btn-primary:hover::after,
+  .btn-primary:focus-visible::after,
+  .btn-secondary:hover::after,
+  .btn-secondary:focus-visible::after {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .btn-primary:active,
@@ -425,62 +451,85 @@
     cursor: not-allowed;
   }
 
-  .btn-primary:disabled::before,
-  .btn-secondary:disabled::before,
-  .btn-ghost:disabled::before,
-  .btn-primary[aria-disabled="true"]::before,
-  .btn-secondary[aria-disabled="true"]::before,
-  .btn-ghost[aria-disabled="true"]::before {
-    transform: scaleY(0);
+  .btn-primary:is(:disabled, [aria-disabled="true"])::after,
+  .btn-secondary:is(:disabled, [aria-disabled="true"])::after {
+    opacity: 0;
   }
 
-  /* Primary: the gold plaque. Hover draws an engraved hairline 4px inside
-     its edge — the one corner detail in the family. */
+  /* Primary, light: the plum plaque with its gold hairline inset. */
   .btn-primary {
-    background-color: var(--color-highlight);
-    color: var(--color-brand);
+    background-color: var(--color-brand);
+    color: var(--color-brand-ink);
     box-shadow:
-      inset 0 0 0 4px var(--color-highlight),
-      inset 0 0 0 5px transparent;
+      inset 0 0 0 3px var(--color-brand),
+      inset 0 0 0 4px color-mix(in srgb, var(--color-highlight) 75%, transparent);
   }
 
   .btn-primary:hover,
   .btn-primary:focus-visible {
     box-shadow:
-      inset 0 0 0 4px var(--color-highlight),
-      inset 0 0 0 5px color-mix(in srgb, var(--color-brand) 55%, transparent);
+      inset 0 0 0 3px var(--color-brand),
+      inset 0 0 0 4px var(--color-highlight);
   }
 
-  /* ...and a glint of light crosses the plaque on hover / focus — once per
-     hover, never travelling back (the family's sweep layer is unused here). */
+  /* One glint of foil crosses the plaque on hover / focus — once per hover. */
   .btn-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background: linear-gradient(
       105deg,
-      transparent 30%,
-      color-mix(in srgb, var(--color-brand-ink) 55%, transparent) 50%,
-      transparent 70%
+      transparent 35%,
+      color-mix(in srgb, var(--color-highlight) 38%, transparent) 50%,
+      transparent 65%
     );
     transform: translateX(-110%);
-    transition: none;
   }
 
   .btn-primary:hover::before,
   .btn-primary:focus-visible::before {
     transform: translateX(110%);
-    transition: transform 380ms var(--ease-out-soft);
+    transition: transform 520ms var(--ease-out-soft);
   }
 
-  .btn-primary:is(:disabled, [aria-disabled="true"])::before {
-    transform: translateX(-110%);
-    transition: none;
+  /* Primary on plum grounds: the champagne plaque. */
+  :is([data-theme="deep"], [data-theme="dark"]) .btn-primary,
+  .btn-primary:is([data-theme="deep"], [data-theme="dark"]) {
+    --btn-flame: var(--color-accent-ink);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+    box-shadow:
+      inset 0 0 0 3px var(--color-accent),
+      inset 0 0 0 4px color-mix(in srgb, var(--color-accent-ink) 35%, transparent);
   }
 
-  /* Secondary: a fine gold line; gold rises into it on hover. */
+  :is([data-theme="deep"], [data-theme="dark"]) .btn-primary:is(:hover, :focus-visible),
+  .btn-primary:is([data-theme="deep"], [data-theme="dark"]):is(:hover, :focus-visible) {
+    box-shadow:
+      inset 0 0 0 3px var(--color-accent),
+      inset 0 0 0 4px color-mix(in srgb, var(--color-accent-ink) 65%, transparent);
+  }
+
+  :is([data-theme="deep"], [data-theme="dark"]) .btn-primary::before {
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      color-mix(in srgb, var(--color-ink) 45%, transparent) 50%,
+      transparent 65%
+    );
+  }
+
+  /* Secondary: a fine gold line. */
   .btn-secondary {
-    --btn-sweep: var(--color-highlight);
     background-color: transparent;
     border-color: var(--color-highlight);
     color: var(--color-brand);
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus-visible {
+    background-color: color-mix(in srgb, var(--color-lavender) 55%, transparent);
   }
 
   :is([data-theme="deep"], [data-theme="dark"]) .btn-secondary,
@@ -488,37 +537,39 @@
     color: var(--color-ink);
   }
 
-  .btn-secondary:hover,
-  .btn-secondary:focus-visible {
-    color: var(--color-brand);
+  :is([data-theme="deep"], [data-theme="dark"]) .btn-secondary:is(:hover, :focus-visible),
+  .btn-secondary:is([data-theme="deep"], [data-theme="dark"]):is(:hover, :focus-visible) {
+    background-color: color-mix(in srgb, var(--color-highlight) 14%, transparent);
   }
 
-  /* Ghost: a quieter outline; the sweep is a soft tint. */
+  /* Ghost: a quieter outline. */
   .btn-ghost {
-    --btn-sweep: color-mix(in srgb, var(--color-ink) 10%, transparent);
     background-color: transparent;
-    border-color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+    border-color: color-mix(in srgb, var(--color-ink) 35%, transparent);
     color: var(--color-ink);
   }
 
   .btn-ghost:hover,
   .btn-ghost:focus-visible {
     border-color: var(--color-ink);
+    background-color: color-mix(in srgb, var(--color-ink) 7%, transparent);
   }
 
   /* An arrow that steps forward on hover (takes the label colour). */
   .btn-cta {
-    padding-inline: 1.5rem 1.25rem;
+    padding-inline: 1.75rem 1.25rem;
   }
 
   .btn-cta::after {
-    content: "";
-    flex: none;
+    /* The arrow replaces the flame dot on these. */
+    position: static;
     width: 1.35em;
     height: 0.85em;
+    margin: 0;
     background-color: currentColor;
     mask: var(--arrow) center / contain no-repeat;
-    transition: transform var(--duration-base) var(--ease-out-soft);
+    opacity: 1;
+    transform: none;
   }
 
   .btn-cta:hover::after,
@@ -530,10 +581,14 @@
   .btn-compact {
     gap: 0.5rem;
     min-height: 44px;
-    padding-inline: 0.5rem;
+    padding-inline: 0.75rem;
     font-size: 0.8125rem;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
     text-transform: none;
+  }
+
+  .btn-compact::after {
+    display: none;
   }
 
   /* Text link with an arrow and an underline that draws in from the left. */
@@ -590,7 +645,7 @@
     justify-content: center;
     width: 44px;
     height: 44px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 40%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent);
     border-radius: var(--radius-sm);
     color: var(--color-ink);
     transition:
@@ -605,7 +660,7 @@
   }
 
   /* ── .link-royal: a text link standing on a fine gold rule that extends on
-     hover (deep surfaces: the hero's quiet second action, the menu). */
+     hover (plum label on light, ivory on plum). */
   .link-royal {
     position: relative;
     display: inline-flex;
@@ -617,6 +672,10 @@
     font-size: 0.6875rem;
     letter-spacing: 0.24em;
     text-transform: uppercase;
+    color: var(--color-brand);
+  }
+
+  :is([data-theme="deep"], [data-theme="dark"]) .link-royal {
     color: var(--color-ink);
   }
 
@@ -627,11 +686,7 @@
     right: 0;
     bottom: 0.625rem;
     height: 1px;
-    background: linear-gradient(
-      to right,
-      var(--color-highlight),
-      color-mix(in srgb, var(--color-highlight) 15%, transparent)
-    );
+    background-color: var(--color-highlight);
     transform: scaleX(0.32);
     transform-origin: 0 50%;
     transition: transform var(--duration-base) var(--ease-out-soft);
@@ -647,9 +702,9 @@
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    padding-inline: 1rem;
+    padding-inline: 1.125rem;
     border: 1px solid var(--color-line);
-    border-radius: var(--radius-none);
+    border-radius: var(--radius-sm);
     background-color: transparent;
     color: var(--color-ink);
     font-family: var(--font-body);
@@ -663,9 +718,10 @@
 
   .chip:hover {
     background-color: var(--color-surface-alt);
+    border-color: color-mix(in srgb, var(--color-highlight) 70%, transparent);
   }
 
-  /* Pressed: copper on light, brass on dark. */
+  /* Pressed: plum on light, champagne on plum grounds. */
   .chip[aria-pressed="true"] {
     background-color: var(--color-accent);
     border-color: var(--color-accent);
@@ -710,10 +766,9 @@
 
   /*
    * .link/.eyebrow/.caption hardcode ink/ink-muted, which are only validated
-   * against surface/surface-alt (and, via [data-theme] re-scoping, the dark variant's own
-   * surface pair). The brand band is a third, separate pairing (brand/
-   * brand-ink) those tokens were never checked against — so inside
-   * .band-brand, repoint them at brand-ink to stay AA-compliant.
+   * against surface/surface-alt (and, via [data-theme] re-scoping, the dark
+   * variants' own surface pairs). The brand band is a separate pairing
+   * (brand/brand-ink), so inside .band-brand they point at brand-ink.
    */
   .band-brand .link,
   .band-brand .eyebrow,
@@ -750,151 +805,12 @@
 
   .rule-ornament {
     width: 3rem;
-    height: 2px;
+    height: 1px;
     border: 0;
     background-color: var(--color-highlight);
   }
 
-  /* ── Header: the engraved band (deep) ──────────────────────────────────
-     Two antique-gold rules run from either end of the bar to a medallion
-     holding the emblem; the links sit inside the band and a small gold bead
-     slides along its lower rule to the link under the pointer, the focused
-     link, or the current page. Ends: the call link (xl) and Book a Stay; below
-     xl the menu takes the left end. Transparent over the home hero; solid
-     deep stone elsewhere and once the hero has passed. */
-  .header-shell {
-    background-color: transparent;
-    transition:
-      background-color var(--duration-base) var(--ease-out-soft),
-      box-shadow var(--duration-base) var(--ease-out-soft);
-  }
-
-  .header-shell[data-state="solid"] {
-    background-color: var(--color-surface);
-    background-image:
-      linear-gradient(
-        color-mix(in srgb, var(--color-surface) 58%, transparent),
-        color-mix(in srgb, var(--color-surface) 58%, transparent)
-      ),
-      var(--texture-stone);
-    background-size: auto, 100% auto;
-    background-position: center 30%;
-    box-shadow:
-      0 1px 0 color-mix(in srgb, var(--color-highlight) 30%, transparent),
-      0 18px 36px -28px rgba(8, 18, 15, 0.7);
-  }
-
-  .header-bar {
-    --medallion: 3.5rem;
-    --band: 2.125rem;
-    /* Both ends share one minimum width (≥ the wider of menu/call and Book a
-       Stay), so the medallion sits on the page's centre line. */
-    --end: 5rem;
-    --rule-top: color-mix(in srgb, var(--color-highlight) 64%, transparent);
-    --rule-bottom: color-mix(in srgb, var(--color-highlight) 30%, transparent);
-    position: relative;
-    display: grid;
-    grid-template-columns:
-      minmax(var(--end), auto) minmax(0.75rem, 1fr) var(--medallion) minmax(0.75rem, 1fr)
-      minmax(var(--end), auto);
-    align-items: center;
-    column-gap: 0.625rem;
-    height: 100%;
-  }
-
-  .header-bar > * {
-    grid-row: 1;
-  }
-
-  .header-menu-button {
-    grid-column: 1;
-    justify-self: start;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-width: 44px;
-    min-height: 44px;
-    cursor: pointer;
-  }
-
-  .header-menu-button svg {
-    color: var(--color-highlight);
-  }
-
-  .header-menu-label {
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-  }
-
-  /* The band: an engraved double rule, a small diamond at its outer end. */
-  .header-band {
-    position: relative;
-    height: var(--band);
-    border-top: 1px solid var(--rule-top);
-    border-bottom: 1px solid var(--rule-bottom);
-  }
-
-  .header-band-l {
-    grid-column: 2;
-  }
-
-  .header-band-r {
-    grid-column: 4;
-  }
-
-  .header-band::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 5px;
-    height: 5px;
-    background-color: var(--color-highlight);
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-
-  .header-band-l::before {
-    left: 0;
-  }
-
-  .header-band-r::before {
-    left: 100%;
-  }
-
-  /* The medallion: a double gold ring (with beads at its crown and foot)
-     around the real emblem, on a deep green disc. */
-  .header-keystone,
-  .menu-medallion {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: var(--medallion, 3.5rem);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 50% 32%,
-      var(--color-surface-alt),
-      var(--color-surface) 72%
-    );
-    box-shadow: 0 12px 26px -16px rgba(8, 18, 15, 0.9);
-  }
-
-  .header-keystone {
-    grid-column: 3;
-    justify-self: center;
-  }
-
-  .header-ring {
-    position: absolute;
-    inset: -5px;
-    width: calc(100% + 10px);
-    height: calc(100% + 10px);
-    overflow: visible;
-    pointer-events: none;
-  }
-
+  /* The medallion ring (MedallionRing): a gold double ring with beads. */
   .ring-line {
     fill: none;
     stroke: var(--color-highlight);
@@ -908,327 +824,6 @@
 
   .ring-bead {
     fill: var(--color-highlight);
-  }
-
-  .header-emblem {
-    height: calc(var(--medallion, 3.5rem) * 0.66);
-  }
-
-  .header-nav,
-  .header-call {
-    display: none;
-  }
-
-  /* The gold plaque, sized to the bar's end column (--end) so the
-     medallion stays on the centre line. */
-  .header-book {
-    grid-column: 5;
-    justify-self: end;
-    gap: 0;
-    min-height: 2.75rem;
-    padding-inline: 0.875rem;
-    font-size: 0.6875rem;
-    letter-spacing: 0.14em;
-  }
-
-  @media (min-width: 480px) {
-    .header-bar {
-      --end: 8.75rem;
-    }
-  }
-
-  /* Phones: "Book" — the full name stays in the accessible name. */
-  @media (max-width: 479.98px) {
-    .header-book-more {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-  }
-
-  /* The number stays the call link's name everywhere; shown from 1440px. */
-  .header-call-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  @media (min-width: 768px) {
-    .header-bar {
-      --medallion: 4rem;
-      --band: 2.375rem;
-      column-gap: 1rem;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .header-bar {
-      --medallion: 4.75rem;
-      --band: 2.5rem;
-      column-gap: 1.25rem;
-    }
-
-    .header-call {
-      grid-column: 1;
-      justify-self: start;
-      display: inline-flex;
-      font-family: var(--font-ui);
-      font-weight: 500;
-      font-size: 0.8125rem;
-      letter-spacing: 0.04em;
-      color: var(--color-ink);
-    }
-
-    .header-call a {
-      gap: 0.625rem;
-    }
-
-    .header-call svg {
-      color: var(--color-highlight);
-    }
-
-    .header-nav {
-      grid-column: 2 / 5;
-      display: grid;
-      grid-template-columns: subgrid;
-      align-items: center;
-    }
-  }
-
-  @media (min-width: 1440px) {
-    .header-call-label {
-      position: static;
-      width: auto;
-      height: auto;
-      overflow: visible;
-      clip-path: none;
-    }
-  }
-
-  .header-wing {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    height: var(--band);
-    padding-inline: 0.75rem;
-  }
-
-  .header-wing-l {
-    grid-column: 1;
-  }
-
-  .header-wing-r {
-    grid-column: 3;
-  }
-
-  .header-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-    transition: color var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .header-link:hover,
-  .header-link:focus-visible,
-  .header-link[aria-current="page"] {
-    color: var(--color-highlight);
-  }
-
-  /* The bead on the lower rule. Transform only; positions come from
-     NavDesktop (--x = the link's left, --w = its width). */
-  .header-glide {
-    position: absolute;
-    left: 0;
-    bottom: -3.5px;
-    width: 6px;
-    height: 6px;
-    background-color: var(--color-highlight);
-    pointer-events: none;
-    opacity: 0;
-    transform: translate3d(calc(var(--x, 0px) + var(--w, 0) * 0.5px - 3px), 0, 0) rotate(45deg);
-    transition:
-      transform var(--duration-base) var(--ease-out-soft),
-      opacity var(--duration-fast) var(--ease-out-soft);
-  }
-
-  /* Jump (don't slide) to the first position while invisible. */
-  .header-wing[data-glide="off"] > .header-glide {
-    transition: opacity var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .header-wing[data-glide="on"] > .header-glide {
-    opacity: 1;
-  }
-
-  /* ── MobileMenu: deep gate leaves part onto a botanical hall ─────────── */
-  .menu-dialog {
-    overflow: hidden;
-    overflow: clip;
-    opacity: 0;
-    /* Darkened botanical panel (the owner's palette 9) behind the hall. */
-    background-image:
-      linear-gradient(
-        color-mix(in srgb, var(--color-surface) 74%, transparent),
-        color-mix(in srgb, var(--color-surface) 82%, transparent)
-      ),
-      var(--texture-botanical);
-    background-size: auto, cover;
-    background-position: center;
-    transition:
-      opacity 240ms var(--ease-out-soft),
-      display 240ms allow-discrete,
-      overlay 240ms allow-discrete;
-  }
-
-  /* Opening needs no fade: the gates do the reveal. */
-  .menu-dialog[open] {
-    opacity: 1;
-  }
-
-  .menu-gate {
-    position: absolute;
-    inset-block: 0;
-    z-index: 2;
-    width: 50.5%;
-    background-color: var(--color-brand);
-    background-image: var(--texture-stone);
-    background-size: cover;
-    pointer-events: none;
-    transition: transform 240ms var(--ease-out-soft);
-  }
-
-  /* A gold arch panel on each leaf; together they make one doorway. */
-  .menu-gate::before {
-    content: "";
-    position: absolute;
-    inset: 12vh 1.25rem 8vh;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 60%, transparent);
-  }
-
-  .menu-gate-l {
-    left: 0;
-  }
-
-  .menu-gate-l::before {
-    left: 1.25rem;
-    right: 0;
-    border-right: 0;
-    border-top-left-radius: 100% 9rem;
-  }
-
-  .menu-gate-r {
-    right: 0;
-  }
-
-  .menu-gate-r::before {
-    left: 0;
-    right: 1.25rem;
-    border-left: 0;
-    border-top-right-radius: 100% 9rem;
-  }
-
-  .menu-dialog[open] .menu-gate {
-    transition-duration: 380ms;
-  }
-
-  .menu-dialog[open] .menu-gate-l {
-    transform: translateX(-101%);
-  }
-
-  .menu-dialog[open] .menu-gate-r {
-    transform: translateX(101%);
-  }
-
-  .menu-hall {
-    position: relative;
-    transition:
-      opacity 320ms var(--ease-out-soft) 80ms,
-      transform 320ms var(--ease-out-soft) 80ms;
-  }
-
-  @starting-style {
-    .menu-dialog[open] {
-      opacity: 1;
-    }
-
-    .menu-dialog[open] .menu-gate {
-      transform: translateX(0);
-    }
-
-    .menu-dialog[open] .menu-hall {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  .menu-medallion {
-    --medallion: 3.75rem;
-  }
-
-  /* The links stand inside a doorway: a hairline arch filling the hall,
-     numbered like the chapters of an invitation. */
-  .menu-arch {
-    counter-reset: menu;
-    padding: clamp(3rem, 10vh, 5.5rem) 1.25rem 1rem;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 42%, transparent);
-    border-bottom: 0;
-    border-radius: 50% 50% 0 0 / 7rem 7rem 0 0;
-  }
-
-  .menu-link {
-    counter-increment: menu;
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    min-height: 44px;
-    padding-block: 0.5rem;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-highlight) 18%, transparent);
-    font-family: var(--font-royal);
-    font-size: clamp(1.875rem, 1.35rem + 2.6vw, 2.75rem);
-    line-height: 1.1;
-    color: var(--color-ink);
-    transition: color var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .menu-link::before {
-    content: counter(menu, upper-roman);
-    flex: none;
-    min-width: 2.25rem;
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: 0.2em;
-    color: var(--color-highlight);
-  }
-
-  .menu-link:hover,
-  .menu-link[aria-current="page"] {
-    color: var(--color-highlight);
-  }
-
-  .menu-address {
-    font-family: var(--font-royal);
-    font-style: italic;
-    font-size: 1.0625rem;
-    line-height: 1.4;
-    color: var(--color-ink-muted);
-  }
-
-  .menu-dialog::backdrop {
-    background-color: rgba(0, 0, 0, 0.3);
   }
 
   /* Form controls (EnquiryForm, step 5). Focus ring comes from the global
@@ -1275,13 +870,13 @@
   .input[aria-invalid="true"],
   .select[aria-invalid="true"],
   .textarea[aria-invalid="true"] {
-    border-color: var(--color-accent);
+    border-color: var(--color-danger);
   }
 
   .field-error {
     font-family: var(--font-body);
     font-size: 0.875rem;
-    color: var(--color-accent);
+    color: var(--color-danger);
   }
 
   .field-hint {
@@ -1360,17 +955,14 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.05;
-    mix-blend-mode: multiply;
-    background-image: var(--noise);
-    background-size: 180px 180px;
+    background-image: var(--texture-paper);
+    background-size: var(--texture-size);
   }
 
-  /* Multiply disappears on dark; lighten the grain instead. */
-  [data-theme="dark"].paper-grain::before,
-  [data-theme="dark"] .paper-grain::before {
-    mix-blend-mode: screen;
-    opacity: 0.04;
+  /* On plum grounds the grain is the velvet pile instead. */
+  :is([data-theme="dark"], [data-theme="deep"]).paper-grain::before,
+  :is([data-theme="dark"], [data-theme="deep"]) .paper-grain::before {
+    background-image: var(--texture-velvet);
   }
 
   /* Hairline frame for campaign-style blocks. */
@@ -1533,837 +1125,6 @@
      opacity / clip-path only, and every scene has a complete static layout
      that applies when JS or motion is absent.
      ═════════════════════════════════════════════════════════════════════ */
-
-  /* ═══ OPENING EXPERIENCE: the loader and the home hero (deep) ══════════
-     The intro choreography is the one place allowed timelines longer than
-     400 ms (owner's brief, 2026-10-24): sequenced draws and reveals lasting
-     ~1.5–2.5 s, each element once, never looping. --intro is when the hero
-     and navigation begin their entrance: after the loader on the home page's
-     first load, immediately otherwise. */
-  :root {
-    --intro: 0s;
-    --ease-draw: cubic-bezier(0.6, 0.05, 0.25, 1);
-    --ease-rise: cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  body:has(.intro) {
-    --intro: 1.45s;
-  }
-
-  /* Data saver or a slow connection (set by the boot script, src/lib/motion.ts):
-     no loader, so it never adds to a slow load. */
-  [data-intro="off"] .intro {
-    display: none;
-  }
-
-  [data-intro="off"] body {
-    --intro: 0s;
-  }
-
-  /* The deep canvas: the deep surface, the owner's folded stone (palette 3,
-     graded toward the deep surface; low-frequency, so it scales gracefully), a warm light behind the focal
-     point, a charcoal vignette and a fine grain that keeps it crisp. */
-  .entrance-canvas,
-  .intro-canvas {
-    position: absolute;
-    inset: 0;
-    background-color: var(--color-surface);
-    background-image:
-      radial-gradient(
-        ellipse 48% 52% at var(--glow-x, 50%) var(--glow-y, 30%),
-        color-mix(in srgb, var(--color-highlight) 16%, transparent),
-        transparent 72%
-      ),
-      radial-gradient(
-        ellipse 130% 95% at 50% 42%,
-        transparent 50%,
-        color-mix(in srgb, var(--color-accent-ink) 74%, transparent) 100%
-      ),
-      var(--texture-stone);
-    background-size: auto, auto, cover;
-    background-position: center;
-  }
-
-  .entrance-canvas::after,
-  .intro-canvas::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: var(--noise);
-    background-size: 180px 180px;
-    opacity: 0.09;
-    mix-blend-mode: overlay;
-  }
-
-  /* Gold lines shared by the arch frame, the sprigs and the ribbon. All are
-     drawn with pathLength=1, so a dashoffset of 1 → 0 draws them on. */
-  /* No vector-effect: non-scaling-stroke here — Chromium then measures the
-     pathLength-normalised dash in screen space, so on any up-scaled SVG the
-     "full" dash covers only part of the line. Stroke widths are instead set
-     in viewBox units per context and breakpoint to render at about 1 px. */
-  .arch-line,
-  .sprig-line,
-  .ribbon-strand {
-    fill: none;
-    stroke-dasharray: 1;
-  }
-
-  .arch-line {
-    stroke: var(--color-highlight);
-    stroke-width: var(--arch-stroke, 1);
-  }
-
-  .arch-line-inner {
-    opacity: 0.7;
-  }
-
-  .arch-key {
-    fill: var(--color-highlight);
-  }
-
-  .sprig-line {
-    stroke: var(--color-highlight);
-    stroke-width: var(--sprig-stroke, 1.8);
-    stroke-linecap: round;
-    opacity: 0.85;
-  }
-
-  /* ── The home hero ── */
-  .entrance {
-    position: relative;
-    display: grid;
-    min-height: 100svh;
-    overflow: hidden;
-    overflow: clip;
-  }
-
-  .entrance-ribbon {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    transform: translate3d(calc(var(--mx, 0) * 10px), calc(var(--my, 0) * 8px), 0);
-    transition: transform 0.9s var(--ease-out-soft);
-  }
-
-  .entrance-ribbon-wide {
-    display: none;
-  }
-
-  .ribbon-strand {
-    stroke-linecap: round;
-  }
-
-  .ribbon-a {
-    stroke-width: 1.7;
-  }
-
-  .ribbon-b {
-    stroke-width: 0.9;
-    opacity: 0.5;
-  }
-
-  .ribbon-glint {
-    fill: none;
-    stroke: var(--gold-glint);
-    stroke-width: 2.6;
-    stroke-linecap: round;
-    stroke-dasharray: 0.06 1.2;
-    stroke-dashoffset: 0.06;
-    opacity: 0;
-  }
-
-  .stop-shade {
-    stop-color: var(--gold-shade);
-  }
-
-  .stop-gold {
-    stop-color: var(--color-highlight);
-  }
-
-  .stop-glint {
-    stop-color: var(--gold-glint);
-  }
-
-  .entrance-inner {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    align-content: center;
-    justify-items: center;
-    gap: 2.75rem;
-    padding-top: 6.5rem;
-    padding-bottom: calc(var(--arch) + 2.5rem);
-    text-align: center;
-  }
-
-  .entrance-copy {
-    max-width: 36rem;
-  }
-
-  .entrance-eyebrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.875rem;
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-  }
-
-  .entrance-eyebrow::before,
-  .entrance-eyebrow::after {
-    content: "";
-    width: 2.25rem;
-    height: 1px;
-    background-color: var(--color-highlight);
-  }
-
-  .entrance-eyebrow::before {
-    transform-origin: 100% 50%;
-  }
-
-  .entrance-eyebrow::after {
-    transform-origin: 0 50%;
-  }
-
-  .entrance-title {
-    margin-top: 1.5rem;
-    font-family: var(--font-royal);
-    font-weight: 400;
-    font-size: clamp(3rem, 1.6rem + 4.4vw, 7rem);
-    line-height: 1;
-    letter-spacing: -0.005em;
-    color: var(--color-ink);
-  }
-
-  .entrance-line {
-    display: block;
-  }
-
-  /* One word in script — the only Great Vibes on the page. */
-  .entrance-script {
-    display: inline-block;
-    padding-inline: 0.04em 0.12em;
-    font-family: var(--font-script);
-    font-weight: 400;
-    font-size: 1.14em;
-    line-height: 0.5;
-    letter-spacing: 0;
-    color: var(--color-highlight);
-  }
-
-  .entrance-subline {
-    margin-top: 1.25rem;
-    font-family: var(--font-royal);
-    font-style: italic;
-    font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.75rem);
-    line-height: 1.3;
-    color: var(--color-ink-muted);
-  }
-
-  .entrance-actions {
-    margin-top: 2.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem 2rem;
-  }
-
-  /* The arched window onto the hotel (aspect 0.72, a true semicircle). */
-  .entrance-arch {
-    order: -1;
-    position: relative;
-    width: min(58vw, 20rem);
-    aspect-ratio: 18 / 25;
-    margin: 0;
-  }
-
-  .entrance-arch-window {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    border-radius: 50% 50% 0 0 / 36% 36% 0 0;
-    background-color: var(--color-surface-alt);
-    box-shadow: 0 50px 90px -50px rgba(4, 14, 11, 0.95);
-  }
-
-  .entrance-arch-window img {
-    transform: scale(1.04) translate3d(calc(var(--mx, 0) * -6px), calc(var(--my, 0) * -5px), 0);
-    transition: transform 0.9s var(--ease-out-soft);
-  }
-
-  /* Ground the photograph in the canvas: deepen its foot and crown. */
-  .entrance-arch-window::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(
-        to top,
-        color-mix(in srgb, var(--color-surface) 72%, transparent) 0%,
-        transparent 34%
-      ),
-      radial-gradient(
-        ellipse 90% 55% at 50% 0%,
-        color-mix(in srgb, var(--color-surface) 38%, transparent),
-        transparent 70%
-      );
-  }
-
-  /* The frame overhangs the window by 30 viewBox units (see ArchFrame). */
-  .entrance-arch-frame,
-  .intro-arch-frame {
-    position: absolute;
-    inset: -6% -8.334% 0;
-    overflow: visible;
-    pointer-events: none;
-  }
-
-  /* ~1 px at each rendered size (viewBox 420 wide). */
-  .entrance-arch-frame {
-    --arch-stroke: 1.6;
-  }
-
-  .intro-arch-frame {
-    --arch-stroke: 1.35;
-  }
-
-  @media (min-width: 768px) {
-    .entrance-arch-frame {
-      --arch-stroke: 1.15;
-    }
-
-    .entrance-sprig {
-      --sprig-stroke: 1.2;
-    }
-  }
-
-  /* Sprigs rise from the arch's foot on either side. */
-  .entrance-sprig {
-    position: absolute;
-    bottom: -1%;
-    width: 30%;
-    height: auto;
-    overflow: visible;
-    pointer-events: none;
-  }
-
-  .entrance-sprig-l {
-    right: 104%;
-  }
-
-  .entrance-sprig-r {
-    left: 104%;
-  }
-
-  @media (min-width: 1024px) {
-    .entrance-arch-frame {
-      --arch-stroke: 0.8;
-    }
-
-    .entrance-sprig {
-      --sprig-stroke: 1;
-    }
-
-    .entrance-canvas {
-      --glow-x: 71%;
-      --glow-y: 48%;
-    }
-
-    .entrance-ribbon-wide {
-      display: block;
-    }
-
-    .entrance-ribbon-narrow {
-      display: none;
-    }
-
-    .entrance-inner {
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-      align-items: center;
-      justify-items: start;
-      column-gap: 4vw;
-      padding-top: 7.5rem;
-      text-align: left;
-    }
-
-    .entrance-eyebrow {
-      justify-content: flex-start;
-    }
-
-    .entrance-eyebrow::after {
-      display: none;
-    }
-
-    .entrance-actions {
-      justify-content: flex-start;
-    }
-
-    .entrance-arch {
-      order: 0;
-      justify-self: center;
-      width: auto;
-      height: min(68svh, 44rem);
-    }
-  }
-
-  /* The hotel in motion (HeroVideo), over the photograph that is its
-     poster: the same framing and pointer depth; it fades in only once frames
-     play, so until then — or if it never plays — the photograph shows. */
-  .entrance-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    transform: scale(1.04) translate3d(calc(var(--mx, 0) * -6px), calc(var(--my, 0) * -5px), 0);
-    transition:
-      opacity 380ms var(--ease-out-soft),
-      transform 0.9s var(--ease-out-soft);
-  }
-
-  .entrance-video:not([data-playback="waiting"]) {
-    opacity: 1;
-  }
-
-  /* Pause / play (WCAG 2.2.2), at the foot of the arch, above its shading. */
-  .entrance-video-toggle {
-    position: absolute;
-    right: 0.875rem;
-    bottom: 0.875rem;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 65%, transparent);
-    border-radius: 50%;
-    background-color: color-mix(in srgb, var(--color-surface) 60%, transparent);
-    color: var(--color-ink);
-    opacity: 0.8;
-    cursor: pointer;
-    transition:
-      opacity var(--duration-fast) var(--ease-out-soft),
-      border-color var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .entrance-video-toggle:hover,
-  .entrance-video-toggle:focus-visible {
-    opacity: 1;
-    border-color: var(--color-highlight);
-  }
-
-  .entrance-video-toggle:focus-visible {
-    outline: 2px solid var(--color-highlight);
-    outline-offset: 3px;
-  }
-
-  /* ── The loader ── */
-  .intro {
-    position: fixed;
-    inset: 0;
-    z-index: 90;
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .intro[data-state="done"] {
-    display: none;
-  }
-
-  /* The botanical panel (palette 9) at close to its native size, framed in
-     a double gold rule like an invitation card, fading into the stone. */
-  .intro-panel {
-    position: absolute;
-    inset-block: 0;
-    left: 50%;
-    width: min(100vw, calc(100svh * 0.6667));
-    background: var(--texture-botanical) center / cover;
-    opacity: 0.92;
-    transform: translateX(-50%);
-    mask-image: linear-gradient(to right, transparent, black 13%, black 87%, transparent);
-  }
-
-  .intro-panel::before,
-  .intro-panel::after {
-    content: "";
-    position: absolute;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
-  }
-
-  .intro-panel::before {
-    inset: 2.25rem 14%;
-  }
-
-  .intro-panel::after {
-    inset: 2.75rem calc(14% + 0.5rem);
-    border-color: color-mix(in srgb, var(--color-highlight) 26%, transparent);
-  }
-
-  .intro-stage {
-    position: relative;
-    display: grid;
-    justify-items: center;
-  }
-
-  .intro-arch {
-    position: relative;
-    height: min(42svh, 24rem);
-    aspect-ratio: 18 / 25;
-  }
-
-  .intro-emblem {
-    position: absolute;
-    left: 50%;
-    top: 56%;
-    width: 46%;
-    height: auto;
-    transform: translate(-50%, -50%);
-  }
-
-  /* A soft light that passes once across the emblem — masked to its alpha. */
-  .intro-sweep {
-    position: absolute;
-    left: 50%;
-    top: 56%;
-    width: 46%;
-    aspect-ratio: 480 / 577;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(
-      100deg,
-      transparent 38%,
-      color-mix(in srgb, var(--color-ink) 75%, transparent) 50%,
-      transparent 62%
-    );
-    background-size: 260% 100%;
-    background-position: 130% 0;
-    mask: url("/images/brand/logo-emblem-240.webp") center / contain no-repeat;
-    opacity: 0.8;
-  }
-
-  .intro-base {
-    width: min(100vw, 64rem);
-    height: 1px;
-    margin-top: -1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      color-mix(in srgb, var(--color-highlight) 70%, transparent) 30%,
-      color-mix(in srgb, var(--color-highlight) 70%, transparent) 70%,
-      transparent
-    );
-  }
-
-  .intro-caption {
-    margin-top: 1.25rem;
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: 0.42em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-  }
-
-  /* Leaving (JS): the canvas dissolves while the arch flies onto the hero's
-     arch — transform and opacity only. */
-  .intro[data-state="leave"]
-    :is(.intro-canvas, .intro-panel, .intro-emblem, .intro-sweep, .intro-base, .intro-caption) {
-    animation: none;
-    opacity: 0;
-    transition: opacity 0.5s var(--ease-out-soft);
-  }
-
-  .intro[data-state="leave"] .intro-emblem,
-  .intro[data-state="leave"] .intro-sweep {
-    transition-duration: 0.22s;
-  }
-
-  .intro[data-state="leave"] .intro-arch {
-    transform: translate3d(var(--fx, 0px), var(--fy, 0px), 0) scale(var(--fs, 1));
-    transition: transform 0.78s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-
-  .intro[data-state="leave"] .intro-arch-frame {
-    opacity: 0;
-    transition: opacity 0.16s linear 0.66s;
-  }
-
-  .intro[data-state="leave"] .intro-arch :is(.arch-line, .arch-key) {
-    animation: none;
-  }
-
-  @keyframes intro-fade {
-    from {
-      opacity: 0;
-    }
-  }
-
-  @keyframes intro-rise {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 0.9rem, 0);
-    }
-  }
-
-  @keyframes intro-draw {
-    from {
-      stroke-dashoffset: 1;
-    }
-  }
-
-  @keyframes intro-scale-x {
-    from {
-      transform: scaleX(0);
-    }
-  }
-
-  @keyframes intro-reveal-up {
-    from {
-      clip-path: inset(100% 0 0 0);
-    }
-  }
-
-  @keyframes intro-zoom {
-    from {
-      scale: 1.14;
-    }
-  }
-
-  @keyframes intro-write {
-    from {
-      clip-path: inset(-0.6em 100% -0.6em -0.3em);
-    }
-
-    to {
-      clip-path: inset(-0.6em -0.3em -0.6em -0.3em);
-    }
-  }
-
-  @keyframes intro-emblem {
-    from {
-      opacity: 0;
-      clip-path: inset(100% 0 0 0);
-      translate: 0 0.5rem;
-    }
-  }
-
-  @keyframes intro-sweep {
-    from {
-      background-position: 130% 0;
-    }
-
-    to {
-      background-position: -30% 0;
-    }
-  }
-
-  @keyframes intro-glint {
-    0% {
-      stroke-dashoffset: 0.06;
-      opacity: 0;
-    }
-
-    10%,
-    88% {
-      opacity: 1;
-    }
-
-    100% {
-      stroke-dashoffset: -1.1;
-      opacity: 0;
-    }
-  }
-
-  @keyframes intro-out {
-    to {
-      opacity: 0;
-      visibility: hidden;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .intro {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    /* Loader timeline (from first paint; JS leaves at 1.45 s). Without JS it
-       fades itself out at 1.9 s. */
-    .intro:not([data-state]) {
-      animation: intro-out 0.45s ease 1.9s forwards;
-    }
-
-    .intro-panel {
-      animation: intro-fade 1s ease 0.05s both;
-    }
-
-    .intro-arch .arch-line {
-      animation: intro-draw 1.05s var(--ease-draw) 0.12s both;
-    }
-
-    .intro-arch .arch-line-inner {
-      animation-delay: 0.24s;
-    }
-
-    .intro-arch :is(.arch-impost, .arch-plinth) {
-      animation-duration: 0.7s;
-      animation-delay: 0.55s;
-    }
-
-    .intro-arch .arch-key {
-      animation: intro-fade 0.4s ease 0.2s both;
-    }
-
-    .intro-emblem {
-      animation: intro-emblem 0.8s var(--ease-rise) 0.42s both;
-    }
-
-    .intro-sweep {
-      animation: intro-sweep 0.95s ease-in-out 0.95s both;
-    }
-
-    .intro-base {
-      animation: intro-scale-x 1s var(--ease-draw) 0.3s both;
-    }
-
-    .intro-caption {
-      animation: intro-rise 0.6s var(--ease-rise) 0.75s both;
-    }
-
-    /* Hero entrance — starts at --intro. */
-    .entrance-eyebrow {
-      animation: intro-rise 0.7s var(--ease-rise) calc(var(--intro) + 0.15s) both;
-    }
-
-    .entrance-eyebrow::before,
-    .entrance-eyebrow::after {
-      animation: intro-scale-x 0.8s var(--ease-draw) calc(var(--intro) + 0.25s) both;
-    }
-
-    .entrance-line {
-      animation: intro-rise 0.8s var(--ease-rise) calc(var(--intro) + 0.25s) both;
-    }
-
-    .entrance-line + .entrance-line {
-      animation-delay: calc(var(--intro) + 0.37s);
-    }
-
-    .entrance-script {
-      animation: intro-write 1s cubic-bezier(0.45, 0, 0.2, 1) calc(var(--intro) + 0.6s) both;
-    }
-
-    .entrance-subline {
-      animation: intro-rise 0.7s var(--ease-rise) calc(var(--intro) + 0.62s) both;
-    }
-
-    .entrance-actions {
-      animation: intro-rise 0.7s var(--ease-rise) calc(var(--intro) + 0.74s) both;
-    }
-
-    .entrance-arch-window {
-      animation: intro-reveal-up 1s var(--ease-draw) calc(var(--intro) + 0.42s) both;
-    }
-
-    .entrance-arch-window img {
-      animation: intro-zoom 1.6s var(--ease-rise) calc(var(--intro) + 0.42s) both;
-    }
-
-    .entrance-arch-frame .arch-line {
-      animation: intro-draw 1.1s var(--ease-draw) calc(var(--intro) + 0.2s) both;
-    }
-
-    .entrance-arch-frame .arch-key {
-      animation: intro-fade 0.4s ease calc(var(--intro) + 0.55s) both;
-    }
-
-    /* After the loader, the flying arch lands on this frame: it appears
-       whole at the moment of landing instead of drawing again. */
-    body:has(.intro) .entrance-arch-frame {
-      animation: intro-fade 0.01s linear calc(var(--intro) + 0.76s) both;
-    }
-
-    body:has(.intro) .entrance-arch-frame :is(.arch-line, .arch-key) {
-      animation: none;
-    }
-
-    .entrance-sprig .sprig-line {
-      animation: intro-draw 1.6s cubic-bezier(0.45, 0, 0.2, 1) calc(var(--intro) + 0.85s) both;
-    }
-
-    .ribbon-strand {
-      animation: intro-draw 1.9s var(--ease-draw) calc(var(--intro) + 0.5s) both;
-    }
-
-    .ribbon-b {
-      animation-delay: calc(var(--intro) + 0.62s);
-    }
-
-    .ribbon-glint {
-      animation: intro-glint 2.4s ease-in-out calc(var(--intro) + 2.2s) both;
-    }
-
-    /* Navigation entrance — the home page's first load only. Scoped to the
-       header: the menu dialog reuses some of these classes, and its content
-       is only displayed (so would only start these delays) when opened. */
-    body:has(.intro) .header-shell .header-band-l {
-      transform-origin: 100% 50%;
-      animation: intro-scale-x 0.9s var(--ease-draw) calc(var(--intro) + 0.25s) both;
-    }
-
-    body:has(.intro) .header-shell .header-band-r {
-      transform-origin: 0 50%;
-      animation: intro-scale-x 0.9s var(--ease-draw) calc(var(--intro) + 0.25s) both;
-    }
-
-    body:has(.intro) .header-shell .header-ring .ring-line {
-      animation: intro-draw 1s var(--ease-draw) calc(var(--intro) + 0.1s) both;
-    }
-
-    body:has(.intro) .header-shell .header-keystone .header-emblem {
-      animation: intro-fade 0.6s ease calc(var(--intro) + 0.35s) both;
-    }
-
-    body:has(.intro) .header-shell .header-wing li {
-      animation: intro-rise 0.5s var(--ease-rise) calc(var(--intro) + 0.45s + var(--i, 0) * 60ms)
-        both;
-    }
-
-    body:has(.intro) .header-shell :is(.header-call, .header-book, .header-menu-button) {
-      animation: intro-fade 0.6s ease calc(var(--intro) + 0.6s) both;
-    }
-  }
-
-  /* An arched deep green ground for the gold logo on light surfaces, where the
-     logo's paler golds wash out (under 2:1 on ivory, 7–8:1 on the deep green).
-     Padded for the trimmed emblem (no built-in margin), keeping the proportions
-     the padded 1080 px PNG gave it. */
-  .logo-medallion {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.75rem 2.4375rem;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 70%, transparent);
-    border-radius: 999px 999px var(--radius-sm) var(--radius-sm);
-    background-color: var(--color-brand);
-  }
-
-  @media (min-width: 768px) {
-    .logo-medallion {
-      padding: 1.875rem 2.625rem;
-    }
-  }
 
   /* ── The threshold: an ivory arch that rises over the bottom of the hero ── */
   .threshold {
@@ -2544,9 +1305,9 @@
         color-mix(in srgb, var(--color-surface) 30%, transparent)
       ),
       var(--texture-stone);
-    background-size: auto, cover;
+    background-size: auto, var(--texture-size);
     background-position: center;
-    box-shadow: 0 28px 56px -40px rgba(8, 18, 15, 0.7);
+    box-shadow: 0 28px 56px -40px color-mix(in srgb, var(--shade) 70%, transparent);
   }
 
   .experience-window {
@@ -2674,27 +1435,15 @@
     opacity: 0;
   }
 
-  .entrance > .layer-veil {
-    --veil-color: var(--color-accent-ink);
+  .home-hero > .layer-veil {
+    --veil-color: var(--color-brand);
   }
 
   @media (min-height: 600px) {
-    [data-motion="rich"] .layers > .entrance {
+    [data-motion="rich"] .layers > .home-hero {
       position: sticky;
       top: 0;
     }
-  }
-
-  [data-motion="rich"] .entrance-inner {
-    transform-origin: 50% 35%;
-    transform: translate3d(0, calc(var(--cover, 0) * -6vh), 0)
-      scale(calc(1 - var(--cover, 0) * 0.06));
-    opacity: calc(1 - var(--cover, 0) * 0.4);
-  }
-
-  [data-motion="rich"] .entrance-ribbon {
-    translate: 0 calc(var(--cover, 0) * -5vh);
-    opacity: calc(1 - var(--cover, 0) * 0.9);
   }
 
   [data-motion="rich"] .layer-veil {
@@ -2703,12 +1452,12 @@
   }
 
   /* What moves every frame gets its own compositor layer (no repaints). */
-  [data-motion="rich"] :is(.entrance-inner, .entrance-ribbon, .layer-rise > .layer-content) {
+  [data-motion="rich"] .layer-rise > .layer-content {
     will-change: transform, opacity;
   }
 
-  [data-motion="rich"] .entrance > .layer-veil {
-    --veil-max: 0.85;
+  [data-motion="rich"] .home-hero > .layer-veil {
+    --veil-max: 0.22;
   }
 
   /* The covered Experience lags behind (it scrolls a little slower) and dims. */
@@ -2721,7 +1470,7 @@
 
   /* The rising panel casts a soft shadow up onto the scene it covers. */
   [data-motion="rich"] .layer-rise {
-    box-shadow: 0 -1.5rem 3.5rem -1.25rem rgba(4, 14, 11, 0.42);
+    box-shadow: 0 -1.5rem 3.5rem -1.25rem color-mix(in srgb, var(--shade) 42%, transparent);
   }
 
   /* ── The Grand Reveal: through a portal to the whole house, lit at night ──
@@ -3587,9 +2336,9 @@
         color-mix(in srgb, var(--color-surface) 30%, transparent)
       ),
       var(--texture-stone);
-    background-size: auto, cover;
+    background-size: auto, var(--texture-size);
     background-position: center;
-    box-shadow: 0 28px 56px -40px rgba(8, 18, 15, 0.7);
+    box-shadow: 0 28px 56px -40px color-mix(in srgb, var(--shade) 70%, transparent);
   }
 
   .room-stage {
@@ -4210,7 +2959,7 @@
         color-mix(in srgb, var(--color-surface) 45%, transparent)
       ),
       var(--texture-stone);
-    background-size: auto, cover;
+    background-size: auto, var(--texture-size);
     background-position: center;
     box-shadow: var(--shadow-lift);
   }
@@ -4488,664 +3237,10 @@
   }
 
   /* ═════════════════════════════════════════════════════════════════════
-     THE FINALE, THE FRONT DESK AND THE ENQUIRY TABLET (2026-10-27)
-     The footer as the last scene of every page, the contact page, and the
-     one enquiry form — all deep stone and antique-gold line. Stone that
-     carries text is veiled at 75% deep surface: measured on the texture's
-     brightest pixel, gold small text stays ≥ 4.6:1 and sage ≥ 6.0:1.
+     THE FRONT DESK AND THE ENQUIRY TABLET (2026-10-27)
+     The contact page and the one enquiry form — deep stone and gold line.
+     Stone that carries text is veiled at 75% of the deep surface.
      ═════════════════════════════════════════════════════════════════════ */
-
-  /* ── The finale: the footer ──────────────────────────────────────────────
-     "The drawn gateway". A deep stone band whose centre is a gateway: its
-     crown rises above the band's straight top edge (over the end of the
-     page), the emblem in its arched head, the invitation and the booking
-     action inside. Sequence once FooterStage sets [data-revealed] (each step
-     under 400 ms): the cornice draws outward; then ONE gold line travels —
-     in from the left along the string course (easing in), over the arch at
-     an even pace (the keystone sets as it passes the crown), out along the
-     right course (easing out); the jambs drop from the springing to the
-     plinth, the inner line follows the opening, and three archivolts — the
-     arch's contours, one order further out each — open from the crown across
-     the frieze. The emblem appears, the invitation rises line by line, then
-     the actions. Contacts and wayfinding rise beside it (ScrollReveal); the
-     legal line settles last. Rich motion adds depth from --p: the gateway and
-     its archivolts rise into place while the stone behind them lags. Reduced
-     motion and no JS: complete and still. */
-  .finale {
-    /* The gateway's width; its head is a semicircle of half of it. */
-    --gate: min(84vw, 21rem);
-    /* How far its crown rises over the section before (with the keystone's
-       0.5rem, under every page's last section's bottom padding: 4rem on
-       phones, 5rem from 768px). */
-    --rise: clamp(2.25rem, 1.5rem + 2.5vw, 3.75rem);
-    /* Stone between the gateway's outer and inner gold lines. */
-    --ring: clamp(0.75rem, 0.55rem + 0.6vw, 1rem);
-    /* The string course, where the arch springs, below the band's top edge. */
-    --spring: calc(var(--gate) / 2 - var(--rise));
-    /* The veil that keeps text legible on the stone (see above). */
-    --stone-veil: color-mix(in srgb, var(--color-surface) 75%, transparent);
-    /* Spacing of the archivolts (the arch's contours) across the frieze. */
-    --order-step: clamp(1.125rem, 0.75rem + 1vw, 1.75rem);
-    /* The travelling line: easing in, an even pace over the arch, easing out. */
-    --ease-line-in: cubic-bezier(0.55, 0, 1, 0.45);
-    --ease-line-out: cubic-bezier(0, 0.55, 0.45, 1);
-    /* ≈ 1px for the arch's stroke at the gateway's width (viewBox 200 wide). */
-    --arch-stroke: 0.64;
-    position: relative;
-    z-index: 20;
-    isolation: isolate;
-    /* The box starts just above the crown (room for its keystone),
-       overlapping the end of the page; beside the crown it is transparent
-       and lets clicks through. */
-    margin-top: calc(-1 * var(--rise) - 0.5rem);
-    padding-top: calc(var(--rise) + 0.5rem);
-    /* Nothing moving inside (the rising gateway, a lamp's glow, content
-       waiting to reveal) may lengthen or widen the page. */
-    overflow: clip;
-    pointer-events: none;
-    /* Not laid out until it nears the viewport, so its serif (the only text
-       in Cormorant on most pages) does not compete with a page's first
-       photograph on a slow phone. Measured 2026-10-27: +46 KB at load on
-       /rooms/ without this. `auto` remembers the real height once shown;
-       the placeholder is a height only (a width would widen the page). */
-    content-visibility: auto;
-    contain-intrinsic-block-size: auto 90rem;
-    /* Below xl the phone sticky bar covers the page's foot: the finale runs
-       on under it (this was the body's padding). */
-    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
-  }
-
-  .finale > * {
-    pointer-events: auto;
-  }
-
-  .finale-surface {
-    position: absolute;
-    inset: calc(var(--rise) + 0.5rem) 0 0;
-    z-index: -1;
-    overflow: hidden;
-    overflow: clip;
-    background-color: var(--color-surface);
-    /* The band casts a soft shadow up onto the end of the page. */
-    box-shadow: 0 -1.25rem 3rem -1.5rem rgba(4, 14, 11, 0.5);
-  }
-
-  /* Taller than the band, so it can lag behind it (rich motion). */
-  .finale-stone {
-    position: absolute;
-    inset: -12vh 0 0;
-    background-image:
-      linear-gradient(
-        to bottom,
-        var(--stone-veil) 0%,
-        var(--stone-veil) 45%,
-        color-mix(in srgb, var(--color-accent-ink) 94%, transparent) 100%
-      ),
-      var(--texture-stone);
-    background-size: auto, cover;
-    background-position: center top;
-  }
-
-  /* The cornice: a gold line along the band's top edge, fading at the ends. */
-  .finale-surface::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      color-mix(in srgb, var(--color-highlight) 70%, transparent) 16%,
-      color-mix(in srgb, var(--color-highlight) 70%, transparent) 84%,
-      transparent
-    );
-    transition: scale 380ms var(--ease-draw);
-  }
-
-  .finale-inner {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  /* The gateway: a stone ring around a lit opening. */
-  .finale-gate {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-self: center;
-    width: var(--gate);
-    margin-top: calc(-1 * var(--rise));
-    padding: var(--ring) var(--ring) 0;
-    border-radius: 999px 999px 0 0;
-    background-color: var(--color-surface);
-    background-image: linear-gradient(var(--stone-veil), var(--stone-veil)), var(--texture-stone);
-    background-size: auto, cover;
-    background-position: center top;
-    box-shadow: 0 -0.375rem 1.25rem -0.75rem rgba(4, 14, 11, 0.55);
-  }
-
-  .finale-door {
-    position: relative;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: calc(var(--gate) * 0.12) clamp(0.875rem, 0.5rem + 1.2vw, 1.5rem) 2.75rem;
-    border-radius: 999px 999px 0 0;
-    text-align: center;
-    /* Lit from within: a green glow under the head, deepening below. */
-    background: radial-gradient(
-      120% 55% at 50% 0%,
-      var(--color-surface-alt) 0%,
-      color-mix(in srgb, var(--color-surface-alt) 40%, var(--color-surface)) 48%,
-      var(--color-surface) 100%
-    );
-  }
-
-  /* The arch: the travelling line's middle stretch, one stroke from the left
-     springing over the crown to the right (it traces the crown's edge). */
-  .finale-arch {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 2;
-    overflow: visible;
-    pointer-events: none;
-  }
-
-  .finale-arch path {
-    stroke: var(--color-highlight);
-    stroke-width: var(--arch-stroke);
-    stroke-dasharray: 1;
-    transition: stroke-dashoffset 380ms linear 270ms;
-  }
-
-  /* The jambs, from the springing down to the plinth. */
-  .finale-gate::before {
-    content: "";
-    position: absolute;
-    top: calc(var(--gate) / 2);
-    right: 0;
-    bottom: 0;
-    left: 0;
-    border-inline: 1px solid var(--color-highlight);
-    pointer-events: none;
-    transition: clip-path 380ms var(--ease-out-soft) 640ms;
-  }
-
-  /* The opening's inner line, following from the crown down. */
-  .finale-door::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border: 1px solid color-mix(in srgb, var(--color-highlight) 72%, transparent);
-    border-bottom: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    transition: clip-path 380ms var(--ease-out-soft) 760ms;
-  }
-
-  .finale-key {
-    position: absolute;
-    top: -4.5px;
-    left: 50%;
-    width: 9px;
-    height: 9px;
-    margin-left: -4.5px;
-    rotate: 45deg;
-    background-color: var(--color-highlight);
-    transition: scale 240ms var(--ease-out-soft) 450ms;
-  }
-
-  /* The doorstep (phones, tablets) / the plinth under the whole band (1024+). */
-  .finale-plinth {
-    justify-self: center;
-    width: calc(var(--gate) + 3rem);
-    height: 1px;
-    background-color: var(--color-highlight);
-    transition: scale 380ms var(--ease-out-soft) 900ms;
-  }
-
-  /* The archivolts: the arch's contours, one order further out each, fading
-     with distance; clipped by the band's top edge (they live in the stone's
-     layer), so they show between the cornice and the string course. Each
-     opens from the crown outward. */
-  .finale-orders {
-    position: absolute;
-    inset: 0;
-  }
-
-  .finale-order {
-    --r: calc(var(--gate) / 2 + var(--n) * var(--order-step));
-    position: absolute;
-    top: calc(var(--spring) - var(--r));
-    left: calc(50% - var(--r));
-    width: calc(2 * var(--r));
-    height: var(--r);
-    border: 1px solid var(--color-highlight);
-    border-bottom: 0;
-    border-radius: 999px 999px 0 0;
-    opacity: calc(0.62 - var(--n) * 0.14);
-    transition: clip-path 380ms var(--ease-out-soft);
-    transition-delay: calc(740ms + var(--n) * 90ms);
-  }
-
-  /* The emblem in its double ring, in the gateway's head. */
-  .finale-medallion {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: clamp(4.5rem, 3.6rem + 2.6vw, 6rem);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 32%, var(--color-surface-alt), var(--color-surface) 72%);
-    box-shadow: 0 14px 30px -18px rgba(4, 14, 11, 0.9);
-    transition:
-      opacity 380ms var(--ease-out-soft) 560ms,
-      translate 380ms var(--ease-out-soft) 560ms;
-  }
-
-  .finale-ring {
-    position: absolute;
-    inset: -6px;
-    width: calc(100% + 12px);
-    height: calc(100% + 12px);
-    overflow: visible;
-    pointer-events: none;
-  }
-
-  .finale-ring .ring-line {
-    stroke-width: 1.1;
-    transition: stroke-dashoffset 380ms var(--ease-draw) 600ms;
-  }
-
-  .finale-emblem {
-    height: clamp(2.875rem, 2.3rem + 1.7vw, 3.875rem);
-  }
-
-  /* Sized so each of its two lines holds on one line inside the opening. */
-  .finale-title {
-    margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
-    font-family: var(--font-royal);
-    font-weight: 400;
-    font-size: clamp(2rem, 1.7rem + 1.1vw, 2.75rem);
-    line-height: 1.06;
-    letter-spacing: -0.01em;
-    color: var(--color-ink);
-  }
-
-  .finale-line {
-    display: block;
-    transition:
-      clip-path 380ms var(--ease-out-soft),
-      translate 380ms var(--ease-out-soft);
-    transition-delay: calc(760ms + var(--l, 0) * 110ms);
-  }
-
-  /* Gold on the lit opening is large text only (3.8:1 on Botanical Green). */
-  .finale-title em {
-    font-style: italic;
-    color: var(--color-accent);
-  }
-
-  .finale-lead {
-    max-width: 17rem;
-    margin-top: 1rem;
-    font-family: var(--font-ui);
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--color-ink-muted);
-    transition:
-      opacity 380ms var(--ease-out-soft) 980ms,
-      translate 380ms var(--ease-out-soft) 980ms;
-  }
-
-  .finale-actions {
-    display: grid;
-    gap: 0.75rem;
-    width: 100%;
-    max-width: 16rem;
-    margin-top: 1.75rem;
-    transition:
-      opacity 380ms var(--ease-out-soft) 1060ms,
-      translate 380ms var(--ease-out-soft) 1060ms;
-  }
-
-  /* The string course either side of the gateway: the travelling line's
-     first stretch comes in from the left edge, its last runs out to the
-     right edge (both fade toward the page's edges). */
-  .finale-course {
-    position: absolute;
-    top: var(--spring);
-    height: 1px;
-    transform-origin: 0 50%;
-    pointer-events: none;
-  }
-
-  .finale-course-l {
-    left: 0;
-    right: calc(50% + var(--gate) / 2);
-    background: linear-gradient(to left, var(--color-highlight) 55%, transparent);
-    transition: scale 300ms var(--ease-line-in) 0ms;
-  }
-
-  .finale-course-r {
-    left: calc(50% + var(--gate) / 2);
-    right: 0;
-    background: linear-gradient(to right, var(--color-highlight) 55%, transparent);
-    transition: scale 300ms var(--ease-line-out) 640ms;
-  }
-
-  /* Beside (1024+) or below (phones, tablets) the gateway. */
-  .finale-side {
-    display: grid;
-    align-content: start;
-    gap: 2.5rem;
-    margin-top: 3rem;
-  }
-
-  .finale-side-r {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 1.5rem;
-  }
-
-  .finale-label {
-    font-family: var(--font-royal);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 1.375rem;
-    line-height: 1.2;
-    color: var(--color-accent);
-  }
-
-  .finale-text {
-    max-width: 22rem;
-    margin-top: 0.75rem;
-    font-family: var(--font-ui);
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--color-ink-muted);
-  }
-
-  .finale-links {
-    display: grid;
-    margin-top: 0.5rem;
-  }
-
-  .finale-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 44px;
-    font-family: var(--font-ui);
-    font-weight: 500;
-    font-size: 0.9375rem;
-    color: var(--color-ink);
-    text-decoration-line: underline;
-    text-decoration-color: transparent;
-    text-underline-offset: 0.3em;
-    transition:
-      color var(--duration-fast) var(--ease-out-soft),
-      text-decoration-color var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .finale-link:hover,
-  .finale-link:focus-visible {
-    color: var(--color-accent);
-    text-decoration-color: currentColor;
-  }
-
-  .finale-link svg {
-    flex: none;
-    color: var(--color-highlight);
-  }
-
-  /* The lines to call or message: full-width rows on phones. */
-  .finale-lines {
-    display: grid;
-    margin-top: 0.75rem;
-    border-top: 1px solid var(--color-line);
-  }
-
-  .finale-lines > li {
-    border-bottom: 1px solid var(--color-line);
-  }
-
-  .finale-line-link {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    min-height: 3.75rem;
-    padding-block: 0.625rem;
-    color: var(--color-ink);
-  }
-
-  .finale-line-link svg {
-    flex: none;
-    color: var(--color-highlight);
-  }
-
-  .finale-line-text {
-    display: grid;
-    gap: 0.125rem;
-  }
-
-  .finale-line-label {
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.8125rem;
-    color: var(--color-ink-muted);
-  }
-
-  .finale-line-value {
-    font-family: var(--font-royal);
-    font-size: 1.375rem;
-    line-height: 1.2;
-    font-variant-numeric: lining-nums;
-    color: var(--color-ink);
-    transition: color var(--duration-fast) var(--ease-out-soft);
-  }
-
-  .finale-line-link:hover .finale-line-value,
-  .finale-line-link:focus-visible .finale-line-value {
-    color: var(--color-accent);
-  }
-
-  /* The legal line, on the darkest stone; it settles last (a fade only —
-     it ends the page, and is revealed with the finale, not on its own). */
-  .finale-base {
-    transition: opacity 380ms var(--ease-out-soft) 1400ms;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem 2rem;
-    padding-top: 2rem;
-    padding-bottom: 1.5rem;
-    font-family: var(--font-ui);
-    font-size: 0.75rem;
-    line-height: 1.6;
-    letter-spacing: 0.04em;
-    text-align: center;
-    color: var(--color-ink-muted);
-  }
-
-  .finale-base-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0 1.5rem;
-  }
-
-  .finale-base .finale-link {
-    font-size: 0.75rem;
-  }
-
-  @media (min-width: 768px) {
-    .finale {
-      contain-intrinsic-block-size: auto 66rem;
-    }
-
-    .finale-inner {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: 3rem;
-    }
-
-    .finale-gate,
-    .finale-plinth {
-      grid-column: 1 / -1;
-    }
-
-    /* Tablets: the lines sit in a quiet list beside the navigation. */
-    .finale-line-link {
-      min-height: 3.25rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .finale {
-      --gate: clamp(21rem, 17.5rem + 6.5vw, 26rem);
-      --arch-stroke: 0.56;
-      contain-intrinsic-block-size: auto 44rem;
-    }
-
-    /* Contacts · the gateway · wayfinding; the plinth runs under all three. */
-    .finale-inner {
-      grid-template-columns: minmax(0, 1fr) var(--gate) minmax(0, 1fr);
-      column-gap: clamp(2rem, 0.5rem + 3.5vw, 4.5rem);
-    }
-
-    .finale-gate {
-      grid-column: 2;
-      grid-row: 1;
-    }
-
-    .finale-plinth {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      width: 100%;
-    }
-
-    .finale-side {
-      margin-top: 0;
-      padding-top: calc(var(--spring) + 2.25rem);
-      padding-bottom: 3rem;
-    }
-
-    .finale-side-l {
-      grid-column: 1;
-      grid-row: 1;
-    }
-
-    .finale-side-r {
-      grid-column: 3;
-      grid-row: 1;
-    }
-
-    .finale-lines {
-      border-top: 0;
-    }
-
-    .finale-lines > li {
-      border-bottom: 0;
-    }
-
-    .finale-line-link {
-      min-height: 3rem;
-      padding-block: 0.375rem;
-    }
-
-    .finale-line-value {
-      font-size: 1.25rem;
-    }
-
-    .finale-base {
-      justify-content: space-between;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .finale {
-      padding-bottom: 0;
-    }
-  }
-
-  /* Before the sequence (JS running, motion allowed): nothing drawn yet.
-     Without JS, or with reduced motion, these never apply. */
-  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-    .finale:not([data-revealed]) :is(.finale-course, .finale-plinth),
-    .finale:not([data-revealed]) .finale-surface::before {
-      scale: 0 1;
-    }
-
-    .finale:not([data-revealed]) .finale-arch path,
-    .finale:not([data-revealed]) .finale-ring .ring-line {
-      stroke-dashoffset: 1;
-    }
-
-    .finale:not([data-revealed]) .finale-gate::before,
-    .finale:not([data-revealed]) .finale-door::before {
-      clip-path: inset(0 0 100% 0);
-    }
-
-    .finale:not([data-revealed]) .finale-order {
-      clip-path: inset(0 50% 0 50%);
-    }
-
-    .finale:not([data-revealed]) .finale-key {
-      scale: 0;
-    }
-
-    .finale:not([data-revealed]) .finale-medallion {
-      opacity: 0;
-      translate: 0 0.75rem;
-    }
-
-    .finale:not([data-revealed]) .finale-line {
-      clip-path: inset(0 0 100% 0);
-      translate: 0 0.6em;
-    }
-
-    .finale[data-revealed] .finale-line {
-      clip-path: inset(0 0 -0.25em 0);
-    }
-
-    .finale:not([data-revealed]) :is(.finale-lead, .finale-actions) {
-      opacity: 0;
-      translate: 0 1rem;
-    }
-
-    .finale:not([data-revealed]) .finale-base {
-      opacity: 0;
-    }
-  }
-
-  /* Keyboard focus arrived before the sequence finished: show it all now. */
-  .finale[data-revealed="instant"] *,
-  .finale[data-revealed="instant"] *::before,
-  .finale[data-revealed="instant"] *::after {
-    transition-delay: 0s !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  /* Rich motion: the gateway and its archivolts rise into place over the
-     first 60% of the footer's entrance (smoothstep) while the stone lags. */
-  [data-motion="rich"] :is(.finale-gate, .finale-orders) {
-    --lift: clamp(0, var(--p, 1) / 0.6, 1);
-    translate: 0 calc((1 - var(--lift) * var(--lift) * (3 - 2 * var(--lift))) * 8vh);
-    will-change: translate;
-  }
-
-  [data-motion="rich"] .finale-stone {
-    translate: 0 calc((1 - var(--p, 1)) * 12vh);
-    will-change: translate;
-  }
 
   /* ── Contact lines: the hotel's numbers, the way to the hotel ─────────────
      "register" — the contact page's front desk: each line on a gold rule
@@ -5287,7 +3382,7 @@
         color-mix(in srgb, var(--color-surface) 75%, transparent)
       ),
       var(--texture-stone);
-    background-size: auto, cover;
+    background-size: auto, var(--texture-size);
     background-position: center;
   }
 
@@ -5415,11 +3510,11 @@
         color-mix(in srgb, var(--color-surface) 75%, transparent)
       ),
       var(--texture-stone);
-    background-size: auto, cover;
+    background-size: auto, var(--texture-size);
     background-position: center;
-    box-shadow: 0 30px 60px -36px rgba(4, 14, 11, 0.75);
+    box-shadow: 0 30px 60px -36px color-mix(in srgb, var(--shade) 75%, transparent);
     /* Laid out as it nears the viewport (its serif loads then, not with the
-       page's first photograph — see .finale). */
+       page's first photograph). */
     content-visibility: auto;
     contain-intrinsic-block-size: auto 68rem;
   }
@@ -5810,4 +3905,1372 @@
     transition: scale 220ms var(--ease-out-soft);
   }
 
+  /* ═════════════════════════════════════════════════════════════════════
+     A THOUSAND LAMPS (2026-11-04): the motion kit, the shell and the home
+     hero. Transform / opacity / clip-path (and filter on small elements)
+     only; every animation ≤ 600 ms except scroll-mapped scenes and the
+     opening's sequenced lamps; nothing moves under prefers-reduced-motion.
+     ═════════════════════════════════════════════════════════════════════ */
+
+  /* ── Reveal variants (ScrollReveal) ── */
+
+  /* mask-line: a heading's lines rise out of their own masks in turn. */
+  [data-reveal="mask-line"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal-line {
+    display: block;
+    overflow: clip;
+    /* Room for descenders inside the mask. */
+    padding-bottom: 0.06em;
+  }
+
+  .reveal-line > span {
+    display: inline-block;
+  }
+
+  [data-reveal="mask-line"] .reveal-line > span {
+    transform: translate3d(0, 108%, 0);
+    transition: transform var(--duration-reveal) var(--ease-out-soft);
+    transition-delay: calc(var(--reveal-delay, 0ms) + var(--line, 0) * 90ms);
+  }
+
+  [data-reveal="mask-line"][data-revealed] .reveal-line > span {
+    transform: none;
+  }
+
+  /* clip-arch: an image opens upward inside an arch (semicircular head). */
+  [data-reveal="clip-arch"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(100% 0 0 0 round 1000px 1000px 0 0);
+    transition: clip-path var(--duration-reveal) var(--ease-out-soft) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="clip-arch"][data-revealed] {
+    clip-path: inset(0 0 0 0 round 1000px 1000px 0 0);
+  }
+
+  /* foil: one narrow highlight of gold crosses the text, once, then it rests
+     in its own colour. Display headings and ornaments only. */
+  .foil,
+  [data-reveal="foil"] {
+    background-image: linear-gradient(
+      100deg,
+      currentColor 44%,
+      var(--gold-glint) 50%,
+      currentColor 56%
+    );
+    background-size: 320% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  [data-reveal="foil"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal="foil"][data-revealed] {
+    animation: foil-sweep 600ms var(--ease-out-soft) var(--reveal-delay, 0ms) 1 both;
+  }
+
+  @keyframes foil-sweep {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  /* Rules take the same light: a glint runs along them once. */
+  .foil-rule {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-highlight);
+  }
+
+  .foil-rule::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 40%, var(--gold-glint) 50%, transparent 60%);
+    transform: translateX(-100%);
+  }
+
+  [data-revealed] .foil-rule::after,
+  .foil-rule[data-revealed]::after {
+    transform: translateX(100%);
+    transition: transform 600ms var(--ease-out-soft) var(--reveal-delay, 0ms);
+  }
+
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .foil,
+    [data-reveal="foil"] {
+      background-image: none;
+      -webkit-text-fill-color: currentColor;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .foil,
+    [data-reveal="foil"] {
+      background-image: none;
+      -webkit-text-fill-color: currentColor;
+    }
+  }
+
+  /* ── Lamps and flames: the identity's one recurring mark ──
+     A lamp is a small flame over a soft glow. Unlit: a dim ember. Lit: the
+     flame at full height and the glow behind it. Sequences set data-lit on a
+     parent (or on the lamp) and stagger with --i. */
+  .lamp {
+    position: relative;
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.75rem;
+    flex: none;
+  }
+
+  .lamp::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin: -0.875rem 0 0 -0.875rem;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-highlight) 55%, transparent),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 420ms var(--ease-out-soft) calc(var(--i, 0) * 70ms + var(--lamp-delay, 0ms));
+  }
+
+  .lamp::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-highlight);
+    mask: var(--flame) center / contain no-repeat;
+    opacity: 0.35;
+    transform: scale(0.55);
+    transform-origin: 50% 100%;
+    transition:
+      opacity 360ms var(--ease-out-soft) calc(var(--i, 0) * 70ms + var(--lamp-delay, 0ms)),
+      transform 360ms var(--ease-out-soft) calc(var(--i, 0) * 70ms + var(--lamp-delay, 0ms));
+  }
+
+  :is([data-lit], [data-revealed]) .lamp::before,
+  .lamp[data-lit]::before {
+    opacity: 1;
+  }
+
+  :is([data-lit], [data-revealed]) .lamp::after,
+  .lamp[data-lit]::after {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── The logo medallion: the gold logo always on plum ── */
+  .logo-medallion {
+    --medallion: 3rem;
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--medallion);
+    height: var(--medallion);
+    border-radius: 50%;
+    background-color: var(--color-brand);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--color-highlight) 85%, transparent),
+      inset 0 0 0 3px var(--color-brand),
+      inset 0 0 0 4px color-mix(in srgb, var(--color-highlight) 35%, transparent),
+      0 10px 22px -14px color-mix(in srgb, var(--shade) 70%, transparent);
+  }
+
+  .logo-medallion img {
+    width: auto;
+    height: 64%;
+  }
+
+  /* ── ArchWindow: media in an arch whose head opens toward a full frame ──
+     --open (0 → 1) flattens the head and widens the window; set from scroll
+     by the owner (the home hero: as the next section covers it). */
+  .arch-window {
+    --open: 0;
+    position: relative;
+    overflow: clip;
+    isolation: isolate;
+    aspect-ratio: var(--aspect, 0.72);
+    clip-path: inset(
+      0 0 0 0 round calc((1 - var(--open)) * 50%) calc((1 - var(--open)) * 50%) 0 0 /
+        calc((1 - var(--open)) * 50% * var(--aspect, 0.72))
+        calc((1 - var(--open)) * 50% * var(--aspect, 0.72)) 0 0
+    );
+    background-color: var(--color-surface-alt);
+  }
+
+  .arch-window img,
+  .arch-window canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* The depth layer (DepthPhoto) fades in over the photograph once it has
+     drawn its first frame; the photograph stays underneath as the fallback. */
+  .depth-canvas {
+    opacity: 0;
+    transition: opacity 400ms var(--ease-out-soft);
+    pointer-events: none;
+  }
+
+  [data-depth="on"] > .depth-canvas {
+    opacity: 1;
+  }
+
+  /* ── Tilt3D: a card leans toward a fine pointer (max 6°) ── */
+  .tilt {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition: transform 360ms var(--ease-out-soft);
+  }
+
+  .tilt[data-tilting] {
+    transition-duration: 120ms;
+    will-change: transform;
+  }
+
+  /* ── Lamplight: a soft glow that warms behind a CTA on plum grounds ── */
+  .lamplight {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+  }
+
+  .lamplight::before {
+    content: "";
+    position: absolute;
+    inset: -45% -18%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-highlight) 32%, transparent),
+      transparent
+    );
+    opacity: 0.2;
+    pointer-events: none;
+    transition: opacity 400ms var(--ease-out-soft);
+  }
+
+  .lamplight:has(> :is(a, button):is(:hover, :focus-visible))::before {
+    opacity: 1;
+  }
+
+  /* ── GoldThread: one gold line drawn down the home page with scroll ──
+     Rich motion only; it weaves between the sections' gutters and ends in a
+     flame above the footer. Elsewhere its stops are short static gold rules. */
+  .thread {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    display: none;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  [data-motion="rich"] .thread[data-ready] {
+    display: block;
+  }
+
+  .thread-path {
+    fill: none;
+    stroke: var(--color-highlight);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: calc(1 - var(--p, 0));
+    will-change: stroke-dashoffset;
+  }
+
+  .thread-flame {
+    opacity: calc((var(--p, 0) - 0.96) * 25);
+  }
+
+  .thread-flame path {
+    fill: var(--color-highlight);
+  }
+
+  .thread-stop {
+    display: block;
+    width: 1px;
+    height: 2.75rem;
+    margin-inline: auto;
+    background-color: var(--color-highlight);
+  }
+
+  [data-motion="rich"] .thread-stop {
+    visibility: hidden;
+    height: 0;
+  }
+
+  /* ═══ THE SHELL ═══ */
+
+  /* --intro: when the hero and the header begin their entrance — after the
+     opening loader on the home page's first load, immediately otherwise. */
+  :root {
+    --intro: 0s;
+    --ease-rise: cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  body:has(.intro) {
+    --intro: 1.15s;
+  }
+
+  [data-intro="off"] body {
+    --intro: 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:has(.intro) {
+      --intro: 0s;
+    }
+  }
+
+  /* ── Header: ivory with a gold hairline; transparent over the home hero ──
+     Below xl: menu · medallion (exactly centred) · Book. From xl: the
+     medallion and name · the links · Book a Stay. */
+  .header-shell {
+    background-color: transparent;
+    transition:
+      background-color var(--duration-base) var(--ease-out-soft),
+      box-shadow var(--duration-base) var(--ease-out-soft);
+  }
+
+  .header-shell[data-state="solid"] {
+    background-color: color-mix(in srgb, var(--color-surface) 95%, transparent);
+    box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--color-highlight) 60%, transparent);
+  }
+
+  .header-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 1rem;
+    height: 100%;
+  }
+
+  .header-menu-button {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 44px;
+    min-height: 44px;
+    color: var(--color-ink);
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .header-menu-label {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .header-menu-label {
+      display: inline;
+    }
+  }
+
+  .header-brand {
+    grid-column: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  .header-brand .logo-medallion {
+    --medallion: 2.875rem;
+  }
+
+  @media (min-width: 768px) {
+    .header-brand .logo-medallion {
+      --medallion: 3.25rem;
+    }
+  }
+
+  .header-wordmark {
+    display: none;
+  }
+
+  .header-nav {
+    display: none;
+  }
+
+  .header-actions {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header-book.btn-primary {
+    min-height: 44px;
+    padding-inline: 1rem;
+    letter-spacing: 0.12em;
+  }
+
+  .header-book-more {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .header-book.btn-primary {
+      padding-inline: 1.5rem;
+    }
+
+    .header-book-more {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .header-bar {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      column-gap: 2rem;
+    }
+
+    .header-brand {
+      grid-column: 1;
+    }
+
+    .header-wordmark {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .header-wordmark-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.01em;
+      color: var(--color-ink);
+    }
+
+    .header-wordmark-place {
+      margin-top: 0.3rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.5625rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--color-ink-muted);
+    }
+
+    .header-nav {
+      grid-column: 2;
+      justify-self: center;
+      display: block;
+    }
+
+    .header-book.btn-primary {
+      padding-inline: 1.75rem;
+    }
+  }
+
+  .header-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 1.6vw, 1.875rem);
+  }
+
+  .header-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  /* Hover / focus: a gold underline drawn out from the centre. */
+  .header-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0.18em;
+    bottom: 0.625rem;
+    height: 1px;
+    background-color: var(--color-highlight);
+    transform: scaleX(0);
+    transition: transform var(--duration-base) var(--ease-out-soft);
+  }
+
+  .header-link:hover::after,
+  .header-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* The current page: a small gold flame under the label. */
+  .header-link[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    left: calc(50% - 0.09em - 0.1875rem);
+    bottom: -0.125rem;
+    width: 0.375rem;
+    height: 0.5625rem;
+    background-color: var(--color-gold-text);
+    mask: var(--flame) center / contain no-repeat;
+  }
+
+  /* The home page's first load: the bar arrives once the opening has gone. */
+  @media (prefers-reduced-motion: no-preference) {
+    body:has(.intro) .header-bar {
+      animation: intro-fade 520ms var(--ease-out-soft) var(--intro) both;
+    }
+  }
+
+  @keyframes intro-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes intro-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1.25rem, 0);
+    }
+  }
+
+  /* ── Mobile menu: a full-screen plum night; the lamps light as it opens ── */
+  .menu-dialog {
+    background-color: var(--color-surface);
+    background-image: var(--texture-velvet);
+    background-size: var(--texture-size);
+    overflow: hidden;
+  }
+
+  .menu-dialog[open] {
+    opacity: 1;
+    transition: opacity 280ms var(--ease-out-soft);
+  }
+
+  @starting-style {
+    .menu-dialog[open] {
+      opacity: 0;
+    }
+  }
+
+  .menu-dialog::backdrop {
+    background-color: var(--shade);
+  }
+
+  .menu-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    min-height: 4.5rem;
+  }
+
+  .menu-top .logo-medallion {
+    --medallion: 2.875rem;
+  }
+
+  .menu-lamps {
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.25rem, 6vw, 2.5rem);
+    padding-block: 1.25rem 0.5rem;
+  }
+
+  .menu-nav {
+    counter-reset: menu;
+  }
+
+  .menu-link {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    min-height: 44px;
+    padding-block: 0.375rem;
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-display);
+    font-size: clamp(1.875rem, 1.25rem + 3.2vw, 2.75rem);
+    line-height: 1.15;
+    color: var(--color-ink);
+  }
+
+  .menu-num {
+    flex: none;
+    min-width: 2.25rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    color: var(--color-accent);
+  }
+
+  .menu-label {
+    position: relative;
+  }
+
+  .menu-link[aria-current="page"] .menu-label::after {
+    content: "";
+    position: absolute;
+    right: -1rem;
+    top: 0.2em;
+    width: 0.5rem;
+    height: 0.75rem;
+    background-color: var(--color-accent);
+    mask: var(--flame) center / contain no-repeat;
+  }
+
+  .menu-link:hover .menu-label,
+  .menu-link:focus-visible .menu-label {
+    font-style: italic;
+  }
+
+  .menu-foot {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .menu-lines {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1.5rem;
+  }
+
+  .menu-address {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.0625rem;
+    color: var(--color-ink-muted);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu-dialog[open] .menu-link {
+      transition:
+        opacity 360ms var(--ease-out-soft) calc(120ms + var(--i, 0) * 45ms),
+        transform 360ms var(--ease-out-soft) calc(120ms + var(--i, 0) * 45ms);
+    }
+
+    @starting-style {
+      .menu-dialog[open] .menu-link {
+        opacity: 0;
+        transform: translate3d(0, 0.75rem, 0);
+      }
+    }
+  }
+
+  /* ── The phone bar: Call · WhatsApp · the page's action, on plum ── */
+  .sticky-bar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 30;
+    padding-bottom: env(safe-area-inset-bottom);
+    background-color: var(--color-surface);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-highlight) 45%, transparent),
+      0 -12px 28px -20px color-mix(in srgb, var(--shade) 80%, transparent);
+  }
+
+  .sticky-bar-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .sticky-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    color: var(--color-gold-text);
+  }
+
+  .sticky-link:hover,
+  .sticky-link:focus-visible {
+    color: var(--color-ink);
+  }
+
+  @media (min-width: 1280px) {
+    .sticky-bar {
+      display: none;
+    }
+  }
+
+  /* ── The footer: plum velvet; a row of lamps lights along its top edge ── */
+  .site-footer {
+    position: relative;
+    overflow: clip;
+    background-color: var(--color-surface);
+    background-image:
+      radial-gradient(
+        ellipse 70% 32rem at 50% 0,
+        color-mix(in srgb, var(--color-highlight) 9%, transparent),
+        transparent
+      ),
+      var(--texture-velvet);
+    background-size: auto, var(--texture-size);
+  }
+
+  .footer-lamps {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-block: 1.75rem 0.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .footer-lamps .lamp {
+    --lamp-delay: 80ms;
+  }
+
+  /* Hidden lamps on the narrowest screens keep the row airy. */
+  .footer-lamp-wide {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .footer-lamp-wide {
+      display: inline-block;
+    }
+  }
+
+  /* Until the footer arrives its lamps are embers (FooterStage lights them);
+     without JavaScript they are simply lit. */
+  @media (scripting: none) {
+    .site-footer .lamp::before {
+      opacity: 1;
+    }
+
+    .site-footer .lamp::after {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .site-footer[data-revealed="instant"] .lamp::before,
+  .site-footer[data-revealed="instant"] .lamp::after {
+    transition-delay: 0s;
+  }
+
+  .footer-invite {
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+    padding-block: 3.5rem 3rem;
+    text-align: center;
+  }
+
+  .footer-invite .logo-medallion {
+    --medallion: 4rem;
+  }
+
+  .footer-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.25rem + 3vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .footer-lead {
+    max-width: 34ch;
+    color: var(--color-ink-muted);
+  }
+
+  .footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .footer-cols {
+    display: grid;
+    gap: 2.25rem;
+    padding-block: 2.75rem 3.25rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (min-width: 768px) {
+    .footer-cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-cols {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  .footer-label {
+    margin-bottom: 1rem;
+  }
+
+  .footer-text {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.1875rem;
+    line-height: 1.4;
+  }
+
+  .footer-list {
+    display: grid;
+    gap: 0.125rem;
+  }
+
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-ink);
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.3em;
+    transition: text-decoration-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .footer-link:hover,
+  .footer-link:focus-visible {
+    text-decoration-color: var(--color-accent);
+  }
+
+  /* Numbers: the line's name small, the number large — a full-width row to tap. */
+  .footer-line {
+    min-height: 44px;
+    padding-block: 0.375rem;
+    color: var(--color-accent);
+  }
+
+  .footer-line-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-line-label {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .footer-line-value {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    color: var(--color-ink);
+  }
+
+  .footer-base {
+    background-color: var(--color-surface-foot);
+    color: var(--color-ink-muted);
+    font-size: 0.8125rem;
+    /* Below xl the phone bar covers the page's foot: the base runs on under
+       it, in its own colour. */
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 1280px) {
+    .footer-base {
+      padding-bottom: 0;
+    }
+  }
+
+  .footer-base-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 1.5rem;
+    padding-block: 1.25rem;
+  }
+
+  .footer-base-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+  }
+
+  .footer-base .footer-link {
+    color: var(--color-ink-muted);
+  }
+
+  .footer-base .footer-link:hover,
+  .footer-base .footer-link:focus-visible {
+    color: var(--color-ink);
+  }
+
+  /* ── The opening: "First lamp" ──
+     One flame lights at the foot of an arch; its light runs along a row of
+     lamps tracing the arch; the logo appears inside on plum; then the arch
+     flies onto the hero's arch window (IntroLoader). ≤ 1.6 s, once per full
+     page load, never blocking input. The timeline is CSS (it plays from first
+     paint); JS (after hydration) runs the exit and the flight. */
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    /* Without JS (no data-state): it leaves on its own. */
+    animation: intro-out 380ms var(--ease-out-soft) 1.2s both;
+  }
+
+  .intro[data-state] {
+    animation: none;
+  }
+
+  .intro[data-state="done"] {
+    display: none;
+  }
+
+  [data-intro="off"] .intro {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro {
+      display: none;
+    }
+  }
+
+  @keyframes intro-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .intro-ground {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-surface);
+    background-image:
+      radial-gradient(
+        ellipse 42% 46% at 50% 52%,
+        color-mix(in srgb, var(--color-highlight) 12%, transparent),
+        transparent 72%
+      ),
+      var(--texture-velvet);
+    background-size: auto, var(--texture-size);
+  }
+
+  .intro[data-state="leave"] .intro-ground {
+    opacity: 0;
+    transition: opacity 380ms var(--ease-out-soft);
+  }
+
+  .intro-arch {
+    position: relative;
+    width: min(42vw, 12rem);
+    aspect-ratio: 0.72;
+  }
+
+  .intro[data-state="leave"] .intro-arch {
+    opacity: 0;
+    transform: translate3d(var(--fx, 0), var(--fy, 0), 0) scale(var(--fs, 1));
+    transition:
+      transform 420ms var(--ease-out-soft),
+      opacity 160ms linear 300ms;
+  }
+
+  /* The plum panel inside the lamps, with the logo. */
+  .intro-panel {
+    position: absolute;
+    inset: 9%;
+    display: grid;
+    place-items: center;
+    border-radius: 1000px 1000px 0 0;
+    background-color: var(--color-brand);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-highlight) 55%, transparent);
+    opacity: 0;
+    transform: scale(0.96);
+    animation: intro-panel 420ms var(--ease-out-soft) 760ms forwards;
+  }
+
+  .intro-emblem {
+    width: 46%;
+    height: auto;
+  }
+
+  @keyframes intro-panel {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .intro-lamps {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The lamps trace the arch: placed by IntroLoader at --x / --y (% of the
+     arch box); each lights at its turn (--i), the first one first. */
+  .intro-lamp {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: 0.4rem;
+    height: 0.6rem;
+    margin: -0.3rem 0 0 -0.2rem;
+    animation: intro-lamp 300ms var(--ease-out-soft) calc(160ms + var(--i) * 34ms) both;
+  }
+
+  .intro-lamp::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: -0.75rem 0 0 -0.75rem;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-highlight) 50%, transparent),
+      transparent
+    );
+  }
+
+  .intro-lamp::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-highlight);
+    mask: var(--flame) center / contain no-repeat;
+  }
+
+  @keyframes intro-lamp {
+    from {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+  }
+
+  /* The first flame: brighter and a touch larger. */
+  .intro-lamps > .intro-lamp:first-child {
+    width: 0.55rem;
+    height: 0.85rem;
+    margin: -0.425rem 0 0 -0.275rem;
+  }
+
+  /* ═══ THE HOME HERO ═══
+     Light. Left: the name, set very large, DIPALI in plum with one pass of
+     gold foil; the line from content; Book a Stay and Plan a Wedding. Right:
+     the lit entrance in an arch window, a soft lavender halo behind it and a
+     thin gold double frame. Rich motion: the photograph gains depth from the
+     pointer (DepthPhoto, WebGL), and as the next section covers the hero the
+     arch opens toward a full frame while the copy rises away. Phones: one
+     column, no WebGL, no video. */
+  .home-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    background-color: var(--color-surface);
+    padding-block: calc(4.5rem + 2rem) 3.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .home-hero {
+      padding-block: calc(5.5rem + 2.5rem) 4.5rem;
+    }
+  }
+
+  /* From 1024px the hero fills the screen; below xl it leaves room at the
+     foot for the phone bar, which is still showing. */
+  @media (min-width: 1024px) {
+    .home-hero {
+      display: grid;
+      align-content: center;
+      min-height: 100svh;
+      padding-block: calc(5.5rem + 1.5rem) calc(4.5rem + 1rem);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .home-hero {
+      padding-bottom: 3rem;
+    }
+  }
+
+  .home-hero-inner {
+    position: relative;
+    display: grid;
+    gap: 2.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .home-hero-inner {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+      column-gap: clamp(2rem, 4vw, 4.5rem);
+    }
+  }
+
+  .home-hero-copy {
+    position: relative;
+    z-index: 2;
+  }
+
+  .home-hero-name {
+    margin-top: 1.25rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.75rem, 1rem + 13.5vw, 10.5rem);
+    line-height: 0.84;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  @media (min-width: 1024px) {
+    .home-hero-name {
+      font-size: clamp(7rem, 1rem + 10.5vw, 11rem);
+    }
+  }
+
+  .home-hero-name > span {
+    display: block;
+  }
+
+  .home-hero-dipali {
+    color: var(--color-brand);
+  }
+
+  .home-hero-line {
+    max-width: 28ch;
+    margin-top: 1.75rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  .home-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem 1rem;
+    margin-top: 2.25rem;
+  }
+
+  /* The vertical line of text on the left edge (wide screens only). */
+  .home-hero-vertical {
+    display: none;
+  }
+
+  @media (min-width: 1280px) {
+    .home-hero-vertical {
+      position: absolute;
+      /* In the gutter beside the container, never stranded at the screen's edge. */
+      left: max(calc(var(--gutter) * 0.4), calc((100% - var(--container-site)) / 2 - 1.5rem));
+      top: 50%;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      writing-mode: vertical-rl;
+      transform: translateY(-50%) rotate(180deg);
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.625rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--color-ink-muted);
+    }
+
+    .home-hero-vertical::before,
+    .home-hero-vertical::after {
+      content: "";
+      width: 1px;
+      height: 4.5rem;
+      background-color: var(--color-highlight);
+    }
+  }
+
+  .home-hero-art {
+    position: relative;
+    justify-self: center;
+    width: min(78vw, 22rem);
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    .home-hero-art {
+      width: min(100%, 27rem, calc((100svh - 16rem) * 0.72));
+      margin-bottom: 0;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .home-hero-art {
+      width: min(100%, 27rem, calc((100svh - 13rem) * 0.72));
+    }
+  }
+
+  /* The lavender halo: a soft disc of light behind the window. */
+  .home-hero-halo {
+    position: absolute;
+    left: -38%;
+    top: -6%;
+    z-index: -1;
+    width: 150%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      var(--color-lavender) 64%,
+      color-mix(in srgb, var(--color-lavender) 55%, transparent) 82%,
+      color-mix(in srgb, var(--color-lavender) 0%, transparent)
+    );
+    pointer-events: none;
+  }
+
+  /* The thin gold double frame, offset around the window. */
+  .home-hero-frame {
+    position: absolute;
+    inset: -0.75rem;
+    border: 1px solid var(--color-highlight);
+    border-radius: 1000px 1000px 0 0;
+    pointer-events: none;
+  }
+
+  .home-hero-frame-outer {
+    inset: -1.375rem;
+    opacity: 0.55;
+  }
+
+  /* First load: the copy rises once the opening has gone; DIPALI takes one
+     pass of foil; the window opens upward inside its arch and the frames
+     draw in. None of it runs under reduced motion — the layout is final. */
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero-copy > * {
+      animation: intro-rise var(--duration-reveal) var(--ease-rise) var(--intro) both;
+    }
+
+    .home-hero-copy > :nth-child(2) {
+      animation-delay: calc(var(--intro) + 80ms);
+    }
+
+    .home-hero-copy > :nth-child(3) {
+      animation-delay: calc(var(--intro) + 200ms);
+    }
+
+    .home-hero-copy > :nth-child(4) {
+      animation-delay: calc(var(--intro) + 280ms);
+    }
+
+    .home-hero-dipali.foil {
+      animation: intro-foil 600ms var(--ease-out-soft) calc(var(--intro) + 520ms) both;
+    }
+
+    /* backwards, not both: once done, the scroll-driven clip takes over.
+       From 1024px only: on phones and tablets the photograph is the page's
+       largest paint, so it shows the moment it has loaded. */
+    @media (min-width: 1024px) {
+      .home-hero-art .arch-window {
+        animation: intro-arch-open var(--duration-reveal) var(--ease-out-soft) var(--intro) backwards;
+      }
+    }
+
+    .home-hero-frame {
+      animation: intro-frame var(--duration-reveal) var(--ease-out-soft) calc(var(--intro) + 160ms) backwards;
+    }
+
+    .home-hero-halo {
+      animation: intro-fade var(--duration-reveal) var(--ease-out-soft) var(--intro) backwards;
+    }
+  }
+
+  @keyframes intro-foil {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  @keyframes intro-arch-open {
+    from {
+      clip-path: inset(100% 0 0 0 round 50% 50% 0 0 / 36% 36% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0 round 50% 50% 0 0 / 36% 36% 0 0);
+    }
+  }
+
+  @keyframes intro-frame {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* Rich motion: as the next section covers the hero, the window opens
+     toward a full frame and the copy rises away (both from --cover). */
+  [data-motion="rich"] .home-hero {
+    --lift: clamp(0, var(--cover, 0) * 1.6, 1);
+  }
+
+  [data-motion="rich"] .home-hero-copy {
+    transform: translate3d(0, calc(var(--lift) * -12vh), 0);
+    opacity: calc(1 - var(--lift) * 1.1);
+    will-change: transform, opacity;
+  }
+
+  [data-motion="rich"] .home-hero-art {
+    transform-origin: 70% 40%;
+    transform: translate3d(calc(var(--lift) * -14vw), 0, 0) scale(calc(1 + var(--lift) * 0.32));
+    will-change: transform;
+  }
+
+  [data-motion="rich"] .home-hero-art .arch-window {
+    --open: var(--lift);
+  }
+
+  [data-motion="rich"] :is(.home-hero-frame, .home-hero-halo, .home-hero-vertical) {
+    opacity: calc(1 - var(--lift) * 1.4);
+  }
 }

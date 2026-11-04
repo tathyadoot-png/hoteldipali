@@ -55,8 +55,8 @@ export function contrastRatio(hex1: string, hex2: string): number {
 
 /**
  * Parse the light (@theme), dark ([data-theme="dark"]) and deep
- * ([data-theme="deep"]) colour tokens from theme.css. Only hex values are returned; rgba tokens (e.g. line) are
- * skipped.
+ * ([data-theme="deep"]) colour tokens from theme.css. Only hex values are
+ * returned; rgba tokens (e.g. line) are skipped.
  */
 export function parseThemeTokens(css: string): Record<Variant, ThemeTokens> {
   const lightBlock = /@theme\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
@@ -75,7 +75,9 @@ export function parseThemeTokens(css: string): Record<Variant, ThemeTokens> {
     return tokens;
   };
 
-  return { light: parse(lightBlock), dark: parse(darkBlock), deep: parse(deepBlock) };
+  // A variant inherits every token it does not redefine (as in the cascade).
+  const light = parse(lightBlock);
+  return { light, dark: { ...light, ...parse(darkBlock) }, deep: { ...light, ...parse(deepBlock) } };
 }
 
 export const BODY_MIN = 4.5;
@@ -83,52 +85,68 @@ export const UI_MIN = 3;
 
 type PairSpec = readonly [fg: string, bg: string, use: string];
 
-// Body text pairs (≥ 4.5:1) checked in both variants.
+// Body text pairs (≥ 4.5:1) checked in every variant.
 const BODY_PAIRS: ReadonlyArray<PairSpec> = [
   ["ink", "surface", "body text"],
   ["ink", "surface-alt", "body text; .btn-secondary hover"],
-  ["ink-muted", "surface", "secondary text"],
-  ["ink-muted", "surface-alt", "secondary text"],
-  ["accent-ink", "accent", ".btn-primary; pressed .chip"],
-  ["brand-ink", "brand", "brand band, footer"],
-  // Copper (light) / brass (dark) is also small text: .field-error, the
-  // current header link, menu hover — so it must pass as body text, not only
-  // as a UI colour.
-  ["accent", "surface", "small accent text (.field-error, current nav link)"],
+  ["ink-muted", "surface", "secondary text, eyebrows"],
+  ["ink-muted", "surface-alt", "secondary text on alt sections"],
+  ["accent-ink", "accent", ".btn-primary on plum grounds; pressed .chip"],
+  ["brand-ink", "brand", ".btn-primary on light; brand band"],
+  // Plum (light) / champagne (dark, deep) is also small text: headings' em,
+  // menu numerals, footer line labels — so it must pass as body text.
+  ["accent", "surface", "small accent text"],
   ["accent", "surface-alt", "small accent text on alt sections"],
-  // Buttons: the gold plaque (.btn-primary, .btn-secondary on hover) carries a
-  // deep green label in every scope.
-  ["brand", "highlight", ".btn-primary label; .btn-secondary hover"],
+  ["danger", "surface", ".field-error: form errors"],
+  ["danger", "surface-alt", ".field-error on alt sections"],
+  ["gold-text", "surface", "gold as text (current-page flame, phone bar links)"],
+  ["gold-text", "surface-alt", "gold as text on alt sections"],
+  ["brand", "highlight", "plum label on a gold plaque"],
 ];
 
-// UI / large-text pairs (≥ 3:1) checked in both variants.
+// UI / large-text pairs (≥ 3:1) checked in every variant.
 const UI_PAIRS: ReadonlyArray<PairSpec> = [
-  ["ink", "surface", ".btn-secondary border"],
-  ["ink", "surface-alt", ".btn-secondary border on alt sections"],
-  ["accent", "surface", "markers: menu current, room, journey progress"],
+  ["ink", "surface", ".btn-secondary / .btn-ghost borders"],
+  ["ink", "surface-alt", "borders on alt sections"],
+  ["accent", "surface", "markers: pressed chip, menu current, room"],
   ["accent", "surface-alt", "markers on alt sections"],
 ];
 
-// UI pairs checked for dark and deep only. On light grounds brass (highlight) is
-// decorative only — rules and hairlines, never text — so it is not gated there.
+// UI pairs checked for dark and deep only. On light grounds antique gold
+// (highlight) is decorative only — rules and hairlines, never text — so it is
+// not gated there.
 const DARK_SCOPE_UI_PAIRS: ReadonlyArray<PairSpec> = [
-  ["highlight", "surface", "brass rules and ornaments on dark"],
-  ["highlight", "surface-alt", "brass rules and ornaments on dark"],
+  ["highlight", "surface", "gold rules, frames and lamps on plum"],
+  ["highlight", "surface-alt", "gold rules on plum alt surfaces"],
+  // The client's logo (its measured median gold) on every plum ground.
+  ["logo-gold", "surface", "the logo on the plum ground"],
+  ["logo-gold", "surface-alt", "the logo on plum alt surfaces"],
+  ["logo-gold", "brand", "the logo in its plum medallion"],
 ];
 
-// Pairs checked for the light variant only: on ivory, deep green is also
-// small text (the .btn-secondary label) and the script accent word.
+// Pairs checked for the light variant only: plum is also small text on ivory
+// (the .btn-secondary label, the script accent word), and the decorative
+// lavender surfaces must carry text legibly.
 const LIGHT_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
-  ["brand", "surface", ".btn-secondary label on ivory; script accent word"],
+  ["brand", "surface", ".btn-secondary label on ivory; DIPALI in the hero"],
+  ["brand", "surface-alt", "plum text on alt sections"],
+  ["ink", "lavender", "body text on a lavender surface"],
+  ["ink-muted", "lavender", "secondary text on lavender"],
+  ["brand", "lavender", "plum text on lavender; .btn-secondary hover"],
+  ["gold-text-tint", "lavender", "gold as text on lavender"],
 ];
 
-// Pairs checked for deep only: the footer finale deepens from the deep
-// surface to Soft Charcoal (accent-ink) at its foot, where the legal line,
-// its links and their hover sit.
+const LIGHT_ONLY_UI_PAIRS: ReadonlyArray<PairSpec> = [
+  // The logo always sits on plum on light pages (the medallion).
+  ["logo-gold", "brand", "the logo in its plum medallion"],
+];
+
+// Pairs checked for deep only: the footer's foot (surface-foot), where the
+// legal line, its links and their hover sit.
 const DEEP_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
-  ["ink", "accent-ink", "footer foot (Soft Charcoal): legal and social links"],
-  ["ink-muted", "accent-ink", "footer foot: the legal line"],
-  ["accent", "accent-ink", "footer foot: link hover"],
+  ["ink", "surface-foot", "footer foot: legal and social links"],
+  ["ink-muted", "surface-foot", "footer foot: the legal line"],
+  ["accent", "surface-foot", "footer foot: gold text"],
 ];
 
 /** The contrast pairs that must pass for a given variant. */
@@ -142,19 +160,40 @@ export function pairsForVariant(variant: Variant): ContrastPair[] {
   ];
   if (variant === "light") {
     pairs.push(...LIGHT_ONLY_BODY_PAIRS.map(toPair(BODY_MIN, "body")));
+    pairs.push(...LIGHT_ONLY_UI_PAIRS.map(toPair(UI_MIN, "ui")));
   }
   if (variant === "dark" || variant === "deep") {
     pairs.push(...DARK_SCOPE_UI_PAIRS.map(toPair(UI_MIN, "ui")));
   }
   if (variant === "deep") {
     pairs.push(...DEEP_ONLY_BODY_PAIRS.map(toPair(BODY_MIN, "body")));
-    // Antique Gold reads as small text on the deep surface (5.1:1) but not on
-    // Botanical Green (3.8:1): there it is a UI / large-text colour only.
-    return pairs.map((p) =>
-      p.fg === "accent" && p.bg === "surface-alt" && p.kind === "body"
-        ? { ...p, min: UI_MIN, kind: "ui" as const, use: "gold on Botanical Green: large text / UI only" }
-        : p,
-    );
   }
   return pairs;
 }
+
+/** Hue of a hex colour, in degrees (0–360). */
+export function hueOf(hex: string): number {
+  const { r, g, b } = hexToRgb(hex);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  if (max === min) return 0;
+  const d = max - min;
+  const h =
+    max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return (h * 60 + 360) % 360;
+}
+
+/** Shortest distance between two hues, in degrees (0–180). */
+export function hueDistance(a: string, b: string): number {
+  const d = Math.abs(hueOf(a) - hueOf(b)) % 360;
+  return d > 180 ? 360 - d : d;
+}
+
+export type DistinctCheck = { a: string; b: string; minHue: number; use: string };
+
+// Colours that must read as different colours, not only as lighter/darker:
+// a form error must never look like a heading or a link.
+export const DISTINCT_CHECKS: ReadonlyArray<DistinctCheck> = [
+  { a: "danger", b: "brand", minHue: 30, use: "form errors differ from plum headings" },
+  { a: "danger", b: "accent", minHue: 30, use: "form errors differ from accent links" },
+];

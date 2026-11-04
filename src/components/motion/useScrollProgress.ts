@@ -46,7 +46,7 @@ type Options = {
  *   frame behind the page; with native scrolling it uses one rAF per change;
  * - nothing runs unless the element is near the viewport and the page moves.
  */
-export function useScrollProgress<T extends HTMLElement>(
+export function useScrollProgress<T extends HTMLElement | SVGElement>(
   ref: RefObject<T | null>,
   { enabled = true, mode = "pinned", cssVar = "--p", onProgress }: Options = {},
 ) {

@@ -39,24 +39,10 @@ test.describe("Contact page", () => {
     );
   });
 
-  test("the enquiry form is on the page, with every choice", async ({ page }) => {
-    const section = page.locator("#enquire");
-    await expect(section.getByRole("heading", { level: 2 })).toHaveText(
-      "Tell us what you are planning",
-    );
-    const form = section.locator("form");
-    await expect(form).toBeVisible();
-    await expect(form.getByRole("radio")).toHaveCount(6);
-    await expect(form.getByRole("button", { name: "Send enquiry" })).toBeEnabled();
-    // The tablet is a deep scope and re-declares its text colour.
-    await expect(section.locator(".enquiry")).toHaveAttribute("data-theme", "deep");
-    await expect(section.locator(".enquiry")).toHaveClass(/text-ink/);
-  });
-
   test("the Enquire actions here stay on this page", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 780 });
     await page.reload();
-    const bar = page.locator("div.fixed.inset-x-0.bottom-0");
+    const bar = page.locator(".sticky-bar");
     await expect(bar.getByRole("link", { name: "Enquire" })).toHaveAttribute("href", "#enquire");
     await expect(
       page.getByRole("contentinfo").getByRole("link", { name: "Send an enquiry" }),

@@ -20,6 +20,7 @@
     "make:placeholders": "tsx scripts/make-placeholders.ts",
     "make:photos": "tsx scripts/make-photos.ts",
     "make:video": "tsx scripts/make-video.ts",
+    "make:depth": "tsx scripts/make-depth.ts",
     "check:content": "tsx scripts/check-content.ts",
     "check:content:strict": "tsx scripts/check-content.ts --strict",
     "content:report": "tsx scripts/content-report.ts",

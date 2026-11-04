@@ -29,23 +29,24 @@ const OUT_DIR = join(process.cwd(), "public", "sample");
 type Tone = { base: string; shade: string; line: string };
 
 /*
- * Bases sit a clear step darker than the page surfaces (sandstone #efe6d6,
- * surface-alt #e4d6bf) so an image slot reads as a distinct plane rather than
- * a faint rectangle on the background.
+ * Bases sit a clear step darker than the page surfaces (ivory #faf6f4,
+ * surface-alt #f1e8ee) so an image slot reads as a distinct plane rather than
+ * a faint rectangle on the background. All from the plum & gold family:
+ * lavender-greys by day, plum by night, hairlines in muted gold.
  */
 const TONES: Record<string, Tone> = {
-  // Exterior / property — warm stone.
-  property: { base: "#D2C4A9", shade: "#C2B294", line: "#A2906F" },
+  // Exterior / property — lavender stone.
+  property: { base: "#DED2DB", shade: "#CFC0CB", line: "#A99577" },
   // Guest rooms — soft ivory linen.
-  stay: { base: "#DCCFB8", shade: "#CBBB9F", line: "#AE9C7C" },
-  // Dining, bakery, sweets — warm clay.
-  dining: { base: "#D8C6AB", shade: "#C6B191", line: "#A8906C" },
-  // Infinity Bar — deep green night.
-  bar: { base: "#0B2F2E", shade: "#0E3B3A", line: "#6B5A3E" },
-  // Lawns and halls — garden green-gold.
-  venue: { base: "#CFC6A8", shade: "#BDB290", line: "#9C8F6D" },
-  // Pool and gym — cool sage.
-  leisure: { base: "#C6CEC4", shade: "#B2BCB0", line: "#93A08F" },
+  stay: { base: "#E7DDE2", shade: "#D8CBD2", line: "#AE9A7C" },
+  // Dining, bakery, sweets — warm rose-ivory.
+  dining: { base: "#E2D3D1", shade: "#D2C0BE", line: "#A8906C" },
+  // Infinity Bar — plum night.
+  bar: { base: "#2B1233", shade: "#3A1A44", line: "#8C7048" },
+  // Lawns and halls — lavender.
+  venue: { base: "#DACCDF", shade: "#C9B8CF", line: "#A3906E" },
+  // Pool and gym — cool lilac-grey.
+  leisure: { base: "#D6D0DE", shade: "#C3BBCD", line: "#97889F" },
 };
 
 /** Map an image id onto a tonal family. */

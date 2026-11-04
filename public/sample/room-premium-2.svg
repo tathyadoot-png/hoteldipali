@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1000" viewBox="0 0 1500 1000" role="img" aria-label="Premium Room, detail of the reading chair and lamp (sample placeholder)">
-  <rect x="0" y="0" width="1500" height="1000" fill="#DCCFB8"/>
-  <path d="M240 1000 V445 a225 225 0 0 1 450 0 V1000 Z" fill="#CBBB9F"/>
-  <path d="M930 1000 V420" stroke="#AE9C7C" stroke-width="2" opacity="0.45"/>
-  <rect x="11" y="11" width="1478" height="978" fill="none" stroke="#AE9C7C" stroke-width="2" opacity="0.35"/>
+  <rect x="0" y="0" width="1500" height="1000" fill="#E7DDE2"/>
+  <path d="M240 1000 V445 a225 225 0 0 1 450 0 V1000 Z" fill="#D8CBD2"/>
+  <path d="M930 1000 V420" stroke="#AE9A7C" stroke-width="2" opacity="0.45"/>
+  <rect x="11" y="11" width="1478" height="978" fill="none" stroke="#AE9A7C" stroke-width="2" opacity="0.35"/>
 </svg>

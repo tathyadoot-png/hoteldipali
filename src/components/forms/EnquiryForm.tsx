@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 
 import { CornerOrnament } from "@/components/brand/Ornaments";
-import { useReveal } from "@/components/home/ScrollReveal";
+import { useReveal } from "@/components/motion/ScrollReveal";
 import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { track } from "@/lib/analytics";

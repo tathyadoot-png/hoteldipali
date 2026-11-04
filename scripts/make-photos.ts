@@ -10,8 +10,7 @@ import { chromium, type Page } from "@playwright/test";
  * outside public/ (media-source/), so they are never deployed:
  * - camera originals in media-source/hotel/ (8–26 MB each, up to 8256 px) and
  *   the night exteriors in media-source/images/hotel/;
- * - the brand logo (public/brand/logo-primary.png, 506 KB);
- * - the owner's palette textures in media-source/palettes/ (736 px Pinterest-size).
+ * - the brand logo (public/brand/logo-primary.png, 506 KB).
  *
  * Each job writes WebP files at several widths to public/images/<dir>/
  * <slug>-<width>.webp; content entries reference the widest file as `src` and
@@ -143,26 +142,9 @@ const JOBS: Job[] = [
     widths: [120, 240, 360, 480],
     quality: 0.86,
   },
-  // Palette textures, graded toward the deep variant's surface (#073B30) / surface-alt.
-  // Deep folded stone (palette 3, the owner's selection of 2026-10-26: a
-  // landscape teal texture, nudged from teal onto the deep green family).
-  {
-    src: "media-source/palettes/3.png",
-    out: "images/textures",
-    slug: "texture-stone-deep",
-    widths: [1024],
-    quality: 0.8,
-    filter: "hue-rotate(-14deg) saturate(0.9) brightness(0.95)",
-  },
-  // Gold foliage around an open centre (palette 9) — the loader's panel.
-  {
-    src: "media-source/palettes/9.jfif",
-    out: "images/textures",
-    slug: "botanical-panel",
-    widths: [480, 736],
-    quality: 0.82,
-    filter: "sepia(0.18) saturate(0.95) hue-rotate(-6deg) brightness(0.66) contrast(1.08)",
-  },
+  // The site's textures are generated in CSS (theme.css: --texture-velvet,
+  // --texture-paper); the palette images in media-source/palettes/ are
+  // references only and no longer ship.
 ];
 
 type Exported = { width: number; height: number; data: string };

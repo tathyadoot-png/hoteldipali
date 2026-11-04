@@ -1,9 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
-import { Logo } from "@/components/brand/Logo";
-import { MedallionRing } from "@/components/brand/Ornaments";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { BrandLink } from "@/components/brand/Logo";
 import { FooterStage } from "@/components/layout/FooterStage";
 import { BookStayLink } from "@/components/links/BookStayLink";
 import { CallLink } from "@/components/links/CallLink";
@@ -12,7 +10,7 @@ import { EnquireLink } from "@/components/links/EnquireLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import type { Outlet, Site } from "@/content";
 import { reachableContacts } from "@/lib/contacts";
-import { isBuiltRoute, outletHref } from "@/lib/routes";
+import { isBuiltRoute, outletHref, primaryNav } from "@/lib/routes";
 
 const SOCIAL_LABELS: Record<string, string> = {
   facebook: "Facebook",
@@ -22,8 +20,9 @@ const SOCIAL_LABELS: Record<string, string> = {
   linkedin: "LinkedIn",
 };
 
-// The archivolts: contours of the gateway's arch, each one order further out.
-const ORDERS = [1, 2, 3];
+// The row of lamps along the footer's top edge. On phones every other one
+// (the "wide" ones) is left out so the row stays airy.
+const LAMPS = 13;
 
 type FooterProps = {
   site: Site;
@@ -33,13 +32,11 @@ type FooterProps = {
 };
 
 /**
- * The finale: a deep stone band whose centre is a gateway — its crown
- * rises above the footer's top edge, the emblem in its arched head, the
- * invitation and the booking action inside. As the footer arrives one gold
- * line draws it (FooterStage, theme.css): in from the left along the string
- * course, over the arch and the keystone, out to the right; the jambs drop to
- * the plinth and three archivolts — the arch's contours, one order further out
- * each — spread across the stone. Contacts and wayfinding sit quietly beside it.
+ * The footer: plum velvet (the deep variant). A row of small gold lamps runs
+ * along its top edge and lights, one after another, as it arrives
+ * (FooterStage); then the invitation with Book a Stay and an enquiry; then
+ * Find us, Call or message, Explore and Eat & drink; and the legal line on
+ * the darker foot.
  *
  * Content rules: only lines a visitor can use (no sample placeholder
  * numbers), only links to pages that exist (isBuiltRoute), and social links
@@ -51,7 +48,10 @@ export function Footer({ site, outlets, bookingUrl }: FooterProps) {
     (site.navigation.footer.find((group) => group.title === title)?.links ?? []).filter((link) =>
       isBuiltRoute(link.href),
     );
-  const explore = [...site.navigation.main, ...builtLinks("Hotel")];
+  const explore = [
+    ...primaryNav(site.navigation.main),
+    ...builtLinks("Hotel").filter((link) => link.href !== "/contact/"),
+  ];
   const legal = builtLinks("Policies");
   const socials = site.socials.filter((social) => social.url.status === "verified");
   const whatsapp = site.contacts.find(
@@ -60,152 +60,128 @@ export function Footer({ site, outlets, bookingUrl }: FooterProps) {
 
   return (
     // text-ink re-declares `color` so it resolves against the deep tokens.
-    <FooterStage data-theme="deep" className="finale text-ink">
-      <div aria-hidden="true" className="finale-surface">
-        <div className="finale-stone" />
-        {/* Clipped by the band's top edge: they show in the frieze only. */}
-        <div className="finale-orders">
-          {ORDERS.map((n) => (
-            <span key={n} className="finale-order" style={{ "--n": n } as CSSProperties} />
-          ))}
-        </div>
+    <FooterStage data-theme="deep" className="site-footer text-ink">
+      <div aria-hidden="true" className="footer-lamps container-site">
+        {Array.from({ length: LAMPS }, (_, i) => (
+          <span
+            key={i}
+            className={i % 2 === 1 ? "lamp footer-lamp-wide" : "lamp"}
+            style={{ "--i": i } as CSSProperties}
+          />
+        ))}
       </div>
 
-      <div className="finale-inner container-site">
-        {/* The gateway: a stone ring around a lit opening. Its outer line is
-            the arch (one stroke, drawn left to right) and the jambs below it;
-            the inner line follows the opening. */}
-        <div className="finale-gate">
-          <svg aria-hidden="true" className="finale-arch" viewBox="0 0 200 100" fill="none">
-            <path pathLength={1} d="M0.3 100A99.7 99.7 0 0 1 199.7 100" />
-          </svg>
-          <div className="finale-door">
-            <div className="finale-medallion">
-              <MedallionRing className="finale-ring" />
-              <Logo variant="reverse" imgClassName="finale-emblem" sizes="4rem" lazy />
-            </div>
-            <h2 className="finale-title">
-              <span className="finale-line" style={{ "--l": 0 } as CSSProperties}>
-                We look forward
-              </span>{" "}
-              <span className="finale-line" style={{ "--l": 1 } as CSSProperties}>
-                to <em>welcoming you</em>
-              </span>
-            </h2>
-            <p className="finale-lead">Book a stay, or tell us what you are planning.</p>
-            <div className="finale-actions">
-              <BookStayLink bookingUrl={bookingUrl} className="btn-primary finale-book">
+      <div className="container-site">
+        <div className="footer-invite">
+          <BrandLink sizes="4rem" lazy />
+          <h2 className="footer-title">We look forward to welcoming you</h2>
+          <p className="footer-lead">Book a stay, or tell us what you are planning.</p>
+          <div className="footer-actions">
+            <span className="lamplight">
+              <BookStayLink bookingUrl={bookingUrl} className="btn-primary">
                 Book a Stay
               </BookStayLink>
-              <EnquireLink className="btn-secondary finale-enquire">Send an enquiry</EnquireLink>
-            </div>
+            </span>
+            <EnquireLink className="btn-secondary">Send an enquiry</EnquireLink>
           </div>
-          <span aria-hidden="true" className="finale-key" />
         </div>
 
-        <span aria-hidden="true" className="finale-plinth" />
+        <div className="footer-cols">
+          <div>
+            <h3 className="eyebrow footer-label">Find us</h3>
+            <p className="footer-text">{site.locationLine.value}</p>
+            <DirectionsLink className="link-royal mt-2" />
+          </div>
 
-        <span aria-hidden="true" className="finale-course finale-course-l" />
-        <span aria-hidden="true" className="finale-course finale-course-r" />
-
-        <div className="finale-side finale-side-l">
-          <ScrollReveal className="finale-group" delay={260}>
-            <h3 className="finale-label">Find us</h3>
-            <p className="finale-text">{site.locationLine.value}</p>
-            <DirectionsLink className="finale-link" />
-          </ScrollReveal>
-          <ScrollReveal className="finale-group" delay={340}>
-            <h3 className="finale-label">Call or message</h3>
-            <ul className="finale-lines">
+          <div>
+            <h3 className="eyebrow footer-label">Call or message</h3>
+            <ul className="footer-list">
               {contacts.map((contact) => (
                 <li key={contact.department}>
                   <CallLink
                     department={contact.department}
-                    className="finale-line-link"
-                    labelClassName="finale-line-text"
+                    className="footer-line"
+                    labelClassName="footer-line-text"
                   >
-                    <span className="finale-line-label">{contact.label}</span>
-                    <span className="finale-line-value">{contact.phone.value}</span>
+                    <span className="footer-line-label">{contact.label}</span>
+                    <span className="footer-line-value">{contact.phone.value}</span>
                   </CallLink>
                 </li>
               ))}
               {whatsapp && whatsapp.status !== "sample" ? (
                 <li>
-                  <WhatsAppLink
-                    context="general"
-                    className="finale-line-link"
-                    labelClassName="finale-line-text"
-                  >
-                    <span className="finale-line-label">WhatsApp</span>
-                    <span className="finale-line-value">{whatsapp.value}</span>
+                  <WhatsAppLink context="general" className="footer-line" labelClassName="footer-line-text">
+                    <span className="footer-line-label">WhatsApp</span>
+                    <span className="footer-line-value">{whatsapp.value}</span>
                   </WhatsAppLink>
                 </li>
               ) : null}
             </ul>
-          </ScrollReveal>
-        </div>
+          </div>
 
-        <nav aria-label="Footer" className="finale-side finale-side-r">
-          <ScrollReveal className="finale-group" delay={300}>
-            <h3 className="finale-label">Explore</h3>
-            <ul className="finale-links">
+          <nav aria-label="Footer">
+            <h3 className="eyebrow footer-label">Explore</h3>
+            <ul className="footer-list">
               {explore.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} prefetch={false} className="finale-link">
+                  <Link href={link.href} prefetch={false} className="footer-link">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </ScrollReveal>
-          <ScrollReveal className="finale-group" delay={380}>
-            <h3 className="finale-label">Eat &amp; drink</h3>
-            <ul className="finale-links">
+          </nav>
+
+          <div>
+            <h3 className="eyebrow footer-label">Eat &amp; drink</h3>
+            <ul className="footer-list">
               {outlets.map((outlet) => (
                 <li key={outlet.slug}>
-                  <Link href={outletHref(outlet.slug)} prefetch={false} className="finale-link">
+                  <Link href={outletHref(outlet.slug)} prefetch={false} className="footer-link">
                     {outlet.name}
                   </Link>
                 </li>
               ))}
             </ul>
-          </ScrollReveal>
-        </nav>
+          </div>
+        </div>
       </div>
 
-      <div className="finale-base container-site">
-        <p>
-          © {new Date().getFullYear()} {site.legal.legalName.value}
-        </p>
-        <p>GSTIN {site.legal.gstin.value}</p>
-        <p>Also searched as Hotel Deepali</p>
-        {legal.length > 0 ? (
-          <ul className="finale-base-links">
-            {legal.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} prefetch={false} className="finale-link">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-        {socials.length > 0 ? (
-          <ul className="finale-base-links">
-            {socials.map((social) => (
-              <li key={social.platform}>
-                <a
-                  href={social.url.value}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="finale-link"
-                >
-                  {SOCIAL_LABELS[social.platform] ?? social.platform}
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : null}
+      <div className="footer-base">
+        <div className="footer-base-inner container-site">
+          <p>
+            © {new Date().getFullYear()} {site.legal.legalName.value}
+          </p>
+          <p>GSTIN {site.legal.gstin.value}</p>
+          <p>Also searched as Hotel Deepali</p>
+          {legal.length > 0 ? (
+            <ul className="footer-base-links">
+              {legal.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} prefetch={false} className="footer-link">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {socials.length > 0 ? (
+            <ul className="footer-base-links">
+              {socials.map((social) => (
+                <li key={social.platform}>
+                  <a
+                    href={social.url.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    {SOCIAL_LABELS[social.platform] ?? social.platform}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       </div>
     </FooterStage>
   );

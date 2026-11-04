@@ -1,4 +1,4 @@
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { Picture } from "@/components/media/Picture";
 import type { Image } from "@/content";
 

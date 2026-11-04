@@ -1,182 +1,185 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-test.describe("Desktop (1280px)", () => {
+// The shell (R1, 2026-11-04): an ivory header with a gold hairline,
+// transparent over the home hero; a full-screen plum menu below xl; the plum
+// phone bar; and the plum footer whose row of lamps lights as it arrives.
+
+const BRAND_PLUM = "rgb(72, 9, 80)"; // --color-brand (#480950)
+
+/** Every href in `links`, followed: each page exists, and so does each anchor. */
+async function expectLinksResolve(page: Page, hrefs: string[]) {
+  for (const href of hrefs) {
+    const [path, hash] = href.split("#");
+    const response = await page.goto(path || "/");
+    expect(response?.status(), href).toBe(200);
+    if (hash) await expect(page.locator(`#${hash}`), href).toBeAttached();
+  }
+}
+
+test.describe("Header — desktop (1280px)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
-  test("desktop nav is visible, Menu button and sticky bar are hidden", async ({
-    page,
-  }) => {
+  test("the nav shows; the Menu button and the phone bar do not", async ({ page }) => {
     await page.goto("/");
-
     await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Menu" })).toBeHidden();
-    // exact: the enquiry close's lines are named "Call Reservations, …".
-    await expect(page.getByRole("link", { name: "Call", exact: true })).toBeHidden();
+    await expect(page.locator(".sticky-bar")).toBeHidden();
   });
 
-  // The header is always deep; on the home page it stays transparent over
-  // the hero and turns solid (deep stone) when the ivory arch that follows
-  // it reaches the top.
-  test("home header is transparent over the hero and solid once past it", async ({
-    page,
-  }) => {
+  test("on the home page it is transparent over the hero and solid once past it", async ({ page }) => {
     await page.goto("/");
     const header = page.locator("header");
-
-    await expect(header).toHaveAttribute("data-theme", "deep");
+    // An ivory (light) header: no dark scope of its own.
+    await expect(header).not.toHaveAttribute("data-theme", /.+/);
     await expect(header).toHaveAttribute("data-state", "overlay");
-    const transparentBg = await header.evaluate(
-      (el) => getComputedStyle(el).backgroundColor,
-    );
-    expect(transparentBg).toBe("rgba(0, 0, 0, 0)");
+    expect(await header.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
 
-    // Still over the hero: still transparent.
     await page.evaluate(() => window.scrollTo(0, 200));
     await expect(header).toHaveAttribute("data-state", "overlay");
 
-    // One-frame jump well past the arch (anchor link, End key, fling): solid.
+    // One-frame jump well past the hero (anchor link, End key, fling): solid,
+    // with its gold hairline.
     await page.evaluate(() => {
-      const arch = document.querySelector<HTMLElement>("[data-header-solid-from]");
-      if (!arch) throw new Error("missing [data-header-solid-from]");
-      window.scrollTo({ top: arch.getBoundingClientRect().top + window.scrollY + 600, behavior: "instant" });
+      const next = document.querySelector<HTMLElement>("[data-header-solid-from]");
+      if (!next) throw new Error("missing [data-header-solid-from]");
+      window.scrollTo({ top: next.getBoundingClientRect().top + window.scrollY + 600, behavior: "instant" });
     });
     await expect(header).toHaveAttribute("data-state", "solid");
     await expect
-      .poll(async () => header.evaluate((el) => getComputedStyle(el).backgroundColor))
+      .poll(() => header.evaluate((el) => getComputedStyle(el).backgroundColor))
       .not.toBe("rgba(0, 0, 0, 0)");
+    expect(await header.evaluate((el) => getComputedStyle(el).boxShadow)).toContain("inset");
 
-    // One-frame jump back to the top: transparent again.
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
     await expect(header).toHaveAttribute("data-state", "overlay");
-    await expect(header).toHaveAttribute("data-theme", "deep");
   });
 
-  test("the logo keystone is centred between the two nav wings", async ({ page }) => {
-    await page.goto("/");
-    const nav = page.getByRole("navigation", { name: "Primary" });
-    await expect(nav.getByRole("link")).toHaveCount(6);
-
-    const keystone = await page.locator(".header-keystone").boundingBox();
-    const wings = await page.locator(".header-wing").evaluateAll((els) =>
-      els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect),
-    );
-    expect(keystone).not.toBeNull();
-    const centre = keystone!.x + keystone!.width / 2;
-    expect(Math.abs(centre - 640)).toBeLessThanOrEqual(2);
-    // Left wing ends before the keystone; right wing starts after it.
-    expect(wings[0]!.right).toBeLessThanOrEqual(keystone!.x);
-    expect(wings[1]!.left).toBeGreaterThanOrEqual(keystone!.x + keystone!.width);
-    await expect(page.locator(".header-keystone").getByRole("link", { name: /home/ })).toBeVisible();
-  });
-
-  test("the logo niche sits inside the header bar, clear of page content", async ({ page }) => {
-    for (const route of ["/", "/rooms/"]) {
-      await page.goto(route);
-      const header = await page.locator("header").boundingBox();
-      const niche = await page.locator(".header-keystone").boundingBox();
-      expect(header && niche).toBeTruthy();
-      expect(niche!.y).toBeGreaterThanOrEqual(header!.y);
-      expect(niche!.y + niche!.height).toBeLessThanOrEqual(header!.y + header!.height + 0.5);
-    }
-  });
-
-  test("the glide marker rests on the current page and follows hover and focus", async ({
-    page,
-  }) => {
-    await page.goto("/rooms/");
-    const leftWing = page.locator(".header-wing-l");
-    const rightWing = page.locator(".header-wing-r");
-    const markerX = (wing: typeof leftWing) =>
-      wing.locator(".header-glide").evaluate((el) => {
-        const r = el.getBoundingClientRect();
-        return r.left + r.width / 2;
-      });
-    const linkX = async (name: string) => {
-      const box = await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name }).boundingBox();
-      return box!.x + box!.width / 2;
-    };
-
-    // /rooms/ is "Stay", in the left wing (Stay, Weddings, Events | Dining,
-    // Experiences, Gallery).
-    await expect(leftWing).toHaveAttribute("data-glide", "on");
-    await expect(rightWing).toHaveAttribute("data-glide", "off");
-    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Stay")))).toBeLessThan(2);
-
-    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Events" }).hover();
-    await expect.poll(async () => Math.abs((await markerX(leftWing)) - (await linkX("Events")))).toBeLessThan(2);
-
-    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Gallery" }).focus();
-    await expect(rightWing).toHaveAttribute("data-glide", "on");
-    await expect.poll(async () => Math.abs((await markerX(rightWing)) - (await linkX("Gallery")))).toBeLessThan(2);
-  });
-
-  test("header is solid on a page without an overlay hero", async ({ page }) => {
+  test("solid from the start on a page without an overlay hero", async ({ page }) => {
     await page.goto("/rooms/");
     await expect(page.locator("header")).toHaveAttribute("data-state", "solid");
   });
 
-  test("the primary nav only links to routes and anchors that exist", async ({ page }) => {
+  test("seven links, each to a page or anchor that exists", async ({ page }) => {
     await page.goto("/rooms/");
-    const hrefs = await page
-      .getByRole("navigation", { name: "Primary" })
+    const nav = page.getByRole("navigation", { name: "Primary" });
+    await expect(nav.getByRole("link")).toHaveText([
+      "Stay",
+      "Weddings",
+      "Events",
+      "Dining",
+      "Experiences",
+      "Gallery",
+      "Contact",
+    ]);
+    const hrefs = await nav
       .getByRole("link")
       .evaluateAll((els) => els.map((el) => el.getAttribute("href") ?? ""));
-    for (const href of hrefs) {
-      const [path, hash] = href.split("#");
-      const response = await page.goto(path || "/");
-      expect(response?.status(), href).toBe(200);
-      if (hash) await expect(page.locator(`#${hash}`), href).toBeAttached();
+    await expectLinksResolve(page, hrefs);
+  });
+
+  test("the current page carries a gold flame; hover draws a gold underline from the centre", async ({
+    page,
+  }) => {
+    await page.goto("/rooms/");
+    const nav = page.getByRole("navigation", { name: "Primary" });
+    const stay = nav.getByRole("link", { name: "Stay" });
+    const events = nav.getByRole("link", { name: "Events" });
+    await expect(stay).toHaveAttribute("aria-current", "page");
+    await expect(events).not.toHaveAttribute("aria-current");
+    const flame = (link: typeof stay) =>
+      link.evaluate((el) => getComputedStyle(el, "::before").content);
+    expect(await flame(stay)).not.toBe("none");
+    expect(await flame(events)).toBe("none");
+
+    const underline = () =>
+      events.evaluate((el) => {
+        const style = getComputedStyle(el, "::after");
+        return { transform: style.transform, origin: style.transformOrigin };
+      });
+    expect((await underline()).transform).toBe("matrix(0, 0, 0, 1, 0, 0)");
+    await events.hover();
+    await expect.poll(async () => (await underline()).transform).toBe("matrix(1, 0, 0, 1, 0, 0)");
+    // Drawn from the centre: its origin is half its width.
+    const { origin } = await underline();
+    const width = await events.evaluate((el) => parseFloat(getComputedStyle(el, "::after").width));
+    expect(Math.abs(parseFloat(origin) - width / 2)).toBeLessThan(1);
+  });
+
+  test("the logo sits on its plum medallion, inside the bar", async ({ page }) => {
+    for (const route of ["/", "/rooms/"]) {
+      await page.goto(route);
+      const home = page.locator("header").getByRole("link", { name: /home/ });
+      const medallion = home.locator(".logo-medallion");
+      await expect(medallion).toHaveCSS("background-color", BRAND_PLUM);
+      await expect(medallion.locator("img")).toBeVisible();
+      const header = await page.locator("header").boundingBox();
+      const box = await medallion.boundingBox();
+      expect(box!.y).toBeGreaterThanOrEqual(header!.y);
+      expect(box!.y + box!.height).toBeLessThanOrEqual(header!.y + header!.height + 0.5);
     }
+  });
+
+  test("Book a Stay is the plum plaque, and asks for availability on WhatsApp", async ({ page }) => {
+    await page.goto("/rooms/");
+    const book = page.locator("header").getByRole("link", { name: /^Book a Stay/ });
+    await expect(book).toHaveCSS("background-color", BRAND_PLUM);
+    await expect(book).toHaveAttribute("href", /^https:\/\/wa\.me\/91\d{10}\?text=/);
+    await expect(book).toHaveAccessibleName(/check availability on WhatsApp/);
   });
 });
 
-test.describe("Mobile (360px)", () => {
+test.describe("Header and menu — phone (360px)", () => {
   test.use({ viewport: { width: 360, height: 780 } });
 
-  test("the logo niche stays inside the header on a phone", async ({ page }) => {
-    await page.goto("/");
-    const header = await page.locator("header").boundingBox();
-    const niche = await page.locator(".header-keystone").boundingBox();
-    expect(niche!.y + niche!.height).toBeLessThanOrEqual(header!.y + header!.height + 0.5);
+  test("the logo is exactly centred, between the Menu button and Book", async ({ page }) => {
+    for (const route of ["/", "/rooms/"]) {
+      await page.goto(route);
+      const medallion = await page.locator("header .logo-medallion").boundingBox();
+      const header = await page.locator("header").boundingBox();
+      const centre = header!.x + header!.width / 2;
+      expect(Math.abs(medallion!.x + medallion!.width / 2 - centre), route).toBeLessThanOrEqual(1);
+      await expect(page.getByRole("button", { name: "Menu" })).toBeVisible();
+      await expect(page.locator("header").getByRole("link", { name: /^Book/ })).toBeVisible();
+    }
   });
 
-  test("Menu button visible; sticky bar visible with 3 buttons", async ({ page }) => {
+  test("the phone bar: Call, WhatsApp and the page's action, in gold on plum", async ({ page }) => {
     await page.goto("/");
-
-    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible();
-
-    const stickyBar = page.locator("div.fixed.inset-x-0.bottom-0");
-    await expect(stickyBar).toBeVisible();
-    await expect(stickyBar.getByRole("link")).toHaveCount(3);
+    const bar = page.locator(".sticky-bar");
+    await expect(bar).toBeVisible();
+    await expect(bar).toHaveAttribute("data-theme", "deep");
+    await expect(bar).toHaveClass(/text-ink/);
+    await expect(bar.getByRole("link")).toHaveCount(3);
+    await expect(bar.getByRole("link", { name: "Call" })).toHaveAttribute("href", /^tel:\+91/);
+    await expect(bar.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", /^https:\/\/wa\.me\//);
+    await expect(bar.getByRole("link", { name: "Enquire" })).toHaveAttribute("href", "#enquire");
+    for (const box of await bar.getByRole("link").evaluateAll((els) =>
+      els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect),
+    )) {
+      expect(box.height).toBeGreaterThanOrEqual(44);
+    }
+    // Pinned to the foot of the screen.
+    const rect = await bar.boundingBox();
+    expect(Math.round(rect!.y + rect!.height)).toBe(780);
   });
 
-  test("opening the menu traps focus and Escape returns focus to Menu button", async ({
-    page,
-  }) => {
+  test("the menu traps focus, and Escape returns focus to the Menu button", async ({ page }) => {
     await page.goto("/");
-
     const menuButton = page.getByRole("button", { name: "Menu" });
     await menuButton.click();
-
     const dialog = page.locator("#mobile-menu");
     await expect(dialog).toBeVisible();
-    // showModal() focuses the first focusable element inside the dialog.
-    await expect(
-      page.locator("#mobile-menu :focus"),
-    ).toBeVisible();
+    await expect(page.locator("#mobile-menu :focus")).toBeVisible();
 
-    // Tab all the way around (11 focusable items) and confirm focus never lands
-    // on real content outside the dialog. Chromium's native modal <dialog> rests
-    // focus on the (non-interactive) <body> for one tick between the last item
-    // and wrapping back to the first — that's an inert resting point, not an
-    // escape, so it's allowed; anything else outside the dialog is not.
-    for (let i = 0; i < 13; i++) {
+    // Chromium's native modal <dialog> rests focus on <body> for one tick
+    // between the last item and wrapping back to the first — an inert
+    // resting point, not an escape.
+    for (let i = 0; i < 16; i++) {
       await page.keyboard.press("Tab");
       const trapped = await page.evaluate(() => {
-        const dialogEl = document.getElementById("mobile-menu");
         const active = document.activeElement;
-        return dialogEl?.contains(active) || active === document.body;
+        return document.getElementById("mobile-menu")?.contains(active) || active === document.body;
       });
       expect(trapped).toBe(true);
     }
@@ -186,29 +189,40 @@ test.describe("Mobile (360px)", () => {
     await expect(menuButton).toBeFocused();
   });
 
-  test("the menu opens like gates onto a deep hall", async ({ page }) => {
+  test("the menu: a plum night, numbered links, its lamps lit, the ways to reach the hotel", async ({
+    page,
+  }) => {
     await page.goto("/rooms/");
     await page.getByRole("button", { name: "Menu" }).click();
     const dialog = page.locator("#mobile-menu");
     await expect(dialog).toHaveAttribute("data-theme", "deep");
     await expect(dialog).toHaveClass(/text-ink/);
 
-    // Both leaves end fully outside the viewport, and never block taps.
+    const nav = dialog.getByRole("navigation", { name: "Mobile" });
+    await expect(nav.getByRole("link")).toHaveCount(7);
+    await expect(nav.locator(".menu-num").first()).toHaveText("I");
+    await expect(nav.locator(".menu-num").last()).toHaveText("VII");
+    // exact: "Book a Stay" is in the menu too.
+    await expect(nav.getByRole("link", { name: "Stay", exact: true })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
+    // The row of lamps lights as it opens.
+    await expect(dialog.locator(".menu-lamps")).toHaveAttribute("data-lit", "");
     await expect
       .poll(() =>
-        page.evaluate(() => {
-          const l = document.querySelector(".menu-gate-l")!.getBoundingClientRect();
-          const r = document.querySelector(".menu-gate-r")!.getBoundingClientRect();
-          return l.right <= 0 && r.left >= window.innerWidth;
-        }),
+        dialog
+          .locator(".menu-lamps .lamp")
+          .evaluateAll((els) => els.map((el) => getComputedStyle(el, "::after").opacity)),
       )
-      .toBe(true);
-    await expect(page.locator(".menu-gate-l")).toHaveCSS("pointer-events", "none");
+      .toEqual(Array(7).fill("1"));
 
-    // exact: "Book a Stay" is in the menu too.
-    const current = dialog.getByRole("link", { name: "Stay", exact: true });
-    await expect(current).toHaveAttribute("aria-current", "page");
-    await dialog.getByRole("link", { name: "Weddings" }).click();
+    await expect(dialog.getByRole("link", { name: /^Book a Stay/ })).toBeVisible();
+    await expect(dialog.locator('a[href^="tel:"]')).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "WhatsApp us" })).toBeVisible();
+
+    await nav.getByRole("link", { name: "Weddings" }).click();
     await expect(page).toHaveURL(/\/weddings\/$/);
     await expect(dialog).toBeHidden();
   });
@@ -218,57 +232,51 @@ test.describe("Links", () => {
   test("Call link href starts with tel:+91", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 780 });
     await page.goto("/");
-    const href = await page
-      .locator('a[href^="tel:"]')
-      .first()
-      .getAttribute("href");
+    const href = await page.locator('a[href^="tel:"]').first().getAttribute("href");
     expect(href).toMatch(/^tel:\+91/);
   });
 
   test("WhatsApp link matches wa.me pattern", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 780 });
     await page.goto("/");
-    const href = await page
-      .locator('a[href^="https://wa.me/"]')
-      .first()
-      .getAttribute("href");
+    const href = await page.locator('a[href^="https://wa.me/"]').first().getAttribute("href");
     expect(href).toMatch(/^https:\/\/wa\.me\/91\d{10}\?text=/);
   });
 });
 
-test("footer contains 'Also searched as Hotel Deepali'", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByText("Also searched as Hotel Deepali")).toBeVisible();
-});
+/* ──── The footer ──── */
 
-/* ──── The footer: the finale (2026-10-27) ──── */
-
-test.describe("Footer — the finale", () => {
+test.describe("Footer", () => {
   const scrollToEnd = (page: Page) =>
-    page.evaluate(() =>
-      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }),
-    );
+    page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+  const lampsLit = (page: Page) =>
+    page
+      .getByRole("contentinfo")
+      .locator(".footer-lamps .lamp")
+      .evaluateAll((els) =>
+        els.filter((el) => el.getClientRects().length > 0).map((el) => getComputedStyle(el, "::after").opacity),
+      );
 
-  test("a deep gateway: the emblem, the invitation and the two actions", async ({ page }) => {
+  test("plum velvet: the logo on plum, the invitation and the two actions", async ({ page }) => {
     await page.goto("/rooms/");
     const footer = page.getByRole("contentinfo");
     await expect(footer).toHaveAttribute("data-theme", "deep");
     await expect(footer).toHaveClass(/text-ink/);
-    const gate = footer.locator(".finale-gate");
-    await expect(gate.getByRole("link", { name: /home/ })).toBeAttached();
+    await expect(footer.getByRole("link", { name: /home/ }).locator(".logo-medallion")).toHaveCSS(
+      "background-color",
+      BRAND_PLUM,
+    );
     await expect(
-      gate.getByRole("heading", { level: 2, name: "We look forward to welcoming you" }),
+      footer.getByRole("heading", { level: 2, name: "We look forward to welcoming you" }),
     ).toBeAttached();
-    // No booking engine is configured: Book a Stay asks for availability on
-    // WhatsApp (CLAUDE.md §D), and says so to screen readers.
-    const book = gate.getByRole("link", { name: /^Book a Stay/ });
+    const book = footer.getByRole("link", { name: /^Book a Stay/ });
     await expect(book).toHaveAttribute("href", /^https:\/\/wa\.me\/91\d{10}\?text=/);
-    await expect(book).toHaveAccessibleName(/check availability on WhatsApp/);
     // /rooms/ has no form of its own, so the enquiry goes to the contact page's.
-    await expect(gate.getByRole("link", { name: "Send an enquiry" })).toHaveAttribute(
+    await expect(footer.getByRole("link", { name: "Send an enquiry" })).toHaveAttribute(
       "href",
       "/contact/#enquire",
     );
+    await expect(footer.getByText("Also searched as Hotel Deepali")).toBeAttached();
   });
 
   test("only real numbers to call, and no unverified or unbuilt destinations", async ({ page }) => {
@@ -280,14 +288,10 @@ test.describe("Footer — the finale", () => {
     expect(tels.length).toBeGreaterThanOrEqual(2);
     for (const tel of tels) expect(tel).toMatch(/^tel:\+91[6-9]\d{9}$/);
     await expect(footer).not.toContainText("00000");
-    // Social links show only once verified; policies only once their pages exist.
     await expect(footer.getByRole("link", { name: "Facebook" })).toHaveCount(0);
     await expect(footer.getByRole("link", { name: "Privacy Policy" })).toHaveCount(0);
     // On the home page the enquiry is the page's own form.
-    await expect(footer.getByRole("link", { name: "Send an enquiry" })).toHaveAttribute(
-      "href",
-      "#enquire",
-    );
+    await expect(footer.getByRole("link", { name: "Send an enquiry" })).toHaveAttribute("href", "#enquire");
   });
 
   test("every footer link leads to a page (and anchor) that exists", async ({ page }) => {
@@ -297,70 +301,44 @@ test.describe("Footer — the finale", () => {
       .locator('a[href^="/"]')
       .evaluateAll((links) => [...new Set(links.map((a) => a.getAttribute("href") ?? ""))]);
     expect(hrefs.length).toBeGreaterThanOrEqual(10);
-    for (const href of hrefs) {
-      const [path, hash] = href.split("#");
-      const response = await page.goto(path || "/");
-      expect(response?.status(), href).toBe(200);
-      if (hash) await expect(page.locator(`#${hash}`), href).toBeAttached();
-    }
+    await expectLinksResolve(page, hrefs);
   });
 
-  test("the sequence plays once it arrives: the gateway drawn, every lamp lit", async ({ page }) => {
+  test("its lamps are embers until it arrives, then light one after another", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/rooms/");
     const footer = page.getByRole("contentinfo");
-    const fire = footer.locator(".lamp-fire");
-
-    // Before it arrives nothing is lit.
     await expect(footer).not.toHaveAttribute("data-revealed");
-    expect(await fire.first().evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
+    expect((await lampsLit(page)).every((o) => o === "0.35")).toBe(true);
 
     await scrollToEnd(page);
     await expect(footer).toHaveAttribute("data-revealed", "");
-    // Four lamps either side from 1024px, all lit; the gateway's line drawn.
-    await expect
-      .poll(() =>
-        fire.evaluateAll((els) =>
-          els.filter((el) => el.getClientRects().length > 0).map((el) => getComputedStyle(el).opacity),
-        ),
-      )
-      .toEqual(Array(8).fill("1"));
-    await expect
-      .poll(() => footer.locator(".finale-gate").evaluate((el) => getComputedStyle(el, "::before").clipPath))
-      .toBe("none");
-    await expect(footer.locator(".finale-base")).toHaveCSS("opacity", "1");
+    await expect.poll(() => lampsLit(page)).toEqual(Array(13).fill("1"));
+    // In sequence: each lamp waits a little longer than the one before.
+    const delays = await footer
+      .locator(".footer-lamps .lamp")
+      .evaluateAll((els) => els.map((el) => parseFloat(getComputedStyle(el, "::after").transitionDelay)));
+    for (let i = 1; i < delays.length; i += 1) expect(delays[i]).toBeGreaterThan(delays[i - 1]!);
   });
 
-  test("keyboard focus arriving first shows the whole finale at once", async ({ page }) => {
+  test("keyboard focus arriving first lights it at once", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/rooms/");
     const footer = page.getByRole("contentinfo");
     await footer.getByRole("link", { name: /^Book a Stay/ }).focus();
     await expect(footer).toHaveAttribute("data-revealed", "instant");
-    // Well inside the sequence's own timing (the actions wait ~1 s): the
-    // focused link is never transparent.
-    await expect(footer.locator(".finale-actions")).toHaveCSS("opacity", "1", { timeout: 250 });
-    await expect(footer.locator(".finale-group").last()).toHaveCSS("opacity", "1", { timeout: 250 });
+    await expect.poll(() => lampsLit(page), { timeout: 600 }).toEqual(Array(13).fill("1"));
   });
 
-  test("reduced motion: the finale is complete and still from the start", async ({ page }) => {
+  test("reduced motion: lit from the start", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/rooms/");
-    const footer = page.getByRole("contentinfo");
-    const state = await footer.evaluate((el) => {
-      const style = (selector: string) => getComputedStyle(el.querySelector(selector)!);
-      return {
-        fire: style(".lamp-fire").opacity,
-        actions: style(".finale-actions").opacity,
-        line: style(".finale-line").clipPath,
-        gate: style(".finale-gate").translate,
-        base: style(".finale-base").opacity,
-      };
-    });
-    expect(state).toEqual({ fire: "1", actions: "1", line: "none", gate: "none", base: "1" });
+    await expect(page.getByRole("contentinfo")).toHaveAttribute("data-revealed", "instant");
+    expect(await lampsLit(page)).toEqual(Array(13).fill("1"));
   });
 
-  test("nothing in the finale lengthens or widens the page", async ({ page }) => {
+  test("nothing in it lengthens or widens the page", async ({ page }) => {
     for (const viewport of [
       { width: 360, height: 780 },
       { width: 1280, height: 800 },
@@ -371,7 +349,6 @@ test.describe("Footer — the finale", () => {
       await expect(page.getByRole("contentinfo")).toHaveAttribute("data-revealed", "");
       const metrics = await page.evaluate(() => ({
         overflowX: document.documentElement.scrollWidth > document.documentElement.clientWidth,
-        // `|| 0` turns a rounded -0 into 0.
         below:
           Math.round(
             document.documentElement.scrollHeight -
@@ -382,49 +359,35 @@ test.describe("Footer — the finale", () => {
     }
   });
 
-  test("phones: the gateway fits, a lamp either side, full-width lines to tap", async ({ page }) => {
+  test("phones: lines to tap at full size, and the legal line clears the phone bar", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 780 });
     await page.goto("/contact/");
     await scrollToEnd(page);
     const footer = page.getByRole("contentinfo");
-    const gate = await footer.locator(".finale-gate").boundingBox();
-    expect(gate!.x).toBeGreaterThanOrEqual(0);
-    expect(gate!.x + gate!.width).toBeLessThanOrEqual(360);
-    const lamps = await footer
-      .locator(".finale-course .lamp")
-      .evaluateAll((els) => els.filter((el) => el.getClientRects().length > 0).length);
-    expect(lamps).toBe(2);
-    const rows = await footer
-      .locator(".finale-line-link")
-      .evaluateAll((links) => links.map((a) => a.getBoundingClientRect().toJSON() as DOMRect));
-    for (const row of rows) {
+    expect(await lampsLit(page)).toHaveLength(7);
+    for (const row of await footer.locator(".footer-line").evaluateAll((links) =>
+      links.map((a) => a.getBoundingClientRect().toJSON() as DOMRect),
+    )) {
       expect(row.height).toBeGreaterThanOrEqual(44);
-      expect(row.width).toBeGreaterThan(280);
     }
-    // The legal line clears the phone sticky bar.
-    const base = await footer.locator(".finale-base").boundingBox();
-    const bar = await page.locator("div.fixed.inset-x-0.bottom-0").boundingBox();
-    expect(base!.y + base!.height).toBeLessThanOrEqual(bar!.y);
+    const legal = await footer.getByText("Also searched as Hotel Deepali").boundingBox();
+    const bar = await page.locator(".sticky-bar").boundingBox();
+    expect(legal!.y + legal!.height).toBeLessThanOrEqual(bar!.y);
   });
 });
 
 test.describe("Footer without JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("the finale is complete: drawn, lit and readable", async ({ page }) => {
+  test("its lamps are simply lit", async ({ page }) => {
     await page.goto("/rooms/");
-    const footer = page.locator("footer");
-    const state = await footer.evaluate((el) => {
-      const style = (selector: string) => getComputedStyle(el.querySelector(selector)!);
-      return {
-        fire: style(".lamp-fire").opacity,
-        lead: style(".finale-lead").opacity,
-        line: style(".finale-line").clipPath,
-        group: style(".finale-group").opacity,
-        base: style(".finale-base").opacity,
-      };
-    });
-    expect(state).toEqual({ fire: "1", lead: "1", line: "none", group: "1", base: "1" });
+    const lit = await page
+      .locator("footer .footer-lamps .lamp")
+      .evaluateAll((els) =>
+        els.filter((el) => el.getClientRects().length > 0).map((el) => getComputedStyle(el, "::after").opacity),
+      );
+    expect(lit.length).toBeGreaterThan(0);
+    expect(lit.every((o) => o === "1")).toBe(true);
   });
 });
 
@@ -433,30 +396,42 @@ test.describe("Accessibility (axe-core)", () => {
     { width: 360, height: 780, label: "mobile" },
     { width: 1280, height: 800, label: "desktop" },
   ]) {
-    for (const path of ["/", "/styleguide/"]) {
-      test(`zero serious/critical violations on ${path} at ${viewport.label}`, async ({
-        page,
-      }) => {
+    for (const path of ["/", "/styleguide/", "/contact/"]) {
+      test(`zero serious/critical violations on ${path} at ${viewport.label}`, async ({ page }) => {
         await page.setViewportSize(viewport);
         await page.goto(path);
-
         const results = await new AxeBuilder({ page }).analyze();
         const seriousOrCritical = results.violations.filter(
           (v) => v.impact === "serious" || v.impact === "critical",
         );
-        expect(seriousOrCritical, JSON.stringify(seriousOrCritical, null, 2)).toEqual(
-          [],
-        );
+        expect(seriousOrCritical, JSON.stringify(seriousOrCritical, null, 2)).toEqual([]);
       });
     }
   }
 });
 
-test("no horizontal scroll at 360px", async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 780 });
-  await page.goto("/");
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
-  );
-  expect(overflow).toBeFalsy();
+test.describe("No horizontal overflow, 360–1920", () => {
+  for (const width of [360, 768, 1024, 1280, 1920]) {
+    test(`at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      for (const path of ["/", "/rooms/", "/weddings/", "/contact/", "/styleguide/"]) {
+        await page.goto(path);
+        const overflow = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+        expect(overflow, path).toBeLessThanOrEqual(0);
+      }
+    });
+  }
+});
+
+test("no console errors on the shell's pages", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (msg) => msg.type() === "error" && errors.push(msg.text()));
+  page.on("pageerror", (err) => errors.push(err.message));
+  for (const path of ["/", "/rooms/", "/contact/", "/styleguide/"]) {
+    await page.goto(path);
+    await page.waitForLoadState("load");
+  }
+  expect(errors).toEqual([]);
 });

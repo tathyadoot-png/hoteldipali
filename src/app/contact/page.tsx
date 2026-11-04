@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ContactLines } from "@/components/contact/ContactLines";
 import { Breadcrumbs } from "@/components/content/Breadcrumbs";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { getSite } from "@/content";
 
 export async function generateMetadata(): Promise<Metadata> {

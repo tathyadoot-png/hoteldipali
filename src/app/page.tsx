@@ -5,8 +5,9 @@ import { Emblem } from "@/components/brand/Logo";
 import { MedallionRing } from "@/components/brand/Ornaments";
 import { ContactLines } from "@/components/contact/ContactLines";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
-import { EntranceHero } from "@/components/home/EntranceHero";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
+import { GoldThread, ThreadStop } from "@/components/motion/GoldThread";
+import { HomeHero } from "@/components/home/HomeHero";
 import { IntroLoader } from "@/components/home/IntroLoader";
 import { DipaliExperience } from "@/components/home/DipaliExperience";
 import { GrandReveal } from "@/components/home/GrandReveal";
@@ -19,6 +20,7 @@ import { UnwindRipple } from "@/components/home/UnwindRipple";
 import { PicturesAssemble } from "@/components/home/PicturesAssemble";
 import { LayeredSection } from "@/components/motion/LayeredSection";
 import { getGallery, getLeisure, getOutlet, getRooms, getSite, getVenues } from "@/content";
+import { getBookingUrl } from "@/lib/booking";
 import { isPhoto } from "@/lib/images";
 import { outletHref } from "@/lib/routes";
 
@@ -38,12 +40,13 @@ const VENUE_KIND: Record<string, string> = {
 };
 
 export default async function HomePage() {
-  const [site, rooms, venues, leisure, gallery] = await Promise.all([
+  const [site, rooms, venues, leisure, gallery, bookingUrl] = await Promise.all([
     getSite(),
     getRooms(),
     getVenues(),
     getLeisure(),
     getGallery(),
+    getBookingUrl(),
   ]);
   const [restaurant, bakery, sweets, poolside, bar] = await Promise.all([
     getOutlet("restaurant"),
@@ -118,20 +121,22 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ═══ ARRIVE — the lit entrance, framed by a gold arch ═══ */}
-      <IntroLoader caption={`${city} · ${site.address.value.state}`} />
+      {/* ═══ ARRIVE — the first lamp, then the name and the lit entrance ═══ */}
+      <IntroLoader />
+      {/* One gold line drawn down the page as it scrolls (desktop rich motion);
+          it crosses at each ThreadStop and ends in a flame above the footer. */}
+      <GoldThread />
       {/* The hero holds still while The Dipali Experience rises over it
-          (rich motion); the wrapper ends the hold once it is covered. */}
+          (rich motion); the wrapper ends the hold once it is covered. The
+          hero video (site.homeHeroVideo, sample) is not shown for now. */}
       <div className="layers">
-        <EntranceHero
+        <HomeHero
           image={site.homeHero}
-          video={site.homeHeroVideo}
-          eyebrow="A Timeless Destination"
-          titlePrefix={`${site.name}, ${city}:`}
-          title={{ lead: "A Stay", accent: "Beyond", tail: "Ordinary" }}
-          subline="Comfort, Crafted with Care"
-          primary={{ label: "Explore the Experience", href: "#explore" }}
-          secondary={{ label: "Discover Hotel Dipali", href: "#welcome" }}
+          depthSrc="/images/hotel/entrance-night-arch-depth.webp"
+          name={site.name}
+          city={city}
+          line={site.tagline.value}
+          bookingUrl={bookingUrl}
         />
 
         {/* ═══ THE DIPALI EXPERIENCE — an ivory arch rises over the hero ═══
@@ -142,6 +147,7 @@ export default async function HomePage() {
           aria-labelledby="home-intro"
           className="threshold layer-rise paper-grain scroll-mt-16 bg-surface pt-[var(--arch)] pb-24 md:pb-36"
         >
+          <ThreadStop />
           <div className="layer-content container-site relative">
             <DipaliExperience
               headingId="home-intro"
@@ -195,6 +201,7 @@ export default async function HomePage() {
         aria-labelledby="home-living"
         className="threshold paper-grain scroll-mt-28 overflow-x-clip bg-surface pt-[var(--arch)]"
       >
+        <ThreadStop />
         <LivingExperiences
           headingId="home-living"
           eyebrow="Four experiences · One destination"
@@ -321,6 +328,7 @@ export default async function HomePage() {
           className="pictures-section scroll-mt-24 overflow-x-clip bg-surface"
         >
           <div className="container-site">
+            <ThreadStop />
             <div className="pictures-head">
               <ScrollReveal>
                 <p className="pictures-eyebrow">In pictures</p>
@@ -343,6 +351,7 @@ export default async function HomePage() {
         aria-labelledby="home-enquire"
         className="close-section threshold paper-grain scroll-mt-24 bg-surface pt-[calc(var(--arch)+3rem)] pb-20 text-ink md:pb-28"
       >
+        <ThreadStop />
         <div className="close container-site">
           <ScrollReveal className="close-copy">
             <span aria-hidden="true" className="close-medallion">

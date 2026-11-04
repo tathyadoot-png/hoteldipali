@@ -138,7 +138,7 @@ test.describe("Smooth scrolling — mouse / trackpad", () => {
     page,
   }) => {
     await page.goto("/");
-    await page.locator(".entrance-actions").getByRole("link", { name: "Explore the Experience" }).click();
+    await page.locator("#welcome").getByRole("link", { name: "Discover Our Story" }).click();
     await expect(page).toHaveURL(/#explore$/);
     await expect
       .poll(

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500" role="img" aria-label="Hall, corporate seating arrangement (sample placeholder)">
-  <rect x="0" y="0" width="1200" height="1500" fill="#CFC6A8"/>
-  <path d="M192 1500 V510 a180 180 0 0 1 360 0 V1500 Z" fill="#BDB290"/>
-  <path d="M744 1500 V630" stroke="#9C8F6D" stroke-width="3" opacity="0.45"/>
-  <rect x="13" y="13" width="1174" height="1474" fill="none" stroke="#9C8F6D" stroke-width="2" opacity="0.35"/>
+  <rect x="0" y="0" width="1200" height="1500" fill="#DACCDF"/>
+  <path d="M192 1500 V510 a180 180 0 0 1 360 0 V1500 Z" fill="#C9B8CF"/>
+  <path d="M744 1500 V630" stroke="#A3906E" stroke-width="3" opacity="0.45"/>
+  <rect x="13" y="13" width="1174" height="1474" fill="none" stroke="#A3906E" stroke-width="2" opacity="0.35"/>
 </svg>

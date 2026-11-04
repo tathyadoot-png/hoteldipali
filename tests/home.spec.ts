@@ -30,9 +30,10 @@ test.describe("Home page", () => {
     await expect(page.locator("#home-enquire")).toBeVisible();
   });
 
-  test("hero section has the deep theme", async ({ page }) => {
+  test("the hero is the light page: ivory, with no dark scope of its own", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    await expect(hero).toHaveAttribute("data-theme", "deep");
+    await expect(hero).not.toHaveAttribute("data-theme", /.+/);
+    await expect(hero).toHaveCSS("background-color", "rgb(250, 246, 244)");
   });
 
   test("enquiry section has dark theme and anchor id", async ({ page }) => {
@@ -42,14 +43,17 @@ test.describe("Home page", () => {
 
   /* ──── Navigation & links ──── */
 
-  test("the hero's two calls to action lead to sections on this page", async ({ page }) => {
+  test("the hero's calls to action: book a stay, or plan a wedding", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    const primary = hero.getByRole("link", { name: "Explore the Experience" });
-    const secondary = hero.getByRole("link", { name: "Discover Hotel Dipali" });
-    await expect(primary).toHaveAttribute("href", "#explore");
-    await expect(secondary).toHaveAttribute("href", "#welcome");
-    await expect(page.locator("#explore")).toBeAttached();
-    await expect(page.locator("#welcome")).toBeAttached();
+    // No booking engine is configured: availability on WhatsApp (CLAUDE.md §D).
+    await expect(hero.getByRole("link", { name: /^Book a Stay/ })).toHaveAttribute(
+      "href",
+      /^https:\/\/wa\.me\/91\d{10}\?text=/,
+    );
+    const wedding = hero.getByRole("link", { name: "Plan a Wedding" });
+    await expect(wedding).toHaveAttribute("href", "/weddings/");
+    const response = await page.goto("/weddings/");
+    expect(response?.status()).toBe(200);
   });
 
   test("has at least one link to /rooms/", async ({ page }) => {
@@ -287,7 +291,7 @@ test.describe("Home page", () => {
   test("passes axe-core accessibility checks", async ({ page }) => {
     const results = await new AxeBuilder({ page })
       .exclude("[data-reveal]:not([data-revealed])") // hidden elements pending reveal
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     expect(results.violations).toEqual([]);
   });

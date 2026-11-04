@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1000" viewBox="0 0 1500 1000" role="img" aria-label="Hall stage, ring ceremony decor (sample placeholder)">
-  <rect x="0" y="0" width="1500" height="1000" fill="#CFC6A8"/>
-  <path d="M0 780 L1500 560 L1500 1000 L0 1000 Z" fill="#BDB290"/>
-  <path d="M300 340 q210 -120 420 0" fill="none" stroke="#9C8F6D" stroke-width="2" opacity="0.45"/>
-  <rect x="11" y="11" width="1478" height="978" fill="none" stroke="#9C8F6D" stroke-width="2" opacity="0.35"/>
+  <rect x="0" y="0" width="1500" height="1000" fill="#DACCDF"/>
+  <path d="M0 780 L1500 560 L1500 1000 L0 1000 Z" fill="#C9B8CF"/>
+  <path d="M300 340 q210 -120 420 0" fill="none" stroke="#A3906E" stroke-width="2" opacity="0.45"/>
+  <rect x="11" y="11" width="1478" height="978" fill="none" stroke="#A3906E" stroke-width="2" opacity="0.35"/>
 </svg>

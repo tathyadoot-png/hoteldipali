@@ -9,7 +9,7 @@ import { RoomCard } from "@/components/cards/RoomCard";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
 import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { getRoom, getRoomSlugs, getRooms } from "@/content";
 import { formatMoney } from "@/lib/format";
 

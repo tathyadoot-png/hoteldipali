@@ -3,14 +3,12 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Logo } from "@/components/brand/Logo";
-import { MedallionRing } from "@/components/brand/Ornaments";
+import { BrandLink } from "@/components/brand/Logo";
 import { BookStayLink } from "@/components/links/BookStayLink";
-import { CallLink } from "@/components/links/CallLink";
 import { NavDesktop } from "@/components/layout/NavDesktop";
 import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
-import { overlayHeaderRoutes } from "@/lib/routes";
+import { overlayHeaderRoutes, primaryNav } from "@/lib/routes";
 
 function MenuIcon() {
   return (
@@ -20,7 +18,7 @@ function MenuIcon() {
       height="22"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.6"
       strokeLinecap="round"
       aria-hidden="true"
     >
@@ -34,6 +32,14 @@ function MenuIcon() {
 // never a scroll listener.
 const SCROLL_THRESHOLD_PX = 80;
 
+/**
+ * The header: an ivory bar with a fine gold hairline, transparent over the
+ * home hero until the next section arrives. Below xl: the menu, the logo
+ * medallion exactly centred, and Book. From xl: the medallion and the name,
+ * the links (a gold underline drawn from the centre on hover; a small gold
+ * flame under the current page) and Book a Stay. The logo is always the gold
+ * emblem on its plum medallion — never on the ivory itself.
+ */
 export function Header({ bookingUrl }: { bookingUrl: string | null }) {
   const { site } = useSiteData();
   const pathname = usePathname();
@@ -42,8 +48,7 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
 
   useEffect(() => {
     // A page can name the element whose arrival should end the overlay — the
-    // home page uses the ivory arch that rises over its entrance film, so the
-    // header stays transparent for the whole pinned scene.
+    // home page uses the section that rises over its hero.
     const solidFrom = document.querySelector<HTMLElement>("[data-header-solid-from]");
     if (solidFrom) {
       const observer = new IntersectionObserver(
@@ -76,17 +81,10 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
 
   return (
     <header
-      data-theme="deep"
       data-state={isOverlay ? "overlay" : "solid"}
-      // text-ink re-declares `color` on this element so it re-resolves against
-      // the deep-scoped --color-ink (inherited `color` would not).
-      // Background lives in .header-shell[data-state] (theme.css).
-      className="header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22"
+      // Background and hairline live in .header-shell[data-state] (theme.css).
+      className="header-shell sticky top-0 z-40 h-18 text-ink md:h-22"
     >
-      {/* The engraved band: two gold rules run from either end to a medallion
-          holding the emblem; the links sit inside the band and a small gold
-          bead slides along its lower rule. Ends: the call link (left, xl) and
-          Book a Stay (right); below xl the menu takes the left end. */}
       <div className="container-site header-bar">
         <button
           ref={triggerRef}
@@ -103,28 +101,23 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
           </span>
         </button>
 
-        <span aria-hidden="true" className="header-band header-band-l" />
-        <span aria-hidden="true" className="header-band header-band-r" />
-
-        <NavDesktop links={site.navigation.main} pathname={pathname} />
-
-        <div className="header-keystone">
-          <MedallionRing className="header-ring" />
-          <Logo variant="reverse" imgClassName="header-emblem" sizes="3rem" />
-        </div>
-
-        {/* The wrapper owns the display rule (the link carries inline-flex
-            utilities, which would outrank a component-layer display:none). */}
-        <span className="header-call">
-          <CallLink labelClassName="header-call-label" />
-        </span>
-
-        <BookStayLink bookingUrl={bookingUrl} className="header-book btn-primary">
-          {/* One flex item, so the space before "a Stay" survives. */}
-          <span>
-            Book<span className="header-book-more"> a Stay</span>
+        <BrandLink className="header-brand" sizes="3.25rem">
+          <span aria-hidden="true" className="header-wordmark">
+            <span className="header-wordmark-name">{site.name}</span>
+            <span className="header-wordmark-place">{site.address.value.city}</span>
           </span>
-        </BookStayLink>
+        </BrandLink>
+
+        <NavDesktop links={primaryNav(site.navigation.main)} pathname={pathname} />
+
+        <div className="header-actions">
+          <BookStayLink bookingUrl={bookingUrl} className="header-book btn-primary">
+            {/* One flex item, so the space before "a Stay" survives. */}
+            <span>
+              Book<span className="header-book-more"> a Stay</span>
+            </span>
+          </BookStayLink>
+        </div>
       </div>
     </header>
   );

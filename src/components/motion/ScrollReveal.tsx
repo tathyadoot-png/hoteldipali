@@ -14,7 +14,13 @@ type RevealVariant =
   | "wipe-centre"
   // Text that arrives sideways, toward the photograph it belongs to.
   | "slide-left"
-  | "slide-right";
+  | "slide-right"
+  // A heading's lines rise out of their own masks in turn (see RevealLines).
+  | "mask-line"
+  // An image opens upward inside an arch.
+  | "clip-arch"
+  // One narrow pass of gold foil crosses the text (display headings only).
+  | "foil";
 
 type ScrollRevealProps = {
   children: ReactNode;
@@ -22,7 +28,10 @@ type ScrollRevealProps = {
   /** "rise" (default) fades content up; "mask" lifts a heading out of a
    * mask; "image" opens a frame from its base while the photo settles;
    * "wipe-*" open a photograph's frame from one edge (or the centre);
-   * "slide-*" fade content in while it moves left or right. */
+   * "slide-*" fade content in while it moves left or right; "mask-line"
+   * raises a heading line by line (wrap the lines in RevealLines);
+   * "clip-arch" opens an image inside an arch; "foil" passes one gleam of
+   * gold across display text. */
   variant?: RevealVariant;
   /** Stagger after the element enters, in ms (applied in CSS, not a timer). */
   delay?: number;
@@ -84,5 +93,22 @@ export function ScrollReveal({ children, className, variant = "rise", delay = 0 
     >
       {children}
     </div>
+  );
+}
+
+/**
+ * The lines of a heading for the "mask-line" reveal: each rises out of its
+ * own mask, one after another. Put it inside the heading, inside a
+ * <ScrollReveal variant="mask-line">.
+ */
+export function RevealLines({ lines }: { lines: ReactNode[] }) {
+  return (
+    <>
+      {lines.map((line, index) => (
+        <span key={index} className="reveal-line" style={{ "--line": index } as CSSProperties}>
+          <span>{line}</span>
+        </span>
+      ))}
+    </>
   );
 }

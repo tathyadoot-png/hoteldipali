@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/content/Breadcrumbs";
 import { Picture } from "@/components/media/Picture";
 import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { getRooms } from "@/content";
 import { formatMoney } from "@/lib/format";
 import { roomHref } from "@/lib/routes";

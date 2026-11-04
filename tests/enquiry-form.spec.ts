@@ -17,53 +17,6 @@ async function fillValidFields(form: Locator) {
   await form.getByLabel("Phone").fill("98765 43210");
 }
 
-test("renders with proper labels and all enquiry-type categories", async ({ page }) => {
-  const form = await openForm(page);
-
-  await expect(form.getByLabel("Name")).toBeVisible();
-  await expect(form.getByLabel("Phone")).toBeVisible();
-  await expect(form.getByLabel("Email (optional)")).toBeVisible();
-  await expect(form.getByLabel("Preferred date (optional)")).toBeVisible();
-  await expect(form.getByLabel("Number of guests (optional)")).toBeVisible();
-  await expect(form.getByLabel("Message (optional)")).toBeVisible();
-
-  // The enquiry type (2026-10-27): a group of choices instead of a select —
-  // the same field, values and default, one tap each.
-  const group = form.getByRole("group", { name: "What are you planning?" });
-  await expect(group).toBeVisible();
-  const values = await group
-    .getByRole("radio")
-    .evaluateAll((radios) => radios.map((r) => (r as HTMLInputElement).value));
-  expect(values).toEqual(["rooms", "wedding", "event", "dining", "pool-gym", "general"]);
-  await expect(group.getByRole("radio", { name: "A stay" })).toBeChecked();
-});
-
-test("the enquiry type is chosen from the keyboard, and the choice is what gets sent", async ({
-  page,
-}) => {
-  let requestBody: Record<string, string> | undefined;
-  await page.route(FORM_ENDPOINT, async (route) => {
-    requestBody = route.request().postDataJSON() as Record<string, string>;
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ success: true }),
-    });
-  });
-
-  const form = await openForm(page);
-  await form.getByRole("radio", { name: "A stay" }).focus();
-  await page.keyboard.press("ArrowRight");
-  const wedding = form.getByRole("radio", { name: "A wedding" });
-  await expect(wedding).toBeChecked();
-  await expect(wedding).toBeFocused();
-
-  await fillValidFields(form);
-  await form.getByRole("button", { name: "Send enquiry" }).click();
-  await expect(page).toHaveURL(/\/thank-you\/?$/);
-  expect(requestBody?.enquiry_type).toBe("wedding");
-});
-
 test("a field checks itself when the visitor leaves it, and the message goes once it is right", async ({
   page,
 }) => {

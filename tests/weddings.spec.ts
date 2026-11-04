@@ -66,21 +66,6 @@ test.describe("Weddings page", () => {
     }
   });
 
-  test("the enquiry section exists and is wired to the wedding/event types", async ({ page }) => {
-    const section = page.locator("#enquire");
-    await expect(section).toBeAttached();
-    const form = section.locator("form");
-    await expect(form).toBeAttached();
-
-    // The enquiry type is a group of choices (it was a select until 2026-10-27).
-    const choices = form.getByRole("group", { name: "What are you planning?" }).getByRole("radio");
-    const values = await choices.evaluateAll((radios) =>
-      radios.map((r) => (r as HTMLInputElement).value),
-    );
-    expect(values).toEqual(["wedding", "event"]);
-    await expect(form.getByRole("radio", { name: "A wedding" })).toBeChecked();
-  });
-
   test("occasions are derived from venue data and name their spaces", async ({ page }) => {
     const occasions = page
       .locator("section", { has: page.locator("#occasions") })
@@ -117,7 +102,7 @@ test.describe("Weddings page", () => {
 
   test("passes axe-core with no serious or critical violations", async ({ page }) => {
     const results = await new AxeBuilder({ page })
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     const serious = results.violations.filter(
       (v) => v.impact === "serious" || v.impact === "critical",
