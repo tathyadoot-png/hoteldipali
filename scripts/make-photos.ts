@@ -6,11 +6,12 @@ import { chromium, type Page } from "@playwright/test";
 /**
  * Makes web-ready derivatives of the hotel's original images.
  *
- * Sources are read only — never renamed, moved or overwritten:
- * - camera originals in public/hotel/ (8–26 MB each, up to 8256 px) and the
- *   night exteriors the owner added to public/images/hotel/;
+ * Sources are read only — never renamed, moved or overwritten. Originals live
+ * outside public/ (media-source/), so they are never deployed:
+ * - camera originals in media-source/hotel/ (8–26 MB each, up to 8256 px) and
+ *   the night exteriors in media-source/images/hotel/;
  * - the brand logo (public/brand/logo-primary.png, 506 KB);
- * - the owner's palette textures in public/palettes/ (736 px Pinterest-size).
+ * - the owner's palette textures in media-source/palettes/ (736 px Pinterest-size).
  *
  * Each job writes WebP files at several widths to public/images/<dir>/
  * <slug>-<width>.webp; content entries reference the widest file as `src` and
@@ -25,14 +26,15 @@ import { chromium, type Page } from "@playwright/test";
  *      pnpm make:photos -- stone   (only jobs whose slug contains "stone")
  */
 
-const PUBLIC = join(process.cwd(), "public");
+const ROOT = process.cwd();
+const PUBLIC = join(ROOT, "public");
 const WIDTHS = [480, 960, 1440, 1920, 2560];
 const QUALITY = 0.8;
 
 type Rect = { x: number; y: number; w: number; h: number };
 
 type Job = {
-  /** Source path, relative to public/. */
+  /** Source path, relative to the project root. */
   src: string;
   /** Output directory, relative to public/. */
   out: string;
@@ -45,7 +47,7 @@ type Job = {
   filter?: string;
 };
 
-/** Camera originals placed on the site: file in public/hotel/ → slug. */
+/** Camera originals placed on the site: file in media-source/hotel/ → slug. */
 const PHOTOS: Record<string, string> = {
   "DJI_20260831173307_0351_D.JPG": "aerial-pool-grounds",
   "DJI_20260831173334_0354_D.JPG": "aerial-pool-lawns",
@@ -75,7 +77,7 @@ const PHOTOS: Record<string, string> = {
 
 const JOBS: Job[] = [
   ...Object.entries(PHOTOS).map(([file, slug]) => ({
-    src: `hotel/${file}`,
+    src: `media-source/hotel/${file}`,
     out: "images/hotel",
     slug,
     widths: WIDTHS,
@@ -83,7 +85,7 @@ const JOBS: Job[] = [
   })),
   // Phone crop of the aerial, centred on the pool.
   {
-    src: "hotel/DJI_20260831173307_0351_D.JPG",
+    src: "media-source/hotel/DJI_20260831173307_0351_D.JPG",
     out: "images/hotel",
     slug: "aerial-pool-grounds-portrait",
     rect: { x: 0.4, y: 0, w: 0.42, h: 1 },
@@ -94,7 +96,7 @@ const JOBS: Job[] = [
   // (aspect 0.72). The crop sits below the rooftop sign and inside the
   // neighbouring buildings' lights — nothing is retouched.
   {
-    src: "images/hotel/DJI_20260909011702_0042_D.JPG",
+    src: "media-source/images/hotel/DJI_20260909011702_0042_D.JPG",
     out: "images/hotel",
     slug: "entrance-night-arch",
     rect: { x: 0.335, y: 0.25, w: 0.37, h: 0.685 },
@@ -104,7 +106,7 @@ const JOBS: Job[] = [
   // "The Dipali Experience" (home): the reception atrium as a 4:5 portrait,
   // centred on the front desk between the carved screens, below the ceiling.
   {
-    src: "hotel/DSC_1632.JPG",
+    src: "media-source/hotel/DSC_1632.JPG",
     out: "images/hotel",
     slug: "reception-atrium-portrait",
     rect: { x: 0.26, y: 0.1, w: 0.4801, h: 0.9 },
@@ -116,7 +118,7 @@ const JOBS: Job[] = [
   // most of the wet car park; and a 4:5 phone crop centred on the entrance,
   // clear of the sign (which stands further right).
   {
-    src: "images/hotel/DJI_20260909011556_0038_D.JPG",
+    src: "media-source/images/hotel/DJI_20260909011556_0038_D.JPG",
     out: "images/hotel",
     slug: "reveal-night-panorama",
     rect: { x: 0, y: 0.385, w: 1, h: 0.535 },
@@ -124,7 +126,7 @@ const JOBS: Job[] = [
     quality: QUALITY,
   },
   {
-    src: "images/hotel/DJI_20260909011556_0038_D.JPG",
+    src: "media-source/images/hotel/DJI_20260909011556_0038_D.JPG",
     out: "images/hotel",
     slug: "reveal-night-portrait",
     rect: { x: 0.4, y: 0.385, w: 0.35, h: 0.5833 },
@@ -134,27 +136,27 @@ const JOBS: Job[] = [
   // The real logo, trimmed to its artwork (alpha kept) for the loader and
   // the navigation medallion — instead of the 506 KB 1080 px PNG.
   {
-    src: "brand/logo-primary.png",
+    src: "public/brand/logo-primary.png",
     out: "images/brand",
     slug: "logo-emblem",
     rect: { x: 196 / 1080, y: 93 / 1080, w: 688 / 1080, h: 827 / 1080 },
     widths: [120, 240, 360, 480],
     quality: 0.86,
   },
-  // Palette textures, graded toward Deep Emerald (#073B30) / Botanical Green.
-  // Emerald folded stone (palette 3, the owner's selection of 2026-10-26: a
-  // landscape teal texture, nudged from teal onto the emerald family).
+  // Palette textures, graded toward the deep variant's surface (#073B30) / surface-alt.
+  // Deep folded stone (palette 3, the owner's selection of 2026-10-26: a
+  // landscape teal texture, nudged from teal onto the deep green family).
   {
-    src: "palettes/3.png",
+    src: "media-source/palettes/3.png",
     out: "images/textures",
-    slug: "emerald-stone",
+    slug: "texture-stone-deep",
     widths: [1024],
     quality: 0.8,
     filter: "hue-rotate(-14deg) saturate(0.9) brightness(0.95)",
   },
   // Gold foliage around an open centre (palette 9) — the loader's panel.
   {
-    src: "palettes/9.jfif",
+    src: "media-source/palettes/9.jfif",
     out: "images/textures",
     slug: "botanical-panel",
     widths: [480, 736],
@@ -167,7 +169,7 @@ type Exported = { width: number; height: number; data: string };
 
 /** Decodes one source in the page and returns a base64 WebP per width. */
 async function exportSet(page: Page, job: Job): Promise<Exported[]> {
-  statSync(join(PUBLIC, job.src)); // fail loudly if a source is missing
+  statSync(join(ROOT, job.src)); // fail loudly if a source is missing
   return page.evaluate(
     async ({ url, widths, quality, rect, filter }) => {
       const blob = await (await fetch(url)).blob();
@@ -236,7 +238,7 @@ async function main(): Promise<void> {
     const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(1));
     if (!path) return route.fulfill({ body: "<!doctype html>", contentType: "text/html" });
     return route.fulfill({
-      body: readFileSync(join(PUBLIC, path)),
+      body: readFileSync(join(ROOT, path)),
       contentType: TYPES[extname(path).toLowerCase()] ?? "application/octet-stream",
     });
   });

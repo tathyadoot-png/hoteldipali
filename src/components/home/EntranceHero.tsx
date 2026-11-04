@@ -23,12 +23,12 @@ type EntranceHeroProps = {
   secondary: Cta;
 };
 
-// The emerald canvas's stone texture (--texture-stone in theme.css) is this
+// The deep canvas's stone texture (--texture-stone in theme.css) is this
 // page's largest paint, but only CSS refers to it; hinted from the document
 // head it loads alongside the photograph instead of after the stylesheet.
-const STONE_TEXTURE = "/images/textures/emerald-stone-1024.webp";
+const STONE_TEXTURE = "/images/textures/texture-stone-deep-1024.webp";
 
-// The gold ribbon: two strands of one band crossing the emerald canvas. Wide
+// The gold ribbon: two strands of one band crossing the deep canvas. Wide
 // screens: it rises from the left edge above the headline, flows into the
 // arched doorway at its shoulder (passing behind the photograph) and leaves
 // through the far side above the sprig. Narrow screens: a shorter curve that
@@ -78,7 +78,7 @@ function Ribbon({ variant }: { variant: "wide" | "narrow" }) {
 }
 
 /**
- * The home page's opening statement (Emerald). A textured emerald canvas; the
+ * The home page's opening statement (deep). A textured deep canvas; the
  * hotel's lit entrance seen through an arched window in a double gold frame,
  * flanked by botanical sprigs; one gold ribbon crossing the composition; and
  * the editorial headline. On first load the loader's arch flies onto this
@@ -102,7 +102,7 @@ export function EntranceHero({
 
   return (
     <section
-      data-theme="emerald"
+      data-theme="deep"
       aria-labelledby="home-hero"
       className="entrance -mt-18 bg-surface text-ink md:-mt-22"
     >

@@ -2,28 +2,31 @@
 
 import { useState, type ReactNode } from "react";
 
-type Mode = "light" | "peacock" | "side-by-side";
+type Mode = "light" | "dark" | "deep" | "side-by-side";
 
 const MODES: ReadonlyArray<{ value: Mode; label: string }> = [
-  { value: "light", label: "Ivory" },
-  { value: "peacock", label: "Peacock" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+  { value: "deep", label: "Deep" },
   { value: "side-by-side", label: "Side-by-side" },
 ];
 
 type Props = {
   light: ReactNode;
-  peacock: ReactNode;
+  dark: ReactNode;
+  deep: ReactNode;
 };
 
 /**
- * Renders the styleguide preview in Ivory (light), Peacock, or both panes side by side.
- * data-theme is set on the preview panes only — never on <html>.
+ * Renders the styleguide preview in one variant (light, dark, deep) or all of
+ * them side by side. data-theme is set on the preview panes only — never on <html>.
  */
-export function ThemePreviewToggle({ light, peacock }: Props) {
+export function ThemePreviewToggle({ light, dark, deep }: Props) {
   const [mode, setMode] = useState<Mode>("side-by-side");
 
   const showLight = mode === "light" || mode === "side-by-side";
-  const showPeacock = mode === "peacock" || mode === "side-by-side";
+  const showDark = mode === "dark" || mode === "side-by-side";
+  const showDeep = mode === "deep" || mode === "side-by-side";
 
   return (
     <>
@@ -49,7 +52,7 @@ export function ThemePreviewToggle({ light, peacock }: Props) {
       <div
         className={
           mode === "side-by-side"
-            ? "grid grid-cols-1 lg:grid-cols-2"
+            ? "grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3"
             : "grid grid-cols-1"
         }
       >
@@ -58,9 +61,14 @@ export function ThemePreviewToggle({ light, peacock }: Props) {
             {light}
           </div>
         ) : null}
-        {showPeacock ? (
-          <div data-preview-pane="peacock" data-theme="peacock" className="bg-surface text-ink">
-            {peacock}
+        {showDark ? (
+          <div data-preview-pane="dark" data-theme="dark" className="bg-surface text-ink">
+            {dark}
+          </div>
+        ) : null}
+        {showDeep ? (
+          <div data-preview-pane="deep" data-theme="deep" className="bg-surface text-ink">
+            {deep}
           </div>
         ) : null}
       </div>

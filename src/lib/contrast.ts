@@ -3,7 +3,7 @@
 
 export type Rgb = { r: number; g: number; b: number };
 
-export type Variant = "light" | "peacock" | "emerald";
+export type Variant = "light" | "dark" | "deep";
 
 export type ThemeTokens = Record<string, string>;
 
@@ -54,14 +54,14 @@ export function contrastRatio(hex1: string, hex2: string): number {
 }
 
 /**
- * Parse the Light (@theme) and Peacock ([data-theme="peacock"]) colour tokens
- * from theme.css. Only hex values are returned; rgba tokens (e.g. line) are
+ * Parse the light (@theme), dark ([data-theme="dark"]) and deep
+ * ([data-theme="deep"]) colour tokens from theme.css. Only hex values are returned; rgba tokens (e.g. line) are
  * skipped.
  */
 export function parseThemeTokens(css: string): Record<Variant, ThemeTokens> {
   const lightBlock = /@theme\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
-  const peacockBlock = /\[data-theme="peacock"\]\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
-  const emeraldBlock = /\[data-theme="emerald"\]\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
+  const darkBlock = /\[data-theme="dark"\]\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
+  const deepBlock = /\[data-theme="deep"\]\s*\{([^}]*)\}/.exec(css)?.[1] ?? "";
 
   const parse = (block: string): ThemeTokens => {
     const tokens: ThemeTokens = {};
@@ -75,7 +75,7 @@ export function parseThemeTokens(css: string): Record<Variant, ThemeTokens> {
     return tokens;
   };
 
-  return { light: parse(lightBlock), peacock: parse(peacockBlock), emerald: parse(emeraldBlock) };
+  return { light: parse(lightBlock), dark: parse(darkBlock), deep: parse(deepBlock) };
 }
 
 export const BODY_MIN = 4.5;
@@ -91,13 +91,13 @@ const BODY_PAIRS: ReadonlyArray<PairSpec> = [
   ["ink-muted", "surface-alt", "secondary text"],
   ["accent-ink", "accent", ".btn-primary; pressed .chip"],
   ["brand-ink", "brand", "brand band, footer"],
-  // Copper (light) / brass (Peacock) is also small text: .field-error, the
+  // Copper (light) / brass (dark) is also small text: .field-error, the
   // current header link, menu hover — so it must pass as body text, not only
   // as a UI colour.
   ["accent", "surface", "small accent text (.field-error, current nav link)"],
   ["accent", "surface-alt", "small accent text on alt sections"],
   // Buttons: the gold plaque (.btn-primary, .btn-secondary on hover) carries a
-  // deep emerald label in every scope.
+  // deep green label in every scope.
   ["brand", "highlight", ".btn-primary label; .btn-secondary hover"],
 ];
 
@@ -109,23 +109,23 @@ const UI_PAIRS: ReadonlyArray<PairSpec> = [
   ["accent", "surface-alt", "markers on alt sections"],
 ];
 
-// UI pairs checked for Peacock only. On light grounds brass (highlight) is
+// UI pairs checked for dark and deep only. On light grounds brass (highlight) is
 // decorative only — rules and hairlines, never text — so it is not gated there.
-const PEACOCK_ONLY_UI_PAIRS: ReadonlyArray<PairSpec> = [
-  ["highlight", "surface", "brass rules and ornaments on Peacock"],
-  ["highlight", "surface-alt", "brass rules and ornaments on Peacock"],
+const DARK_SCOPE_UI_PAIRS: ReadonlyArray<PairSpec> = [
+  ["highlight", "surface", "brass rules and ornaments on dark"],
+  ["highlight", "surface-alt", "brass rules and ornaments on dark"],
 ];
 
-// Pairs checked for the light variant only: on ivory, deep emerald is also
+// Pairs checked for the light variant only: on ivory, deep green is also
 // small text (the .btn-secondary label) and the script accent word.
 const LIGHT_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
   ["brand", "surface", ".btn-secondary label on ivory; script accent word"],
 ];
 
-// Pairs checked for Emerald only: the footer finale deepens from Deep
-// Emerald to Soft Charcoal (accent-ink) at its foot, where the legal line,
+// Pairs checked for deep only: the footer finale deepens from the deep
+// surface to Soft Charcoal (accent-ink) at its foot, where the legal line,
 // its links and their hover sit.
-const EMERALD_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
+const DEEP_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
   ["ink", "accent-ink", "footer foot (Soft Charcoal): legal and social links"],
   ["ink-muted", "accent-ink", "footer foot: the legal line"],
   ["accent", "accent-ink", "footer foot: link hover"],
@@ -143,12 +143,12 @@ export function pairsForVariant(variant: Variant): ContrastPair[] {
   if (variant === "light") {
     pairs.push(...LIGHT_ONLY_BODY_PAIRS.map(toPair(BODY_MIN, "body")));
   }
-  if (variant === "peacock" || variant === "emerald") {
-    pairs.push(...PEACOCK_ONLY_UI_PAIRS.map(toPair(UI_MIN, "ui")));
+  if (variant === "dark" || variant === "deep") {
+    pairs.push(...DARK_SCOPE_UI_PAIRS.map(toPair(UI_MIN, "ui")));
   }
-  if (variant === "emerald") {
-    pairs.push(...EMERALD_ONLY_BODY_PAIRS.map(toPair(BODY_MIN, "body")));
-    // Antique Gold reads as small text on Deep Emerald (5.1:1) but not on
+  if (variant === "deep") {
+    pairs.push(...DEEP_ONLY_BODY_PAIRS.map(toPair(BODY_MIN, "body")));
+    // Antique Gold reads as small text on the deep surface (5.1:1) but not on
     // Botanical Green (3.8:1): there it is a UI / large-text colour only.
     return pairs.map((p) =>
       p.fg === "accent" && p.bg === "surface-alt" && p.kind === "body"

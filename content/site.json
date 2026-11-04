@@ -31,7 +31,7 @@
     ],
     "focus": "50% 45%",
     "status": "public-unverified",
-    "source": "Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
+    "source": "Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
     "note": "cropped below the rooftop sign; confirm usage rights and caption with the hotel"
   },
   "homeHeroVideo": {
@@ -42,7 +42,7 @@
     "height": 740,
     "duration": 7,
     "status": "sample",
-    "note": "AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from public/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch"
+    "note": "AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from media-source/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch"
   },
   "homeExperience": {
     "id": "home-experience-reception",
@@ -59,7 +59,7 @@
       1200
     ],
     "status": "public-unverified",
-    "source": "Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10",
+    "source": "Owner-supplied hotel photograph (media-source/hotel/DSC_1632.JPG), received 2026-10",
     "note": "portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel"
   },
   "homeReveal": {
@@ -89,7 +89,7 @@
       "height": 1792
     },
     "status": "public-unverified",
-    "source": "Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011556_0038_D.JPG), received 2026-10-24",
+    "source": "Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011556_0038_D.JPG), received 2026-10-24",
     "note": "cropped below the rooftop \"DIPALI RESIDENCY\" sign; the tower on the left still carries a \"HOTEL DEEPALI\" sign — confirm usage rights, caption and that signage with the hotel"
   },
   "address": {

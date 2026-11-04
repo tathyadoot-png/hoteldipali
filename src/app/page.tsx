@@ -168,11 +168,11 @@ export default async function HomePage() {
       </div>
 
       {/* ═══ THE GRAND REVEAL — through a portal to the whole house at night ═══
-          An emerald panel rises over The Dipali Experience (rich motion). */}
+          A deep panel rises over The Dipali Experience (rich motion). */}
       <LayeredSection
         id="reveal"
         covers="#welcome"
-        data-theme="emerald"
+        data-theme="deep"
         aria-labelledby="home-reveal"
         className="grand-reveal-section layer-rise scroll-mt-24 bg-surface text-ink"
       >
@@ -236,7 +236,7 @@ export default async function HomePage() {
           {/* ─── II · CELEBRATE — the hall, seen through the word ─── */}
           <section
             id="celebrate"
-            data-theme="peacock"
+            data-theme="dark"
             aria-labelledby="home-weddings"
             className="chapter chapter-celebrate paper-grain scroll-mt-24 overflow-x-clip bg-surface text-ink"
           >
@@ -336,10 +336,10 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {/* ═══ CLOSE — a peacock arch, and the conversation that starts a visit ═══ */}
+      {/* ═══ CLOSE — a dark arch, and the conversation that starts a visit ═══ */}
       <section
         id="enquire"
-        data-theme="peacock"
+        data-theme="dark"
         aria-labelledby="home-enquire"
         className="close-section threshold paper-grain scroll-mt-24 bg-surface pt-[calc(var(--arch)+3rem)] pb-20 text-ink md:pb-28"
       >

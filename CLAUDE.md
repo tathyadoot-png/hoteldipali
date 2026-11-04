@@ -24,15 +24,19 @@ Business goals, in priority order:
 Next.js App Router, static export (`output: 'export'`), TypeScript strict, Tailwind v4
 (`@theme` in CSS), pnpm, ESLint + Prettier, Playwright. Hosting: Cloudflare Pages
 (static). Forms post to a hosted form endpoint set by an env var. Images are
-pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height): the hotel's
-camera originals live in `public/hotel/` (never renamed, moved or edited by code, never
-referenced by pages) and `pnpm make:photos` writes WebP width sets to
-`public/images/hotel/` (Playwright's Chromium — no image library); the same script
-writes the trimmed logo emblem (`public/images/brand/`, from `public/brand/`) and the
-graded palette textures (`public/images/textures/`, from `public/palettes/`). Video
-works the same way: source clips in `public/video/` are never served or edited, and
-`pnpm make:video` (Playwright's Chromium + WebCodecs — no ffmpeg) writes the cropped,
-looped, silent, web-optimised H.264 clip pages use.
+pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height). Source media
+lives OUTSIDE `public/`, in `media-source/` (never deployed; never renamed, moved or
+edited by code, never referenced by pages): the hotel's camera originals in
+`media-source/hotel/` and `media-source/images/hotel/` (night exteriors), the palette
+textures in `media-source/palettes/`, the source video in `media-source/video/`.
+`pnpm make:photos` writes WebP width sets to `public/images/hotel/` (Playwright's
+Chromium — no image library); the same script writes the trimmed logo emblem
+(`public/images/brand/`, from `public/brand/logo-primary.png`) and the graded palette
+textures (`public/images/textures/`). Video works the same way: `pnpm make:video`
+(Playwright's Chromium + WebCodecs — no ffmpeg) writes the cropped, looped, silent,
+web-optimised H.264 clip pages use (`public/video/`). Only files pages request belong in
+`public/`. `brand-source/` holds brand working files that are not deliverables (e.g. the
+traced logo SVG — not a master vector).
 Animation:
 CSS + IntersectionObserver first. Smooth wheel scrolling: Lenis (approved 2026-10-19),
 only through `src/lib/smooth-scroll.ts`.
@@ -79,8 +83,11 @@ third-party script without asking.
 - `src/app/fonts.ts` is the only file besides `theme.css` allowed to contain font
   names.
 - `highlight` (antique gold) is decorative only on light surfaces — rules, hairlines,
-  never text. `accent` is terracotta clay on light and antique gold on Peacock; it is
-  gated as small text.
+  never text. `accent` is terracotta clay on light and antique gold on `dark` and
+  `deep`; it is gated as small text.
+- Gradients may only be built from tokens (var/color-mix) for scrims, veils, depth and
+  gold sheen on ornaments. Never multi-hue decorative gradients on text, buttons or
+  large surfaces.
 - Components use only semantic utilities (`bg-surface`, `text-ink`, `bg-accent`,
   `font-display`…) and component classes defined in `theme.css` (`.heading-hero`,
   `.heading-1/2/3`, `.eyebrow`, `.body-lg`, `.body`, `.caption`, `.big-number`,
@@ -88,7 +95,7 @@ third-party script without asking.
   plaque, booking actions; `.btn-secondary` = fine gold outline, every other action;
   `.btn-ghost`; modifiers `.btn-cta` (stepping arrow) and `.btn-compact` (dense bars);
   colours from the scope: gold = `highlight`, label = `brand`), `.link-cta`,
-  `.link-royal` (Emerald text link on a gold rule), `.btn-icon`, `.chip`,
+  `.link-royal` (deep-green text link on a gold rule), `.btn-icon`, `.chip`,
   `.card`,
   `.link`,
   `.section`, `.container-site`, `.band-brand`, `.skip-link`, `.rule`,
@@ -111,29 +118,32 @@ third-party script without asking.
   `.menu-address`)). Never
   raw hex, never raw Tailwind palette colours
   (`bg-amber-700`), never font names in components.
-- Theme variants via `[data-theme="…"]` redefining the same tokens: a dark "Peacock"
-  variant (weddings, the bar, the enquiry close) and "Emerald" — the
-  owner's fixed palette (2026-10-24: Deep Emerald #073B30, Botanical Green #0D5145,
-  Antique Gold #C5A15E, Warm Ivory #F4EBDD, Muted Sage #B7C2A5, Soft Charcoal #252B26;
-  do not change) — for the opening loader, the header, the mobile menu, the home
-  hero and the home page's emerald stone (the Grand Reveal, the Stay tablet, the
-  Unwind plaque), the footer finale, the enquiry tablet and the contact page's front
-  desk, with the palette textures as `--texture-stone` / `--texture-botanical`. Stone
-  that carries text sits under a 75% Deep Emerald veil (gold small text ≥ 4.6:1 on the
-  texture's brightest pixel, measured 2026-10-27). Gold
-  small text belongs on Deep Emerald only (3.8:1 on Botanical Green: UI/large text).
-  Every element that sets `data-theme="peacock"` or `"emerald"`
+- The palette lives only in theme.css. Variants are role-based: light (default), dark,
+  deep. Changing the brand palette = editing theme.css token values + regenerating
+  graded assets; no code renames.
+- Theme variants via `[data-theme="…"]` redefining the same tokens: `dark`
+  (weddings, the bar, the enquiry close) and `deep` (the opening loader, the header,
+  the mobile menu, the home hero and the home page's stone — the Grand Reveal, the
+  Stay tablet, the Unwind plaque — the footer finale, the enquiry tablet and the
+  contact page's front desk), with the palette textures as `--texture-stone` /
+  `--texture-botanical`. Current `deep` values (2026-10-24): surface #073B30,
+  surface-alt #0D5145, gold #C5A15E, ink #F4EBDD, ink-muted #B7C2A5, accent-ink
+  #252B26. Stone that carries text sits under a 75% veil of the `deep` surface (gold
+  small text ≥ 4.6:1 on the texture's brightest pixel, measured 2026-10-27). Gold
+  small text belongs on the `deep` surface only (3.8:1 on its surface-alt: UI/large
+  text). Every element that sets `data-theme="dark"` or `"deep"`
   MUST also carry an explicit `text-ink` (or other colour utility) on that same
   element — `color` inherits the ancestor's already-resolved value, it does not
-  re-evaluate `var(--color-ink)` per scope, so without this the Peacock subtree
+  re-evaluate `var(--color-ink)` per scope, so without this the dark subtree
   silently renders in the parent's (light) ink colour.
 - Every text/background pair passes WCAG AA (4.5:1 body, 3:1 large text and UI).
   Gold-like colours are never body text on light backgrounds. The gold logo always
   sits on the deep green (`brand`) on light pages (header niche, `.logo-medallion`).
-- Palette: "Peacock & Ivory" — "Ivory" (light, default: warm near-white surfaces,
-  near-black green ink, terracotta clay accent, deep forest-peacock brand, antique gold
-  ornament) with a dark "Peacock" variant (deep forest-peacock surfaces, pearl ink,
-  antique gold accent), tuned against the hotel's photographs. Buttons are nearly
+- Palette (current values; a plum re-theme is planned — Phase P in `docs/PLAN.md`):
+  light (default: warm near-white ivory surfaces, near-black green ink, terracotta clay
+  accent, deep forest-green brand, antique gold ornament) with the `dark` variant (deep
+  forest-green surfaces, pearl ink, antique gold accent), tuned against the hotel's
+  photographs. Buttons are nearly
   square ("architrave"); arches appear as the header's doorway niche, the gentle
   section thresholds and `.frame-arch` feature images. Fonts: display Instrument
   Serif, body Figtree; home hero up to ~12vw, inner-page heroes `.heading-page`. See

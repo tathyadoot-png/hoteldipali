@@ -3,9 +3,10 @@
 /*
  * Design tokens and component classes. Never put colours or font names anywhere else.
  * Fonts are named here and in src/app/fonts.ts only.
- * Palette "Peacock & Ivory" (2026-10-22): a warm near-white ivory light default and a
- * deep forest-peacock dark variant ("Peacock") for the hero, weddings, the bar and
- * dark bands, with terracotta clay for actions and antique gold for ornament.
+ * Palette (2026-10-22; variants named by role since 2026-11-03): a warm near-white
+ * ivory light default, a deep forest-green `dark` variant for weddings, the bar and
+ * dark bands, and a `deep` variant for the opening experience and the stone
+ * surfaces; terracotta clay for actions and antique gold for ornament.
  * Tuned against the hotel's photographs: warm wood and cream walls, teal upholstery,
  * green lawns and the blue pool.
  */
@@ -66,9 +67,9 @@
   --duration-base: 320ms;
 }
 
-/* Colours — Peacock variant (dark: deep forest-peacock). Redefines the same
+/* Colours — dark variant (deep forest green). Redefines the same
    tokens; utilities resolve per-element. */
-[data-theme="peacock"] {
+[data-theme="dark"] {
   color-scheme: dark;
   --color-surface: #0f2e2a;
   --color-surface-alt: #0a211e;
@@ -82,13 +83,13 @@
   --color-line: rgba(246, 241, 231, 0.16);
 }
 
-/* Colours — Emerald variant: the owner's final brand palette (2026-10-24), used
+/* Colours — deep variant: the owner's brand palette of 2026-10-24, used
    by the opening experience (loader, navigation, home hero).
-   Deep Emerald #073B30 · Botanical Green #0D5145 · Antique Gold #C5A15E ·
+   Surface #073B30 · surface-alt #0D5145 · antique gold #C5A15E ·
    Warm Ivory #F4EBDD · Muted Sage #B7C2A5 · Soft Charcoal #252B26.
-   Gold small text belongs on Deep Emerald only — on Botanical Green it is a UI /
+   Gold small text belongs on the surface only — on surface-alt it is a UI /
    large-text colour (3.8:1), and the contrast gate checks exactly that. */
-[data-theme="emerald"] {
+[data-theme="deep"] {
   color-scheme: dark;
   --color-surface: #073b30;
   --color-surface-alt: #0d5145;
@@ -104,17 +105,17 @@
      shade (toward charcoal) for gradients on fine lines. */
   --gold-glint: color-mix(in srgb, var(--color-highlight) 45%, var(--color-ink));
   --gold-shade: color-mix(in srgb, var(--color-highlight) 58%, var(--color-accent-ink));
-  /* The owner's palette textures, graded toward Deep Emerald (pnpm make:photos). */
+  /* The owner's palette textures, graded toward the deep surface (pnpm make:photos). */
   /* The stone is the home hero's largest paint: EntranceHero preloads this
      exact file, so keep the two in step. */
-  --texture-stone: url("/images/textures/emerald-stone-1024.webp");
+  --texture-stone: url("/images/textures/texture-stone-deep-1024.webp");
   --texture-botanical: url("/images/textures/botanical-panel-736.webp");
 }
 
 /* Phones: the botanical panel at its smaller width (half the bytes; it always
    sits under a dark veil). */
 @media (max-width: 767.98px) {
-  [data-theme="emerald"] {
+  [data-theme="deep"] {
     --texture-botanical: url("/images/textures/botanical-panel-480.webp");
   }
 }
@@ -163,7 +164,7 @@
   }
 
   /* The page's scrollbar: a slim antique-gold thumb in a deep green channel
-     edged with a gold hairline — part of the frame beside ivory and emerald
+     edged with a gold hairline — part of the frame beside ivory and deep green
      alike. Chromium and Safari draw it from ::-webkit-scrollbar; Firefox,
      which has no such pseudo-elements, from scrollbar-color (kept away from
      Chromium, where the standard properties switch the drawn one off). The
@@ -219,43 +220,6 @@
 
   html::-webkit-scrollbar-corner {
     background-color: var(--color-brand);
-  }
-
-  /* The custom cursor (CustomCursor) takes over from the native one only on
-     desktop pointers, and only once it has started and seen the mouse — so
-     if it ever fails, the native cursor simply stays. Typing, choosing and
-     disabled controls keep their native cursors; so does an open dialog (it
-     sits in the top layer, above the custom cursor). */
-  @media (hover: hover) and (pointer: fine) {
-    html[data-cursor="on"],
-    html[data-cursor="on"] * {
-      cursor: none;
-    }
-
-    html[data-cursor="on"]
-      :is(
-        input:not([type="hidden"]),
-        textarea,
-        select,
-        [contenteditable=""],
-        [contenteditable="true"],
-        [data-cursor="native"]
-      ) {
-      cursor: auto;
-    }
-
-    html[data-cursor="on"] :is(:disabled, [aria-disabled="true"]) {
-      cursor: not-allowed;
-    }
-
-    html[data-cursor="on"]:has(dialog[open]),
-    html[data-cursor="on"]:has(dialog[open]) * {
-      cursor: auto;
-    }
-
-    html[data-cursor="on"]:has(dialog[open]) :is(a[href], button) {
-      cursor: pointer;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -370,11 +334,11 @@
   /* ── Buttons: one family, drawn for the hotel ──────────────────────────
      A crisp, near-square plaque (2px radius): one height, Manrope small
      capitals, one timing, colours from the surrounding scope's tokens —
-     gold is `highlight`, deep emerald is `brand` (each palette's deep green).
+     gold is `highlight`, deep green is `brand` (each palette's deep green).
      .btn-primary   the booking action: an antique-gold plaque with a deep
-                    emerald label; on hover an engraved hairline draws in.
+                    deep green label; on hover an engraved hairline draws in.
      .btn-secondary every other action: a fine gold outline — ivory label on
-                    emerald / Peacock, deep emerald label on ivory; on hover
+                    deep / dark, deep green label on ivory; on hover
                     gold rises from the base and it becomes the plaque.
      .btn-ghost     a quieter outline beside a primary (call, WhatsApp).
      .btn-cta       adds an arrow that steps forward on hover.
@@ -410,8 +374,8 @@
   }
 
   /* On the dark scopes the focus ring is gold (deep green would vanish). */
-  :is([data-theme="emerald"], [data-theme="peacock"]) :is(.btn-primary, .btn-secondary, .btn-ghost),
-  :is(.btn-primary, .btn-secondary, .btn-ghost):is([data-theme="emerald"], [data-theme="peacock"]) {
+  :is([data-theme="deep"], [data-theme="dark"]) :is(.btn-primary, .btn-secondary, .btn-ghost),
+  :is(.btn-primary, .btn-secondary, .btn-ghost):is([data-theme="deep"], [data-theme="dark"]) {
     --btn-focus: var(--color-highlight);
   }
 
@@ -519,8 +483,8 @@
     color: var(--color-brand);
   }
 
-  :is([data-theme="emerald"], [data-theme="peacock"]) .btn-secondary,
-  .btn-secondary:is([data-theme="emerald"], [data-theme="peacock"]) {
+  :is([data-theme="deep"], [data-theme="dark"]) .btn-secondary,
+  .btn-secondary:is([data-theme="deep"], [data-theme="dark"]) {
     color: var(--color-ink);
   }
 
@@ -641,7 +605,7 @@
   }
 
   /* ── .link-royal: a text link standing on a fine gold rule that extends on
-     hover (Emerald surfaces: the hero's quiet second action, the menu). */
+     hover (deep surfaces: the hero's quiet second action, the menu). */
   .link-royal {
     position: relative;
     display: inline-flex;
@@ -701,7 +665,7 @@
     background-color: var(--color-surface-alt);
   }
 
-  /* Pressed: copper on light, brass on Peacock. */
+  /* Pressed: copper on light, brass on dark. */
   .chip[aria-pressed="true"] {
     background-color: var(--color-accent);
     border-color: var(--color-accent);
@@ -746,7 +710,7 @@
 
   /*
    * .link/.eyebrow/.caption hardcode ink/ink-muted, which are only validated
-   * against surface/surface-alt (and, via [data-theme] re-scoping, Peacock's own
+   * against surface/surface-alt (and, via [data-theme] re-scoping, the dark variant's own
    * surface pair). The brand band is a third, separate pairing (brand/
    * brand-ink) those tokens were never checked against — so inside
    * .band-brand, repoint them at brand-ink to stay AA-compliant.
@@ -791,13 +755,13 @@
     background-color: var(--color-highlight);
   }
 
-  /* ── Header: the engraved band (Emerald) ───────────────────────────────
+  /* ── Header: the engraved band (deep) ──────────────────────────────────
      Two antique-gold rules run from either end of the bar to a medallion
      holding the emblem; the links sit inside the band and a small gold bead
      slides along its lower rule to the link under the pointer, the focused
      link, or the current page. Ends: the call link (xl) and Book a Stay; below
      xl the menu takes the left end. Transparent over the home hero; solid
-     emerald stone elsewhere and once the hero has passed. */
+     deep stone elsewhere and once the hero has passed. */
   .header-shell {
     background-color: transparent;
     transition:
@@ -900,7 +864,7 @@
   }
 
   /* The medallion: a double gold ring (with beads at its crown and foot)
-     around the real emblem, on a deep emerald disc. */
+     around the real emblem, on a deep green disc. */
   .header-keystone,
   .menu-medallion {
     position: relative;
@@ -1109,7 +1073,7 @@
     opacity: 1;
   }
 
-  /* ── MobileMenu: emerald gate leaves part onto a botanical hall ──────── */
+  /* ── MobileMenu: deep gate leaves part onto a botanical hall ─────────── */
   .menu-dialog {
     overflow: hidden;
     overflow: clip;
@@ -1344,7 +1308,7 @@
   /* Hero scrim. Two jobs, both legibility, not decoration:
      bottom → the headline/CTA block sits on solid surface and fades up;
      top    → the overlay header's ink stays readable over a light image.
-     Uses the scoped --color-surface so it adapts to Light and Peacock. */
+     Uses the scoped --color-surface so it adapts to light and dark. */
   .hero-gradient {
     background:
       linear-gradient(
@@ -1403,8 +1367,8 @@
   }
 
   /* Multiply disappears on dark; lighten the grain instead. */
-  [data-theme="peacock"].paper-grain::before,
-  [data-theme="peacock"] .paper-grain::before {
+  [data-theme="dark"].paper-grain::before,
+  [data-theme="dark"] .paper-grain::before {
     mix-blend-mode: screen;
     opacity: 0.04;
   }
@@ -1570,7 +1534,7 @@
      that applies when JS or motion is absent.
      ═════════════════════════════════════════════════════════════════════ */
 
-  /* ═══ OPENING EXPERIENCE: the loader and the home hero (Emerald) ═══════
+  /* ═══ OPENING EXPERIENCE: the loader and the home hero (deep) ══════════
      The intro choreography is the one place allowed timelines longer than
      400 ms (owner's brief, 2026-10-24): sequenced draws and reveals lasting
      ~1.5–2.5 s, each element once, never looping. --intro is when the hero
@@ -1596,8 +1560,8 @@
     --intro: 0s;
   }
 
-  /* The emerald canvas: Deep Emerald, the owner's folded stone (palette 3,
-     graded toward emerald; low-frequency, so it scales gracefully), a warm light behind the focal
+  /* The deep canvas: the deep surface, the owner's folded stone (palette 3,
+     graded toward the deep surface; low-frequency, so it scales gracefully), a warm light behind the focal
      point, a charcoal vignette and a fine grain that keeps it crisp. */
   .entrance-canvas,
   .intro-canvas {
@@ -2381,7 +2345,7 @@
     }
   }
 
-  /* An arched peacock ground for the gold logo on light surfaces, where the
+  /* An arched deep green ground for the gold logo on light surfaces, where the
      logo's paler golds wash out (under 2:1 on ivory, 7–8:1 on the deep green).
      Padded for the trimmed emblem (no built-in margin), keeping the proportions
      the padded 1080 px PNG gave it. */
@@ -2436,7 +2400,7 @@
      An editorial pair on the ivory threshold. The statement on one side; on
      the other a photograph under a shallow lintel (the threshold's own
      elliptical curve, not the hero's round arch), set against a tablet of
-     emerald stone and traced by one fine gold line that draws upward after
+     deep stone and traced by one fine gold line that draws upward after
      the photograph is revealed. Phones: statement → photograph → text. */
   .experience {
     --lintel: clamp(1.75rem, 6vw, 3.75rem);
@@ -2471,7 +2435,7 @@
     position: relative;
     width: min(100%, 34rem);
     margin: 0;
-    /* Room for the emerald tablet to show to the right and below. */
+    /* Room for the stone tablet to show to the right and below. */
     padding: 0 12% 3.25rem 0;
   }
 
@@ -2761,9 +2725,9 @@
   }
 
   /* ── The Grand Reveal: through a portal to the whole house, lit at night ──
-     The home page's signature moment. An emerald panel that rises over The
+     The home page's signature moment. A deep panel that rises over The
      Dipali Experience (LayeredSection), with a doorway crown on its edge;
-     emerald deepening toward charcoal at its foot, like the night behind the
+     the deep surface deepening toward charcoal at its foot, like the night behind the
      photograph, with a faint warm glow where the façade is lit. A centred,
      staggered heading; then the façade — a wide view, or a portrait crop on
      phones — in a fine antique-gold frame with corner ornaments and a
@@ -2880,7 +2844,7 @@
     display: block;
   }
 
-  /* Antique Gold on Deep Emerald: display size (and gated as small text). */
+  /* Antique gold on the deep surface: display size (and gated as small text). */
   .grand-reveal-accent {
     color: var(--color-accent);
   }
@@ -3180,8 +3144,8 @@
     transform-origin: 63% 56%;
   }
 
-  /* Botanical Green jambs; the archivolt that carries the name is Deep
-     Emerald, the ground gold small text is gated on (5.15:1). */
+  /* Surface-alt jambs; the archivolt that carries the name is the deep
+     surface, the ground gold small text is gated on (5.15:1). */
   .portal-stone {
     fill: var(--color-surface-alt);
   }
@@ -3512,7 +3476,7 @@
   /* ── I · Stay: the rooms as an index, the stage following ──────────────
      The index of rooms on one side; on wide screens, on the other, a stage —
      a photograph under a shallow lintel with a fine gold line inside it,
-     standing on emerald stone — that follows the hovered or focused room,
+     standing on deep stone — that follows the hovered or focused room,
      the next photograph sweeping in from the side. Phones: each room carries
      its own photograph. */
   .stay {
@@ -3730,7 +3694,7 @@
   }
 
   /* ── II · Celebrate: the hall, seen through the word ────────────────────
-     Peacock. A full-width stage: the photograph of the hall with a giant word
+     Dark. A full-width stage: the photograph of the hall with a giant word
      over it — outlined in fine gold, and under rich motion first filled with
      the photograph itself (TypeFill, background-clip: text) around a band of
      the same picture, which opens with the stage's --p until the whole room
@@ -3756,7 +3720,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    /* A peacock wash over the bright hall, deeper at the foot (the caption)
+    /* A dark wash over the bright hall, deeper at the foot (the caption)
        and the top (the chandeliers), so the gold outline holds throughout. */
     background:
       linear-gradient(
@@ -3824,8 +3788,8 @@
     padding-top: clamp(3rem, 2rem + 4vw, 5rem);
   }
 
-  /* The programme: Warm pearl ground (--color-ink here) and deep peacock type
-     (--color-surface) — the Peacock ink/surface pair, inverted (11:1). */
+  /* The programme: Warm pearl ground (--color-ink here) and deep green type
+     (--color-surface) — the dark ink/surface pair, inverted (11:1). */
   .celebrate-program {
     position: relative;
     align-self: start;
@@ -4180,7 +4144,7 @@
 
   /* ── IV · Unwind: the water, in widening circles ─────────────────────────
      The pool from above across the full width, the chapter's copy on an
-     emerald stone plaque laid over its foot. Under rich motion the stage's
+     deep stone plaque laid over its foot. Under rich motion the stage's
      --p opens the photograph in a widening circle from its round plunge
      pools while gold rings spread across the water; elsewhere it opens once
      from the centre and the rings rest on the water. */
@@ -4451,7 +4415,7 @@
   }
 
   /* ── The close: the conversation that starts a visit ─────────────────────
-     Peacock, under its arch: the emblem in the medallion's double ring, the
+     Dark, under its arch: the emblem in the medallion's double ring, the
      invitation and the ways to reach the hotel beside the enquiry form. */
   .close {
     display: grid;
@@ -4526,13 +4490,13 @@
   /* ═════════════════════════════════════════════════════════════════════
      THE FINALE, THE FRONT DESK AND THE ENQUIRY TABLET (2026-10-27)
      The footer as the last scene of every page, the contact page, and the
-     one enquiry form — all Emerald stone and antique-gold line. Stone that
-     carries text is veiled at 75% Deep Emerald: measured on the texture's
+     one enquiry form — all deep stone and antique-gold line. Stone that
+     carries text is veiled at 75% deep surface: measured on the texture's
      brightest pixel, gold small text stays ≥ 4.6:1 and sage ≥ 6.0:1.
      ═════════════════════════════════════════════════════════════════════ */
 
   /* ── The finale: the footer ──────────────────────────────────────────────
-     "The drawn gateway". An emerald stone band whose centre is a gateway: its
+     "The drawn gateway". A deep stone band whose centre is a gateway: its
      crown rises above the band's straight top edge (over the end of the
      page), the emblem in its arched head, the invitation and the booking
      action inside. Sequence once FooterStage sets [data-revealed] (each step
@@ -5310,7 +5274,7 @@
   }
 
   /* ── Contact: the front desk ─────────────────────────────────────────────
-     Emerald stone under the header: the title and an italic lead beside the
+     Deep stone under the header: the title and an italic lead beside the
      register of lines (a gold rule between them from 1024px); then the
      enquiry on ivory, its copy holding beside the stone tablet. */
   .contact-hero {
@@ -5431,7 +5395,7 @@
   }
 
   /* ── The enquiry tablet: every enquiry form ──────────────────────────────
-     Emerald stone with a fine gold frame inset from its edge (edges draw
+     Deep stone with a fine gold frame inset from its edge (edges draw
      from their centres, corner ornaments set after, once in view). Inside:
      the question in italic serif, choices as gold-lined chips (the chosen
      one filled with gold), fields on a fine rule that a gold line draws

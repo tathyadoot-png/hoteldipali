@@ -15,8 +15,8 @@ test.describe("Desktop (1280px)", () => {
     await expect(page.getByRole("link", { name: "Call", exact: true })).toBeHidden();
   });
 
-  // The header is always Emerald; on the home page it stays transparent over
-  // the hero and turns solid (emerald stone) when the ivory arch that follows
+  // The header is always deep; on the home page it stays transparent over
+  // the hero and turns solid (deep stone) when the ivory arch that follows
   // it reaches the top.
   test("home header is transparent over the hero and solid once past it", async ({
     page,
@@ -24,7 +24,7 @@ test.describe("Desktop (1280px)", () => {
     await page.goto("/");
     const header = page.locator("header");
 
-    await expect(header).toHaveAttribute("data-theme", "emerald");
+    await expect(header).toHaveAttribute("data-theme", "deep");
     await expect(header).toHaveAttribute("data-state", "overlay");
     const transparentBg = await header.evaluate(
       (el) => getComputedStyle(el).backgroundColor,
@@ -49,7 +49,7 @@ test.describe("Desktop (1280px)", () => {
     // One-frame jump back to the top: transparent again.
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
     await expect(header).toHaveAttribute("data-state", "overlay");
-    await expect(header).toHaveAttribute("data-theme", "emerald");
+    await expect(header).toHaveAttribute("data-theme", "deep");
   });
 
   test("the logo keystone is centred between the two nav wings", async ({ page }) => {
@@ -186,11 +186,11 @@ test.describe("Mobile (360px)", () => {
     await expect(menuButton).toBeFocused();
   });
 
-  test("the menu opens like gates onto an emerald hall", async ({ page }) => {
+  test("the menu opens like gates onto a deep hall", async ({ page }) => {
     await page.goto("/rooms/");
     await page.getByRole("button", { name: "Menu" }).click();
     const dialog = page.locator("#mobile-menu");
-    await expect(dialog).toHaveAttribute("data-theme", "emerald");
+    await expect(dialog).toHaveAttribute("data-theme", "deep");
     await expect(dialog).toHaveClass(/text-ink/);
 
     // Both leaves end fully outside the viewport, and never block taps.
@@ -249,10 +249,10 @@ test.describe("Footer — the finale", () => {
       window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }),
     );
 
-  test("an emerald gateway: the emblem, the invitation and the two actions", async ({ page }) => {
+  test("a deep gateway: the emblem, the invitation and the two actions", async ({ page }) => {
     await page.goto("/rooms/");
     const footer = page.getByRole("contentinfo");
-    await expect(footer).toHaveAttribute("data-theme", "emerald");
+    await expect(footer).toHaveAttribute("data-theme", "deep");
     await expect(footer).toHaveClass(/text-ink/);
     const gate = footer.locator(".finale-gate");
     await expect(gate.getByRole("link", { name: /home/ })).toBeAttached();

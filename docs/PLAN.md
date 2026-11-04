@@ -1,7 +1,8 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-27
-Current step: 11 — Pool & Gym, Gallery + Lightbox
+Last updated: 2026-11-04
+Current step: P-1b — Palette swap (Phase P, branch `theme/plum`; Phase 1A resumes with
+step 11 in P-2)
 
 ## Status legend
 
@@ -36,6 +37,25 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 - [ ] 16. Motion / "wow" polish pass
 - [ ] 17. QA: accessibility, performance, mobile
 - [ ] 18. Cloudflare Pages deployment + launch checklist
+
+### Phase P — Plum re-theme (2026-11, branch `theme/plum`)
+
+From `docs/audit-2026-11-plum.md` §I — one step per prompt, a commit per step. Steps P-2,
+P-4, P-5 and P-6 carry Phase 1A's remaining steps (noted in brackets).
+
+- [x] P-1a. Role-based theme variants (peacock → `dark`, emerald → `deep`) with no colour
+      change; pnpm only (`packageManager`, one lockfile); source media out of `public/`
+      into `media-source/`; unused components and placeholders removed (owner-approved)
+- [ ] P-1b. Palette swap: plum values; role-named new tokens (gold text, decorative
+      tint), an error token; `deep` accent-ink step; token-derived shadows; our own
+      generated stone texture; botanical panel dropped or redrawn; placeholders and
+      favicon regenerated; gate pairs added (audit §D); reference-image check (audit §E)
+- [ ] P-2. Remaining pages [steps 11, 12 (About, FAQ), 13 (wedding LP, 404)]
+- [ ] P-3. 3D signature: depth-parallax façade in the Grand Reveal — only after the
+      CLAUDE.md §K WebGL decision (audit §G)
+- [ ] P-4. Scroll choreography [step 16]; fix the near-budget scenes
+- [ ] P-5. Legal pages, SEO, analytics [steps 13-legal, 14, 15]
+- [ ] P-6. QA and deploy [steps 17, 18]
 
 ### Phase 1B — More pages
 
@@ -143,6 +163,13 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-27 | Shared `ContactLines` ("register" on the contact page, "list" in the home page's enquiry close, replacing its call / WhatsApp pair and location line): every usable line, WhatsApp on the line that takes it, the location with Get directions (new `DirectionsLink`, `directions_click`). Links are named "Call Reservations, +91 …". | Brief: the home enquiry and the contact page share components, each keeping its own copy. |
 | 2026-10-27 | `content-visibility: auto` with a block-size placeholder only on `.finale` and `.enquiry`; the footer emblem is `lazy` (new `Logo` prop — no React image preload). | Measured on a throttled phone: the footer's and tablet's Cormorant text fetched both serif files (46 KB) at load on pages that never used them — /rooms/ LCP 2.89 → 3.09 s. With it, 2.83 → 2.86 s (within run-to-run noise), +8 KB. An inline-size placeholder widened the page at 360 px (caught by the overflow tests). |
 | 2026-10-27 | Contrast gate: Emerald-only pairs for the footer's charcoal foot — ink / accent-ink 12.24, ink-muted / accent-ink 7.76, accent / accent-ink 5.95. Stone that carries text is veiled at 75% Deep Emerald: on the texture's brightest pixel (#2a5c50) gold stays ≥ 4.60:1 and sage ≥ 6.01:1. | Every text/background pair is gated (CLAUDE.md §E). |
+| 2026-11-03 | Audit `docs/audit-2026-11-plum.md`: the owner's new "Royal Plum & Gold" palette is evaluated (not applied); work continues on branch `theme/plum` in the phases of its §I (Phase P above). | Owner's new palette; one phase per prompt, each its own rollback point. |
+| 2026-11-03 | The traced logo SVG that appeared in `public/svg/` is kept outside the deploy at `brand-source/traced/hotel-dipali-logo-traced.svg`. | It is a pixel trace of `logo-primary.png` (619 straight segments on integer coordinates, no curves), not the client's master vector — not a deliverable. |
+| 2026-11-04 | **Theme variants are role-based:** `[data-theme="peacock"]` → `"dark"`, `"emerald"` → `"deep"`; light stays the default (no attribute). The stone texture file is `texture-stone-deep-1024.webp` (renamed, same bytes). The styleguide toggle reads Light / Dark / Deep / Side-by-side and gains a Deep pane. No colour value changed. | Owner: future palette changes edit token values only, never rename code (CLAUDE.md §E). Proof: contrast gate output identical apart from variant labels (47 pairs); 16 full-page screenshots (8 pages × 360/1280, reduced motion) pixel-identical before/after; computed colours of 3,326 elements in rich motion at 1280 identical. |
+| 2026-11-04 | CLAUDE.md §E: "do not change the palette" replaced by "The palette lives only in theme.css. Variants are role-based…"; gradient rule added: token-built only, for scrims, veils, depth and gold sheen on ornaments — never multi-hue decorative gradients on text, buttons or large surfaces. `docs/brief.md` §14.6/§14.7 marked superseded (text kept). | Owner's wording. The audit (§B) found 38 gradients, all token-built and within these uses. |
+| 2026-11-04 | **Source media out of the deploy:** `public/hotel/` (27 originals), the three night originals from `public/images/hotel/`, `public/video/1.mp4` and `public/palettes/` moved to `media-source/` with `git mv` (42 files, 488 MB; still tracked, no history rewrite). `make:photos` / `make:video` read from there (outputs still in `public/`); content `source` provenance paths updated to match. | Export 515 MB / 359 files → 28 MB / 288 files; largest file 24.6 MiB → 2.3 MB (`brand/lawn.png`). Regenerated: 145 photo/logo/texture WebPs byte-identical; the clip re-encodes visually identical (167 frames, mean difference 1.44/255) — the committed clip was kept. |
+| 2026-11-04 | **pnpm only:** `package-lock.json` deleted; `"packageManager": "pnpm@12.8.1"` (the installed version) and `engines.node` `^24.19.0` (`.nvmrc`'s version, same major). pnpm 12 records the package manager in the lockfile, so `pnpm-lock.yaml` gained a 158-line environment section (pnpm 12.8.1 and its platform binaries); the dependency section is unchanged. `pnpm install --frozen-lockfile` passes. | Two lockfiles let a CI pick npm, which once resolved a different `playwright-core` and broke typecheck (2026-10-26). |
+| 2026-11-04 | Deleted with the owner's approval: `CustomCursor.tsx` and its `html[data-cursor="on"]` rules, `WorldWithin.tsx`, `DayJourney.tsx`, and 28 placeholder SVGs whose slots show real photographs. `make:placeholders` now writes placeholders only for image entries still under `/sample/` (it wrote one per entry, which would have restored them); `credits.json` lists the 25 in use. `public/brand/lawn.png` (unreferenced, 2.3 MB) is kept by the owner's choice. | None was imported or referenced; the cursor contradicted the 2026-10-22 "no custom cursor" decision. |
 
 ## Brand assets
 
@@ -177,10 +204,9 @@ See CLAUDE.md section M:
 - **Still needed:** Executive Suite, Family Suite, Celebration Hall, Main Lawn,
   Poolside Lawn, gym, bakery, sweets and Poolside Restaurant photos (landscape,
   ≥2400 px wide); a daytime exterior/entrance photo without signage issues.
-- **Deploy:** `public/hotel/` originals (447 MB, files up to 26 MB) are copied into the
-  static export; Cloudflare Pages rejects files over 25 MB. Move the originals out of
-  `public/` (e.g. to a `photos/` source folder and point `make:photos` at it) before
-  deploying — not done, as the brief said not to move them.
+- ~~**Deploy:** `public/hotel/` originals (447 MB, files up to 26 MB) are copied into the
+  static export~~ — resolved 2026-11-04: originals live in `media-source/` (export 28 MB,
+  largest file 2.3 MB).
 
 - Official single address and pincode (platforms conflict — see docs/public-data.md).
 - Room count and categories.
@@ -197,12 +223,12 @@ See CLAUDE.md section M:
   - The brief called the hero photo "Hotel Dipali Residency", and DJI_…0042/0038 show
     "DIPALI RESIDENCY" / "HOTEL DEEPALI" signage. Is Dipali Residency the same property
     and brand? The hero crops the sign out until this is confirmed (CLAUDE.md §G).
-  - Usage rights for `public/palettes/` (they look like downloaded reference images,
-    ~736 px): may their textures ship on the site? Two are used as graded textures.
-  - The three night originals were placed in `public/images/hotel/` (8 MB each) — that
-    folder is deployed. Move them next to the other originals (`public/hotel/`, or a
-    non-public source folder) before deploying; not done (originals are never moved by
-    code without sign-off).
+  - Usage rights for the palette images (now `media-source/palettes/`; they look like
+    downloaded reference images, ~736 px): may their textures ship on the site? Two are
+    used as graded textures. (P-1b proposes our own generated texture, which removes
+    the question.)
+  - ~~The three night originals were placed in `public/images/hotel/` (8 MB each)~~ —
+    resolved 2026-11-04: moved to `media-source/images/hotel/` with the owner's sign-off.
   - Navigation: "About" has no page; "Experiences" (/#unwind) and "Gallery" (/#gallery)
     are provisional anchors until the Pool & Gym and Gallery pages exist. ~~The footer
     still links to /pool-and-gym/, /gallery/ and /contact/~~ — resolved 2026-10-27: the
@@ -217,9 +243,8 @@ See CLAUDE.md section M:
   caption "The reception atrium · Sagar" and `11.jfif` (now unused) can be removed.
 - **Hero video (2026-10-26):** it is AI-generated (Veo) and marked `sample`; launch is
   blocked until original footage (a slow night push-in to the porch, ≥1080 px tall, no
-  signage in view) replaces it. The 12.9 MB source `public/video/1.mp4` is copied into
-  the export — move it out of `public/` before deploying (not done: the brief says not
-  to alter it).
+  signage in view) replaces it. ~~The 12.9 MB source `public/video/1.mp4` is copied into
+  the export~~ — resolved 2026-11-04: it is `media-source/video/1.mp4` (unaltered).
 - **Buttons (2026-10-26):** the shared `.btn-primary` is now gold on every page (it was
   clay on ivory pages) — confirm this is wanted site-wide.
 - **The four experiences (2026-10-27):** the nav's "Experiences" links to the Pool & Gym
@@ -237,10 +262,47 @@ See CLAUDE.md section M:
   "Through the day / Something to take home / By the water / Evening"). The home page no
   longer shows the pool's portrait crop (`leisure.pool.images[1]`) or the photographs the
   retired sections led with; they stay in the content, inner pages are unchanged.
-- **Unused components (2026-10-27):** `src/components/home/WorldWithin.tsx` and
-  `DayJourney.tsx` are imported nowhere since this pass — delete them once the owner
-  agrees (not deleted: deletions are confirmed first). `ScrollSection` stays (motion
-  architecture, CLAUDE.md §K).
+- ~~**Unused components (2026-10-27):** `WorldWithin.tsx` and `DayJourney.tsx`~~ —
+  deleted 2026-11-04 with the owner's approval (with `CustomCursor.tsx`). `ScrollSection`
+  stays (motion architecture, CLAUDE.md §K).
+- **Plum re-theme (audit 2026-11-03, `docs/audit-2026-11-plum.md`):**
+  - ~~Two lockfiles~~ — resolved 2026-11-04 (pnpm only, `packageManager` set).
+  - ~~Deploy weight (515 MB export)~~ — resolved 2026-11-04 (28 MB). Still in `public/`
+    though no page requests them: `brand/lawn.png` (2.3 MB, kept by the owner) and
+    `brand/logo-primary.png` (494 KB, the emblem's source) — move the latter to
+    `media-source/brand/`?
+  - `media-source/` (488 MB) is still tracked in git (repo 499.65 MiB,
+    `git count-objects -vH`, 2026-11-04): consider Git LFS or external storage
+    (history rewriting only with the owner's approval).
+  - **Stone texture drift (found 2026-11-04):** the served `texture-stone-deep-1024.webp`
+    (kept byte-identical) cannot be reproduced from `media-source/palettes/`:
+    `make:photos -- stone` from today's `3.png` (replaced in `5586dd5`) gives a much
+    brighter stone (mean RGB 5/66/52 vs 9/34/30); `--3.png` (the earlier `3.png`) comes
+    close (mean difference ≈ 2/255) but not exact. Moot if P-1b generates its own
+    texture; otherwise decide which source is canonical.
+  - Textures: both are teal (hue 170–181°) and do not regrade cleanly to plum —
+    recommended: our own generated stone, botanical panel dropped or redrawn as SVG.
+  - Token issues for P-1b: light `accent` = `brand` (error text loses its colour → a
+    `danger` token, e.g. #8E1B2E); `deep` accent-ink = surface (the footer foot and the
+    Grand Reveal lose their tonal step → a plum-charcoal, e.g. #2A2230); gold text on
+    lavender fails (3.75:1 → #6D5222, or never on lavender); new tokens get role names
+    (not `gold-text` / `lavender`).
+  - `/rooms/` phone LCP 2.86 s (over the 2.5 s budget, 2026-10-27) — for P-4/P-6.
+  - The traced logo is not a master vector: a 3D medallion or a crisp large mark needs
+    the client's artwork (AI/EPS/PDF/SVG with curves).
+  - The plum reference image is now at `docs/reference/palette-plum.png` (untracked, as
+    is a WhatsApp image beside it) — sample it in P-1b (audit §E was blocked).
+  - P-3 needs the owner's decision on CLAUDE.md §K ("No WebGL/Three.js") — wording
+    proposed in the audit, §G.
+- **20 e2e failures inherited from `3f30fac` (found 2026-11-04):** that commit added the
+  tests for the enquiry choice chips (radios), the date / guests fields and the footer's
+  lamps, but not the code — at HEAD there is no `Lamp` component, no `.lamp` CSS and no
+  radio inputs in `EnquiryForm`. 10 tests × 2 projects fail identically on untouched
+  HEAD and on this branch: contact (form choices), enquiry-form (labels; keyboard
+  choice), events and weddings (enquiry types), shell (keystone centred within 2 px —
+  6 px off; the finale's sequence, reduced motion, phones, no-JS). Is the rest of the
+  2026-10-27 work uncommitted on the office machine? Decide: commit it, or bring the
+  tests in line with the code.
 - ~~**No JavaScript:** the header keeps its transparent overlay state~~ — resolved
   2026-10-27: without JS it no longer floats over the content (decision row).
 - **Console (pre-existing, header):** from 768px Chromium warns that the preloaded
@@ -968,3 +1030,42 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     1.18 s, LCP 2.01 s, CLS 0, 398 KB. Wheel-scrolling to the end of /, /contact/ and
     /rooms/: CLS 0, 0 and 0.0004. Not measured: frame timing of the footer's scroll-linked
     depth, Safari, Firefox, real devices.
+- 2026-11-04: **Phase P, step P-1a** — role-based theme names and housekeeping (branch
+  `theme/plum`; no colour, font, layout or motion change). Audit committed first
+  (`e9c3fd0`) and the traced logo moved out of `public/` (`a520662`).
+  - **Variants:** `[data-theme]` `peacock` → `dark`, `emerald` → `deep` in theme.css,
+    pages, components, the contrast gate (`Variant`, parser, pair labels), tests,
+    comments, CLAUDE.md; `emerald-stone-1024.webp` → `texture-stone-deep-1024.webp`
+    (same bytes; `EntranceHero`'s preload and `make:photos` slug follow). Styleguide
+    toggle Light / Dark / Deep / Side-by-side with a new Deep pane (three columns from
+    1536 px). `git grep -niE "peacock|emerald" -- src tests scripts` returns nothing.
+  - **Proof of no visual change:** contrast gate output identical apart from variant
+    labels (47 pairs, same ratios); 16 full-page screenshots (/, /rooms/, a room,
+    /weddings/, /events/, /dining/, /contact/, /thank-you/ × 360 and 1280, reduced
+    motion) pixel-identical against the build of HEAD; computed colours of all 3,326
+    elements of those pages in rich motion at 1280 identical.
+  - **pnpm:** `package-lock.json` deleted; `packageManager` pnpm@12.8.1; `engines.node`
+    `^24.19.0`; `pnpm-lock.yaml` + pnpm's 158-line environment section;
+    `pnpm install --frozen-lockfile` passes. `node_modules.npm-backup/` does not exist on
+    this machine; it is ignored in `.gitignore`, `tsconfig.json`, ESLint and (new)
+    `.prettierignore`.
+  - **Media:** `media-source/` (42 files, 488 MB, tracked via `git mv`); scripts and
+    content provenance paths updated; `docs/data-needed.md` regenerated (paths only).
+    Re-running `make:photos`: 145 outputs byte-identical; the stone texture cannot be
+    reproduced from the repo (open question; the served file is kept). `make:video`: a
+    visually identical re-encode (167 frames, mean difference 1.44/255, worst 4.5 in the
+    closing dissolve); the committed clip is kept. Export **515 MB / 359 files → 28 MB /
+    288 files**; largest file `brand/lawn.png` 2.3 MB; none over 10 MB.
+  - **Removed (owner-approved):** `CustomCursor.tsx` + its CSS, `WorldWithin.tsx`,
+    `DayJourney.tsx`, 28 stale placeholder SVGs; `make:placeholders` writes only
+    placeholders still in use (25) and `credits.json` matches them.
+  - **Docs:** CLAUDE.md §B (`media-source/`, `brand-source/`), §E (role-based palette
+    rule, gradient rule, variant names); `docs/brief.md` §14.6/§14.7 marked superseded;
+    Phase P added here with P-1a ticked; audit findings recorded as decisions and open
+    questions.
+  - **Checks:** lint, typecheck, contrast gate and build pass. `pnpm test:e2e`: **434 of
+    454 pass; 20 fail** — the same 20 fail on untouched HEAD (run in a separate worktree:
+    146 passed, 20 failed across the five affected spec files), inherited from `3f30fac`
+    (open question). The new styleguide toggle test passes on both projects. A first
+    e2e attempt reused a stray preview server without the test form endpoint and was
+    discarded.

@@ -56,7 +56,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
       {/* The phone sticky bar's clearance is the footer's own (.finale), so
-          the emerald finale runs under the bar instead of an ivory strip. */}
+          the deep finale runs under the bar instead of an ivory strip. */}
       <body>
         <a href="#main" className="skip-link">
           Skip to main content

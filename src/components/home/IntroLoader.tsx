@@ -8,7 +8,7 @@ import { hasBooted } from "@/lib/app-boot";
 
 /**
  * The opening moment on the home page's first load. Fine gold lines draw an
- * arch around the real Hotel Dipali emblem on the emerald botanical canvas;
+ * arch around the real Hotel Dipali emblem on the deep botanical canvas;
  * then the arch itself flies onto the hero's arched window — the insignia
  * becomes the doorway onto the hotel — while the canvas dissolves.
  *
@@ -121,8 +121,8 @@ export function IntroLoader({ caption }: IntroLoaderProps) {
   if (!show) return null;
 
   return (
-    // Emerald scope + text-ink: the loader sits outside every themed section.
-    <div ref={ref} data-theme="emerald" className="intro text-ink" aria-hidden="true">
+    // Deep scope + text-ink: the loader sits outside every themed section.
+    <div ref={ref} data-theme="deep" className="intro text-ink" aria-hidden="true">
       <div className="intro-canvas" />
       <div className="intro-panel" />
       <div className="intro-stage">

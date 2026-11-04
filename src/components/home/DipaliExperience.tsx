@@ -21,7 +21,7 @@ type DipaliExperienceProps = {
  * "The Dipali Experience": the editorial pair below the home hero, on the
  * ivory threshold. The statement on one side; on the other a photograph of the
  * hotel under a shallow lintel (the threshold's own curve), set against a
- * tablet of emerald stone and traced by a fine gold line that draws upward
+ * tablet of deep stone and traced by a fine gold line that draws upward
  * once the photograph is revealed. Server-rendered; the reveals are the shared
  * ScrollReveal (no scroll-linked work), and everything is complete without JS
  * or motion.
@@ -54,8 +54,8 @@ export function DipaliExperience({
       </div>
 
       <figure className="experience-figure">
-        {/* Emerald stone tablet; data-theme needs its own text-ink (CLAUDE.md §E). */}
-        <div aria-hidden="true" data-theme="emerald" className="experience-plinth text-ink" />
+        {/* Deep stone tablet; data-theme needs its own text-ink (CLAUDE.md §E). */}
+        <div aria-hidden="true" data-theme="deep" className="experience-plinth text-ink" />
         <div className="experience-window">
           <ScrollReveal variant="image" delay={80} className="experience-photo">
             <Picture
@@ -70,7 +70,7 @@ export function DipaliExperience({
           <span aria-hidden="true" className="experience-frame" />
           <span aria-hidden="true" className="experience-keystone" />
         </div>
-        <figcaption data-theme="emerald" className="experience-caption text-ink">
+        <figcaption data-theme="deep" className="experience-caption text-ink">
           {caption}
         </figcaption>
       </figure>

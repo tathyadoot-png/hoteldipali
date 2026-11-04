@@ -30,14 +30,14 @@ test.describe("Home page", () => {
     await expect(page.locator("#home-enquire")).toBeVisible();
   });
 
-  test("hero section has the emerald theme", async ({ page }) => {
+  test("hero section has the deep theme", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    await expect(hero).toHaveAttribute("data-theme", "emerald");
+    await expect(hero).toHaveAttribute("data-theme", "deep");
   });
 
-  test("enquiry section has peacock theme and anchor id", async ({ page }) => {
+  test("enquiry section has dark theme and anchor id", async ({ page }) => {
     const enquiry = page.locator("#enquire");
-    await expect(enquiry).toHaveAttribute("data-theme", "peacock");
+    await expect(enquiry).toHaveAttribute("data-theme", "dark");
   });
 
   /* ──── Navigation & links ──── */
@@ -119,7 +119,7 @@ test.describe("Home page", () => {
 
   test("The Grand Reveal: the façade at night, a real photograph in a gold frame", async ({ page }) => {
     const section = page.locator("#reveal");
-    await expect(section).toHaveAttribute("data-theme", "emerald");
+    await expect(section).toHaveAttribute("data-theme", "deep");
     await expect(
       section.getByRole("heading", { level: 2, name: "As evening falls, the whole house comes alight" }),
     ).toBeVisible();
@@ -183,7 +183,7 @@ test.describe("Home page", () => {
 
   test("Weddings & Events: every venue on the programme card, and the ways in", async ({ page }) => {
     const chapter = page.locator("#celebrate");
-    await expect(chapter).toHaveAttribute("data-theme", "peacock");
+    await expect(chapter).toHaveAttribute("data-theme", "dark");
     await expect(chapter.locator(".celebrate-venue-name")).toHaveText(venuesData.map((venue) => venue.name));
     await expect(chapter.getByRole("link", { name: "Plan your wedding" })).toHaveAttribute("href", "/weddings/");
     await expect(chapter.getByRole("link", { name: "Events & gatherings" })).toHaveAttribute("href", "/events/");
@@ -252,20 +252,20 @@ test.describe("Home page", () => {
 
   /* ──── Themed scopes carry text-ink ──── */
 
-  test("all peacock-themed sections carry text-ink class", async ({ page }) => {
-    const peacockSections = page.locator('section[data-theme="peacock"]');
-    const count = await peacockSections.count();
+  test("all dark-themed sections carry text-ink class", async ({ page }) => {
+    const darkSections = page.locator('section[data-theme="dark"]');
+    const count = await darkSections.count();
     expect(count).toBeGreaterThanOrEqual(2);
     for (let i = 0; i < count; i++) {
-      const classes = await peacockSections.nth(i).getAttribute("class");
+      const classes = await darkSections.nth(i).getAttribute("class");
       expect(classes).toContain("text-ink");
     }
   });
 
-  // Header, opening loader, hero and menu: every Emerald scope re-declares its
+  // Header, opening loader, hero and menu: every Deep scope re-declares its
   // colour (inherited `color` would not re-resolve --color-ink).
-  test("every emerald-themed element carries text-ink class", async ({ page }) => {
-    const scopes = page.locator('[data-theme="emerald"]');
+  test("every deep-themed element carries text-ink class", async ({ page }) => {
+    const scopes = page.locator('[data-theme="deep"]');
     const count = await scopes.count();
     expect(count).toBeGreaterThanOrEqual(4);
     for (let i = 0; i < count; i++) {

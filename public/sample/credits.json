@@ -1,31 +1,6 @@
 {
   "generated": [
     {
-      "id": "property-home-hero",
-      "file": "/sample/property-home-hero.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "room-garden-deluxe-1",
-      "file": "/sample/room-garden-deluxe-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "room-garden-deluxe-2",
-      "file": "/sample/room-garden-deluxe-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "room-garden-deluxe-3",
-      "file": "/sample/room-garden-deluxe-3.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "room-premium-1",
-      "file": "/sample/room-premium-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
       "id": "room-premium-2",
       "file": "/sample/room-premium-2.svg",
       "note": "generated placeholder, no licence needed"
@@ -86,16 +61,6 @@
       "note": "generated placeholder, no licence needed"
     },
     {
-      "id": "venue-grand-banquet-hall-1",
-      "file": "/sample/venue-grand-banquet-hall-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "venue-grand-banquet-hall-2",
-      "file": "/sample/venue-grand-banquet-hall-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
       "id": "venue-celebration-hall-1",
       "file": "/sample/venue-celebration-hall-1.svg",
       "note": "generated placeholder, no licence needed"
@@ -106,16 +71,6 @@
       "note": "generated placeholder, no licence needed"
     },
     {
-      "id": "outlet-restaurant-1",
-      "file": "/sample/outlet-restaurant-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "outlet-restaurant-2",
-      "file": "/sample/outlet-restaurant-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
       "id": "outlet-poolside-restaurant-1",
       "file": "/sample/outlet-poolside-restaurant-1.svg",
       "note": "generated placeholder, no licence needed"
@@ -123,16 +78,6 @@
     {
       "id": "outlet-poolside-restaurant-2",
       "file": "/sample/outlet-poolside-restaurant-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "outlet-infinity-bar-1",
-      "file": "/sample/outlet-infinity-bar-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "outlet-infinity-bar-2",
-      "file": "/sample/outlet-infinity-bar-2.svg",
       "note": "generated placeholder, no licence needed"
     },
     {
@@ -156,16 +101,6 @@
       "note": "generated placeholder, no licence needed"
     },
     {
-      "id": "leisure-pool-1",
-      "file": "/sample/leisure-pool-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "leisure-pool-2",
-      "file": "/sample/leisure-pool-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
       "id": "leisure-gym-1",
       "file": "/sample/leisure-gym-1.svg",
       "note": "generated placeholder, no licence needed"
@@ -173,56 +108,6 @@
     {
       "id": "leisure-gym-2",
       "file": "/sample/leisure-gym-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-stay-1",
-      "file": "/sample/gallery-stay-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-stay-2",
-      "file": "/sample/gallery-stay-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-stay-3",
-      "file": "/sample/gallery-stay-3.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-dining-1",
-      "file": "/sample/gallery-dining-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-dining-2",
-      "file": "/sample/gallery-dining-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-dining-3",
-      "file": "/sample/gallery-dining-3.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-weddings-1",
-      "file": "/sample/gallery-weddings-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-weddings-2",
-      "file": "/sample/gallery-weddings-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-weddings-3",
-      "file": "/sample/gallery-weddings-3.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-events-1",
-      "file": "/sample/gallery-events-1.svg",
       "note": "generated placeholder, no licence needed"
     },
     {
@@ -236,33 +121,8 @@
       "note": "generated placeholder, no licence needed"
     },
     {
-      "id": "gallery-pool-gym-1",
-      "file": "/sample/gallery-pool-gym-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
       "id": "gallery-pool-gym-2",
       "file": "/sample/gallery-pool-gym-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-pool-gym-3",
-      "file": "/sample/gallery-pool-gym-3.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-property-1",
-      "file": "/sample/gallery-property-1.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-property-2",
-      "file": "/sample/gallery-property-2.svg",
-      "note": "generated placeholder, no licence needed"
-    },
-    {
-      "id": "gallery-property-3",
-      "file": "/sample/gallery-property-3.svg",
       "note": "generated placeholder, no licence needed"
     }
   ]

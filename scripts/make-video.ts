@@ -25,10 +25,12 @@ import { chromium } from "@playwright/test";
  * Run: pnpm make:video
  */
 
+// Sources live outside public/ (never deployed); the clip is written to public/.
+const SOURCES = join(process.cwd(), "media-source");
 const PUBLIC = join(process.cwd(), "public");
 
 type Job = {
-  /** Source path, relative to public/. */
+  /** Source path, relative to media-source/. */
   src: string;
   /** Output path, relative to public/. */
   out: string;
@@ -80,7 +82,7 @@ type Encoded = {
 };
 
 async function encode(job: Job): Promise<Encoded> {
-  statSync(join(PUBLIC, job.src)); // fail loudly if the source is missing
+  statSync(join(SOURCES, job.src)); // fail loudly if the source is missing
   const browser = await chromium.launch();
   const page = await browser.newPage();
   // tsx (esbuild keepNames) wraps the named helpers inside the evaluated
@@ -90,7 +92,7 @@ async function encode(job: Job): Promise<Encoded> {
   await page.route("https://video.local/**", (route) => {
     const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(1));
     if (!path) return route.fulfill({ body: "<!doctype html>", contentType: "text/html" });
-    return route.fulfill({ body: readFileSync(join(PUBLIC, path)), contentType: "video/mp4" });
+    return route.fulfill({ body: readFileSync(join(SOURCES, path)), contentType: "video/mp4" });
   });
   await page.goto("https://video.local/");
 

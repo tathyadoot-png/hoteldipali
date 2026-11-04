@@ -18,21 +18,26 @@ test("styleguide loads with one h1, noindex, no console errors", async ({ page }
   expect(consoleErrors).toEqual([]);
 });
 
-test("peacock toggle changes the preview wrapper background colour", async ({ page }) => {
+test("the Light / Dark / Deep toggle shows each variant's own background", async ({ page }) => {
   await page.goto("/styleguide/");
 
-  // Side-by-side is the default; switch to Ivory to read a single pane's colour.
-  await page.getByRole("button", { name: "Ivory", exact: true }).click();
-  const lightBg = await page
-    .locator('[data-preview-pane="light"]')
-    .evaluate((el) => getComputedStyle(el).backgroundColor);
+  const group = page.getByRole("group", { name: "Theme preview mode" });
+  await expect(group.getByRole("button")).toHaveText(["Light", "Dark", "Deep", "Side-by-side"]);
 
-  await page.getByRole("button", { name: "Peacock", exact: true }).click();
-  const peacockBg = await page
-    .locator('[data-preview-pane="peacock"]')
-    .evaluate((el) => getComputedStyle(el).backgroundColor);
+  // Side-by-side is the default; switch to one variant to read a single pane's colour.
+  const background = async (label: string, pane: string) => {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    const panes = page.locator("[data-preview-pane]");
+    await expect(panes).toHaveCount(1);
+    return panes.and(page.locator(`[data-preview-pane="${pane}"]`)).evaluate(
+      (el) => getComputedStyle(el).backgroundColor,
+    );
+  };
+  const lightBg = await background("Light", "light");
+  const darkBg = await background("Dark", "dark");
+  const deepBg = await background("Deep", "deep");
 
-  expect(peacockBg).not.toBe(lightBg);
+  expect(new Set([lightBg, darkBg, deepBg]).size).toBe(3);
 });
 
 test("home skip link is hidden by default and visible after first Tab", async ({

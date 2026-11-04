@@ -247,13 +247,13 @@ export default async function DiningPage() {
         </section>
       ) : null}
 
-      {/* ──────────────────── AFTER DARK: Infinity Bar (Peacock) ────────────────────
+      {/* ──────────────────── AFTER DARK: Infinity Bar (dark) ────────────────────
           The evening moment — the page darkens here. No invented drinks,
           brands, hours or age-policy claims. */}
       {bar ? (
         <section
           id="infinity-bar"
-          data-theme="peacock"
+          data-theme="dark"
           className="scroll-mt-24 bg-surface py-16 text-ink md:py-20"
           aria-labelledby="dining-bar"
         >
@@ -283,10 +283,10 @@ export default async function DiningPage() {
         </section>
       ) : null}
 
-      {/* ───────────────────── ENQUIRY (Peacock) ───────────────────── */}
+      {/* ───────────────────── ENQUIRY (dark) ───────────────────── */}
       <section
         id="enquire"
-        data-theme="peacock"
+        data-theme="dark"
         className="paper-grain scroll-mt-24 bg-surface-alt py-16 text-ink md:py-20"
         aria-labelledby="dining-enquire"
       >

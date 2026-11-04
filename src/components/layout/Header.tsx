@@ -76,10 +76,10 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
 
   return (
     <header
-      data-theme="emerald"
+      data-theme="deep"
       data-state={isOverlay ? "overlay" : "solid"}
       // text-ink re-declares `color` on this element so it re-resolves against
-      // the emerald-scoped --color-ink (inherited `color` would not).
+      // the deep-scoped --color-ink (inherited `color` would not).
       // Background lives in .header-shell[data-state] (theme.css).
       className="header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22"
     >

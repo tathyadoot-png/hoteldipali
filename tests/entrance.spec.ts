@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-// The home page's opening, hero and scroll-driven scenes. The hero (Emerald,
+// The home page's opening, hero and scroll-driven scenes. The hero (deep,
 // 2026-10-24) frames the hotel's lit entrance in a gold arch — a photograph,
 // and from tablet width up the same view in motion (2026-10-26); a short
 // opening loader plays on a full page load only. Scenes run under "rich

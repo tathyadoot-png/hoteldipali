@@ -59,10 +59,10 @@ const SWATCH_ORDER = [
 ];
 
 const VARIANT_LABEL: Record<Variant, string> = {
-  light: "Ivory — the light default. Terracotta clay for actions, antique gold for ornament only.",
-  peacock: "Peacock — the dark forest-peacock variant ([data-theme=\"peacock\"]). Antique gold for actions and ornament.",
-  emerald:
-    "Emerald — the royal identity (loader, navigation, home hero): Deep Emerald, Warm Ivory, Muted Sage, Antique Gold.",
+  light: "Light — the default. Terracotta clay for actions, antique gold for ornament only.",
+  dark: "Dark — the deep forest-green variant ([data-theme=\"dark\"]). Antique gold for actions and ornament.",
+  deep:
+    "Deep — the royal identity ([data-theme=\"deep\"]: loader, navigation, home hero, stone surfaces): deep green, warm ivory, muted sage, antique gold.",
 };
 
 const PLANNING_CHIPS = [
@@ -337,7 +337,7 @@ function Sections({
         </h2>
         <div className="band-brand mt-6 p-8">
           <p className="eyebrow">Hotel Dipali</p>
-          <p className="heading-3">A deep peacock band for the footer and brand moments.</p>
+          <p className="heading-3">A deep brand band for the footer and brand moments.</p>
         </div>
       </section>
 
@@ -486,7 +486,8 @@ export default async function StyleguidePage() {
       </div>
       <ThemePreviewToggle
         light={<Sections variant="light" tokens={tokens.light} content={content} />}
-        peacock={<Sections variant="peacock" tokens={tokens.peacock} content={content} />}
+        dark={<Sections variant="dark" tokens={tokens.dark} content={content} />}
+        deep={<Sections variant="deep" tokens={tokens.deep} content={content} />}
       />
     </>
   );

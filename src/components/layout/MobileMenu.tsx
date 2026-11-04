@@ -83,14 +83,14 @@ export function MobileMenu({ bookingUrl }: { bookingUrl: string | null }) {
     };
   }, [open]);
 
-  // The hall behind the gates is Emerald (the royal identity); data-theme needs
+  // The hall behind the gates is deep (the royal identity); data-theme needs
   // its own text-ink (see CLAUDE.md §E) so colour re-resolves inside it.
   return (
     <dialog
       ref={dialogRef}
       id="mobile-menu"
       aria-label="Site menu"
-      data-theme="emerald"
+      data-theme="deep"
       data-lenis-prevent=""
       className="menu-dialog m-0 h-dvh max-h-none w-screen max-w-none bg-surface p-0 text-ink"
     >

@@ -67,11 +67,11 @@ export default async function WeddingsPage() {
 
   return (
     <>
-      {/* ───────────────────────── HERO (Peacock) ─────────────────────────
+      {/* ───────────────────────── HERO (dark) ─────────────────────────
           Cinematic venue cover. The header is solid on this route, so the
           hero sits below it rather than pulling under a transparent header. */}
       <section
-        data-theme="peacock"
+        data-theme="dark"
         className="relative flex min-h-[82vh] flex-col overflow-hidden bg-surface text-ink"
         aria-labelledby="weddings-title"
       >
@@ -139,12 +139,12 @@ export default async function WeddingsPage() {
         </div>
       </section>
 
-      {/* ───────────────────── FEATURED VENUE (Peacock) ─────────────────────
+      {/* ───────────────────── FEATURED VENUE (dark) ─────────────────────
           Signature device: a dominant venue image with a smaller framed inset
           crossing its edge, carried through the whole showcase below. */}
       {featured ? (
         <section
-          data-theme="peacock"
+          data-theme="dark"
           className="bg-surface py-16 text-ink md:py-20"
           aria-labelledby="venue-featured"
         >
@@ -315,10 +315,10 @@ export default async function WeddingsPage() {
         </section>
       ) : null}
 
-      {/* ───────────────────── ENQUIRY (Peacock) ───────────────────── */}
+      {/* ───────────────────── ENQUIRY (dark) ───────────────────── */}
       <section
         id="enquire"
-        data-theme="peacock"
+        data-theme="dark"
         className="paper-grain bg-surface py-16 text-ink md:py-20"
         aria-labelledby="weddings-enquire"
       >

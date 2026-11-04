@@ -77,14 +77,14 @@ type EnquiryFormProps = {
    * weddings page, "rooms" on a room's page; "general" by default. */
   enquiryType?: EnquiryType;
   /** Namespaces element ids. Only needed if a page ever renders the form more
-   * than once (e.g. shown in both the Light and Peacock styleguide panes). */
+   * than once (e.g. shown in both the light and dark styleguide panes). */
   idPrefix?: string;
   className?: string;
 };
 
 /**
  * The one enquiry form, on every page that has one: four fields — name and
- * phone (all we need), email and a message (optional) — on an emerald stone
+ * phone (all we need), email and a message (optional) — on a deep stone
  * tablet in a fine gold frame that draws as it comes into view. Fields check
  * themselves when the visitor leaves them; a submission shows a sending line
  * and an "Enquiry sent" confirmation before the thank-you page. The page's
@@ -237,10 +237,10 @@ export function EnquiryForm({
   const busy = status === "submitting" || status === "sent";
 
   return (
-    // text-ink re-declares `color` so it resolves against the emerald tokens.
+    // text-ink re-declares `color` so it resolves against the deep tokens.
     <div
       ref={tabletRef}
-      data-theme="emerald"
+      data-theme="deep"
       data-status={status}
       className={`enquiry text-ink ${className ?? ""}`}
     >

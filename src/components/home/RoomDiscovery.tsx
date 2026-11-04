@@ -24,7 +24,7 @@ function facts(room: RoomPreview): string {
 
 /**
  * Rooms as an index rather than a card grid. On wide screens the stage beside
- * it — a photograph under a shallow lintel, standing on emerald stone in a fine
+ * it — a photograph under a shallow lintel, standing on deep stone in a fine
  * gold line — follows whichever room is hovered or keyboard-focused, the next
  * photograph sweeping in from the side. On small screens there is no hover to
  * rely on, so each room simply carries its own photograph inline (beside it
@@ -63,8 +63,8 @@ export function RoomDiscovery({ rooms }: { rooms: RoomPreview[] }) {
       <div className="stay-stage-col">
         <div className="stay-stage-sticky">
           <div className="stay-stage-wrap">
-            {/* Emerald stone tablet; data-theme needs its own text-ink (CLAUDE.md §E). */}
-            <div aria-hidden="true" data-theme="emerald" className="stay-tablet text-ink" />
+            {/* Deep stone tablet; data-theme needs its own text-ink (CLAUDE.md §E). */}
+            <div aria-hidden="true" data-theme="deep" className="stay-tablet text-ink" />
             <div className="room-stage">
               {rooms.map((room, i) => (
                 <div

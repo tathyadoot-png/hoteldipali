@@ -33,7 +33,7 @@ type FooterProps = {
 };
 
 /**
- * The finale: an emerald stone band whose centre is a gateway — its crown
+ * The finale: a deep stone band whose centre is a gateway — its crown
  * rises above the footer's top edge, the emblem in its arched head, the
  * invitation and the booking action inside. As the footer arrives one gold
  * line draws it (FooterStage, theme.css): in from the left along the string
@@ -59,8 +59,8 @@ export function Footer({ site, outlets, bookingUrl }: FooterProps) {
   )?.whatsapp;
 
   return (
-    // text-ink re-declares `color` so it resolves against the emerald tokens.
-    <FooterStage data-theme="emerald" className="finale text-ink">
+    // text-ink re-declares `color` so it resolves against the deep tokens.
+    <FooterStage data-theme="deep" className="finale text-ink">
       <div aria-hidden="true" className="finale-surface">
         <div className="finale-stone" />
         {/* Clipped by the band's top edge: they show in the frieze only. */}

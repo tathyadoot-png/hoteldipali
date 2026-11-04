@@ -40,7 +40,7 @@ const TONES: Record<string, Tone> = {
   stay: { base: "#DCCFB8", shade: "#CBBB9F", line: "#AE9C7C" },
   // Dining, bakery, sweets — warm clay.
   dining: { base: "#D8C6AB", shade: "#C6B191", line: "#A8906C" },
-  // Infinity Bar — peacock night.
+  // Infinity Bar — deep green night.
   bar: { base: "#0B2F2E", shade: "#0E3B3A", line: "#6B5A3E" },
   // Lawns and halls — garden green-gold.
   venue: { base: "#CFC6A8", shade: "#BDB290", line: "#9C8F6D" },
@@ -178,6 +178,8 @@ async function main(): Promise<void> {
   const credits: Array<{ id: string; file: string; note: string }> = [];
 
   for (const image of images) {
+    // Entries already showing a real photograph need no placeholder.
+    if (!image.src.startsWith("/sample/")) continue;
     if (seen.has(image.id)) continue;
     seen.add(image.id);
     const file = `${image.id}.svg`;

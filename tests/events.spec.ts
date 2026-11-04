@@ -46,8 +46,8 @@ test.describe("Events page", () => {
       "href",
       "#enquire",
     );
-    // Events opens light (no peacock theme on the hero), unlike /weddings/.
-    await expect(hero).not.toHaveAttribute("data-theme", "peacock");
+    // Events opens light (no dark theme on the hero), unlike /weddings/.
+    await expect(hero).not.toHaveAttribute("data-theme", "dark");
   });
 
   test("the finder exposes every event type present in the content", async ({ page }) => {

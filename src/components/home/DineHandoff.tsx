@@ -42,7 +42,7 @@ export function DineHandoff({ children, outlets, more, day, evening }: DineHando
             </ScrollReveal>
             <figcaption className="dine-label">{day.label}</figcaption>
           </figure>
-          <figure data-theme="peacock" className="dine-evening text-ink">
+          <figure data-theme="dark" className="dine-evening text-ink">
             <ScrollReveal variant="wipe-down" delay={160} className="dine-photo">
               <Picture image={evening.image} fill sizes="(min-width: 1024px) 42vw, 44vw" />
             </ScrollReveal>
