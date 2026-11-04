@@ -44,7 +44,21 @@ type Job = {
   rect?: Rect;
   /** CSS filter applied while drawing (colour grading). */
   filter?: string;
+  /** Per-pixel grade (decoration only, see DECOR below). */
+  grade?: Grade;
 };
+
+/**
+ * Grades a decorative image into the palette, pixel by pixel:
+ * - `palette`: hues are pulled into plum and gold — greens and olives (stems,
+ *   leaves) become antique gold, blues and indigos (a navy night) become
+ *   plum, violets and magentas are held in the plum family, yellows settle
+ *   on antique gold. Lightness is kept, so the image keeps its modelling.
+ * - `whiten`: each channel is divided by this ground colour, so a near-white
+ *   studio ground becomes pure white — which `mix-blend-mode: multiply` then
+ *   turns into exactly the ivory surface beneath it.
+ */
+type Grade = { palette?: boolean; whiten?: [number, number, number] };
 
 /** Camera originals placed on the site: file in media-source/hotel/ → slug. */
 const PHOTOS: Record<string, string> = {
@@ -145,15 +159,138 @@ const JOBS: Job[] = [
   // The site's textures are generated in CSS (theme.css: --texture-velvet,
   // --texture-paper); the palette images in media-source/palettes/ are
   // references only and no longer ship.
+  ...DECOR(),
 ];
 
-type Exported = { width: number; height: number; data: string };
+/**
+ * Decoration (content/decor.json): the owner-supplied flower downloads in
+ * media-source/decor/flowers/, graded to plum and gold. Widths never exceed
+ * the source (no upscaling), so the 736 px downloads stop at their own width.
+ * - The dahlia (a transparent cut-out) as its left and right halves, split at
+ *   the flower's heart — two halves of one flower, never one half mirrored.
+ * - The orchid pattern, dark and light (the "-Photoroom" cut-out), as
+ *   seamless tiles at 1× and 2× (≤ 120 KB each).
+ * - Three chrysanthemum studies: two on plum, one on ivory (whitened for
+ *   multiply).
+ */
+function DECOR(): Job[] {
+  const dir = "media-source/decor/flowers";
+  const palette: Grade = { palette: true };
+  // The dahlia's artwork inside 1.png and its heart (measured from the alpha).
+  const dahlia = { x0: 0, x1: 1, y0: 0.196, y1: 0.795, heart: 0.497 };
+  const half = (side: "left" | "right"): Job => ({
+    src: `${dir}/1.png`,
+    out: "images/decor",
+    slug: `dahlia-${side}`,
+    rect:
+      side === "left"
+        ? { x: dahlia.x0, y: dahlia.y0, w: dahlia.heart - dahlia.x0, h: dahlia.y1 - dahlia.y0 }
+        : { x: dahlia.heart, y: dahlia.y0, w: dahlia.x1 - dahlia.heart, h: dahlia.y1 - dahlia.y0 },
+    widths: [480, 960, 1440],
+    quality: 0.82,
+    grade: palette,
+  });
+  const study = (file: string, slug: string, grade: Grade): Job => ({
+    src: `${dir}/${file}`,
+    out: "images/decor",
+    slug,
+    widths: [480, 960, 1440],
+    quality: 0.78,
+    grade,
+  });
+  const tile = (file: string, slug: string, quality: number): Job => ({
+    src: `${dir}/${file}`,
+    out: "images/decor",
+    slug,
+    widths: [368, 736],
+    quality,
+    grade: palette,
+  });
+  return [
+    half("left"),
+    half("right"),
+    tile("Midnight Orchid & Gold Veins – Seamless Pattern.jfif", "orchid-veins-dark", 0.7),
+    tile("Midnight Orchid & Gold Veins – Seamless Pattern (1)-Photoroom.png", "orchid-veins-light", 0.7),
+    study("Dewy Purple Chrysanthemum Macro.png", "chrysanthemum-dewy", palette),
+    study("Velvety Purple Chrysanthemum Bud.png", "chrysanthemum-bud", palette),
+    study("Purple Chrysanthemum Bud on Ivory.png", "chrysanthemum-bud-ivory", {
+      palette: true,
+      whiten: [248, 239, 238],
+    }),
+  ];
+}
+
+type Exported = { width: number; height: number; data: string; brightest?: string };
 
 /** Decodes one source in the page and returns a base64 WebP per width. */
 async function exportSet(page: Page, job: Job): Promise<Exported[]> {
   statSync(join(ROOT, job.src)); // fail loudly if a source is missing
   return page.evaluate(
-    async ({ url, widths, quality, rect, filter }) => {
+    async ({ url, widths, quality, rect, filter, grade }) => {
+      // HSL ↔ RGB for the palette grade (h in degrees, s/l 0–1).
+      const toHsl = (r: number, g: number, b: number): [number, number, number] => {
+        const max = Math.max(r, g, b) / 255;
+        const min = Math.min(r, g, b) / 255;
+        const l = (max + min) / 2;
+        if (max === min) return [0, 0, l];
+        const d = max - min;
+        const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        const [R, G, B] = [r / 255, g / 255, b / 255];
+        const h =
+          max === R ? ((G - B) / d + (G < B ? 6 : 0)) * 60 : max === G ? ((B - R) / d + 2) * 60 : ((R - G) / d + 4) * 60;
+        return [h, s, l];
+      };
+      const toRgb = (h: number, s: number, l: number): [number, number, number] => {
+        const k = (n: number) => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+        return [f(0) * 255, f(8) * 255, f(4) * 255];
+      };
+      const applyGrade = (ctx: OffscreenCanvasRenderingContext2D, w: number, h: number) => {
+        const image = ctx.getImageData(0, 0, w, h);
+        const px = image.data;
+        let best = -1;
+        let brightest = "";
+        for (let i = 0; i < px.length; i += 4) {
+          let r = px[i]!;
+          let g = px[i + 1]!;
+          let b = px[i + 2]!;
+          if (grade?.whiten) {
+            r = Math.min(255, (r * 255) / grade.whiten[0]);
+            g = Math.min(255, (g * 255) / grade.whiten[1]);
+            b = Math.min(255, (b * 255) / grade.whiten[2]);
+          }
+          if (grade?.palette) {
+            let [hue, sat, lig] = toHsl(r, g, b);
+            if (sat > 0.06) {
+              if (hue >= 62 && hue < 180) {
+                hue = 40;
+                sat = Math.min(sat, 0.55) * 0.9;
+              } else if (hue >= 180 && hue < 268) {
+                hue = 290 + (hue - 268) * 0.15;
+              } else if (hue >= 268 && hue < 340) {
+                hue = 293 + (hue - 300) * 0.4;
+              } else if (hue >= 40 && hue < 62) {
+                hue = 40 + (hue - 40) * 0.3;
+              }
+              [r, g, b] = toRgb(hue, sat, lig);
+            }
+          }
+          px[i] = r;
+          px[i + 1] = g;
+          px[i + 2] = b;
+          // The brightest opaque pixel (for a veil's contrast check).
+          if (px[i + 3]! > 200) {
+            const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            if (lum > best) {
+              best = lum;
+              brightest = `#${[r, g, b].map((c) => Math.round(c).toString(16).padStart(2, "0")).join("")}`;
+            }
+          }
+        }
+        ctx.putImageData(image, 0, 0);
+        return brightest;
+      };
       const blob = await (await fetch(url)).blob();
       const whole = await createImageBitmap(blob);
       const full = rect
@@ -179,13 +316,14 @@ async function exportSet(page: Page, job: Job): Promise<Exported[]> {
         if (filter) ctx.filter = filter;
         ctx.drawImage(scaled, 0, 0);
         scaled.close();
+        const brightest = grade ? applyGrade(ctx, width, height) : undefined;
         const webp = await canvas.convertToBlob({ type: "image/webp", quality });
         const buf = new Uint8Array(await webp.arrayBuffer());
         let bin = "";
         for (let i = 0; i < buf.length; i += 0x8000) {
           bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
         }
-        out.push({ width, height, data: btoa(bin) });
+        out.push({ width, height, data: btoa(bin), brightest });
         if (width === full.width) break;
       }
       if (full !== whole) full.close();
@@ -198,6 +336,7 @@ async function exportSet(page: Page, job: Job): Promise<Exported[]> {
       quality: job.quality,
       rect: job.rect,
       filter: job.filter,
+      grade: job.grade,
     },
   );
 }
@@ -238,8 +377,11 @@ async function main(): Promise<void> {
       bytes += buf.length;
     }
     const last = results.at(-1)!;
+    const sizes = results.map((r) => `${r.width}:${Math.round((r.data.length * 3) / 4 / 1024)}KB`).join(" ");
     console.log(
-      `${`${job.out}/${job.slug}`.padEnd(44)} ${results.map((r) => r.width).join("/")}  (full ${last.width}×${last.height})`,
+      `${`${job.out}/${job.slug}`.padEnd(44)} ${sizes}  (full ${last.width}×${last.height})${
+        last.brightest ? `  brightest ${last.brightest}` : ""
+      }`,
     );
   }
   await browser.close();
