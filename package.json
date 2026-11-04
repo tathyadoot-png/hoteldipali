@@ -8,6 +8,7 @@
     "node": "^24.19.0"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
     "prebuild": "tsx scripts/check-contrast.ts",
     "build": "next build",

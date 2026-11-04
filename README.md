@@ -5,7 +5,9 @@ Static marketing website for Hotel Dipali, Sagar (Madhya Pradesh, India). Built 
 ## Requirements
 
 - Node.js 24.x (see `.nvmrc`)
-- pnpm
+- pnpm only (the version in `package.json` → `packageManager`). `npm install` and
+  `yarn` are refused by the `preinstall` guard (`only-allow pnpm`); never commit a
+  `package-lock.json`.
 
 ## Commands
 

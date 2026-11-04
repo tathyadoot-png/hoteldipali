@@ -22,7 +22,9 @@ Business goals, in priority order:
 ## B. Stack (fixed — ask before adding ANY dependency)
 
 Next.js App Router, static export (`output: 'export'`), TypeScript strict, Tailwind v4
-(`@theme` in CSS), pnpm, ESLint + Prettier, Playwright. Hosting: Cloudflare Pages
+(`@theme` in CSS), pnpm (pnpm only — never npm or yarn; `preinstall` runs
+`only-allow pnpm`, and a `package-lock.json` is never committed), ESLint + Prettier,
+Playwright. Hosting: Cloudflare Pages
 (static). Forms post to a hosted form endpoint set by an env var. Images are
 pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height). Source media
 lives OUTSIDE `public/`, in `media-source/` (never deployed; never renamed, moved or
