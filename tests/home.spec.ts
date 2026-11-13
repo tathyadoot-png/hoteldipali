@@ -30,10 +30,11 @@ test.describe("Home page", () => {
     await expect(page.locator("#home-enquire")).toBeVisible();
   });
 
-  test("the hero is the light page: ivory, with no dark scope of its own", async ({ page }) => {
+  test("the hero is the night: the deep plum scope, with its own text-ink", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    await expect(hero).not.toHaveAttribute("data-theme", /.+/);
-    await expect(hero).toHaveCSS("background-color", "rgb(250, 246, 244)");
+    await expect(hero).toHaveAttribute("data-theme", "deep");
+    await expect(hero).toHaveClass(/text-ink/);
+    await expect(hero).toHaveCSS("background-color", "rgb(23, 8, 32)");
   });
 
   test("enquiry section has dark theme and anchor id", async ({ page }) => {

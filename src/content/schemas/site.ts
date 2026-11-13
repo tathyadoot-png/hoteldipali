@@ -54,6 +54,9 @@ export const siteSchema = z.object({
   // The home hero's full-bleed photograph (a labelled placeholder until the
   // hotel supplies an original).
   homeHero: imageSchema,
+  // The home hero's cut-out: the lit entrance lifted out of the night
+  // photograph (pnpm make:mask), standing in front of the giant name.
+  homeHeroCutout: imageSchema,
   homeHeroVideo: heroVideoSchema,
   // "The Dipali Experience", the section below the home hero.
   homeExperience: imageSchema,

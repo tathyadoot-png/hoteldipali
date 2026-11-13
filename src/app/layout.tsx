@@ -5,11 +5,12 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { StickyCtaBar } from "@/components/layout/StickyCtaBar";
+import { CursorFollower } from "@/components/motion/CursorFollower";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { BootMarker } from "@/components/providers/BootMarker";
 import { MobileMenuProvider } from "@/components/providers/MobileMenuProvider";
 import { SiteDataProvider } from "@/components/providers/SiteDataProvider";
-import { getOutlets, getSite } from "@/content";
+import { getDecorItem, getOutlets, getSite } from "@/content";
 import { getBookingUrl } from "@/lib/booking";
 import { MOTION_BOOT_SCRIPT } from "@/lib/motion";
 import { cormorant, greatVibes, manrope } from "./fonts";
@@ -26,10 +27,11 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const [site, outlets, bookingUrl] = await Promise.all([
+  const [site, outlets, bookingUrl, footerFlower] = await Promise.all([
     getSite(),
     getOutlets(),
     getBookingUrl(),
+    getDecorItem("dahlia-right"),
   ]);
 
   return (
@@ -43,7 +45,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <head>
         {/* Runs before first paint so scroll scenes are laid out correctly from
             frame one, and the opening loader is skipped on a slow connection
-            (see src/lib/motion/index.ts). Static string, no user input. */}
+            (see src/lib/motion/index.ts) — or already seen this session. Static
+            string, no user input. */}
         <script dangerouslySetInnerHTML={{ __html: MOTION_BOOT_SCRIPT }} />
         {/* Without JS nothing would reveal: show scroll-reveal content as-is.
             Nor would the home page's transparent header ever turn solid, so it
@@ -70,9 +73,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <SiteDataProvider site={site} outlets={outlets}>
             <Header bookingUrl={bookingUrl} />
             <main id="main">{children}</main>
-            <Footer site={site} outlets={outlets} bookingUrl={bookingUrl} />
+            <Footer site={site} outlets={outlets} bookingUrl={bookingUrl} decor={footerFlower} />
             <StickyCtaBar />
             <MobileMenu bookingUrl={bookingUrl} />
+            <CursorFollower />
           </SiteDataProvider>
         </MobileMenuProvider>
       </body>

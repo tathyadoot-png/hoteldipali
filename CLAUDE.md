@@ -30,11 +30,16 @@ pre-optimised (AVIF/WebP, multiple widths, srcset, explicit width/height). Sourc
 lives OUTSIDE `public/`, in `media-source/` (never deployed; never renamed, moved or
 edited by code, never referenced by pages): the hotel's camera originals in
 `media-source/hotel/` and `media-source/images/hotel/` (night exteriors), the palette
-textures in `media-source/palettes/`, the source video in `media-source/video/`.
+textures in `media-source/palettes/`, the decorative flower downloads in
+`media-source/decor/flowers/`, the source video in `media-source/video/`.
 `pnpm make:photos` writes WebP width sets to `public/images/hotel/` (Playwright's
 Chromium — no image library); the same script writes the trimmed logo emblem
-(`public/images/brand/`, from `public/brand/logo-primary.png`) and the graded palette
-textures (`public/images/textures/`). Video works the same way: `pnpm make:video`
+(`public/images/brand/`, from `public/brand/logo-primary.png`) and the decoration,
+graded to plum and gold (`public/images/decor/`, never wider than its source; patterns
+as seamless tiles). `pnpm make:mask` writes the home hero's cut-out — the lit entrance
+lifted out of the night photograph through a hand-traced mask
+(`src/lib/hero-cutout.ts`, which also records the signage that must never be in frame).
+Video works the same way: `pnpm make:video`
 (Playwright's Chromium + WebCodecs — no ffmpeg) writes the cropped, looped, silent,
 web-optimised H.264 clip pages use (`public/video/`). Only files pages request belong in
 `public/`. `brand-source/` holds brand working files that are not deliverables (e.g. the
@@ -88,7 +93,7 @@ third-party script without asking.
 - `src/app/fonts.ts` is the only file besides `theme.css` allowed to contain font
   names.
 - Gold is one family in three shades — never a yellow gold: champagne (`accent` /
-  `highlight` on `dark` and `deep`) for actions, small gold text, rules and lamps on
+  `highlight` on `dark` and `deep`) for actions, small gold text, rules, veins and vines on
   plum; antique (`highlight` on light) for ornament only — rules, hairlines, frames,
   never text; deep (`gold-text`, and `gold-text-tint` on lavender) when gold must be
   read on a light ground. `accent` is plum on light and champagne on `dark` / `deep`;
@@ -109,7 +114,7 @@ third-party script without asking.
   `.heading-1/2/3`, `.eyebrow` (with its short gold rule), `.body-lg`, `.body`,
   `.caption`, `.big-number`, `.heading-page` (inner-page heroes), the button family
   (`.btn-primary` = the booking action: a plum plaque with a gold hairline inset on
-  light, a champagne plaque on plum grounds, a flame dot on hover; `.btn-secondary` =
+  light, a champagne plaque on plum grounds, the logo's diamond on hover; `.btn-secondary` =
   fine gold outline, every other action; `.btn-ghost`; modifiers `.btn-cta` (stepping
   arrow) and `.btn-compact` (dense bars)), `.link-cta`, `.link-royal`, `.btn-icon`,
   `.chip`, `.card`, `.link`, `.section`, `.container-site`, `.band-brand`,
@@ -119,9 +124,11 @@ third-party script without asking.
   `[data-reveal]` (`""` rise, `"mask"` headings, `"mask-line"` headings line by line
   with `.reveal-line`, `"image"` frames, `"clip-arch"` images opening inside an arch,
   `"foil"` one gleam of gold, `"wipe-*"` photographs opening from one edge, `"slide-*"`
-  sideways text); the motion kit's `.arch-window` (+ `.depth-canvas`), `.tilt`,
-  `.lamplight`, `.thread*`, `.foil`, `.foil-rule`; the identity's `.lamp` and
-  `.logo-medallion` (the logo on plum); `.pictures-*`; the home scenes `.home-hero*`,
+  sideways text); the motion kit's `.arch-window`, `.tilt`, `.glow`, `.thread*`,
+  `.foil`, `.foil-rule`, `.cursor*` (the cursor follower); the identity's `.wordmark*`
+  (HOTEL over DIPALI), the diamond (`--diamond`, a mask), `.logo-medallion` (the logo
+  on plum), `.footer-vine` / `.vine-*`, `.menu-petal*`; decoration `.decor`,
+  `.decor-pattern`; `.pictures-*`; the home scenes `.home-hero*`,
   `.experience*` (The Dipali Experience), `.grand-reveal*` and `.portal-*` (The Grand
   Reveal), `.living*` and `.chapter*` (The Living Experiences and its chapter heads),
   the chapters' `.stay-*`, `.room-stage*`, `.room-marker`, `.celebrate-*`, `.dine-*`
@@ -138,8 +145,9 @@ third-party script without asking.
 - Theme variants via `[data-theme="…"]` redefining the same tokens: `dark` (plum
   velvet: weddings, the bar, the enquiry close, dark bands) and `deep` (the night: the
   opening loader, the mobile menu, the phone bar, the footer, the home page's stone —
-  the Grand Reveal, the Stay tablet, the Unwind plaque — the enquiry tablet and the
-  contact page's front desk). The header and the home hero are light. Stone that
+  the Grand Reveal, the Stay tablet, the Unwind plaque — the enquiry tablet, the
+  contact page's front desk, and the home hero; the header takes the deep scope while
+  it is transparent over the home hero, and is light everywhere else). Stone that
   carries text sits under a 75% veil of its surface. Every element that sets
   `data-theme="dark"` or `"deep"` MUST also carry an explicit `text-ink` (or other
   colour utility) on that same element — `color` inherits the ancestor's
@@ -150,14 +158,45 @@ third-party script without asking.
   (median #ECAE33) only ever sits on `brand`, `dark` or `deep` grounds — on light
   pages inside its plum medallion (`BrandLink`, `.logo-medallion`) — never on light or
   lavender.
-- Palette "Plum & Gold" — "A Thousand Lamps" (2026-11-04). Dipali means a row of
-  lamps: night is deep plum velvet, light is gold lamplight, day is ivory and lavender
-  pages set in near-black plum. The one recurring mark is the lamp (`.lamp`, the
-  flame): the opening's row of lamps, the menu's and the footer's, the current page's
-  flame, the gold thread's end. Buttons are nearly square; arches appear as the hero's
-  arch window, the section thresholds and `.frame-arch` images. Fonts: Cormorant
-  Garamond for display (the home hero's name ~15vw on phones, up to 11rem), Manrope for
-  interface and body. See `theme.css` and `src/app/fonts.ts`.
+- Palette "Plum & Gold" — concept "Midnight Bloom" (R1.1, 2026-11-04): a plum night,
+  gold veins, flowers that bloom. Night is deep plum velvet, gold runs through it as fine
+  veins and vines, day is ivory and lavender pages set in near-black plum. The recurring
+  mark is the small diamond from the logo (the current page, the buttons' hover); the
+  opening's veins and dahlia, the menu's petals, the footer's vine and the gold thread's
+  flower carry the bloom. Buttons are nearly square; arches appear as the section
+  thresholds and `.frame-arch` images. Fonts: Cormorant Garamond for display (the home
+  hero's DIPALI spans the screen's width), Manrope for interface and body. See
+  `theme.css` and `src/app/fonts.ts`.
+- **No diya, lamp, flame or oil-lamp imagery anywhere** (owner, 2026-11-04 — not
+  religious, simply not wanted): no such element, class, SVG, motif or wording in the
+  UI, the styles or the docs' design language. A test greps the built HTML/CSS and the
+  source (`tests/midnight-bloom.spec.ts`; photographs' alt text describing furniture
+  lamps is content, not a motif).
+- **The wordmark** (`Wordmark`, `.wordmark`): HOTEL small and tracked above DIPALI in
+  Cormorant capitals, every length a fraction of `--wm`, so one uniform scale maps any
+  copy onto any other. The header shows it as its logotype — type, never the gold logo on
+  a light ground (plum on ivory, engraved gold over the night). On the home page under
+  rich motion the hero's giant name travels into the header's centre slot over the first
+  viewport of scroll (`HeroMorph`: `--h` per frame, the travel's end measured on
+  resize) and hands over to the logotype at the same size and place; phones, reduced
+  motion and no-JS show the logotype from the start.
+- **Decoration** (`content/decor.json`, `DecorFlower`, `.decor*`): flowers and patterns
+  that are never the subject — `alt=""`, aria-hidden, no pointer events; at most one
+  flower per section, alternating left / right between sections; never behind text (a
+  pattern that carries text sits under an 80% veil of its surface, checked on the tile's
+  own pixels); a white studio ground multiplies into ivory; a drift of at most 40 px over
+  its section under rich motion only. The owner-supplied downloads are `sample` (source =
+  the original file, note "downloaded image — usage rights unconfirmed") until their
+  rights are confirmed, so `pnpm release` stays blocked. Never the teal mandala, nor the
+  duplicate downloads.
+- **The cursor follower** (`CursorFollower`, `.cursor*`): only for `(hover: hover) and
+  (pointer: fine)` without reduced motion; a 28 px gold ring easing after the pointer
+  (lerp ≈ 0.18) and a 6 px plum dot exactly on it; over links/buttons the ring grows to
+  56 px with a faint gold tint, over `data-cursor="view"` it reads "View", over
+  `data-cursor="drag"` "Drag", over text fields it steps aside, a press tightens it; it
+  hides when the pointer leaves the window. Never `cursor: none`; transform only, one
+  rAF loop that runs only while it eases; aria-hidden, pointer-events none, below
+  dialogs; it changes no hit area and takes no focus.
 - `docs/reference/palette-plum.png` is a COLOUR reference only (an AI image of a
   different hotel): never copy its layout, logo, lotus mark, copy or numbers, and never
   put the image in `public/`.
@@ -246,31 +285,38 @@ opacity / clip-path, and filter on small elements only; every animation ≤ 600 
 viewport; everything still under `prefers-reduced-motion`, and the opening skipped on
 data saver / 2G–3G; phones get a simplified version of every scene; no layout shift.
 Primitives: `ScrollReveal` variants, `ArchWindow`, `GoldThread` / `ThreadStop`,
-`Tilt3D` (fine pointer, ≤ 6°), `.lamplight`, `DepthPhoto`.
+`Tilt3D` (fine pointer, ≤ 6°), `.glow`, `CursorFollower`, `HeroMorph`.
 - GSAP (+ScrollTrigger) only if it replaces hand-rolled code or an effect provably
   needs it — say which and its size; not used today.
-- WebGL only for the home hero's depth effect (`DepthPhoto` → `src/lib/motion/
-  depth-gl.ts`): raw WebGL (or OGL), ≤ 25 KB gzip, lazy-loaded after `load`, desktop
-  rich motion only, drawing only while its pointer offset eases (no idle loop), the
-  plain photograph as its fallback (no WebGL, failure, lost context, phones, reduced
-  motion). Its depth map is authored per photograph (`pnpm make:depth`, ≤ 30 KB). No
-  Three.js.
+- No WebGL in use. The home hero's WebGL depth effect (R1) was removed in R1.1: the
+  cut-out standing in front of the name, and the two planes moving apart with scroll,
+  give the depth it faked. Any future WebGL needs the same conditions as before (raw
+  WebGL or OGL, ≤ 25 KB gzip, lazy after `load`, desktop rich motion only, no idle
+  loop, a plain fallback). No Three.js.
 Scrolling: wheel input on mouse/trackpad devices is smoothed by Lenis — never slowed
 (wheelMultiplier 1) and never locked except under a modal; touch, keyboard, reduced
 motion and Lenis-failure all stay native.
-Exception (owner's brief): the home page's opening — `IntroLoader` ("First lamp") plus
-the hero/header entrance — may run its sequenced lamps for ≤ 1.6 s, once per full page
-load, never looping. It never blocks input (pointer-events none; any input ends it),
-never replays on client-side navigation (`src/lib/app-boot.ts`), is hidden under
-reduced motion, leaves on its own without JS, and is skipped on data saver / 2G–3G
+Exception (owner's brief): the home page's opening — `IntroLoader` ("Midnight Bloom":
+gold veins from the corners, a drawn dahlia blooming, the logo at its heart, the name's
+letters rising, the name flying into the hero) plus the hero/header entrance — may run
+its sequence for ≤ 2.2 s, once per browser session (sessionStorage, every access
+guarded) and on full page loads only, never looping. It never blocks input
+(pointer-events none; any input skips to the end), never replays on client-side
+navigation (`src/lib/app-boot.ts`), is hidden under reduced motion, fades on its own
+without JS, adds no download (the flower is SVG), never delays the hero's cut-out (it is
+preloaded) and is skipped on data saver / 2G–3G and when already seen
 (`html[data-intro="off"]`, set by the boot script in `src/lib/motion/index.ts`).
-The footer lights its row of lamps once when it arrives (`FooterStage` →
-`data-revealed`): each lamp ≤ 420 ms, staggered; lit at once under reduced motion, as
-soon as keyboard focus enters it (`data-revealed="instant"`), and without JS. The
+The header hides while the page scrolls down past 1.5 viewports and returns on any
+scroll up (transform only) — never while it holds focus or the menu is open.
+The footer grows its gold vine once when it arrives (`FooterStage` →
+`data-revealed`): a small flower opens at the centre, then each stem segment draws in
+< 400 ms, staggered over ~1.3 s; complete at once under reduced motion, as soon as
+keyboard focus enters it (`data-revealed="instant"`), and without JS. The
 enquiry form's sending line eases over 1.6 s while a submission is in flight —
 progress feedback, not decoration, never looping. The enquiry tablet (`.enquiry`) uses
-`content-visibility: auto` with a block-size placeholder only (an inline size would
-widen the page); the footer is `overflow: clip`, so nothing in it can lengthen or widen
+`content-visibility: auto` below 1024px only, with a block-size placeholder only (an
+inline size would widen the page) — from 1024px the serif is already loaded and laying
+the tablet out as it arrived cost a 50 ms frame mid-scroll; the footer is `overflow: clip`, so nothing in it can lengthen or widen
 the page.
 
 Scroll-driven scenes (no animation library): `useScrollProgress` writes a unitless

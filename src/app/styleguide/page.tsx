@@ -3,14 +3,18 @@ import { join } from "node:path";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 
+import { Wordmark } from "@/components/brand/Wordmark";
 import { Breadcrumbs } from "@/components/content/Breadcrumbs";
 import { SectionHeading } from "@/components/content/SectionHeading";
 import { Botanical } from "@/components/decor/Botanical";
+import { DecorFlower } from "@/components/decor/DecorFlower";
 import { OfferCard } from "@/components/cards/OfferCard";
 import { OutletCard } from "@/components/cards/OutletCard";
 import { RoomCard } from "@/components/cards/RoomCard";
 import { VenueCard } from "@/components/cards/VenueCard";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
+import { FooterVine } from "@/components/layout/FooterVine";
+import { MenuPetals } from "@/components/layout/MenuPetals";
 import { Picture } from "@/components/media/Picture";
 import { ArchWindow } from "@/components/motion/ArchWindow";
 import { ThreadStop } from "@/components/motion/GoldThread";
@@ -18,7 +22,18 @@ import { RevealLines, ScrollReveal } from "@/components/motion/ScrollReveal";
 import { ScrollScene } from "@/components/motion/ScrollScene";
 import { Tilt3D } from "@/components/motion/Tilt3D";
 import { ThemePreviewToggle } from "@/components/styleguide/ThemePreviewToggle";
-import { getOutlets, getRooms, getVenues, type Offer, type Outlet, type Room, type Venue } from "@/content";
+import {
+  getDecor,
+  getOutlets,
+  getSite,
+  getRooms,
+  getVenues,
+  type Decor,
+  type Offer,
+  type Outlet,
+  type Room,
+  type Venue,
+} from "@/content";
 import {
   contrastRatio,
   pairsForVariant,
@@ -84,7 +99,7 @@ const GOLDS: ReadonlyArray<{ name: string; token: string; theme?: Variant; rule:
     name: "Champagne",
     token: "accent",
     theme: "deep",
-    rule: "On plum grounds: actions, small gold text, rules, frames, lamps.",
+    rule: "On plum grounds: actions, small gold text, rules, frames, veins and vines.",
   },
   {
     name: "Antique",
@@ -173,7 +188,27 @@ function ContrastTable({ variant, tokens }: { variant: Variant; tokens: ThemeTok
 }
 
 /** The system as a whole: rendered once, above the per-variant previews. */
-function System({ tokens, photo }: { tokens: Record<Variant, ThemeTokens>; photo: Room["images"][number] }) {
+/** A pattern tile (content/decor.json) as a background, 1× and 2×. */
+function patternStyle(decor: Decor): CSSProperties {
+  const at = (w: number) => decor.src.replace(/-\d+\.webp$/, `-${w}.webp`);
+  const [one, two] = decor.widths;
+  return {
+    "--decor-tile": `image-set(url("${at(one ?? decor.width)}") 1x, url("${at(two ?? decor.width)}") 2x)`,
+    "--decor-size": `${decor.tile ?? 320}px`,
+  } as CSSProperties;
+}
+
+function System({
+  tokens,
+  photo,
+  decor,
+  name,
+}: {
+  tokens: Record<Variant, ThemeTokens>;
+  photo: Room["images"][number];
+  decor: Record<string, Decor | undefined>;
+  name: string;
+}) {
   return (
     <div className="container-site section flex flex-col gap-20">
       {/* Palettes */}
@@ -183,9 +218,10 @@ function System({ tokens, photo }: { tokens: Record<Variant, ThemeTokens>; photo
           Plum, ivory, lavender and gold
         </h2>
         <p className="body-lg mt-4 max-w-prose">
-          Dipali means a row of lamps. Night is deep plum velvet, light is gold lamplight, and
-          day is ivory and lavender pages. Three role-based variants redefine the same tokens;
-          a palette change edits theme.css only.
+          Midnight Bloom: a plum night with gold veins, and flowers that bloom. Night is deep
+          plum velvet, gold runs through it in fine lines, and day is ivory and lavender pages.
+          Three role-based variants redefine the same tokens; a palette change edits theme.css
+          only.
         </p>
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {VARIANTS.map(({ variant, title, role }) => (
@@ -249,10 +285,19 @@ function System({ tokens, photo }: { tokens: Record<Variant, ThemeTokens>; photo
         </h2>
         <div className="mt-8 flex flex-col gap-7">
           <div>
-            <p className="caption not-italic">home-hero-name · ~15vw on phones, up to 11rem</p>
-            <p className="home-hero-name break-words">
-              <span>Hotel</span> <span className="home-hero-dipali">Dipali</span>
+            <p className="caption not-italic">
+              wordmark · the home hero&rsquo;s name (DIPALI spans the screen) and the header&rsquo;s
+              logotype — one composition, sized by --wm
             </p>
+            <div data-theme="deep" className="mt-3 overflow-hidden bg-surface px-4 py-10 text-center text-ink">
+              <Wordmark name={name} className="sg-wordmark-hero" />
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-10 bg-surface-alt px-6 py-5">
+              <Wordmark name={name} className="sg-wordmark-logotype" />
+              <span data-theme="deep" className="bg-surface px-6 py-4 text-ink">
+                <Wordmark name={name} className="sg-wordmark-logotype" />
+              </span>
+            </div>
           </div>
           <div>
             <p className="caption not-italic">heading-page · inner-page heroes</p>
@@ -309,6 +354,65 @@ function System({ tokens, photo }: { tokens: Record<Variant, ThemeTokens>; photo
           </div>
           <div data-theme="deep" className="paper-grain h-40 bg-surface p-5 text-ink">
             <p className="relative caption not-italic">velvet on deep</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Decoration */}
+      <section aria-labelledby="sys-decor">
+        <p className="eyebrow">Decoration</p>
+        <h2 id="sys-decor" className="heading-2 mt-3">
+          Flowers, never the subject
+        </h2>
+        <p className="body mt-4 max-w-prose">
+          Downloaded flower images, graded to plum and gold (pnpm make:photos) — sample content
+          until their rights are confirmed, so a release is blocked until then. At most one
+          flower per section, alternating left and right; never behind text (a pattern under
+          text sits beneath a veil of its surface); a slow drift of at most 40 px under rich
+          motion; a white studio ground multiplies into ivory.
+        </p>
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div data-theme="deep" className="relative h-72 overflow-hidden bg-surface p-6 text-ink">
+            {decor["dahlia-right"] ? (
+              <DecorFlower
+                decor={decor["dahlia-right"]}
+                className="top-0 left-0 h-full w-auto"
+                sizes="9rem"
+                drift={false}
+              />
+            ) : null}
+            <p className="body relative ml-auto max-w-[15rem]">
+              The dahlia&rsquo;s right half opens from the left edge — and its left half from the
+              right edge in the next section: two halves of one flower, never one mirrored.
+            </p>
+          </div>
+          <div className="relative h-72 overflow-hidden bg-surface p-6">
+            {decor["chrysanthemum-bud-ivory"] ? (
+              <DecorFlower
+                decor={decor["chrysanthemum-bud-ivory"]}
+                className="top-0 right-0 h-full w-auto"
+                sizes="14rem"
+                drift={false}
+              />
+            ) : null}
+            <p className="body relative max-w-[14rem]">
+              On ivory the bud&rsquo;s white studio ground is multiplied away.
+            </p>
+          </div>
+          <div data-theme="deep" className="relative h-72 overflow-hidden bg-surface p-6 text-ink">
+            {decor["orchid-veins-dark"] ? (
+              <div data-veil="" className="decor-pattern" style={patternStyle(decor["orchid-veins-dark"])} />
+            ) : null}
+            <p className="body relative max-w-prose">
+              The orchid pattern on the night, under a veil of the surface so text reads on it
+              (the gate checks it against the tile&rsquo;s brightest pixel).
+            </p>
+          </div>
+          <div className="relative h-72 overflow-hidden bg-surface p-6">
+            {decor["orchid-veins-light"] ? (
+              <div data-veil="" className="decor-pattern" style={patternStyle(decor["orchid-veins-light"])} />
+            ) : null}
+            <p className="body relative max-w-prose">The same orchids, cut out, on ivory.</p>
           </div>
         </div>
       </section>
@@ -376,31 +480,81 @@ function System({ tokens, photo }: { tokens: Record<Variant, ThemeTokens>; photo
             </Tilt3D>
           </div>
           <div data-theme="deep" className="bg-surface p-8 text-ink">
-            <h3 className="heading-3">Lamplight</h3>
-            <p className="body mt-2 text-ink-muted">A glow warms behind a CTA on plum grounds.</p>
-            <span className="lamplight mt-6">
+            <h3 className="heading-3">Glow</h3>
+            <p className="body mt-2 text-ink-muted">A soft glow warms behind a CTA on plum grounds.</p>
+            <span className="glow mt-6">
               <a href="#sys-motion" className="btn-primary">
                 Book a Stay
               </a>
             </span>
           </div>
-          <div data-theme="deep" className="bg-surface p-8 text-ink">
-            <h3 className="heading-3">Lamps</h3>
-            <p className="body mt-2 text-ink-muted">
-              Embers until their row is lit (the menu, the footer); then one after another.
+          <div>
+            <h3 className="heading-3">The diamond</h3>
+            <p className="body mt-2">
+              The small diamond from the logo: under the current page in the header (and after it
+              in the menu), and at the start of a button on hover or focus.
             </p>
-            <ScrollReveal className="mt-6 flex gap-6">
-              {Array.from({ length: 7 }, (_, i) => (
-                <span key={i} aria-hidden="true" className="lamp" style={{ "--i": i } as CSSProperties} />
-              ))}
+            <ul className="header-links mt-6">
+              <li>
+                <a href="#sys-motion" aria-current="page" className="header-link">
+                  Stay
+                </a>
+              </li>
+              <li>
+                <a href="#sys-motion" className="header-link">
+                  Weddings
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="lg:col-span-2">
+            <h3 className="heading-3">The vine</h3>
+            <p className="body mt-2">
+              Along the footer&rsquo;s top edge: a small flower opens, then the vine grows out from
+              it to both sides, segment by segment (each step under 400 ms), once.
+            </p>
+            <ScrollReveal className="mt-4">
+              <div data-theme="deep" className="bg-surface px-4 pb-6 text-ink">
+                <FooterVine />
+              </div>
             </ScrollReveal>
+          </div>
+          <div>
+            <h3 className="heading-3">The petals</h3>
+            <p className="body mt-2">
+              Behind the menu&rsquo;s links: plum petals that unfold from the centre as it opens.
+              At rest:
+            </p>
+            <div data-theme="deep" className="relative mt-4 h-64 overflow-hidden bg-surface text-ink">
+              <MenuPetals className="sg-petals" />
+            </div>
+          </div>
+          <div>
+            <h3 className="heading-3">Cursor follower</h3>
+            <p className="body mt-2">
+              With a mouse or trackpad: a fine gold ring eases after the pointer, a plum dot sits
+              on it. It grows over links, reads &ldquo;View&rdquo; over a photograph and
+              &ldquo;Drag&rdquo; over a swipe rail, and steps aside over text fields. The system
+              cursor always stays.
+            </p>
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              <a href="#sys-motion" className="card grid min-h-24 place-items-center p-3 text-center">
+                A link
+              </a>
+              <div data-cursor="view" className="relative min-h-24 overflow-hidden">
+                <Picture image={photo} fill sizes="10rem" />
+              </div>
+              <div data-cursor="drag" className="card grid min-h-24 place-items-center p-3 text-center">
+                A rail
+              </div>
+            </div>
           </div>
           <div>
             <h3 className="heading-3">GoldThread</h3>
             <p className="body mt-2">
               On the home page, desktop rich motion: one gold line drawn down the page with
-              scroll, crossing at each stop, ending in a flame above the footer. Elsewhere each
-              stop is this short static rule:
+              scroll, crossing at each stop, ending in a small gold flower above the footer.
+              Elsewhere each stop is this short static rule:
             </p>
             <div className="mt-4">
               <ThreadStop />
@@ -444,8 +598,8 @@ function Sections({
         </h2>
         <p className="body mt-3 max-w-prose">
           Primary is the booking action (plum on light, champagne on plum); secondary is a fine
-          gold outline. Hover or focus lights a flame at the start and sends one glint across
-          the primary. The focus ring appears on Tab.
+          gold outline. Hover or focus shows the logo&rsquo;s diamond at the start and sends one
+          glint across the primary. The focus ring appears on Tab.
         </p>
         <div className="mt-6 flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-4">
@@ -675,7 +829,14 @@ export default async function StyleguidePage() {
   const css = readFileSync(join(process.cwd(), "src", "styles", "theme.css"), "utf8");
   const tokens = parseThemeTokens(css);
 
-  const [rooms, venues, outlets] = await Promise.all([getRooms(), getVenues(), getOutlets()]);
+  const [site, rooms, venues, outlets, decorItems] = await Promise.all([
+    getSite(),
+    getRooms(),
+    getVenues(),
+    getOutlets(),
+    getDecor(),
+  ]);
+  const decor = Object.fromEntries(decorItems.map((item) => [item.id, item]));
   const room = rooms[0]!;
   const venue = venues[0]!;
   const outlet = outlets[0]!;
@@ -706,7 +867,7 @@ export default async function StyleguidePage() {
         <p className="eyebrow">Internal · not indexed</p>
         <h1 className="heading-1 mt-3">Hotel Dipali — Design system</h1>
       </div>
-      <System tokens={tokens} photo={photo} />
+      <System tokens={tokens} photo={photo} decor={decor} name={site.name} />
       <ThemePreviewToggle
         light={<Sections variant="light" tokens={tokens.light} content={content} />}
         dark={<Sections variant="dark" tokens={tokens.dark} content={content} />}

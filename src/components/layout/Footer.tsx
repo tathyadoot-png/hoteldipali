@@ -1,14 +1,15 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
 
 import { BrandLink } from "@/components/brand/Logo";
+import { DecorFlower } from "@/components/decor/DecorFlower";
 import { FooterStage } from "@/components/layout/FooterStage";
+import { FooterVine } from "@/components/layout/FooterVine";
 import { BookStayLink } from "@/components/links/BookStayLink";
 import { CallLink } from "@/components/links/CallLink";
 import { DirectionsLink } from "@/components/links/DirectionsLink";
 import { EnquireLink } from "@/components/links/EnquireLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
-import type { Outlet, Site } from "@/content";
+import type { Decor, Outlet, Site } from "@/content";
 import { reachableContacts } from "@/lib/contacts";
 import { isBuiltRoute, outletHref, primaryNav } from "@/lib/routes";
 
@@ -20,29 +21,28 @@ const SOCIAL_LABELS: Record<string, string> = {
   linkedin: "LinkedIn",
 };
 
-// The row of lamps along the footer's top edge. On phones every other one
-// (the "wide" ones) is left out so the row stays airy.
-const LAMPS = 13;
-
 type FooterProps = {
   site: Site;
   outlets: Outlet[];
   /** From getBookingUrl() (src/lib/booking.ts), resolved by the root layout. */
   bookingUrl: string | null;
+  /** The footer's one flower (content/decor.json), resolved by the root layout. */
+  decor?: Decor | null;
 };
 
 /**
- * The footer: plum velvet (the deep variant). A row of small gold lamps runs
- * along its top edge and lights, one after another, as it arrives
- * (FooterStage); then the invitation with Book a Stay and an enquiry; then
- * Find us, Call or message, Explore and Eat & drink; and the legal line on
- * the darker foot.
+ * The footer: plum velvet (the deep variant). As it arrives (FooterStage) a
+ * small gold flower opens at the centre of its top edge and a gold vine grows
+ * out from it to both sides; the dahlia's right half opens from the left edge
+ * beside the invitation (wide screens). Then the invitation with Book a Stay
+ * and an enquiry; then Find us, Call or message, Explore and Eat & drink; and
+ * the legal line on the darker foot.
  *
  * Content rules: only lines a visitor can use (no sample placeholder
  * numbers), only links to pages that exist (isBuiltRoute), and social links
  * only once the hotel has verified them.
  */
-export function Footer({ site, outlets, bookingUrl }: FooterProps) {
+export function Footer({ site, outlets, bookingUrl, decor }: FooterProps) {
   const contacts = reachableContacts(site);
   const builtLinks = (title: string) =>
     (site.navigation.footer.find((group) => group.title === title)?.links ?? []).filter((link) =>
@@ -61,15 +61,9 @@ export function Footer({ site, outlets, bookingUrl }: FooterProps) {
   return (
     // text-ink re-declares `color` so it resolves against the deep tokens.
     <FooterStage data-theme="deep" className="site-footer text-ink">
-      <div aria-hidden="true" className="footer-lamps container-site">
-        {Array.from({ length: LAMPS }, (_, i) => (
-          <span
-            key={i}
-            className={i % 2 === 1 ? "lamp footer-lamp-wide" : "lamp"}
-            style={{ "--i": i } as CSSProperties}
-          />
-        ))}
-      </div>
+      {decor ? <DecorFlower decor={decor} className="footer-decor" sizes="11rem" /> : null}
+
+      <FooterVine className="container-site" />
 
       <div className="container-site">
         <div className="footer-invite">
@@ -77,7 +71,7 @@ export function Footer({ site, outlets, bookingUrl }: FooterProps) {
           <h2 className="footer-title">We look forward to welcoming you</h2>
           <p className="footer-lead">Book a stay, or tell us what you are planning.</p>
           <div className="footer-actions">
-            <span className="lamplight">
+            <span className="glow">
               <BookStayLink bookingUrl={bookingUrl} className="btn-primary">
                 Book a Stay
               </BookStayLink>

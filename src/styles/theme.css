@@ -4,13 +4,14 @@
  * Design tokens and component classes. Never put colours or font names anywhere else.
  * Fonts are named here and in src/app/fonts.ts only.
  *
- * "A Thousand Lamps" — Plum & Gold (2026-11-04). Dipali is a row of lamps:
- * night is deep plum velvet, light is gold lamplight, day is ivory and
- * lavender pages set in near-black plum. Variants are role-based — light
- * (default), dark (weddings, the bar, dark bands) and deep (the opening
- * loader, the menu, the footer, the phone bar, the stone surfaces) — so a
- * palette change edits the values below and regenerates graded assets; no
- * code renames.
+ * "Midnight Bloom" — Plum & Gold (2026-11-04, R1.1). A plum night, gold
+ * veins, flowers that bloom: night is deep plum velvet, gold runs through it
+ * as fine veins and vines, day is ivory and lavender pages set in near-black
+ * plum. The recurring mark is the small diamond from the logo (the current
+ * page, the buttons' hover). Variants are role-based — light (default), dark
+ * (weddings, the bar, dark bands) and deep (the home hero, the opening, the
+ * menu, the footer, the phone bar, the stone surfaces) — so a palette change
+ * edits the values below and regenerates graded assets; no code renames.
  *
  * Gold is one family in three shades, never a yellow gold:
  * - champagne (#C9A45C / #D8B56E) — accent and ornament on plum grounds;
@@ -146,9 +147,9 @@
   --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath d='M0 8h21M15 2l6 6-6 6' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
   /* Check glyph, same box as the arrow: the enquiry button once sent. */
   --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath d='M5 8.5l4.5 4.5L19 2.5' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
-  /* A lamp flame, as a mask (takes currentColor): the current-page mark, the
-     thread's end, the lamps. */
-  --flame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 18'%3E%3Cpath d='M6 0C7.5 4 11 6.5 11 11.2A5 5 0 0 1 1 11.2C1 8 3.4 6.6 4.2 3.6C5 5.8 5.6 6.4 6 7.2C6.6 5.2 6.6 2.6 6 0Z' fill='black'/%3E%3C/svg%3E");
+  /* The small diamond from the logo — a cut gem, crown over pavilion — as a
+     mask (takes its background colour): the current page, the buttons' hover. */
+  --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M2.2 0h7.6L12 3H0z M0 3.9h12L6 10z' fill='black'/%3E%3C/svg%3E");
   /* Fractal-noise tile used for grain on photographs and cards. */
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
   /* Our own generated textures (no image files, no rights question). Both are
@@ -362,8 +363,8 @@
      one timing; colours come from the surrounding scope.
      .btn-primary   the booking action. Light: a plum plaque with a gold
                     hairline inset. Dark / deep: a champagne plaque with a
-                    plum-black label. Hover: a flame dot lights at the start
-                    and one glint of foil crosses the plaque.
+                    plum-black label. Hover: the logo's diamond appears at
+                    the start and one glint of foil crosses the plaque.
      .btn-secondary every other action: a fine gold outline with a plum
                     (light) or ivory (dark) label; hover warms its ground.
      .btn-ghost     a quieter outline beside a primary (call, WhatsApp).
@@ -406,21 +407,21 @@
     outline-offset: 3px;
   }
 
-  /* The flame dot: lights in the start padding on hover / focus. */
+  /* The diamond: appears in the start padding on hover / focus. */
   .btn-primary::after,
   .btn-secondary::after {
     content: "";
     position: absolute;
-    left: 0.8rem;
+    left: 0.75rem;
     top: 50%;
-    width: 0.4rem;
-    height: 0.6rem;
-    margin-top: -0.3rem;
-    background-color: var(--btn-flame, var(--color-highlight));
-    mask: var(--flame) center / contain no-repeat;
+    width: 0.5rem;
+    height: 0.4167rem;
+    margin-top: -0.2083rem;
+    background-color: var(--btn-mark, var(--color-highlight));
+    mask: var(--diamond) center / contain no-repeat;
     opacity: 0;
-    transform: scale(0.4);
-    transform-origin: 50% 100%;
+    transform: scale(0.4) rotate(-45deg);
+    transform-origin: 50% 50%;
     transition:
       opacity var(--duration-base) var(--ease-out-soft),
       transform var(--duration-base) var(--ease-out-soft);
@@ -496,7 +497,7 @@
   /* Primary on plum grounds: the champagne plaque. */
   :is([data-theme="deep"], [data-theme="dark"]) .btn-primary,
   .btn-primary:is([data-theme="deep"], [data-theme="dark"]) {
-    --btn-flame: var(--color-accent-ink);
+    --btn-mark: var(--color-accent-ink);
     background-color: var(--color-accent);
     color: var(--color-accent-ink);
     box-shadow:
@@ -561,7 +562,7 @@
   }
 
   .btn-cta::after {
-    /* The arrow replaces the flame dot on these. */
+    /* The arrow replaces the diamond on these. */
     position: static;
     width: 1.35em;
     height: 0.85em;
@@ -3519,6 +3520,15 @@
     contain-intrinsic-block-size: auto 68rem;
   }
 
+  /* From 1024px the serif is already loaded with the page (the hero's name),
+     and laying the whole tablet out in the frame it arrives cost a 50 ms frame
+     mid-scroll (3 of 7 runs, R1.1) — so it renders with the page there. */
+  @media (min-width: 1024px) {
+    .enquiry {
+      content-visibility: visible;
+    }
+  }
+
   .enquiry-frame {
     --corner: 1.625rem;
     position: absolute;
@@ -3906,10 +3916,11 @@
   }
 
   /* ═════════════════════════════════════════════════════════════════════
-     A THOUSAND LAMPS (2026-11-04): the motion kit, the shell and the home
-     hero. Transform / opacity / clip-path (and filter on small elements)
-     only; every animation ≤ 600 ms except scroll-mapped scenes and the
-     opening's sequenced lamps; nothing moves under prefers-reduced-motion.
+     MIDNIGHT BLOOM (R1.1, 2026-11-04): the motion kit, the shell and the
+     home hero. Transform / opacity / clip-path (and filter on small
+     elements) only; every animation ≤ 600 ms except scroll-mapped scenes and
+     the opening's sequenced draw and bloom; nothing moves under
+     prefers-reduced-motion.
      ═════════════════════════════════════════════════════════════════════ */
 
   /* ── Reveal variants (ScrollReveal) ── */
@@ -4025,61 +4036,6 @@
     }
   }
 
-  /* ── Lamps and flames: the identity's one recurring mark ──
-     A lamp is a small flame over a soft glow. Unlit: a dim ember. Lit: the
-     flame at full height and the glow behind it. Sequences set data-lit on a
-     parent (or on the lamp) and stagger with --i. */
-  .lamp {
-    position: relative;
-    display: inline-block;
-    width: 0.5rem;
-    height: 0.75rem;
-    flex: none;
-  }
-
-  .lamp::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 55%;
-    width: 1.75rem;
-    height: 1.75rem;
-    margin: -0.875rem 0 0 -0.875rem;
-    border-radius: 50%;
-    background: radial-gradient(
-      closest-side,
-      color-mix(in srgb, var(--color-highlight) 55%, transparent),
-      transparent
-    );
-    opacity: 0;
-    transition: opacity 420ms var(--ease-out-soft) calc(var(--i, 0) * 70ms + var(--lamp-delay, 0ms));
-  }
-
-  .lamp::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: var(--color-highlight);
-    mask: var(--flame) center / contain no-repeat;
-    opacity: 0.35;
-    transform: scale(0.55);
-    transform-origin: 50% 100%;
-    transition:
-      opacity 360ms var(--ease-out-soft) calc(var(--i, 0) * 70ms + var(--lamp-delay, 0ms)),
-      transform 360ms var(--ease-out-soft) calc(var(--i, 0) * 70ms + var(--lamp-delay, 0ms));
-  }
-
-  :is([data-lit], [data-revealed]) .lamp::before,
-  .lamp[data-lit]::before {
-    opacity: 1;
-  }
-
-  :is([data-lit], [data-revealed]) .lamp::after,
-  .lamp[data-lit]::after {
-    opacity: 1;
-    transform: none;
-  }
-
   /* ── The logo medallion: the gold logo always on plum ── */
   .logo-medallion {
     --medallion: 3rem;
@@ -4105,7 +4061,7 @@
 
   /* ── ArchWindow: media in an arch whose head opens toward a full frame ──
      --open (0 → 1) flattens the head and widens the window; set from scroll
-     by the owner (the home hero: as the next section covers it). */
+     by the owner. */
   .arch-window {
     --open: 0;
     position: relative;
@@ -4120,25 +4076,12 @@
     background-color: var(--color-surface-alt);
   }
 
-  .arch-window img,
-  .arch-window canvas {
+  .arch-window img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-
-  /* The depth layer (DepthPhoto) fades in over the photograph once it has
-     drawn its first frame; the photograph stays underneath as the fallback. */
-  .depth-canvas {
-    opacity: 0;
-    transition: opacity 400ms var(--ease-out-soft);
-    pointer-events: none;
-  }
-
-  [data-depth="on"] > .depth-canvas {
-    opacity: 1;
   }
 
   /* ── Tilt3D: a card leans toward a fine pointer (max 6°) ── */
@@ -4153,14 +4096,14 @@
     will-change: transform;
   }
 
-  /* ── Lamplight: a soft glow that warms behind a CTA on plum grounds ── */
-  .lamplight {
+  /* ── Glow: a soft token-colour glow that warms behind a CTA on plum grounds ── */
+  .glow {
     position: relative;
     isolation: isolate;
     display: inline-flex;
   }
 
-  .lamplight::before {
+  .glow::before {
     content: "";
     position: absolute;
     inset: -45% -18%;
@@ -4176,13 +4119,14 @@
     transition: opacity 400ms var(--ease-out-soft);
   }
 
-  .lamplight:has(> :is(a, button):is(:hover, :focus-visible))::before {
+  .glow:has(> :is(a, button):is(:hover, :focus-visible))::before {
     opacity: 1;
   }
 
   /* ── GoldThread: one gold line drawn down the home page with scroll ──
      Rich motion only; it weaves between the sections' gutters and ends in a
-     flame above the footer. Elsewhere its stops are short static gold rules. */
+     small gold flower that opens above the footer. Elsewhere its stops are
+     short static gold rules. */
   .thread {
     position: absolute;
     top: 0;
@@ -4207,12 +4151,19 @@
     will-change: stroke-dashoffset;
   }
 
-  .thread-flame {
-    opacity: calc((var(--p, 0) - 0.96) * 25);
+  .thread-flower {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    transform: scale(clamp(0, (var(--p, 0) - 0.95) * 20, 1))
+      rotate(calc((1 - clamp(0, (var(--p, 0) - 0.95) * 20, 1)) * -40deg));
   }
 
-  .thread-flame path {
+  .thread-flower ellipse {
     fill: var(--color-highlight);
+  }
+
+  .thread-flower circle {
+    fill: var(--color-gold-text);
   }
 
   .thread-stop {
@@ -4231,14 +4182,20 @@
   /* ═══ THE SHELL ═══ */
 
   /* --intro: when the hero and the header begin their entrance — after the
-     opening loader on the home page's first load, immediately otherwise. */
+     opening on the home page's first load (the name lands at ~2 s), at once
+     otherwise. --header-h: the bar's height (the home hero slides under it).
+     --logotype-hotel: HOTEL's size in the header's logotype, as a fraction of
+     DIPALI's — larger than in the hero, so it stays legible when small. */
   :root {
     --intro: 0s;
     --ease-rise: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --header-h: 4rem;
+    --logotype-hotel: 0.26;
+    --book-w: 9.5rem;
   }
 
   body:has(.intro) {
-    --intro: 1.15s;
+    --intro: 1.6s;
   }
 
   [data-intro="off"] body {
@@ -4251,19 +4208,133 @@
     }
   }
 
-  /* ── Header: ivory with a gold hairline; transparent over the home hero ──
-     Below xl: menu · medallion (exactly centred) · Book. From xl: the
-     medallion and name · the links · Book a Stay. */
+  @keyframes intro-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes intro-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1.25rem, 0);
+    }
+  }
+
+  /* ── The wordmark: HOTEL over DIPALI ──
+     One composition at every size — the home hero's giant name, the header's
+     logotype, the opening's line. Every length is a fraction of --wm
+     (DIPALI's size), so one uniform scale maps any copy onto any other (the
+     hero → header morph, the opening's flight). Plum on light grounds; on
+     plum, gold lit like an engraving: one gold family top to bottom, a
+     hairline of shade beneath, a soft glow. */
+  .wordmark {
+    --wm: 2.25rem;
+    --hotel: 0.16;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .wordmark-hotel {
+    display: block;
+    margin-bottom: calc(var(--wm) * 0.05);
+    /* The tracking's trailing space, mirrored, keeps the word centred. */
+    padding-inline-start: 0.62em;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: calc(var(--wm) * var(--hotel));
+    letter-spacing: 0.62em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .wordmark-dipali {
+    display: flex;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--wm);
+    line-height: 0.74;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .wordmark-letter {
+    display: inline-block;
+    margin-inline: 0.014em;
+  }
+
+  .wordmark-char {
+    display: inline-block;
+  }
+
+  /* The styleguide's specimens: the hero's proportions, the header's logotype. */
+  .sg-wordmark-hero {
+    --wm: min(20vw, 13rem);
+    --hotel: 0.12;
+  }
+
+  .sg-wordmark-logotype {
+    --wm: 2.375rem;
+    --hotel: var(--logotype-hotel);
+  }
+
+  .sg-petals svg {
+    width: min(100%, 16rem);
+  }
+
+  :is([data-theme="deep"], [data-theme="dark"]) :is(.wordmark-letter, .wordmark-char) {
+    background-image: linear-gradient(
+      180deg,
+      var(--gold-glint) 0%,
+      var(--color-accent) 46%,
+      var(--gold-shade) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0.012em 0 color-mix(in srgb, var(--shade) 85%, transparent))
+      drop-shadow(0 0 0.16em color-mix(in srgb, var(--color-highlight) 30%, transparent));
+  }
+
+  @media (forced-colors: active) {
+    :is([data-theme="deep"], [data-theme="dark"]) :is(.wordmark-letter, .wordmark-char) {
+      background-image: none;
+      -webkit-text-fill-color: currentColor;
+      filter: none;
+    }
+  }
+
+  /* ── Header: a thin bar; the name at its centre ──
+     Transparent (the deep scope) over the home hero, where the hero's giant
+     name travels into the centre slot as the page scrolls (rich motion); solid
+     ivory with a gold hairline everywhere else. Below xl: Menu · logotype ·
+     Book. From xl: three links · logotype · the other links and Book a Stay.
+     It hides while scrolling down past the first screen and returns on any
+     scroll up — never while it holds focus or the menu is open. The gold logo
+     never sits on it: the logotype is type (plum on ivory, gold on plum). */
   .header-shell {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: var(--header-h);
     background-color: transparent;
     transition:
       background-color var(--duration-base) var(--ease-out-soft),
-      box-shadow var(--duration-base) var(--ease-out-soft);
+      box-shadow var(--duration-base) var(--ease-out-soft),
+      transform var(--duration-base) var(--ease-out-soft);
   }
 
   .header-shell[data-state="solid"] {
     background-color: color-mix(in srgb, var(--color-surface) 95%, transparent);
     box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--color-highlight) 60%, transparent);
+  }
+
+  .header-shell[data-hidden] {
+    transform: translate3d(0, -100%, 0);
   }
 
   .header-bar {
@@ -4275,6 +4346,8 @@
   }
 
   .header-menu-button {
+    grid-column: 1;
+    grid-row: 1;
     justify-self: start;
     display: inline-flex;
     align-items: center;
@@ -4299,25 +4372,24 @@
     }
   }
 
-  .header-brand {
+  .header-logotype {
     grid-column: 2;
+    grid-row: 1;
     display: inline-flex;
     align-items: center;
-    gap: 0.875rem;
+    justify-content: center;
+    min-height: 44px;
+    transition: opacity var(--duration-fast) linear;
   }
 
-  .header-brand .logo-medallion {
-    --medallion: 2.875rem;
+  .header-logotype .wordmark {
+    --wm: 2.125rem;
+    --hotel: var(--logotype-hotel);
   }
 
-  @media (min-width: 768px) {
-    .header-brand .logo-medallion {
-      --medallion: 3.25rem;
-    }
-  }
-
-  .header-wordmark {
-    display: none;
+  /* Home, rich motion: the slot waits for the hero's name to land in it. */
+  [data-motion="rich"] .header-shell[data-home]:not([data-landed]) .header-logotype:not(:focus-visible) {
+    opacity: 0;
   }
 
   .header-nav {
@@ -4326,10 +4398,10 @@
 
   .header-actions {
     grid-column: 3;
+    grid-row: 1;
     justify-self: end;
     display: flex;
     align-items: center;
-    gap: 1rem;
   }
 
   .header-book.btn-primary {
@@ -4354,52 +4426,41 @@
 
   @media (min-width: 1280px) {
     .header-bar {
-      grid-template-columns: auto minmax(0, 1fr) auto;
       column-gap: 2rem;
     }
 
-    .header-brand {
-      grid-column: 1;
+    .header-logotype .wordmark {
+      --wm: 2.375rem;
     }
 
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
-
-    .header-wordmark-name {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      letter-spacing: 0.01em;
-      color: var(--color-ink);
-    }
-
-    .header-wordmark-place {
-      margin-top: 0.3rem;
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.5625rem;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--color-ink-muted);
-    }
-
+    /* The nav's two lists sit either side of the logotype. */
     .header-nav {
-      grid-column: 2;
-      justify-self: center;
-      display: block;
+      display: contents;
+    }
+
+    .header-links-start {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+    }
+
+    .header-links-end {
+      grid-column: 3;
+      grid-row: 1;
+      justify-self: end;
+      margin-inline-end: calc(var(--book-w) + 1.75rem);
     }
 
     .header-book.btn-primary {
-      padding-inline: 1.75rem;
+      width: var(--book-w);
+      padding-inline: 0.75rem;
     }
   }
 
   .header-links {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 1.6vw, 1.875rem);
+    gap: clamp(1rem, 1.5vw, 1.75rem);
   }
 
   .header-link {
@@ -4410,7 +4471,7 @@
     font-family: var(--font-ui);
     font-weight: 600;
     font-size: 0.6875rem;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--color-ink);
     white-space: nowrap;
@@ -4421,7 +4482,7 @@
     content: "";
     position: absolute;
     left: 0;
-    right: 0.18em;
+    right: 0.16em;
     bottom: 0.625rem;
     height: 1px;
     background-color: var(--color-highlight);
@@ -4434,39 +4495,27 @@
     transform: scaleX(1);
   }
 
-  /* The current page: a small gold flame under the label. */
+  /* The current page: the logo's small diamond under the label. */
   .header-link[aria-current="page"]::before {
     content: "";
     position: absolute;
-    left: calc(50% - 0.09em - 0.1875rem);
-    bottom: -0.125rem;
-    width: 0.375rem;
-    height: 0.5625rem;
+    left: calc(50% - 0.08em - 0.25rem);
+    bottom: -0.0625rem;
+    width: 0.5rem;
+    height: 0.4167rem;
     background-color: var(--color-gold-text);
-    mask: var(--flame) center / contain no-repeat;
+    mask: var(--diamond) center / contain no-repeat;
   }
 
-  /* The home page's first load: the bar arrives once the opening has gone. */
+  /* The home page's first load: the bar arrives as the name lands. */
   @media (prefers-reduced-motion: no-preference) {
     body:has(.intro) .header-bar {
       animation: intro-fade 520ms var(--ease-out-soft) var(--intro) both;
     }
   }
 
-  @keyframes intro-fade {
-    from {
-      opacity: 0;
-    }
-  }
-
-  @keyframes intro-rise {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 1.25rem, 0);
-    }
-  }
-
-  /* ── Mobile menu: a full-screen plum night; the lamps light as it opens ── */
+  /* ── Mobile menu: a full-screen plum night; plum petals unfold from the
+     centre as it opens (transform / opacity), the links over them. ── */
   .menu-dialog {
     background-color: var(--color-surface);
     background-image: var(--texture-velvet);
@@ -4476,7 +4525,7 @@
 
   .menu-dialog[open] {
     opacity: 1;
-    transition: opacity 280ms var(--ease-out-soft);
+    transition: opacity 240ms var(--ease-out-soft);
   }
 
   @starting-style {
@@ -4489,26 +4538,68 @@
     background-color: var(--shade);
   }
 
+  .menu-body {
+    position: relative;
+    z-index: 1;
+  }
+
+  .menu-petals {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  /* The whole bloom, a little wider than the screen's shorter side. */
+  .menu-petals svg {
+    width: max(112vmin, 24rem);
+    height: auto;
+    flex: none;
+  }
+
+  .menu-petal {
+    stroke: color-mix(in srgb, var(--color-highlight) 32%, transparent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+  }
+
+  .menu-petal-a {
+    fill: var(--color-surface-alt);
+  }
+
+  .menu-petal-b {
+    fill: var(--color-lavender);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu-dialog[open] .menu-petal {
+      transition:
+        transform 380ms var(--ease-out-soft) calc(var(--i, 0) * 22ms),
+        opacity 240ms var(--ease-out-soft) calc(var(--i, 0) * 22ms);
+    }
+
+    @starting-style {
+      .menu-dialog[open] .menu-petal {
+        opacity: 0;
+        transform: rotate(-28deg) scale(0.12);
+      }
+    }
+  }
+
   .menu-top {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    min-height: 4.5rem;
+    min-height: var(--header-h);
   }
 
   .menu-top .logo-medallion {
     --medallion: 2.875rem;
-  }
-
-  .menu-lamps {
-    display: flex;
-    justify-content: center;
-    gap: clamp(1.25rem, 6vw, 2.5rem);
-    padding-block: 1.25rem 0.5rem;
-  }
-
-  .menu-nav {
-    counter-reset: menu;
   }
 
   .menu-link {
@@ -4538,15 +4629,16 @@
     position: relative;
   }
 
+  /* The current page: the logo's diamond after the label. */
   .menu-link[aria-current="page"] .menu-label::after {
     content: "";
     position: absolute;
-    right: -1rem;
-    top: 0.2em;
-    width: 0.5rem;
-    height: 0.75rem;
+    right: -1.125rem;
+    top: 0.42em;
+    width: 0.625rem;
+    height: 0.52rem;
     background-color: var(--color-accent);
-    mask: var(--flame) center / contain no-repeat;
+    mask: var(--diamond) center / contain no-repeat;
   }
 
   .menu-link:hover .menu-label,
@@ -4576,8 +4668,8 @@
   @media (prefers-reduced-motion: no-preference) {
     .menu-dialog[open] .menu-link {
       transition:
-        opacity 360ms var(--ease-out-soft) calc(120ms + var(--i, 0) * 45ms),
-        transform 360ms var(--ease-out-soft) calc(120ms + var(--i, 0) * 45ms);
+        opacity 360ms var(--ease-out-soft) calc(160ms + var(--i, 0) * 45ms),
+        transform 360ms var(--ease-out-soft) calc(160ms + var(--i, 0) * 45ms);
     }
 
     @starting-style {
@@ -4632,7 +4724,12 @@
     }
   }
 
-  /* ── The footer: plum velvet; a row of lamps lights along its top edge ── */
+  /* ── The footer: plum velvet; a gold vine grows along its top edge ──
+     As the footer arrives (FooterStage → data-revealed) a small gold flower
+     opens at the centre of its top edge and the vine grows out from it to
+     both sides, segment by segment, its leaves unfurling as it passes — each
+     step < 400 ms, the whole ~1.3 s, once. At once under reduced motion, as
+     soon as keyboard focus enters, and without JS. */
   .site-footer {
     position: relative;
     overflow: clip;
@@ -4647,45 +4744,104 @@
     background-size: auto, var(--texture-size);
   }
 
-  .footer-lamps {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding-block: 1.75rem 0.5rem;
+  .site-footer > :not(.decor) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-vine {
+    display: block;
+    padding-top: 1.25rem;
     border-bottom: 1px solid var(--color-line);
   }
 
-  .footer-lamps .lamp {
-    --lamp-delay: 80ms;
+  .footer-vine svg {
+    display: block;
+    width: 100%;
+    height: 3.5rem;
+    overflow: visible;
   }
 
-  /* Hidden lamps on the narrowest screens keep the row airy. */
-  .footer-lamp-wide {
-    display: none;
+  .vine-stem,
+  .vine-tendril {
+    fill: none;
+    stroke: var(--color-highlight);
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 360ms var(--ease-out-soft) var(--d, 0ms);
   }
 
-  @media (min-width: 768px) {
-    .footer-lamp-wide {
-      display: inline-block;
-    }
+  .vine-stem {
+    stroke-width: 1.25;
   }
 
-  /* Until the footer arrives its lamps are embers (FooterStage lights them);
-     without JavaScript they are simply lit. */
+  .vine-tendril {
+    stroke-width: 1;
+  }
+
+  .vine-leaf,
+  .vine-bloom {
+    fill: var(--color-highlight);
+    transform-box: fill-box;
+    transform: scale(0);
+    transition: transform 320ms var(--ease-out-soft) var(--d, 0ms);
+  }
+
+  .vine-leaf {
+    transform-origin: 0% 50%;
+    opacity: 0.9;
+  }
+
+  .vine-bloom {
+    transform-origin: 50% 50%;
+  }
+
+  .vine-heart {
+    fill: var(--color-surface);
+    stroke: var(--color-highlight);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  [data-revealed] :is(.vine-stem, .vine-tendril) {
+    stroke-dashoffset: 0;
+  }
+
+  [data-revealed] :is(.vine-leaf, .vine-bloom) {
+    transform: none;
+  }
+
+  [data-revealed="instant"] :is(.vine-stem, .vine-tendril, .vine-leaf, .vine-bloom) {
+    transition-delay: 0s;
+  }
+
   @media (scripting: none) {
-    .site-footer .lamp::before {
-      opacity: 1;
+    :is(.vine-stem, .vine-tendril) {
+      stroke-dashoffset: 0;
     }
 
-    .site-footer .lamp::after {
-      opacity: 1;
+    :is(.vine-leaf, .vine-bloom) {
       transform: none;
     }
   }
 
-  .site-footer[data-revealed="instant"] .lamp::before,
-  .site-footer[data-revealed="instant"] .lamp::after {
-    transition-delay: 0s;
+  /* One flower per section: the dahlia's right half opens from the footer's
+     left edge, beside the invitation (never behind text); wide screens only. */
+  .footer-decor {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .footer-decor {
+      display: block;
+      left: 0;
+      top: 5rem;
+      height: 21rem;
+      width: auto;
+      opacity: 0.62;
+    }
   }
 
   .footer-invite {
@@ -4838,12 +4994,15 @@
     color: var(--color-ink);
   }
 
-  /* ── The opening: "First lamp" ──
-     One flame lights at the foot of an arch; its light runs along a row of
-     lamps tracing the arch; the logo appears inside on plum; then the arch
-     flies onto the hero's arch window (IntroLoader). ≤ 1.6 s, once per full
-     page load, never blocking input. The timeline is CSS (it plays from first
-     paint); JS (after hydration) runs the exit and the flight. */
+  /* ── The opening: "Midnight Bloom" ──
+     On the plum night, gold veins grow in from the four corners; where they
+     meet, a plum dahlia blooms (layered petals, a soft gold rim of light) and
+     the logo surfaces on its medallion at the flower's heart; the letters of
+     the name rise into a line beneath; then that line flies into the hero's
+     name (IntroLoader, FLIP — transform only) while the veins draw back.
+     ≤ 2.2 s, once per session, never blocking input; any input skips to the
+     end. The timeline is CSS (it plays from first paint); JS (after
+     hydration) runs the exit and the flight. Without JS it fades on its own. */
   .intro {
     position: fixed;
     inset: 0;
@@ -4852,7 +5011,7 @@
     place-items: center;
     pointer-events: none;
     /* Without JS (no data-state): it leaves on its own. */
-    animation: intro-out 380ms var(--ease-out-soft) 1.2s both;
+    animation: intro-out 380ms var(--ease-out-soft) 1.6s both;
   }
 
   .intro[data-state] {
@@ -4886,391 +5045,638 @@
     background-color: var(--color-surface);
     background-image:
       radial-gradient(
-        ellipse 42% 46% at 50% 52%,
-        color-mix(in srgb, var(--color-highlight) 12%, transparent),
+        ellipse 46% 42% at 50% 44%,
+        color-mix(in srgb, var(--color-brand) 55%, transparent),
+        transparent 75%
+      ),
+      var(--texture-velvet);
+    background-size: auto, var(--texture-size);
+  }
+
+  /* The veins: from each corner toward the centre, in a landscape or a
+     portrait frame (whichever fits the screen; never stretched). */
+  .intro-veins {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .intro-veins-portrait {
+    display: none;
+  }
+
+  @media (orientation: portrait) {
+    .intro-veins-landscape {
+      display: none;
+    }
+
+    .intro-veins-portrait {
+      display: block;
+    }
+  }
+
+  .intro-vein {
+    --vein: 0.15;
+    fill: none;
+    stroke: var(--color-highlight);
+    stroke-width: var(--vein);
+    stroke-linecap: round;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+    animation: intro-draw 620ms var(--ease-out-soft) var(--d, 0ms) both;
+  }
+
+  .intro-veins-portrait .intro-vein {
+    --vein: 0.28;
+  }
+
+  .intro-vein-branch {
+    stroke-width: calc(var(--vein) * 0.7);
+    opacity: 0.8;
+    animation-duration: 420ms;
+  }
+
+  @keyframes intro-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .intro-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .intro-bloom {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(50vmin, 17rem);
+    aspect-ratio: 1;
+    animation: intro-bloom 600ms var(--ease-out-soft) 420ms both;
+  }
+
+  @keyframes intro-bloom {
+    from {
+      transform: scale(0.85);
+    }
+  }
+
+  /* The soft gold rim of light behind the flower. */
+  .intro-glow {
+    position: absolute;
+    inset: -18%;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-highlight) 30%, transparent) 52%,
+      color-mix(in srgb, var(--color-highlight) 8%, transparent) 76%,
+      transparent
+    );
+    animation: intro-fade 520ms var(--ease-out-soft) 640ms both;
+  }
+
+  .intro-dahlia {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .intro-ring {
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+    animation: intro-petals 520ms var(--ease-out-soft) var(--d, 0ms) both;
+  }
+
+  @keyframes intro-petals {
+    from {
+      opacity: 0;
+      transform: rotate(-16deg) scale(0.55);
+    }
+  }
+
+  .intro-petal {
+    stroke: color-mix(in srgb, var(--color-highlight) 55%, transparent);
+    stroke-width: 0.35;
+  }
+
+  .intro-ring-1 .intro-petal {
+    fill: var(--color-surface-alt);
+  }
+
+  .intro-ring-2 .intro-petal {
+    fill: var(--color-lavender);
+  }
+
+  .intro-ring-3 .intro-petal {
+    fill: var(--color-brand);
+    stroke: color-mix(in srgb, var(--color-highlight) 70%, transparent);
+  }
+
+  .intro-medallion.logo-medallion {
+    --medallion: 30%;
+    position: relative;
+    animation: intro-medallion 360ms var(--ease-out-soft) 820ms both;
+  }
+
+  @keyframes intro-medallion {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+
+  /* The name, one line: HOTEL and DIPALI side by side at matching heights. */
+  .intro-name {
+    margin-top: clamp(1.25rem, 4vmin, 2.25rem);
+  }
+
+  .intro-name .wordmark {
+    --wm: min(10vw, 5.25rem);
+    --hotel: 0.5;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.32em;
+  }
+
+  .intro-name .wordmark-hotel {
+    margin-bottom: 0;
+  }
+
+  .intro-letter {
+    animation: intro-letter 360ms var(--ease-rise) calc(900ms + var(--n, 0) * 36ms) both;
+  }
+
+  @keyframes intro-letter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.45em, 0);
+    }
+  }
+
+  /* Leaving: the veins draw back toward their corners, the flower closes
+     and the night lifts, while the name flies into the hero (JS). */
+  .intro[data-state="leave"] .intro-vein {
+    animation: none;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition:
+      stroke-dashoffset 420ms var(--ease-out-soft),
+      opacity 300ms var(--ease-out-soft);
+  }
+
+  .intro[data-state="leave"] .intro-ground {
+    opacity: 0;
+    transition: opacity 440ms var(--ease-out-soft) 40ms;
+  }
+
+  .intro[data-state="leave"] .intro-bloom {
+    animation: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition:
+      opacity 300ms var(--ease-out-soft),
+      transform 300ms var(--ease-out-soft);
+  }
+
+  /* The flying words (placed on their hero rectangles by IntroLoader, then
+     released from their opening positions). */
+  .intro-fly {
+    position: fixed;
+    margin: 0;
+    transform-origin: 0 0;
+  }
+
+  .intro-fly[data-go] {
+    transform: none !important;
+    transition: transform 480ms var(--ease-out-soft);
+  }
+
+  /* ═══ THE HOME HERO ═══
+     The night, full screen. DIPALI spans the screen's width in engraved gold,
+     HOTEL above it; the hotel's lit entrance — a cut-out of the real night
+     photograph (pnpm make:mask) — stands in front of the letters. Below: the
+     line from content, Book a Stay and Plan a Wedding, and (wide screens) a
+     gold hairline that draws down as the scroll cue. Rich motion: as the page
+     scrolls (--h, HeroMorph) the letters spread a little and sink behind the
+     building, which rises faster (two planes); then the name shrinks and
+     travels into the header's centre and becomes its logotype. Phones get the
+     same layering, still. */
+  .home-hero {
+    --hero-edge: clamp(0.875rem, 2.6vw, 2.5rem);
+    /* DIPALI's width in em (Cormorant 500, its letters' spacing included;
+       measured). */
+    --dipali-em: 3.27;
+    --hero-wm: calc((100cqw - 2 * var(--hero-edge)) / var(--dipali-em));
+    --hero-hotel: 0.16;
+    --name-top: calc(var(--header-h) + clamp(1rem, 4.5svh, 3.25rem));
+    /* Where the building's parapet crosses DIPALI, below the top of its line
+       (in DIPALI's em): about the lower third of the capitals is hidden. */
+    --cross: 0.5;
+    /* The foot: the line, the actions and (below xl) the phone bar. */
+    --foot: 17.5rem;
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    container-type: inline-size;
+    height: 100svh;
+    min-height: 38rem;
+    margin-top: calc(-1 * var(--header-h));
+    background-color: var(--color-surface);
+    background-image:
+      radial-gradient(
+        ellipse 58% 42% at 50% 30%,
+        color-mix(in srgb, var(--color-highlight) 11%, transparent),
         transparent 72%
       ),
       var(--texture-velvet);
     background-size: auto, var(--texture-size);
   }
 
-  .intro[data-state="leave"] .intro-ground {
-    opacity: 0;
-    transition: opacity 380ms var(--ease-out-soft);
-  }
-
-  .intro-arch {
-    position: relative;
-    width: min(42vw, 12rem);
-    aspect-ratio: 0.72;
-  }
-
-  .intro[data-state="leave"] .intro-arch {
-    opacity: 0;
-    transform: translate3d(var(--fx, 0), var(--fy, 0), 0) scale(var(--fs, 1));
-    transition:
-      transform 420ms var(--ease-out-soft),
-      opacity 160ms linear 300ms;
-  }
-
-  /* The plum panel inside the lamps, with the logo. */
-  .intro-panel {
-    position: absolute;
-    inset: 9%;
-    display: grid;
-    place-items: center;
-    border-radius: 1000px 1000px 0 0;
-    background-color: var(--color-brand);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-highlight) 55%, transparent);
-    opacity: 0;
-    transform: scale(0.96);
-    animation: intro-panel 420ms var(--ease-out-soft) 760ms forwards;
-  }
-
-  .intro-emblem {
-    width: 46%;
-    height: auto;
-  }
-
-  @keyframes intro-panel {
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  .intro-lamps {
-    position: absolute;
-    inset: 0;
-  }
-
-  /* The lamps trace the arch: placed by IntroLoader at --x / --y (% of the
-     arch box); each lights at its turn (--i), the first one first. */
-  .intro-lamp {
-    position: absolute;
-    left: var(--x);
-    top: var(--y);
-    width: 0.4rem;
-    height: 0.6rem;
-    margin: -0.3rem 0 0 -0.2rem;
-    animation: intro-lamp 300ms var(--ease-out-soft) calc(160ms + var(--i) * 34ms) both;
-  }
-
-  .intro-lamp::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 55%;
-    width: 1.5rem;
-    height: 1.5rem;
-    margin: -0.75rem 0 0 -0.75rem;
-    border-radius: 50%;
-    background: radial-gradient(
-      closest-side,
-      color-mix(in srgb, var(--color-highlight) 50%, transparent),
-      transparent
-    );
-  }
-
-  .intro-lamp::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: var(--color-highlight);
-    mask: var(--flame) center / contain no-repeat;
-  }
-
-  @keyframes intro-lamp {
-    from {
-      opacity: 0;
-      transform: scale(0.3);
-    }
-  }
-
-  /* The first flame: brighter and a touch larger. */
-  .intro-lamps > .intro-lamp:first-child {
-    width: 0.55rem;
-    height: 0.85rem;
-    margin: -0.425rem 0 0 -0.275rem;
-  }
-
-  /* ═══ THE HOME HERO ═══
-     Light. Left: the name, set very large, DIPALI in plum with one pass of
-     gold foil; the line from content; Book a Stay and Plan a Wedding. Right:
-     the lit entrance in an arch window, a soft lavender halo behind it and a
-     thin gold double frame. Rich motion: the photograph gains depth from the
-     pointer (DepthPhoto, WebGL), and as the next section covers the hero the
-     arch opens toward a full frame while the copy rises away. Phones: one
-     column, no WebGL, no video. */
-  .home-hero {
-    position: relative;
-    isolation: isolate;
-    overflow: clip;
-    background-color: var(--color-surface);
-    padding-block: calc(4.5rem + 2rem) 3.5rem;
-  }
-
   @media (min-width: 768px) {
     .home-hero {
-      padding-block: calc(5.5rem + 2.5rem) 4.5rem;
+      --foot: 14.5rem;
     }
   }
 
-  /* From 1024px the hero fills the screen; below xl it leaves room at the
-     foot for the phone bar, which is still showing. */
   @media (min-width: 1024px) {
     .home-hero {
-      display: grid;
-      align-content: center;
-      min-height: 100svh;
-      padding-block: calc(5.5rem + 1.5rem) calc(4.5rem + 1rem);
+      --hero-hotel: 0.12;
+      --cross: 0.44;
     }
   }
 
+  .home-hero .wordmark {
+    --wm: var(--hero-wm);
+    --hotel: var(--hero-hotel);
+  }
+
+  /* The name's resting place (never transformed: the morph measures it). */
+  .home-hero-name {
+    position: absolute;
+    inset-inline: 0;
+    top: var(--name-top);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  /* The building, in front of the letters: its parapet crosses DIPALI a
+     little below the middle of the capitals. */
+  .home-hero-building {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: calc(var(--name-top) + var(--hero-wm) * (var(--hero-hotel) + 0.05 + var(--cross)));
+    bottom: var(--foot);
+    aspect-ratio: 1440 / 1101;
+    translate: -50% 0;
+    pointer-events: none;
+  }
+
+  .home-hero-building img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .home-hero-foot {
+    position: absolute;
+    z-index: 3;
+    inset-inline: 0;
+    bottom: 0;
+    height: var(--foot);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem var(--gutter) calc(4.5rem + env(safe-area-inset-bottom));
+    text-align: center;
+  }
+
+  /* From xl: the building stands down to the threshold, and the line and
+     the actions flank its garden on the plain night — the line at the left,
+     the actions at the right. */
   @media (min-width: 1280px) {
     .home-hero {
-      padding-bottom: 3rem;
+      /* The building's box (its height from its top to the threshold, its
+         width from the cut-out's aspect), and the plain night left beside it
+         for the line and the actions — they may reach 5% into its box,
+         where the garden has faded to nothing. */
+      --b-h: calc(
+        100svh - var(--name-top) - var(--hero-wm) * (var(--hero-hotel) + 0.05 + var(--cross)) -
+          var(--arch) - 0.5rem
+      );
+      --b-w: calc(var(--b-h) * 1440 / 1101);
+      --side: calc(
+        (100cqw - var(--b-w)) / 2 + var(--b-w) * 0.05 - max(0px, (100cqw - var(--container-site)) / 2) -
+          var(--gutter)
+      );
     }
-  }
 
-  .home-hero-inner {
-    position: relative;
-    display: grid;
-    gap: 2.75rem;
-  }
-
-  @media (min-width: 1024px) {
-    .home-hero-inner {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-      align-items: center;
-      column-gap: clamp(2rem, 4vw, 4.5rem);
+    .home-hero-building {
+      bottom: calc(var(--arch) + 0.5rem);
     }
-  }
 
-  .home-hero-copy {
-    position: relative;
-    z-index: 2;
-  }
-
-  .home-hero-name {
-    margin-top: 1.25rem;
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(3.75rem, 1rem + 13.5vw, 10.5rem);
-    line-height: 0.84;
-    letter-spacing: -0.035em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-  }
-
-  @media (min-width: 1024px) {
-    .home-hero-name {
-      font-size: clamp(7rem, 1rem + 10.5vw, 11rem);
+    .home-hero-foot {
+      bottom: calc(var(--arch) + 1.5rem);
+      height: auto;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      max-width: var(--container-site);
+      margin-inline: auto;
+      padding: 0 var(--gutter);
+      text-align: start;
     }
-  }
 
-  .home-hero-name > span {
-    display: block;
-  }
+    /* (Scoped to the foot: these come before the base rules below.) */
+    .home-hero-foot .home-hero-line {
+      max-width: min(19ch, var(--side));
+    }
 
-  .home-hero-dipali {
-    color: var(--color-brand);
+    .home-hero-foot .home-hero-actions {
+      flex-direction: column;
+      align-items: flex-end;
+      max-width: var(--side);
+      margin-top: 0;
+    }
   }
 
   .home-hero-line {
-    max-width: 28ch;
-    margin-top: 1.75rem;
+    max-width: 32ch;
     font-family: var(--font-display);
     font-style: italic;
-    font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
+    font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.75rem);
     line-height: 1.3;
     color: var(--color-ink);
+    text-wrap: balance;
   }
 
   .home-hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.875rem 1rem;
-    margin-top: 2.25rem;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    margin-top: 1.5rem;
   }
 
-  /* The vertical line of text on the left edge (wide screens only). */
-  .home-hero-vertical {
+  /* The scroll cue: one gold hairline drawing down (wide screens). */
+  .home-hero-cue {
     display: none;
   }
 
   @media (min-width: 1280px) {
-    .home-hero-vertical {
+    .home-hero-cue {
       position: absolute;
-      /* In the gutter beside the container, never stranded at the screen's edge. */
-      left: max(calc(var(--gutter) * 0.4), calc((100% - var(--container-site)) / 2 - 1.5rem));
-      top: 50%;
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-      writing-mode: vertical-rl;
-      transform: translateY(-50%) rotate(180deg);
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.625rem;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--color-ink-muted);
-    }
-
-    .home-hero-vertical::before,
-    .home-hero-vertical::after {
-      content: "";
+      left: 50%;
+      bottom: -1rem;
+      display: block;
       width: 1px;
-      height: 4.5rem;
+      height: 2.25rem;
       background-color: var(--color-highlight);
+      transform-origin: 50% 0;
     }
   }
 
-  .home-hero-art {
-    position: relative;
-    justify-self: center;
-    width: min(78vw, 22rem);
-    margin-bottom: 1rem;
+  /* First load: the name is hidden under the opening until it lands there
+     (JS) — or, without JS, fades in as the CSS-only opening fades out; the
+     line and the actions rise; the cue draws. None of it under reduced
+     motion. On phones the building is the largest paint, so it never waits. */
+  body:has(.intro) .home-hero-name {
+    animation: intro-fade 420ms var(--ease-out-soft) var(--intro) both;
   }
 
-  @media (min-width: 1024px) {
-    .home-hero-art {
-      width: min(100%, 27rem, calc((100svh - 16rem) * 0.72));
-      margin-bottom: 0;
-    }
+  body:has(.intro[data-state]) .home-hero-name,
+  [data-intro="off"] .home-hero-name {
+    animation: none;
   }
 
-  @media (min-width: 1280px) {
-    .home-hero-art {
-      width: min(100%, 27rem, calc((100svh - 13rem) * 0.72));
-    }
+  body:has(.intro[data-state]:not([data-state="done"])) .home-hero-name {
+    opacity: 0;
   }
 
-  /* The lavender halo: a soft disc of light behind the window. */
-  .home-hero-halo {
-    position: absolute;
-    left: -38%;
-    top: -6%;
-    z-index: -1;
-    width: 150%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(
-      closest-side,
-      var(--color-lavender) 64%,
-      color-mix(in srgb, var(--color-lavender) 55%, transparent) 82%,
-      color-mix(in srgb, var(--color-lavender) 0%, transparent)
-    );
-    pointer-events: none;
-  }
-
-  /* The thin gold double frame, offset around the window. */
-  .home-hero-frame {
-    position: absolute;
-    inset: -0.75rem;
-    border: 1px solid var(--color-highlight);
-    border-radius: 1000px 1000px 0 0;
-    pointer-events: none;
-  }
-
-  .home-hero-frame-outer {
-    inset: -1.375rem;
-    opacity: 0.55;
-  }
-
-  /* First load: the copy rises once the opening has gone; DIPALI takes one
-     pass of foil; the window opens upward inside its arch and the frames
-     draw in. None of it runs under reduced motion — the layout is final. */
   @media (prefers-reduced-motion: no-preference) {
-    .home-hero-copy > * {
+    .home-hero-foot > * {
       animation: intro-rise var(--duration-reveal) var(--ease-rise) var(--intro) both;
     }
 
-    .home-hero-copy > :nth-child(2) {
-      animation-delay: calc(var(--intro) + 80ms);
+    .home-hero-foot > :nth-child(2) {
+      animation-delay: calc(var(--intro) + 90ms);
     }
 
-    .home-hero-copy > :nth-child(3) {
-      animation-delay: calc(var(--intro) + 200ms);
+    .home-hero-cue {
+      animation: intro-cue 600ms var(--ease-out-soft) calc(var(--intro) + 500ms) both;
     }
 
-    .home-hero-copy > :nth-child(4) {
-      animation-delay: calc(var(--intro) + 280ms);
-    }
-
-    .home-hero-dipali.foil {
-      animation: intro-foil 600ms var(--ease-out-soft) calc(var(--intro) + 520ms) both;
-    }
-
-    /* backwards, not both: once done, the scroll-driven clip takes over.
-       From 1024px only: on phones and tablets the photograph is the page's
-       largest paint, so it shows the moment it has loaded. */
     @media (min-width: 1024px) {
-      .home-hero-art .arch-window {
-        animation: intro-arch-open var(--duration-reveal) var(--ease-out-soft) var(--intro) backwards;
+      body:has(.intro) .home-hero-building {
+        animation: intro-fade 560ms var(--ease-out-soft) calc(var(--intro) - 200ms) both;
       }
     }
-
-    .home-hero-frame {
-      animation: intro-frame var(--duration-reveal) var(--ease-out-soft) calc(var(--intro) + 160ms) backwards;
-    }
-
-    .home-hero-halo {
-      animation: intro-fade var(--duration-reveal) var(--ease-out-soft) var(--intro) backwards;
-    }
   }
 
-  @keyframes intro-foil {
+  @keyframes intro-cue {
     from {
-      background-position: 100% 0;
-    }
-    to {
-      background-position: 0 0;
+      transform: scaleY(0);
     }
   }
 
-  @keyframes intro-arch-open {
-    from {
-      clip-path: inset(100% 0 0 0 round 50% 50% 0 0 / 36% 36% 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0 round 50% 50% 0 0 / 36% 36% 0 0);
-    }
-  }
-
-  @keyframes intro-frame {
-    from {
-      clip-path: inset(100% 0 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  /* Rich motion: as the next section covers the hero, the window opens
-     toward a full frame and the copy rises away (both from --cover). */
+  /* Rich motion, from --h (0 at the top, 1 one viewport down; HeroMorph):
+     --a the letters spread and sink (the first third); then the name
+     travels to the header — it shrinks first (--s, done by 0.6) and slides
+     up into the slot (--m, done by 0.72), where it lands while the bar is
+     still transparent and the header's gold logotype takes over at the same
+     size and place, before the next section's arch arrives. --mx/--my/--ms:
+     the travel's end, measured on resize. */
   [data-motion="rich"] .home-hero {
-    --lift: clamp(0, var(--cover, 0) * 1.6, 1);
+    --a: clamp(0, var(--h, 0) / 0.35, 1);
+    --s: clamp(0, (var(--h, 0) - 0.25) / 0.35, 1);
+    --m: clamp(0, (var(--h, 0) - 0.25) / 0.47, 1);
   }
 
-  [data-motion="rich"] .home-hero-copy {
-    transform: translate3d(0, calc(var(--lift) * -12vh), 0);
-    opacity: calc(1 - var(--lift) * 1.1);
-    will-change: transform, opacity;
-  }
-
-  [data-motion="rich"] .home-hero-art {
-    transform-origin: 70% 40%;
-    transform: translate3d(calc(var(--lift) * -14vw), 0, 0) scale(calc(1 + var(--lift) * 0.32));
+  [data-motion="rich"] .home-hero-name .wordmark {
+    transform-origin: 50% 0;
+    transform: translate3d(calc(var(--mx, 0px) * var(--m)), calc(var(--my, 0px) * var(--m)), 0)
+      scale(calc(1 + (var(--ms, 1) - 1) * var(--s)));
     will-change: transform;
   }
 
-  [data-motion="rich"] .home-hero-art .arch-window {
-    --open: var(--lift);
+  [data-motion="rich"] .home-hero-name .wordmark-dipali > .wordmark-letter {
+    transform: translate3d(
+      calc((var(--i) - 2.5) * 0.05em * var(--a) * (1 - var(--m))),
+      calc(0.09em * var(--a) * (1 - var(--m))),
+      0
+    );
+    will-change: transform;
   }
 
-  [data-motion="rich"] :is(.home-hero-frame, .home-hero-halo, .home-hero-vertical) {
-    opacity: calc(1 - var(--lift) * 1.4);
+  [data-motion="rich"] .home-hero-name .wordmark-hotel {
+    transform-origin: 50% 100%;
+    transform: translate3d(0, calc(0.35em * var(--a) * (1 - var(--m))), 0)
+      scale(calc(1 + (var(--logotype-hotel) / var(--hero-hotel) - 1) * var(--s)));
+  }
+
+  [data-motion="rich"] .home-hero-building {
+    transform-origin: 50% 100%;
+    transform: translate3d(0, calc(var(--h, 0) * -16svh), 0) scale(calc(1 + var(--h, 0) * 0.04));
+    will-change: transform;
+  }
+
+  [data-motion="rich"] .home-hero-foot {
+    opacity: calc(1 - var(--a) * 1.4);
+    transform: translate3d(0, calc(var(--a) * -2.5rem), 0);
+  }
+
+  [data-motion="rich"] .home-hero[data-landed] .home-hero-name {
+    opacity: 0;
+  }
+
+  /* ── The cursor follower (CursorFollower) ──
+     A fine gold ring easing after a mouse, a small plum dot exactly on it.
+     Over links and buttons the ring grows and warms; over a photograph that
+     opens it reads "View", over a swipe rail "Drag"; over text fields it
+     steps aside; a press tightens it. The system cursor always stays. */
+  .cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 95;
+    pointer-events: none;
+  }
+
+  .cursor-ring,
+  .cursor-dot {
+    position: fixed;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    will-change: transform;
+    transition: opacity var(--duration-fast) linear;
+  }
+
+  .cursor-ring {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+  }
+
+  .cursor-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    /* 28 px at rest. */
+    transform: scale(0.4375);
+    transition:
+      transform 240ms var(--ease-out-soft),
+      scale 120ms var(--ease-out-soft);
+  }
+
+  .cursor-shape circle {
+    fill: transparent;
+    stroke: var(--color-highlight);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    transition: fill 240ms var(--ease-out-soft);
+  }
+
+  .cursor[data-state="link"] .cursor-shape {
+    transform: scale(0.875);
+  }
+
+  .cursor[data-state="link"] .cursor-shape circle {
+    fill: color-mix(in srgb, var(--color-highlight) 16%, transparent);
+  }
+
+  .cursor:is([data-state="view"], [data-state="drag"]) .cursor-shape {
+    transform: none;
+  }
+
+  .cursor:is([data-state="view"], [data-state="drag"]) .cursor-shape circle {
+    fill: var(--color-brand);
+  }
+
+  .cursor[data-press] .cursor-shape {
+    scale: 0.82;
+  }
+
+  .cursor-label {
+    position: relative;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-brand-ink);
+    opacity: 0;
+    transition: opacity var(--duration-fast) linear;
+  }
+
+  .cursor:is([data-state="view"], [data-state="drag"]) .cursor-label {
+    opacity: 1;
+  }
+
+  .cursor-dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background-color: var(--color-brand);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-highlight) 70%, transparent);
+  }
+
+  .cursor:is([data-hidden], [data-state="text"]) :is(.cursor-ring, .cursor-dot),
+  .cursor:is([data-state="view"], [data-state="drag"]) .cursor-dot {
+    opacity: 0;
+  }
+
+  /* ── Decoration (content/decor.json): flowers and patterns ──
+     Ornament only — never the subject, never behind text (a pattern that
+     carries text sits under a veil of its surface: see the gate). At most one
+     flower per section, alternating sides; a white studio ground multiplies
+     into ivory; a slow drift (≤ 40 px over the section) under rich motion. */
+  .decor {
+    position: absolute;
+    z-index: 0;
+    max-width: none;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .decor[data-blend="multiply"] {
+    mix-blend-mode: multiply;
+  }
+
+  [data-motion="rich"] .decor[data-drift] {
+    transform: translate3d(0, calc((0.5 - var(--p, 0.5)) * 40px), 0);
+    will-change: transform;
+  }
+
+  .decor-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: var(--decor-tile);
+    background-size: var(--decor-size) auto;
+    pointer-events: none;
+  }
+
+  /* A pattern under text: a veil of the surface over it. */
+  .decor-pattern[data-veil]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--color-surface) 80%, transparent);
   }
 }

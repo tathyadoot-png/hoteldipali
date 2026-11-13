@@ -22,7 +22,7 @@ export function PicturesAssemble({ images }: { images: Image[] }) {
         {images.map((image, i) => (
           <li key={image.id} className="pictures-item" style={{ "--i": i } as CSSProperties}>
             <ScrollReveal variant="image" delay={(i % 3) * 70} className="h-full">
-              <figure className="pictures-figure img-hover">
+              <figure className="pictures-figure img-hover" data-cursor="view">
                 <Picture
                   image={image}
                   fill

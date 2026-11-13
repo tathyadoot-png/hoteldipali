@@ -4,11 +4,11 @@ import { useEffect, useRef, type ComponentPropsWithoutRef } from "react";
 
 /**
  * The <footer> element, and its one moment: once its top is a fifth of the
- * way up the viewport it is marked `data-revealed`, and CSS lights the row of
- * lamps along its top edge, one after another (theme.css, .footer-lamps).
- * Once only; at once under reduced motion or when keyboard focus arrives
- * first (`data-revealed="instant"`); without JS the lamps are simply lit.
- * Children stay server-rendered.
+ * way up the viewport it is marked `data-revealed`, and CSS opens the small
+ * flower at the centre of its top edge and grows the gold vine out from it
+ * (theme.css, .footer-vine). Once only; at once under reduced motion or when
+ * keyboard focus arrives first (`data-revealed="instant"`); without JS the
+ * vine is simply there. Children stay server-rendered.
  */
 export function FooterStage({ children, ...rest }: ComponentPropsWithoutRef<"footer">) {
   const ref = useRef<HTMLElement>(null);

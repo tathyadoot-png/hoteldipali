@@ -7,12 +7,13 @@ import { lengthAtY, threadGutters, threadPath } from "@/lib/motion/thread";
 
 // Where the drawn tip sits on the screen: this far down the viewport.
 const TIP = 0.62;
+const FLOWER_PETALS = [0, 72, 144, 216, 288];
 const SAMPLES = 240;
 
 /**
  * One fine gold line drawn down the page as it scrolls: it runs down one
- * gutter, crosses to the other at each <ThreadStop>, and ends in a small
- * flame above the footer. Desktop rich motion only (the stops are short
+ * gutter, crosses to the other at each <ThreadStop>, and ends in a small gold
+ * flower that opens above the footer. Desktop rich motion only (the stops are short
  * static gold rules otherwise). The line is measured from the stops on
  * resize, never per frame; per frame only `--p` is written on the SVG.
  * Decorative: aria-hidden, no pointer events.
@@ -106,8 +107,13 @@ export function GoldThread() {
       fill="none"
     >
       <path ref={pathRef} className="thread-path" pathLength={1} d={layout.d} />
-      <g className="thread-flame" transform={`translate(${layout.cx - 6} ${layout.cy - 22})`}>
-        <path d="M6 0C7.5 4 11 6.5 11 11.2A5 5 0 0 1 1 11.2C1 8 3.4 6.6 4.2 3.6C5 5.8 5.6 6.4 6 7.2C6.6 5.2 6.6 2.6 6 0Z" />
+      <g transform={`translate(${layout.cx} ${layout.cy + 4})`}>
+        <g className="thread-flower">
+          {FLOWER_PETALS.map((angle) => (
+            <ellipse key={angle} cx={0} cy={-6} rx={3} ry={5.6} transform={`rotate(${angle})`} />
+          ))}
+          <circle r={2.4} />
+        </g>
       </g>
     </svg>
   );

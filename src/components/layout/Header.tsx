@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { BrandLink } from "@/components/brand/Logo";
+import { Wordmark } from "@/components/brand/Wordmark";
 import { BookStayLink } from "@/components/links/BookStayLink";
 import { NavDesktop } from "@/components/layout/NavDesktop";
 import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
@@ -31,20 +32,32 @@ function MenuIcon() {
 // header from overlay to solid. Detected via IntersectionObserver rootMargin,
 // never a scroll listener.
 const SCROLL_THRESHOLD_PX = 80;
+// The header may hide once the page is this far down (in viewports): well past
+// the first screen — never over a hero, nor while the home hero's name lands.
+const HIDE_AFTER = 1.5;
+// Scroll movement (px) that counts as a change of direction.
+const DIRECTION_SLOP = 6;
 
 /**
- * The header: an ivory bar with a fine gold hairline, transparent over the
- * home hero until the next section arrives. Below xl: the menu, the logo
- * medallion exactly centred, and Book. From xl: the medallion and the name,
- * the links (a gold underline drawn from the centre on hover; a small gold
- * flame under the current page) and Book a Stay. The logo is always the gold
- * emblem on its plum medallion — never on the ivory itself.
+ * The header: a thin bar with the hotel's name at its centre. Transparent —
+ * the deep scope, the name in gold — over the home hero, where the hero's own
+ * giant name travels into the centre slot as the page scrolls (rich motion,
+ * HomeHero → HeroMorph sets data-landed); solid ivory with a gold hairline
+ * everywhere else, the name in plum. Below xl: Menu · logotype · Book. From
+ * xl: three links · logotype · the other links and Book a Stay; the current
+ * page carries the logo's small diamond.
+ *
+ * It hides while the page scrolls down past the first screen and comes back
+ * on any scroll up (transform only) — never while it holds keyboard focus or
+ * the menu is open.
  */
 export function Header({ bookingUrl }: { bookingUrl: string | null }) {
   const { site } = useSiteData();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const { open: menuOpen, setOpen: setMenuOpen, triggerRef } = useMobileMenu();
+  const headerRef = useRef<HTMLElement>(null);
+  const menuOpenRef = useRef(menuOpen);
 
   useEffect(() => {
     // A page can name the element whose arrival should end the overlay — the
@@ -77,13 +90,60 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
     // Re-run on navigation: the trigger element only exists on some pages.
   }, [pathname]);
 
-  const isOverlay = overlayHeaderRoutes.includes(pathname) && !scrolled;
+  // Hide on the way down, return on the way up. One rAF per scroll burst; the
+  // attribute only changes when the decision does.
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    let last = window.scrollY;
+    let frame = 0;
+    const show = () => {
+      if (header.dataset.hidden !== undefined) delete header.dataset.hidden;
+    };
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const dy = y - last;
+      if (Math.abs(dy) < DIRECTION_SLOP) return;
+      last = y;
+      const hide =
+        dy > 0 &&
+        y > window.innerHeight * HIDE_AFTER &&
+        !menuOpenRef.current &&
+        !header.matches(":focus-within");
+      if (hide) header.dataset.hidden = "";
+      else show();
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    header.addEventListener("focusin", show);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      header.removeEventListener("focusin", show);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  useEffect(() => {
+    menuOpenRef.current = menuOpen;
+    if (menuOpen) delete headerRef.current?.dataset.hidden;
+  }, [menuOpen]);
+
+  const isHome = overlayHeaderRoutes.includes(pathname);
+  const isOverlay = isHome && !scrolled;
 
   return (
     <header
+      ref={headerRef}
       data-state={isOverlay ? "overlay" : "solid"}
-      // Background and hairline live in .header-shell[data-state] (theme.css).
-      className="header-shell sticky top-0 z-40 h-18 text-ink md:h-22"
+      data-home={isHome ? "" : undefined}
+      // Over the home hero the bar takes the night's colours; the deep scope
+      // needs its own text-ink so colour re-resolves (CLAUDE.md §E).
+      data-theme={isOverlay ? "deep" : undefined}
+      // Height, position and background live in .header-shell (theme.css).
+      className="header-shell text-ink"
     >
       <div className="container-site header-bar">
         <button
@@ -101,14 +161,11 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
           </span>
         </button>
 
-        <BrandLink className="header-brand" sizes="3.25rem">
-          <span aria-hidden="true" className="header-wordmark">
-            <span className="header-wordmark-name">{site.name}</span>
-            <span className="header-wordmark-place">{site.address.value.city}</span>
-          </span>
-        </BrandLink>
-
         <NavDesktop links={primaryNav(site.navigation.main)} pathname={pathname} />
+
+        <Link href="/" prefetch={false} aria-label={`${site.name} — home`} className="header-logotype">
+          <Wordmark name={site.name} />
+        </Link>
 
         <div className="header-actions">
           <BookStayLink bookingUrl={bookingUrl} className="header-book btn-primary">

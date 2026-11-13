@@ -99,7 +99,7 @@ const BODY_PAIRS: ReadonlyArray<PairSpec> = [
   ["accent", "surface-alt", "small accent text on alt sections"],
   ["danger", "surface", ".field-error: form errors"],
   ["danger", "surface-alt", ".field-error on alt sections"],
-  ["gold-text", "surface", "gold as text (current-page flame, phone bar links)"],
+  ["gold-text", "surface", "gold as text (current-page diamond, phone bar links)"],
   ["gold-text", "surface-alt", "gold as text on alt sections"],
   ["brand", "highlight", "plum label on a gold plaque"],
 ];
@@ -116,7 +116,7 @@ const UI_PAIRS: ReadonlyArray<PairSpec> = [
 // (highlight) is decorative only — rules and hairlines, never text — so it is
 // not gated there.
 const DARK_SCOPE_UI_PAIRS: ReadonlyArray<PairSpec> = [
-  ["highlight", "surface", "gold rules, frames and lamps on plum"],
+  ["highlight", "surface", "gold rules, frames, veins and the vine on plum"],
   ["highlight", "surface-alt", "gold rules on plum alt surfaces"],
   // The client's logo (its measured median gold) on every plum ground.
   ["logo-gold", "surface", "the logo on the plum ground"],
@@ -128,7 +128,7 @@ const DARK_SCOPE_UI_PAIRS: ReadonlyArray<PairSpec> = [
 // (the .btn-secondary label, the script accent word), and the decorative
 // lavender surfaces must carry text legibly.
 const LIGHT_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
-  ["brand", "surface", ".btn-secondary label on ivory; DIPALI in the hero"],
+  ["brand", "surface", ".btn-secondary label on ivory; the header's logotype"],
   ["brand", "surface-alt", "plum text on alt sections"],
   ["ink", "lavender", "body text on a lavender surface"],
   ["ink-muted", "lavender", "secondary text on lavender"],
@@ -142,11 +142,15 @@ const LIGHT_ONLY_UI_PAIRS: ReadonlyArray<PairSpec> = [
 ];
 
 // Pairs checked for deep only: the footer's foot (surface-foot), where the
-// legal line, its links and their hover sit.
+// legal line, its links and their hover sit; and the menu's petals (lavender,
+// surface-alt), which the links, numerals and address lie over.
 const DEEP_ONLY_BODY_PAIRS: ReadonlyArray<PairSpec> = [
   ["ink", "surface-foot", "footer foot: legal and social links"],
   ["ink-muted", "surface-foot", "footer foot: the legal line"],
   ["accent", "surface-foot", "footer foot: gold text"],
+  ["ink", "lavender", "menu links over its petals"],
+  ["ink-muted", "lavender", "the menu's address over its petals"],
+  ["accent", "lavender", "menu numerals and current diamond over its petals"],
 ];
 
 /** The contrast pairs that must pass for a given variant. */

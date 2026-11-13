@@ -103,7 +103,7 @@ const ALSO_NEEDED: ReadonlyArray<{ group: string; items: string[] }> = [
       "**Legal pages** — Privacy Policy, Terms, Booking & Cancellation: the footer links them only once their pages exist (`isBuiltRoute` in `src/lib/routes.ts`). Supply the texts (or approve drafts) — step 13.",
       "**Hosted form endpoint** — `NEXT_PUBLIC_FORM_ENDPOINT` (+ access key) for production. Without it every enquiry form shows \"Online enquiries aren't connected yet\" with Call / WhatsApp instead.",
       "**Copy approval** — the footer invitation (\"We look forward to welcoming you\", \"Book a stay, or tell us what you are planning.\"), the contact page's lead and enquiry copy, and the enquiry choices (\"A stay, A wedding, An event, Dining, Pool & gym, Something else\").",
-      "**The lamps** — the footer's row of oil lamps is a decorative motif (Dipali/Deepali evokes a row of lamps). Confirm the hotel is happy with it; no claim about the name is made on the site.",
+      "**Flower images** — the decorative flowers and orchid patterns (content/decor.json, owner-supplied downloads) are `sample` until their usage rights are confirmed, or they are replaced with licensed or commissioned images; `pnpm release` stays blocked until then.",
     ],
   },
 ];

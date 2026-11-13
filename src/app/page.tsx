@@ -121,18 +121,19 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ═══ ARRIVE — the first lamp, then the name and the lit entrance ═══ */}
-      <IntroLoader />
+      {/* ═══ ARRIVE — the night blooms, then the name lands in the hero ═══ */}
+      <IntroLoader name={site.name} />
       {/* One gold line drawn down the page as it scrolls (desktop rich motion);
-          it crosses at each ThreadStop and ends in a flame above the footer. */}
+          it crosses at each ThreadStop and ends in a small gold flower above
+          the footer. */}
       <GoldThread />
       {/* The hero holds still while The Dipali Experience rises over it
-          (rich motion); the wrapper ends the hold once it is covered. The
-          hero video (site.homeHeroVideo, sample) is not shown for now. */}
+          (rich motion) and its name travels into the header; the wrapper ends
+          the hold once it is covered. The hero video (site.homeHeroVideo,
+          sample) is not shown for now. */}
       <div className="layers">
         <HomeHero
-          image={site.homeHero}
-          depthSrc="/images/hotel/entrance-night-arch-depth.webp"
+          cutout={site.homeHeroCutout}
           name={site.name}
           city={city}
           line={site.tagline.value}

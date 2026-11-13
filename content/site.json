@@ -34,6 +34,23 @@
     "source": "Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
     "note": "cropped below the rooftop sign; confirm usage rights and caption with the hotel"
   },
+  "homeHeroCutout": {
+    "id": "home-hero-entrance-cutout",
+    "src": "/images/hotel/entrance-night-cutout-1440.webp",
+    "alt": "Hotel Dipali's lit entrance tower and porch at night, above a garden of yellow cannas",
+    "shot": "Night, frontal: the entrance tower, porch and garden lifted out of the sky (below the rooftop signage), so the name can stand behind the building",
+    "aspect": "4:3",
+    "width": 1440,
+    "height": 1101,
+    "widths": [
+      720,
+      1080,
+      1440
+    ],
+    "status": "public-unverified",
+    "source": "Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
+    "note": "cut out by pnpm make:mask (a hand-traced mask; nothing retouched); confirm usage rights and caption with the hotel"
+  },
   "homeHeroVideo": {
     "id": "home-hero-entrance-night-video",
     "src": "/video/entrance-night-arch-532.mp4",

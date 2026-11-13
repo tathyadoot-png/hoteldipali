@@ -2,6 +2,7 @@
 export * from "./loaders";
 export type {
   Aspect,
+  Decor,
   Department,
   Faq,
   FaqGroup,

@@ -46,6 +46,12 @@ type Job = {
   filter?: string;
   /** Per-pixel grade (decoration only, see DECOR below). */
   grade?: Grade;
+  /**
+   * Make a repeating tile seamless: the last `seamless` source pixels of each
+   * edge are cross-faded over the first ones, so the tile (that much smaller)
+   * wraps without a visible seam.
+   */
+  seamless?: number;
 };
 
 /**
@@ -177,7 +183,7 @@ function DECOR(): Job[] {
   const dir = "media-source/decor/flowers";
   const palette: Grade = { palette: true };
   // The dahlia's artwork inside 1.png and its heart (measured from the alpha).
-  const dahlia = { x0: 0, x1: 1, y0: 0.196, y1: 0.795, heart: 0.497 };
+  const dahlia = { x0: 0, x1: 1, y0: 0.2, y1: 0.8, heart: 0.488 };
   const half = (side: "left" | "right"): Job => ({
     src: `${dir}/1.png`,
     out: "images/decor",
@@ -198,19 +204,22 @@ function DECOR(): Job[] {
     quality: 0.78,
     grade,
   });
-  const tile = (file: string, slug: string, quality: number): Job => ({
+  // The light tile's alpha plane is stored losslessly, so it ships a little
+  // smaller to stay under 120 KB.
+  const tile = (file: string, slug: string, quality: number, widths = [352, 704]): Job => ({
     src: `${dir}/${file}`,
     out: "images/decor",
     slug,
-    widths: [368, 736],
+    widths,
     quality,
     grade: palette,
+    seamless: 32,
   });
   return [
     half("left"),
     half("right"),
     tile("Midnight Orchid & Gold Veins – Seamless Pattern.jfif", "orchid-veins-dark", 0.7),
-    tile("Midnight Orchid & Gold Veins – Seamless Pattern (1)-Photoroom.png", "orchid-veins-light", 0.7),
+    tile("Midnight Orchid & Gold Veins – Seamless Pattern (1)-Photoroom.png", "orchid-veins-light", 0.6, [288, 576]),
     study("Dewy Purple Chrysanthemum Macro.png", "chrysanthemum-dewy", palette),
     study("Velvety Purple Chrysanthemum Bud.png", "chrysanthemum-bud", palette),
     study("Purple Chrysanthemum Bud on Ivory.png", "chrysanthemum-bud-ivory", {
@@ -226,7 +235,7 @@ type Exported = { width: number; height: number; data: string; brightest?: strin
 async function exportSet(page: Page, job: Job): Promise<Exported[]> {
   statSync(join(ROOT, job.src)); // fail loudly if a source is missing
   return page.evaluate(
-    async ({ url, widths, quality, rect, filter, grade }) => {
+    async ({ url, widths, quality, rect, filter, grade, seamless }) => {
       // HSL ↔ RGB for the palette grade (h in degrees, s/l 0–1).
       const toHsl = (r: number, g: number, b: number): [number, number, number] => {
         const max = Math.max(r, g, b) / 255;
@@ -261,7 +270,9 @@ async function exportSet(page: Page, job: Job): Promise<Exported[]> {
             b = Math.min(255, (b * 255) / grade.whiten[2]);
           }
           if (grade?.palette) {
-            let [hue, sat, lig] = toHsl(r, g, b);
+            const hsl = toHsl(r, g, b);
+            let [hue, sat] = hsl;
+            const lig = hsl[2];
             if (sat > 0.06) {
               if (hue >= 62 && hue < 180) {
                 hue = 40;
@@ -302,11 +313,45 @@ async function exportSet(page: Page, job: Job): Promise<Exported[]> {
             Math.round(rect.h * whole.height),
           )
         : whole;
+      // Seamless tile: cross-fade the far band of each edge over the near one.
+      const wrap = async (bitmap: ImageBitmap, band: number): Promise<ImageBitmap> => {
+        const { width: W, height: H } = bitmap;
+        const src = new OffscreenCanvas(W, H).getContext("2d")!;
+        src.drawImage(bitmap, 0, 0);
+        const a = src.getImageData(0, 0, W, H).data;
+        const w = W - band;
+        const h = H - band;
+        const outData = new ImageData(w, h);
+        const o = outData.data;
+        const at = (x: number, y: number) => (y * W + x) * 4;
+        for (let y = 0; y < h; y += 1) {
+          for (let x = 0; x < w; x += 1) {
+            // Horizontal: columns 0…band-1 blend in the columns past the end.
+            const tx = x < band ? x / band : 1;
+            const ty = y < band ? y / band : 1;
+            const p00 = at(x, y);
+            const p10 = at(x + w, y); // the far band (x < band only)
+            const p01 = at(x, y + h); // the far band (y < band only)
+            const p11 = at(x + w, y + h);
+            for (let c = 0; c < 4; c += 1) {
+              const near = a[p00 + c]!;
+              const farX = x < band ? a[p10 + c]! : near;
+              const farY = y < band ? a[p01 + c]! : near;
+              const farXY = x < band && y < band ? a[p11 + c]! : x < band ? farX : farY;
+              const row0 = farX * (1 - tx) + near * tx;
+              const row1 = farXY * (1 - tx) + farY * tx;
+              o[(y * w + x) * 4 + c] = row1 * (1 - ty) + row0 * ty;
+            }
+          }
+        }
+        return createImageBitmap(outData);
+      };
+      const tileable = seamless ? await wrap(full, seamless) : full;
       const out: Exported[] = [];
       for (const target of widths) {
-        const width = Math.min(target, full.width);
-        const height = Math.round((full.height * width) / full.width);
-        const scaled = await createImageBitmap(full, {
+        const width = Math.min(target, tileable.width);
+        const height = Math.round((tileable.height * width) / tileable.width);
+        const scaled = await createImageBitmap(tileable, {
           resizeWidth: width,
           resizeHeight: height,
           resizeQuality: "high",
@@ -324,8 +369,9 @@ async function exportSet(page: Page, job: Job): Promise<Exported[]> {
           bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
         }
         out.push({ width, height, data: btoa(bin), brightest });
-        if (width === full.width) break;
+        if (width === tileable.width) break;
       }
+      if (tileable !== full) tileable.close();
       if (full !== whole) full.close();
       whole.close();
       return out;
@@ -337,6 +383,7 @@ async function exportSet(page: Page, job: Job): Promise<Exported[]> {
       rect: job.rect,
       filter: job.filter,
       grade: job.grade,
+      seamless: job.seamless,
     },
   );
 }
@@ -363,6 +410,9 @@ async function main(): Promise<void> {
       contentType: TYPES[extname(path).toLowerCase()] ?? "application/octet-stream",
     });
   });
+  // tsx keeps function names with an `__name` helper; the code evaluated in
+  // the page needs it too.
+  await page.addInitScript("window.__name = (f) => f;");
   await page.goto("http://photos.local/");
 
   let written = 0;

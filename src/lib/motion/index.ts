@@ -13,10 +13,16 @@ export const RICH_MOTION_QUERY =
  *   first frame — switching layouts after hydration would make the hero jump
  *   (CLS);
  * - <html data-intro="off"> on data saver or a slow connection (effective type
- *   2G/3G): the home page's opening loader is skipped there, so it never adds
- *   to a slow load (see IntroLoader).
+ *   2G/3G), so the home page's opening never adds to a slow load — and when
+ *   it has already played in this browser session (INTRO_SEEN_KEY in
+ *   sessionStorage, set by IntroLoader; storage may be unavailable, so every
+ *   access is guarded).
  */
-export const MOTION_BOOT_SCRIPT = `(function(){try{var c=navigator.connection,d=document.documentElement;if(c&&(c.saveData||/2g|3g/.test(c.effectiveType||"")))d.setAttribute("data-intro","off");if(c&&c.saveData)return;if(window.matchMedia(${JSON.stringify(
+export const INTRO_SEEN_KEY = "dipali:intro-seen";
+
+export const MOTION_BOOT_SCRIPT = `(function(){var d=document.documentElement;try{if(sessionStorage.getItem(${JSON.stringify(
+  INTRO_SEEN_KEY,
+)}))d.setAttribute("data-intro","off")}catch(e){}try{var c=navigator.connection;if(c&&(c.saveData||/2g|3g/.test(c.effectiveType||"")))d.setAttribute("data-intro","off");if(c&&c.saveData)return;if(window.matchMedia(${JSON.stringify(
   RICH_MOTION_QUERY,
 )}).matches)d.setAttribute("data-motion","rich")}catch(e){}})();`;
 

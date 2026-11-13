@@ -2,7 +2,7 @@
 
 > Auto-generated — do not edit by hand; run `pnpm content:report`.
 
-Last generated: 2026-11-04
+Last generated: 2026-11-13
 
 Everything below is still **sample** (we invented it) or **public-unverified** (found online, not confirmed by the hotel). The hotel needs to confirm or replace each item before launch. See also `docs/public-data.md`.
 
@@ -13,6 +13,7 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **tagline** _(sample)_ — sample tagline — confirm the hotel's preferred line · `tagline`
 - [ ] **shortDescription** _(sample)_ — sample copy — rewrite with verified details · `shortDescription`
 - [ ] **home-hero-entrance-night** _(public-unverified)_ — cropped below the rooftop sign; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24 · `homeHero`
+- [ ] **home-hero-entrance-cutout** _(public-unverified)_ — cut out by pnpm make:mask (a hand-traced mask; nothing retouched); confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24 · `homeHeroCutout`
 - [ ] **home-hero-entrance-night-video** _(sample)_ — AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from media-source/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch · `homeHeroVideo`
 - [ ] **home-experience-reception** _(public-unverified)_ — portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (media-source/hotel/DSC_1632.JPG), received 2026-10 · `homeExperience`
 - [ ] **home-reveal-facade-night** _(public-unverified)_ — cropped below the rooftop "DIPALI RESIDENCY" sign; the tower on the left still carries a "HOTEL DEEPALI" sign — confirm usage rights, caption and that signage with the hotel · source: Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011556_0038_D.JPG), received 2026-10-24 · `homeReveal`
@@ -165,6 +166,16 @@ Everything below is still **sample** (we invented it) or **public-unverified** (
 - [ ] **gallery-property-2** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (media-source/hotel/DSC_3355.JPG), received 2026-10 · `[16].image`
 - [ ] **gallery-property-3** _(public-unverified)_ — confirm usage rights and caption with the hotel · source: Owner-supplied hotel photograph (media-source/hotel/DSC_3240.JPG), received 2026-10 · `[17].image`
 
+### Decoration (site-wide)
+
+- [ ] **dahlia-left** _(sample)_ — downloaded image — usage rights unconfirmed · source: media-source/decor/flowers/1.png · `[0]`
+- [ ] **dahlia-right** _(sample)_ — downloaded image — usage rights unconfirmed · source: media-source/decor/flowers/1.png · `[1]`
+- [ ] **orchid-veins-dark** _(sample)_ — downloaded image — usage rights unconfirmed · source: media-source/decor/flowers/Midnight Orchid & Gold Veins – Seamless Pattern.jfif · `[2]`
+- [ ] **orchid-veins-light** _(sample)_ — downloaded image — usage rights unconfirmed · source: media-source/decor/flowers/Midnight Orchid & Gold Veins – Seamless Pattern (1)-Photoroom.png · `[3]`
+- [ ] **chrysanthemum-dewy** _(sample)_ — downloaded image — usage rights unconfirmed · source: media-source/decor/flowers/Dewy Purple Chrysanthemum Macro.png · `[4]`
+- [ ] **chrysanthemum-bud** _(sample)_ — downloaded image — usage rights unconfirmed · source: media-source/decor/flowers/Velvety Purple Chrysanthemum Bud.png · `[5]`
+- [ ] **chrysanthemum-bud-ivory** _(sample)_ — downloaded image — usage rights unconfirmed · source: media-source/decor/flowers/Purple Chrysanthemum Bud on Ivory.png · `[6]`
+
 ## Photos needed
 
 Every image below is a labelled placeholder. Provide an original photograph matching the described shot and aspect ratio; file names can stay the same.
@@ -219,8 +230,8 @@ Every image below is a labelled placeholder. Provide an original photograph matc
 - [ ] **Legal pages** — Privacy Policy, Terms, Booking & Cancellation: the footer links them only once their pages exist (`isBuiltRoute` in `src/lib/routes.ts`). Supply the texts (or approve drafts) — step 13.
 - [ ] **Hosted form endpoint** — `NEXT_PUBLIC_FORM_ENDPOINT` (+ access key) for production. Without it every enquiry form shows "Online enquiries aren't connected yet" with Call / WhatsApp instead.
 - [ ] **Copy approval** — the footer invitation ("We look forward to welcoming you", "Book a stay, or tell us what you are planning."), the contact page's lead and enquiry copy, and the enquiry choices ("A stay, A wedding, An event, Dining, Pool & gym, Something else").
-- [ ] **The lamps** — the footer's row of oil lamps is a decorative motif (Dipali/Deepali evokes a row of lamps). Confirm the hotel is happy with it; no claim about the name is made on the site.
+- [ ] **Flower images** — the decorative flowers and orchid patterns (content/decor.json, owner-supplied downloads) are `sample` until their usage rights are confirmed, or they are replaced with licensed or commissioned images; `pnpm release` stays blocked until then.
 
 ---
 
-Totals: 133 items/facts to confirm · 25 photos to replace · 7 further items above.
+Totals: 141 items/facts to confirm · 25 photos to replace · 7 further items above.

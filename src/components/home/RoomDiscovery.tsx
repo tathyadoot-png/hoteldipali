@@ -53,7 +53,7 @@ export function RoomDiscovery({ rooms }: { rooms: RoomPreview[] }) {
                 <span className="stay-room-facts">{facts(room)}</span>
               </span>
             </Link>
-            <div className="stay-room-photo">
+            <div className="stay-room-photo" data-cursor="view">
               <Picture image={room.image} ratio="3:2" sizes="(min-width: 768px) 46vw, 92vw" />
             </div>
           </li>
@@ -65,7 +65,7 @@ export function RoomDiscovery({ rooms }: { rooms: RoomPreview[] }) {
           <div className="stay-stage-wrap">
             {/* Deep stone tablet; data-theme needs its own text-ink (CLAUDE.md §E). */}
             <div aria-hidden="true" data-theme="deep" className="stay-tablet text-ink" />
-            <div className="room-stage">
+            <div className="room-stage" data-cursor="view">
               {rooms.map((room, i) => (
                 <div
                   key={room.slug}
