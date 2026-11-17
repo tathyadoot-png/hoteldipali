@@ -30,26 +30,31 @@ test.describe("Home page", () => {
     await expect(page.locator("#home-enquire")).toBeVisible();
   });
 
-  test("hero section has the emerald theme", async ({ page }) => {
+  test("the hero is the night: the deep plum scope, with its own text-ink", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    await expect(hero).toHaveAttribute("data-theme", "emerald");
+    await expect(hero).toHaveAttribute("data-theme", "deep");
+    await expect(hero).toHaveClass(/text-ink/);
+    await expect(hero).toHaveCSS("background-color", "rgb(23, 8, 32)");
   });
 
-  test("enquiry section has peacock theme and anchor id", async ({ page }) => {
+  test("enquiry section has dark theme and anchor id", async ({ page }) => {
     const enquiry = page.locator("#enquire");
-    await expect(enquiry).toHaveAttribute("data-theme", "peacock");
+    await expect(enquiry).toHaveAttribute("data-theme", "dark");
   });
 
   /* ──── Navigation & links ──── */
 
-  test("the hero's two calls to action lead to sections on this page", async ({ page }) => {
+  test("the hero's calls to action: book a stay, or plan a wedding", async ({ page }) => {
     const hero = page.locator("section").filter({ has: page.locator("#home-hero") });
-    const primary = hero.getByRole("link", { name: "Explore the Experience" });
-    const secondary = hero.getByRole("link", { name: "Discover Hotel Dipali" });
-    await expect(primary).toHaveAttribute("href", "#explore");
-    await expect(secondary).toHaveAttribute("href", "#welcome");
-    await expect(page.locator("#explore")).toBeAttached();
-    await expect(page.locator("#welcome")).toBeAttached();
+    // No booking engine is configured: availability on WhatsApp (CLAUDE.md §D).
+    await expect(hero.getByRole("link", { name: /^Book a Stay/ })).toHaveAttribute(
+      "href",
+      /^https:\/\/wa\.me\/91\d{10}\?text=/,
+    );
+    const wedding = hero.getByRole("link", { name: "Plan a Wedding" });
+    await expect(wedding).toHaveAttribute("href", "/weddings/");
+    const response = await page.goto("/weddings/");
+    expect(response?.status()).toBe(200);
   });
 
   test("has at least one link to /rooms/", async ({ page }) => {
@@ -119,7 +124,7 @@ test.describe("Home page", () => {
 
   test("The Grand Reveal: the façade at night, a real photograph in a gold frame", async ({ page }) => {
     const section = page.locator("#reveal");
-    await expect(section).toHaveAttribute("data-theme", "emerald");
+    await expect(section).toHaveAttribute("data-theme", "deep");
     await expect(
       section.getByRole("heading", { level: 2, name: "As evening falls, the whole house comes alight" }),
     ).toBeVisible();
@@ -183,7 +188,7 @@ test.describe("Home page", () => {
 
   test("Weddings & Events: every venue on the programme card, and the ways in", async ({ page }) => {
     const chapter = page.locator("#celebrate");
-    await expect(chapter).toHaveAttribute("data-theme", "peacock");
+    await expect(chapter).toHaveAttribute("data-theme", "dark");
     await expect(chapter.locator(".celebrate-venue-name")).toHaveText(venuesData.map((venue) => venue.name));
     await expect(chapter.getByRole("link", { name: "Plan your wedding" })).toHaveAttribute("href", "/weddings/");
     await expect(chapter.getByRole("link", { name: "Events & gatherings" })).toHaveAttribute("href", "/events/");
@@ -252,20 +257,20 @@ test.describe("Home page", () => {
 
   /* ──── Themed scopes carry text-ink ──── */
 
-  test("all peacock-themed sections carry text-ink class", async ({ page }) => {
-    const peacockSections = page.locator('section[data-theme="peacock"]');
-    const count = await peacockSections.count();
+  test("all dark-themed sections carry text-ink class", async ({ page }) => {
+    const darkSections = page.locator('section[data-theme="dark"]');
+    const count = await darkSections.count();
     expect(count).toBeGreaterThanOrEqual(2);
     for (let i = 0; i < count; i++) {
-      const classes = await peacockSections.nth(i).getAttribute("class");
+      const classes = await darkSections.nth(i).getAttribute("class");
       expect(classes).toContain("text-ink");
     }
   });
 
-  // Header, opening loader, hero and menu: every Emerald scope re-declares its
+  // Header, opening loader, hero and menu: every Deep scope re-declares its
   // colour (inherited `color` would not re-resolve --color-ink).
-  test("every emerald-themed element carries text-ink class", async ({ page }) => {
-    const scopes = page.locator('[data-theme="emerald"]');
+  test("every deep-themed element carries text-ink class", async ({ page }) => {
+    const scopes = page.locator('[data-theme="deep"]');
     const count = await scopes.count();
     expect(count).toBeGreaterThanOrEqual(4);
     for (let i = 0; i < count; i++) {
@@ -287,7 +292,7 @@ test.describe("Home page", () => {
   test("passes axe-core accessibility checks", async ({ page }) => {
     const results = await new AxeBuilder({ page })
       .exclude("[data-reveal]:not([data-revealed])") // hidden elements pending reveal
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     expect(results.violations).toEqual([]);
   });

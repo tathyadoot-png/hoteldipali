@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.8.1",
   "engines": {
-    "node": ">=24.0.0"
+    "node": "^24.19.0"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
     "prebuild": "tsx scripts/check-contrast.ts",
     "build": "next build",
@@ -22,7 +24,8 @@
     "check:content": "tsx scripts/check-content.ts",
     "check:content:strict": "tsx scripts/check-content.ts --strict",
     "content:report": "tsx scripts/content-report.ts",
-    "release": "pnpm check:content:strict && pnpm build"
+    "release": "pnpm check:content:strict && pnpm build",
+    "make:mask": "tsx scripts/make-mask.ts"
   },
   "dependencies": {
     "lenis": "1.3.27",

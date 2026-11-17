@@ -55,9 +55,9 @@ test.describe("Dining hub", () => {
     expect(hasScrollMargin).toBe(true);
   });
 
-  test("the Infinity Bar section uses the peacock evening treatment", async ({ page }) => {
+  test("the Infinity Bar section uses the dark evening treatment", async ({ page }) => {
     const bar = page.locator("#infinity-bar");
-    await expect(bar).toHaveAttribute("data-theme", "peacock");
+    await expect(bar).toHaveAttribute("data-theme", "dark");
     await expect(bar).toContainText("Infinity Bar");
   });
 
@@ -138,7 +138,7 @@ test.describe("Dining hub", () => {
 
   test("passes axe-core with no serious or critical violations", async ({ page }) => {
     const results = await new AxeBuilder({ page })
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     const serious = results.violations.filter(
       (v) => v.impact === "serious" || v.impact === "critical",

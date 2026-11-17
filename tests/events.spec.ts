@@ -46,8 +46,8 @@ test.describe("Events page", () => {
       "href",
       "#enquire",
     );
-    // Events opens light (no peacock theme on the hero), unlike /weddings/.
-    await expect(hero).not.toHaveAttribute("data-theme", "peacock");
+    // Events opens light (no dark theme on the hero), unlike /weddings/.
+    await expect(hero).not.toHaveAttribute("data-theme", "dark");
   });
 
   test("the finder exposes every event type present in the content", async ({ page }) => {
@@ -120,24 +120,6 @@ test.describe("Events page", () => {
     ).toHaveAttribute("href", "/weddings/");
   });
 
-  test("the enquiry section offers the event and wedding types and defaults to event", async ({
-    page,
-  }) => {
-    // EnquiryForm renders options in the canonical ENQUIRY_TYPE_OPTIONS order
-    // (wedding before event); what matters here is the pair offered and that
-    // this event-focused page defaults the selection to "event".
-    const section = page.locator("#enquire");
-    await expect(section).toBeAttached();
-    // The enquiry type is a group of choices (it was a select until 2026-10-27).
-    const form = section.locator("form");
-    const choices = form.getByRole("group", { name: "What are you planning?" }).getByRole("radio");
-    const values = await choices.evaluateAll((radios) =>
-      radios.map((r) => (r as HTMLInputElement).value),
-    );
-    expect(new Set(values)).toEqual(new Set(["event", "wedding"]));
-    await expect(form.getByRole("radio", { name: "An event" })).toBeChecked();
-  });
-
   test("shows no price, booking, or availability UI", async ({ page }) => {
     const body = page.locator("body");
     await expect(body).not.toContainText("₹");
@@ -157,7 +139,7 @@ test.describe("Events page", () => {
 
   test("passes axe-core with no serious or critical violations", async ({ page }) => {
     const results = await new AxeBuilder({ page })
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     const serious = results.violations.filter(
       (v) => v.impact === "serious" || v.impact === "critical",

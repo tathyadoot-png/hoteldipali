@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="Family Suite bathroom, wide shot (sample placeholder)">
-  <rect x="0" y="0" width="1200" height="1200" fill="#DCCFB8"/>
-  <rect x="0" y="816" width="1200" height="384" fill="#CBBB9F"/>
-  <circle cx="888" cy="618" r="360" fill="none" stroke="#AE9C7C" stroke-width="3" opacity="0.5"/>
-  <rect x="13" y="13" width="1174" height="1174" fill="none" stroke="#AE9C7C" stroke-width="2" opacity="0.35"/>
+  <rect x="0" y="0" width="1200" height="1200" fill="#E7DDE2"/>
+  <rect x="0" y="816" width="1200" height="384" fill="#D8CBD2"/>
+  <circle cx="888" cy="618" r="360" fill="none" stroke="#AE9A7C" stroke-width="3" opacity="0.5"/>
+  <rect x="13" y="13" width="1174" height="1174" fill="none" stroke="#AE9A7C" stroke-width="2" opacity="0.35"/>
 </svg>

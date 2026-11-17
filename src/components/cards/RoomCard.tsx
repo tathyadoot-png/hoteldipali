@@ -16,7 +16,11 @@ export function RoomCard({ room }: { room: Room }) {
 
   return (
     <article className="card flex h-full flex-col">
-      {cover ? <Picture image={cover} ratio="4:3" sizes="(min-width: 1024px) 24rem, 100vw" /> : null}
+      {cover ? (
+        <div data-cursor="view">
+          <Picture image={cover} ratio="4:3" sizes="(min-width: 1024px) 24rem, 100vw" />
+        </div>
+      ) : null}
       <div className="flex flex-1 flex-col gap-2 p-5">
         <p className="eyebrow">Stay</p>
         <h3 className="heading-3">{room.name}</h3>

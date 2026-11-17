@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500" role="img" aria-label="Lobby / reception seating, wide shot (sample placeholder)">
-  <rect x="0" y="0" width="1200" height="1500" fill="#D2C4A9"/>
-  <path d="M192 1500 V510 a180 180 0 0 1 360 0 V1500 Z" fill="#C2B294"/>
-  <path d="M744 1500 V630" stroke="#A2906F" stroke-width="3" opacity="0.45"/>
-  <rect x="13" y="13" width="1174" height="1474" fill="none" stroke="#A2906F" stroke-width="2" opacity="0.35"/>
-</svg>

@@ -1,16 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { Logo } from "@/components/brand/Logo";
-import { MedallionRing } from "@/components/brand/Ornaments";
+import { Wordmark } from "@/components/brand/Wordmark";
 import { BookStayLink } from "@/components/links/BookStayLink";
-import { CallLink } from "@/components/links/CallLink";
 import { NavDesktop } from "@/components/layout/NavDesktop";
 import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
-import { overlayHeaderRoutes } from "@/lib/routes";
+import { overlayHeaderRoutes, primaryNav } from "@/lib/routes";
 
 function MenuIcon() {
   return (
@@ -20,7 +19,7 @@ function MenuIcon() {
       height="22"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.6"
       strokeLinecap="round"
       aria-hidden="true"
     >
@@ -33,17 +32,49 @@ function MenuIcon() {
 // header from overlay to solid. Detected via IntersectionObserver rootMargin,
 // never a scroll listener.
 const SCROLL_THRESHOLD_PX = 80;
+// The header may hide once the page is this far down (in viewports): well past
+// the first screen — never over a hero, nor while the home hero's name lands.
+const HIDE_AFTER = 1.5;
+// Scroll movement (px) that counts as a change of direction.
+const DIRECTION_SLOP = 6;
 
+/**
+ * The header: a thin bar with the hotel's name at its centre. Transparent —
+ * the deep scope, the name in gold — only on an overlayHeaderRoutes path
+ * while that page's hero ([data-header-hero]) is in view, where the hero's
+ * own giant name travels into the centre slot as the page scrolls (rich
+ * motion, HomeHero → HeroMorph sets data-landed). Solid ivory with a gold
+ * hairline everywhere else, including not-found and any page with no hero,
+ * the name in plum. Below xl: Menu · logotype · Book. From xl: three links ·
+ * logotype · the other links and Book a Stay; the current page carries the
+ * logo's small diamond.
+ *
+ * It hides while the page scrolls down past the first screen and comes back
+ * on any scroll up (transform only) — never while it holds keyboard focus or
+ * the menu is open.
+ */
 export function Header({ bookingUrl }: { bookingUrl: string | null }) {
   const { site } = useSiteData();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const { open: menuOpen, setOpen: setMenuOpen, triggerRef } = useMobileMenu();
+  const headerRef = useRef<HTMLElement>(null);
+  const menuOpenRef = useRef(menuOpen);
 
   useEffect(() => {
+    // Overlay is only for a page that actually rendered its hero. A not-found
+    // response (including one served for "/") has no [data-header-hero], so
+    // the bar stays the solid ivory one. Reported from the observer, same as
+    // the scroll signal below — not during this effect's own turn.
+    const hero = document.querySelector("[data-header-hero]");
+    if (!hero) {
+      const observer = new IntersectionObserver(() => setScrolled(true));
+      observer.observe(document.documentElement);
+      return () => observer.disconnect();
+    }
+
     // A page can name the element whose arrival should end the overlay — the
-    // home page uses the ivory arch that rises over its entrance film, so the
-    // header stays transparent for the whole pinned scene.
+    // home page uses the section that rises over its hero.
     const solidFrom = document.querySelector<HTMLElement>("[data-header-solid-from]");
     if (solidFrom) {
       const observer = new IntersectionObserver(
@@ -72,21 +103,61 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
     // Re-run on navigation: the trigger element only exists on some pages.
   }, [pathname]);
 
-  const isOverlay = overlayHeaderRoutes.includes(pathname) && !scrolled;
+  // Hide on the way down, return on the way up. One rAF per scroll burst; the
+  // attribute only changes when the decision does.
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    let last = window.scrollY;
+    let frame = 0;
+    const show = () => {
+      if (header.dataset.hidden !== undefined) delete header.dataset.hidden;
+    };
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const dy = y - last;
+      if (Math.abs(dy) < DIRECTION_SLOP) return;
+      last = y;
+      const hide =
+        dy > 0 &&
+        y > window.innerHeight * HIDE_AFTER &&
+        !menuOpenRef.current &&
+        !header.matches(":focus-within");
+      if (hide) header.dataset.hidden = "";
+      else show();
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    header.addEventListener("focusin", show);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      header.removeEventListener("focusin", show);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  useEffect(() => {
+    menuOpenRef.current = menuOpen;
+    if (menuOpen) delete headerRef.current?.dataset.hidden;
+  }, [menuOpen]);
+
+  const isHome = overlayHeaderRoutes.includes(pathname);
+  const isOverlay = isHome && !scrolled;
 
   return (
     <header
-      data-theme="emerald"
+      ref={headerRef}
       data-state={isOverlay ? "overlay" : "solid"}
-      // text-ink re-declares `color` on this element so it re-resolves against
-      // the emerald-scoped --color-ink (inherited `color` would not).
-      // Background lives in .header-shell[data-state] (theme.css).
-      className="header-shell sticky top-0 z-40 flex h-18 items-center text-ink md:h-22"
+      data-home={isHome ? "" : undefined}
+      // Over the home hero the bar takes the night's colours; the deep scope
+      // needs its own text-ink so colour re-resolves (CLAUDE.md §E).
+      data-theme={isOverlay ? "deep" : undefined}
+      // Height, position and background live in .header-shell (theme.css).
+      className="header-shell text-ink"
     >
-      {/* The engraved band: two gold rules run from either end to a medallion
-          holding the emblem; the links sit inside the band and a small gold
-          bead slides along its lower rule. Ends: the call link (left, xl) and
-          Book a Stay (right); below xl the menu takes the left end. */}
       <div className="container-site header-bar">
         <button
           ref={triggerRef}
@@ -103,28 +174,25 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
           </span>
         </button>
 
-        <span aria-hidden="true" className="header-band header-band-l" />
-        <span aria-hidden="true" className="header-band header-band-r" />
+        <NavDesktop links={primaryNav(site.navigation.main)} pathname={pathname} />
 
-        <NavDesktop links={site.navigation.main} pathname={pathname} />
+        <Link
+          href="/"
+          prefetch={false}
+          aria-label={`${site.name} — home`}
+          className="header-logotype"
+        >
+          <Wordmark name={site.name} />
+        </Link>
 
-        <div className="header-keystone">
-          <MedallionRing className="header-ring" />
-          <Logo variant="reverse" imgClassName="header-emblem" sizes="3rem" />
+        <div className="header-actions">
+          <BookStayLink bookingUrl={bookingUrl} className="header-book btn-primary">
+            {/* One flex item, so the space before "a Stay" survives. */}
+            <span>
+              Book<span className="header-book-more"> a Stay</span>
+            </span>
+          </BookStayLink>
         </div>
-
-        {/* The wrapper owns the display rule (the link carries inline-flex
-            utilities, which would outrank a component-layer display:none). */}
-        <span className="header-call">
-          <CallLink labelClassName="header-call-label" />
-        </span>
-
-        <BookStayLink bookingUrl={bookingUrl} className="header-book btn-primary">
-          {/* One flex item, so the space before "a Stay" survives. */}
-          <span>
-            Book<span className="header-book-more"> a Stay</span>
-          </span>
-        </BookStayLink>
       </div>
     </header>
   );

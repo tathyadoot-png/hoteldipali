@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Gym, wide shot of the floor (sample placeholder)">
-  <rect x="0" y="0" width="1600" height="900" fill="#C6CEC4"/>
-  <rect x="0" y="612" width="1600" height="288" fill="#B2BCB0"/>
-  <circle cx="1184" cy="464" r="270" fill="none" stroke="#93A08F" stroke-width="2" opacity="0.5"/>
-  <rect x="10" y="10" width="1580" height="880" fill="none" stroke="#93A08F" stroke-width="2" opacity="0.35"/>
+  <rect x="0" y="0" width="1600" height="900" fill="#D6D0DE"/>
+  <rect x="0" y="612" width="1600" height="288" fill="#C3BBCD"/>
+  <circle cx="1184" cy="464" r="270" fill="none" stroke="#97889F" stroke-width="2" opacity="0.5"/>
+  <rect x="10" y="10" width="1580" height="880" fill="none" stroke="#97889F" stroke-width="2" opacity="0.35"/>
 </svg>

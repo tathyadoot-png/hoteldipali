@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { Picture } from "@/components/media/Picture";
 import { ScrollScene } from "@/components/motion/ScrollScene";
 import type { Image } from "@/content";
@@ -17,7 +17,7 @@ type UnwindRippleProps = {
  * Unwind: the water, seen from above. The aerial photograph of the pool opens
  * in a widening circle from its round plunge pools, as rings spread across the
  * surface — under rich motion, from the stage's own --p (ScrollScene); a
- * one-time reveal elsewhere. The chapter's copy sits on an emerald stone
+ * one-time reveal elsewhere. The chapter's copy sits on a deep stone
  * plaque laid over the photograph's foot. Without motion the photograph is
  * simply there, with the rings resting on the water.
  */
@@ -37,9 +37,9 @@ export function UnwindRipple({ image, children }: UnwindRippleProps) {
         </ScrollScene>
       ) : null}
       <div className="unwind-body container-site">
-        {/* Emerald stone plaque; data-theme needs its own text-ink (CLAUDE.md §E). */}
+        {/* Deep stone plaque; data-theme needs its own text-ink (CLAUDE.md §E). */}
         <ScrollReveal delay={80} className="unwind-plaque">
-          <div data-theme="emerald" className="unwind-plaque-inner text-ink">
+          <div data-theme="deep" className="unwind-plaque-inner text-ink">
             {children}
           </div>
         </ScrollReveal>

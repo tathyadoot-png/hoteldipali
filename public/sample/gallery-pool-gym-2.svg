@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="Gym, cardio equipment detail (sample placeholder)">
-  <rect x="0" y="0" width="1200" height="1200" fill="#C6CEC4"/>
-  <path d="M200 216 V1200" stroke="#93A08F" stroke-width="3" opacity="0.45"/>
-  <path d="M400 216 V1200" stroke="#93A08F" stroke-width="3" opacity="0.3"/>
-  <path d="M600 216 V1200" stroke="#93A08F" stroke-width="3" opacity="0.45"/>
-  <path d="M800 216 V1200" stroke="#93A08F" stroke-width="3" opacity="0.3"/>
-  <path d="M1000 216 V1200" stroke="#93A08F" stroke-width="3" opacity="0.45"/>
-  <rect x="0" y="1032" width="1200" height="168" fill="#B2BCB0"/>
-  <rect x="13" y="13" width="1174" height="1174" fill="none" stroke="#93A08F" stroke-width="2" opacity="0.35"/>
+  <rect x="0" y="0" width="1200" height="1200" fill="#D6D0DE"/>
+  <path d="M200 216 V1200" stroke="#97889F" stroke-width="3" opacity="0.45"/>
+  <path d="M400 216 V1200" stroke="#97889F" stroke-width="3" opacity="0.3"/>
+  <path d="M600 216 V1200" stroke="#97889F" stroke-width="3" opacity="0.45"/>
+  <path d="M800 216 V1200" stroke="#97889F" stroke-width="3" opacity="0.3"/>
+  <path d="M1000 216 V1200" stroke="#97889F" stroke-width="3" opacity="0.45"/>
+  <rect x="0" y="1032" width="1200" height="168" fill="#C3BBCD"/>
+  <rect x="13" y="13" width="1174" height="1174" fill="none" stroke="#97889F" stroke-width="2" opacity="0.35"/>
 </svg>

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 
 type LivingExperiencesProps = {
   /** id of the h2, for the enclosing section's aria-labelledby. */

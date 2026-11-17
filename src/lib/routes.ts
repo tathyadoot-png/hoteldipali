@@ -2,11 +2,7 @@
 export const overlayHeaderRoutes: string[] = ["/"];
 
 /** Routes where the mobile StickyCtaBar is hidden entirely. */
-export const stickyCtaHiddenRoutes: string[] = [
-  "/thank-you/",
-  "/styleguide/",
-  "/dev/content/",
-];
+export const stickyCtaHiddenRoutes: string[] = ["/thank-you/", "/styleguide/", "/dev/content/"];
 
 /** Per-route label for the StickyCtaBar's third (primary) button. */
 const STICKY_CTA_LABELS: Record<string, string> = {
@@ -51,7 +47,14 @@ export function enquireHref(pathname: string): string {
  * here, so a planned page never shows as a dead link. Add each route as its
  * page is built.
  */
-const BUILT_PAGES: string[] = ["/", "/rooms/", "/weddings/", "/events/", "/dining/", "/contact/"];
+export const BUILT_PAGES: readonly string[] = [
+  "/",
+  "/rooms/",
+  "/weddings/",
+  "/events/",
+  "/dining/",
+  "/contact/",
+];
 const BUILT_ROUTE_PATTERNS: RegExp[] = [/^\/rooms\/[^/]+\/$/];
 
 /** Whether a site-relative href leads to a page in this build (anchors included). */
@@ -68,3 +71,14 @@ export const venueHref = (slug: string): string => `/events/venues/${slug}/`;
 // Outlets are sections on the dining hub (see Footer), not standalone pages yet.
 export const outletHref = (slug: string): string => `/dining/#${slug}`;
 export const offerHref = (slug: string): string => `/offers/${slug}/`;
+
+type NavLink = { label: string; href: string };
+
+/**
+ * The primary navigation (site.navigation.main), keeping only links whose page
+ * (and anchor's page) exists in this build — so the header, the menu and the
+ * footer never offer a dead link.
+ */
+export function primaryNav(main: ReadonlyArray<NavLink>): NavLink[] {
+  return main.filter((link) => isBuiltRoute(link.href));
+}

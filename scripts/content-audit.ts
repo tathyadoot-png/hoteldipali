@@ -46,6 +46,7 @@ export const CONTENT_FILES: Array<{ file: string; page: string }> = [
   { file: "reviews.json", page: "Home (reviews)" },
   { file: "gallery.json", page: "Gallery" },
   { file: "offers.json", page: "Offers" },
+  { file: "decor.json", page: "Decoration (site-wide)" },
 ];
 
 export function pageForFile(file: string): string {

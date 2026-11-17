@@ -9,7 +9,7 @@ import { RoomCard } from "@/components/cards/RoomCard";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
 import { CallLink } from "@/components/links/CallLink";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { getRoom, getRoomSlugs, getRooms } from "@/content";
 import { formatMoney } from "@/lib/format";
 
@@ -199,7 +199,7 @@ export default async function RoomPage({ params }: RoomPageProps) {
       {/* ── Enquiry ───────────────────────────────────────────── */}
       <section
         id="enquire"
-        data-theme="peacock"
+        data-theme="dark"
         className="paper-grain bg-surface py-16 text-ink md:py-20"
         aria-labelledby="room-enquire"
       >

@@ -34,7 +34,7 @@
         ],
         "focus": "45% 70%",
         "status": "public-unverified",
-        "source": "Owner-supplied hotel photograph (public/hotel/DJI_20260831173334_0354_D.JPG), received 2026-10",
+        "source": "Owner-supplied hotel photograph (media-source/hotel/DJI_20260831173334_0354_D.JPG), received 2026-10",
         "note": "confirm usage rights and caption with the hotel"
       },
       {
@@ -51,7 +51,7 @@
           1080
         ],
         "status": "public-unverified",
-        "source": "Owner-supplied hotel photograph (public/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10",
+        "source": "Owner-supplied hotel photograph (media-source/hotel/DJI_20260831173307_0351_D.JPG), received 2026-10",
         "note": "portrait crop of the gallery's pool aerial (made by pnpm make:photos); confirm usage rights and caption with the hotel"
       }
     ]

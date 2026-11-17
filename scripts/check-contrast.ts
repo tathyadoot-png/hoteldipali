@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 
 import {
   contrastRatio,
+  DISTINCT_CHECKS,
+  hueDistance,
   pairsForVariant,
   parseThemeTokens,
   type ThemeTokens,
@@ -15,7 +17,7 @@ const themePath = join(here, "..", "src", "styles", "theme.css");
 const css = readFileSync(themePath, "utf8");
 const tokens = parseThemeTokens(css);
 
-const variants: Variant[] = ["light", "peacock", "emerald"];
+const variants: Variant[] = ["light", "dark", "deep"];
 let failures = 0;
 
 console.log("\nWCAG AA contrast check — src/styles/theme.css\n");
@@ -50,6 +52,26 @@ for (const variant of variants) {
         `${pair.min}`.padEnd(7) +
         (pass ? "PASS" : "FAIL").padEnd(8) +
         pair.use,
+    );
+  }
+  for (const check of DISTINCT_CHECKS) {
+    const a = set[check.a];
+    const b = set[check.b];
+    if (!a || !b) {
+      console.log(`  ${`${check.a}≠${check.b}`.padEnd(28)}MISSING TOKEN`);
+      failures += 1;
+      continue;
+    }
+    const distance = hueDistance(a, b);
+    const pass = distance >= check.minHue;
+    if (!pass) failures += 1;
+    console.log(
+      "  " +
+        `${check.a}≠${check.b}`.padEnd(28) +
+        `${distance.toFixed(0)}°`.padEnd(10) +
+        `${check.minHue}°`.padEnd(7) +
+        (pass ? "PASS" : "FAIL").padEnd(8) +
+        check.use,
     );
   }
   console.log("");

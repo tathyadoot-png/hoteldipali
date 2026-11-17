@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200" role="img" aria-label="Executive Suite, bedroom wide shot (sample placeholder)">
-  <rect x="0" y="0" width="1600" height="1200" fill="#DCCFB8"/>
-  <path d="M0 936 L1600 672 L1600 1200 L0 1200 Z" fill="#CBBB9F"/>
-  <path d="M320 408 q224 -144 448 0" fill="none" stroke="#AE9C7C" stroke-width="3" opacity="0.45"/>
-  <rect x="13" y="13" width="1574" height="1174" fill="none" stroke="#AE9C7C" stroke-width="2" opacity="0.35"/>
+  <rect x="0" y="0" width="1600" height="1200" fill="#E7DDE2"/>
+  <path d="M0 936 L1600 672 L1600 1200 L0 1200 Z" fill="#D8CBD2"/>
+  <path d="M320 408 q224 -144 448 0" fill="none" stroke="#AE9A7C" stroke-width="3" opacity="0.45"/>
+  <rect x="13" y="13" width="1574" height="1174" fill="none" stroke="#AE9A7C" stroke-width="2" opacity="0.35"/>
 </svg>

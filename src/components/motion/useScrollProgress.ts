@@ -5,7 +5,7 @@ import { useEffect, useRef, useSyncExternalStore, type RefObject } from "react";
 import { useSmoothScroll } from "@/components/motion/SmoothScroll";
 import { prefersRichMotion, RICH_MOTION_QUERY, syncRootMotionAttribute } from "@/lib/motion";
 
-export type ProgressMode = "pinned" | "through" | "rise" | "enter";
+export type ProgressMode = "pinned" | "through" | "rise" | "enter" | "leave";
 
 type Options = {
   /** When false nothing is observed and the CSS variable is never written. */
@@ -20,6 +20,8 @@ type Options = {
    * "enter": 0 when its top enters at the bottom, 1 once it is wholly in view
    * (or, if taller than the viewport, when its top reaches the top) — for the
    * last element on a page, whose top may never reach the top (the footer).
+   * "leave": 0 when its top is at the viewport top, 1 once its top has moved
+   * one viewport above it — for the first thing on a page (the home hero).
    */
   mode?: ProgressMode;
   /**
@@ -46,7 +48,7 @@ type Options = {
  *   frame behind the page; with native scrolling it uses one rAF per change;
  * - nothing runs unless the element is near the viewport and the page moves.
  */
-export function useScrollProgress<T extends HTMLElement>(
+export function useScrollProgress<T extends HTMLElement | SVGElement>(
   ref: RefObject<T | null>,
   { enabled = true, mode = "pinned", cssVar = "--p", onProgress }: Options = {},
 ) {
@@ -84,7 +86,9 @@ export function useScrollProgress<T extends HTMLElement>(
             ? (y + vh - top) / vh
             : mode === "enter"
               ? (y + vh - top) / Math.max(1, Math.min(vh, height))
-              : (y + vh - top) / (vh + height);
+              : mode === "leave"
+                ? (y - top) / vh
+                : (y + vh - top) / (vh + height);
       const p = Math.round(Math.min(1, Math.max(0, raw)) * 10000) / 10000;
       if (p === last) return;
       last = p;

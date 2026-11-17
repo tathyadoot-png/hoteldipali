@@ -40,6 +40,8 @@ type PictureProps = {
   fill?: boolean;
   /** Classes for the wrapper (cropped mode) or the <img> (natural / fill mode). */
   className?: string;
+  /** A cut-out with alpha: no placeholder colour behind it. */
+  transparent?: boolean;
 };
 
 /** "…/name-2560.webp" + [480, 960] → "…/name-480.webp 480w, …/name-960.webp 960w". */
@@ -56,7 +58,9 @@ export function Picture({
   decorative = false,
   fill = false,
   className,
+  transparent = false,
 }: PictureProps) {
+  const ground = transparent ? "" : "bg-surface-alt";
   const alt = decorative ? "" : image.alt;
   const ariaHidden = decorative ? true : undefined;
   const loading = priority ? "eager" : "lazy";
@@ -82,7 +86,7 @@ export function Picture({
       <img
         {...common}
         alt={alt}
-        className={`absolute inset-0 h-full w-full bg-surface-alt object-cover ${className ?? ""}`}
+        className={`absolute inset-0 h-full w-full ${ground} object-cover ${className ?? ""}`}
       />
     );
     if (!image.small) return img;
@@ -103,7 +107,7 @@ export function Picture({
   if (ratio) {
     return (
       <div
-        className={`relative overflow-hidden bg-surface-alt ${ASPECT_CLASS[ratio]} ${className ?? ""}`}
+        className={`relative overflow-hidden ${ground} ${ASPECT_CLASS[ratio]} ${className ?? ""}`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation */}
         <img {...common} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
@@ -113,6 +117,6 @@ export function Picture({
 
   return (
     // eslint-disable-next-line @next/next/no-img-element -- static export; no next/image optimisation
-    <img {...common} alt={alt} className={`h-auto w-full bg-surface-alt ${className ?? ""}`} />
+    <img {...common} alt={alt} className={`h-auto w-full ${ground} ${className ?? ""}`} />
   );
 }

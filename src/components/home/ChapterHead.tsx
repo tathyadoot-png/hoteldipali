@@ -1,4 +1,4 @@
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 
 type ChapterHeadProps = {
   /** Roman numeral of the chapter in The Living Experiences. */

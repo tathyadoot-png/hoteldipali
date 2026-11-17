@@ -1,6 +1,7 @@
 // STATIC-ONLY: JSON import; replace with CMS/DB fetch in Phase 2
 import type { z } from "zod";
 
+import decorData from "@content/decor.json";
 import galleryData from "@content/gallery.json";
 import leisureData from "@content/leisure.json";
 import restaurantMenuData from "@content/menus/restaurant.json";
@@ -13,6 +14,7 @@ import siteData from "@content/site.json";
 import venuesData from "@content/venues.json";
 
 import {
+  decorSchema,
   faqsSchema,
   gallerySchema,
   leisureSchema,
@@ -23,6 +25,7 @@ import {
   roomsSchema,
   siteSchema,
   venuesSchema,
+  type Decor,
   type Department,
   type Faq,
   type FaqGroup,
@@ -72,6 +75,7 @@ const gallery: GalleryItem[] = parseOrThrow(
   "content/gallery.json",
 ).sort((a, b) => a.order - b.order);
 const offers = parseOrThrow(offersSchema, offersData, "content/offers.json");
+const decor: Decor[] = parseOrThrow(decorSchema, decorData, "content/decor.json");
 
 const menus: Record<string, Menu> = {
   restaurant: parseOrThrow(
@@ -147,6 +151,15 @@ export async function getOffers({ activeOn }: { activeOn?: Date } = {}): Promise
   if (!activeOn) return offers;
   const day = activeOn.toISOString().slice(0, 10);
   return offers.filter((o) => o.validFrom <= day && day <= o.validTo);
+}
+
+/** Decoration (flowers, patterns): ornament only, never a page's subject. */
+export async function getDecor(): Promise<Decor[]> {
+  return decor;
+}
+
+export async function getDecorItem(id: string): Promise<Decor | null> {
+  return decor.find((d) => d.id === id) ?? null;
 }
 
 export async function getContact(department: Department) {

@@ -26,21 +26,21 @@ import Lenis from "lenis";
 /**
  * Glide strength. Lenis damps exponentially with a time constant of
  * 1 / (lerp × 60) s, independent of frame rate. Measured per 100px wheel notch
- * in Chromium (production build, 1440×900; see docs/PLAN.md):
+ * in Chromium (production build, 1440×900, timed from the wheel event; median
+ * of 5; see docs/PLAN.md):
  *
- *   lerp   50% of notch   90%      settled   frames   reversal
- *   0.14    97 ms         283 ms   ~520 ms   30       37 ms   (2026-10-19)
- *   0.10   128 ms         395 ms   ~716 ms   38       37 ms   ← chosen
- *   0.09   143 ms         436 ms   ~796 ms   41       39 ms
- *   0.08   166 ms         486 ms   ~900 ms   44       31 ms
+ *   lerp   50% of notch   90%      ≤ 1 px from rest   last 1 px   reversal
+ *   0.10   137 ms         402 ms   725 ms             908 ms      19–33 ms  (R1)
+ *   0.09   156 ms         442 ms   806 ms             1006 ms     25–34 ms  ← chosen
+ *   0.08   165 ms         497 ms   897 ms             1130 ms     27–34 ms
  *
- * 0.10 gives the longer, softer glide asked for (2026-10-21) while a notch is
- * still 90% done in ~0.4 s and at rest in ~0.7 s; 0.08–0.09 took up to ~0.9 s
- * to stop. Reversal stays instant at every setting (see `virtualScroll`
- * below). wheelMultiplier stays 1: a notch travels exactly as far as it does
- * natively — never slower.
+ * 0.09 (R1.1, 2026-11-04) gives the softer glide asked for while a notch is
+ * still within a pixel of rest in ~0.8 s (0.08 took ~0.9 s); the last pixel
+ * lands at ~1 s, below what reads as movement. Reversal stays instant at every
+ * setting (see `virtualScroll` below). wheelMultiplier stays 1: a notch
+ * travels exactly as far as it does natively — never slower.
  */
-const LERP = 0.1;
+const LERP = 0.09;
 
 /** Keys whose default action scrolls the page. */
 const SCROLL_KEYS = new Set([" ", "PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown", "Tab"]);

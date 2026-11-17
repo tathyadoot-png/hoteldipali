@@ -1,19 +1,25 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-// The home page's opening, hero and scroll-driven scenes. The hero (Emerald,
-// 2026-10-24) frames the hotel's lit entrance in a gold arch — a photograph,
-// and from tablet width up the same view in motion (2026-10-26); a short
-// opening loader plays on a full page load only. Scenes run under "rich
-// motion" (>=1024px, fine pointer, no reduced-motion request — the same query
-// the boot script uses).
+import { CUTOUT_CROP, CUTOUT_GARDEN, CUTOUT_TOWER, SIGNAGE } from "../src/lib/hero-cutout";
+
+// The home page's opening, hero and scroll-driven scenes. The hero (R1.1,
+// "Midnight Bloom", 2026-11-04) is the night: DIPALI across the screen in
+// engraved gold, HOTEL above it, and the hotel's lit entrance — a cut-out of
+// the night photograph — standing in front of the letters. Under desktop rich
+// motion the first viewport of scroll spreads and sinks the letters behind
+// the building, then the name travels into the header and becomes its
+// logotype. The opening ("Midnight Bloom") plays once per session. Scenes run
+// under "rich motion" (>=1024px, fine pointer, no reduced-motion request — the
+// same query the boot script uses).
 
 const DESKTOP = { width: 1280, height: 800 };
 const PHONE = { width: 360, height: 780 };
-const EXIT_AT = 1450; // IntroLoader: ms after navigation start
-const CLIP = "/video/entrance-night-arch-532.mp4";
+const EXIT_AT = 1600; // IntroLoader: ms after navigation start
+const CUTOUT = /\/images\/hotel\/entrance-night-cutout-(\d+)\.webp$/;
+const INTRO_SEEN_KEY = "dipali:intro-seen";
 
-/** Every request for a file under /video/ while `page` is open. */
+/** Requests for video files while `page` is open. */
 function trackVideo(page: Page) {
   const requests: string[] = [];
   page.on("request", (req) => {
@@ -23,134 +29,246 @@ function trackVideo(page: Page) {
   return requests;
 }
 
-/** The hero: headline, photograph and calls to action in one viewport. */
+const rectOf = (page: Page, selector: string) =>
+  page.evaluate((s) => {
+    const r = document.querySelector(s)!.getBoundingClientRect();
+    return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
+  }, selector);
+
+/** The hero: the night, the name, the line, the two actions and the cut-out. */
 async function expectHero(page: Page) {
-  const videoRequests = trackVideo(page);
   await page.goto("/");
   await page.waitForLoadState("load");
+  const hero = page.locator(".home-hero");
+  await expect(hero).toHaveAttribute("data-theme", "deep");
+  await expect(hero).toHaveClass(/text-ink/);
 
-  const hero = page.locator(".entrance");
-  await expect(hero.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(hero.getByRole("link", { name: "Explore the Experience" })).toHaveAttribute(
-    "href",
-    "#explore",
-  );
-  await expect(hero.getByRole("link", { name: "Discover Hotel Dipali" })).toHaveAttribute(
-    "href",
-    "#welcome",
+  await expect(hero.getByRole("heading", { level: 1 })).toHaveAccessibleName(/^Hotel Dipali, Sagar$/);
+  await expect(hero.locator(".home-hero-name .wordmark-hotel")).toHaveText("Hotel");
+  await expect(hero.locator(".home-hero-name .wordmark-dipali")).toHaveText("Dipali");
+  await expect(hero.locator(".home-hero-line")).toHaveText(
+    "Gardens, gatherings and warm hospitality in the heart of Sagar",
   );
 
-  const image = await hero.locator("img").evaluate((img: HTMLImageElement) => ({
+  const book = hero.getByRole("link", { name: /^Book a Stay/ });
+  await expect(book).toHaveClass(/btn-primary/);
+  await expect(book).toHaveAttribute("href", /^https:\/\/wa\.me\/91\d{10}\?text=/);
+  const wedding = hero.getByRole("link", { name: "Plan a Wedding" });
+  await expect(wedding).toHaveClass(/btn-secondary/);
+  await expect(wedding).toHaveAttribute("href", "/weddings/");
+
+  const image = await hero.locator(".home-hero-building img").evaluate((img: HTMLImageElement) => ({
     src: img.currentSrc,
-    srcset: img.srcset,
+    alt: img.alt,
     loaded: img.complete && img.naturalWidth > 0,
+    aspect: img.naturalWidth / img.naturalHeight,
+    background: getComputedStyle(img).backgroundColor,
   }));
-  // A real, responsive photograph — not a placeholder, not the camera original.
-  expect(image.src).toMatch(/\/images\/hotel\/entrance-night-arch-\d+\.webp$/);
-  expect(image.srcset).toContain("entrance-night-arch-960.webp 960w");
+  expect(image.src).toMatch(CUTOUT);
   expect(image.loaded).toBe(true);
-
-  // No runway: the hero is one viewport tall.
-  const ratio = await page.evaluate(
-    () => document.querySelector<HTMLElement>(".entrance")!.offsetHeight / window.innerHeight,
-  );
-  expect(ratio).toBeLessThan(1.15);
-
-  // No canvas / WebGL layer, and never the 13 MB source video.
-  await expect(page.locator("canvas")).toHaveCount(0);
-  expect(videoRequests.filter((path) => path !== CLIP)).toEqual([]);
-  return { image, videoRequests };
+  expect(image.alt).toMatch(/entrance/i);
+  // A cut-out: nothing painted behind it.
+  expect(image.background).toBe("rgba(0, 0, 0, 0)");
+  await expect(page.locator("video")).toHaveCount(0);
+  return { hero, image };
 }
 
 test.describe("Home hero", () => {
-  test("desktop: the lit entrance in its arch, headline and calls to action", async ({
+  for (const viewport of [DESKTOP, { width: 1920, height: 1080 }]) {
+    test(`${viewport.width}px: DIPALI spans the screen, and the building stands in front of it`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      const video = trackVideo(page);
+      await expectHero(page);
+      // The page's own width (a stable scrollbar gutter is reserved beside it).
+      const width = await page.evaluate(() => document.body.getBoundingClientRect().width);
+      const dipali = await rectOf(page, ".home-hero-name .wordmark-dipali");
+      expect(dipali.width / width).toBeGreaterThan(0.9);
+      expect(Math.abs(dipali.left + dipali.width / 2 - width / 2)).toBeLessThanOrEqual(2);
+
+      // Stacking: the building is painted over the letters (same stacking
+      // context, a higher z-index), and its parapet crosses the capitals.
+      const z = await page.evaluate(() => ({
+        name: Number(getComputedStyle(document.querySelector(".home-hero-name")!).zIndex),
+        building: Number(getComputedStyle(document.querySelector(".home-hero-building")!).zIndex),
+      }));
+      expect(z.building).toBeGreaterThan(z.name);
+      const building = await rectOf(page, ".home-hero-building");
+      expect(building.top).toBeGreaterThan(dipali.top + dipali.height * 0.3);
+      expect(building.top).toBeLessThan(dipali.bottom);
+      expect(building.left).toBeLessThan(width / 2);
+      expect(building.right).toBeGreaterThan(width / 2);
+
+      // From xl the line and the actions flank the garden on the plain night.
+      const line = await rectOf(page, ".home-hero-line");
+      const actions = await rectOf(page, ".home-hero-actions");
+      expect(line.right).toBeLessThanOrEqual(building.left + building.width * 0.05);
+      expect(actions.left).toBeGreaterThanOrEqual(building.right - building.width * 0.05);
+      // Clear of the next section's arched edge.
+      const next = await rectOf(page, "#welcome");
+      expect(actions.bottom).toBeLessThan(next.top);
+      expect(video).toEqual([]);
+    });
+  }
+
+  test("phone: the same layering, still, with a phone-sized cut-out and the header's logotype", async ({
+    page,
+  }) => {
+    await page.setViewportSize(PHONE);
+    const { image } = await expectHero(page);
+    expect(Number(CUTOUT.exec(image.src)?.[1])).toBeLessThanOrEqual(720);
+    await expect(page.locator("html")).not.toHaveAttribute("data-motion", "rich");
+    const dipali = await rectOf(page, ".home-hero-name .wordmark-dipali");
+    const building = await rectOf(page, ".home-hero-building");
+    expect(dipali.width / 360).toBeGreaterThan(0.88);
+    expect(building.top).toBeGreaterThan(dipali.top);
+    expect(building.top).toBeLessThan(dipali.bottom);
+    // No scroll morph: nothing written, the letters untransformed; the header
+    // shows its own logotype from the start.
+    await page.evaluate(() => window.scrollTo({ top: innerHeight * 0.6, behavior: "instant" }));
+    await page.waitForTimeout(300);
+    expect(await page.locator(".home-hero").evaluate((el) => el.style.getPropertyValue("--h"))).toBe("");
+    expect(
+      await page.locator(".home-hero-name .wordmark").evaluate((el) => getComputedStyle(el).transform),
+    ).toBe("none");
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await expect(page.locator(".header-logotype")).toHaveCSS("opacity", "1");
+    await expect(page.locator("canvas")).toHaveCount(0);
+  });
+
+  test("the cut-out never frames the signage, and is fetched with the document", async ({ page }) => {
+    // The crop and the mask's opaque regions (src/lib/hero-cutout.ts).
+    const crop = { ...CUTOUT_CROP, right: CUTOUT_CROP.x + CUTOUT_CROP.w, bottom: CUTOUT_CROP.y + CUTOUT_CROP.h };
+    const xs = CUTOUT_TOWER.map(([x]) => x);
+    const ys = CUTOUT_TOWER.map(([, y]) => y);
+    const opaque = [
+      { left: Math.min(...xs), right: Math.max(...xs), top: Math.min(...ys), bottom: Math.max(...ys) },
+      { left: CUTOUT_GARDEN.outer[0], right: CUTOUT_GARDEN.outer[1], top: CUTOUT_GARDEN.top, bottom: 1 },
+    ];
+    const overlaps = (a: { left: number; right: number; top: number; bottom: number }, b: typeof a) =>
+      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    for (const sign of SIGNAGE) {
+      const box = { left: sign.x, right: sign.x + sign.w, top: sign.y, bottom: sign.y + sign.h };
+      const inCrop = overlaps(box, { left: crop.x, right: crop.right, top: crop.y, bottom: crop.bottom });
+      if (!inCrop) continue;
+      for (const region of opaque) expect(overlaps(box, region), sign.name).toBe(false);
+    }
+    // The rooftop sign is not even in the file.
+    expect(SIGNAGE[0]!.y + SIGNAGE[0]!.h).toBeLessThanOrEqual(CUTOUT_CROP.y);
+
+    await page.setViewportSize(DESKTOP);
+    const { image } = await expectHero(page);
+    // The shipped file is this crop (4096 × 3072 source).
+    expect(image.aspect).toBeCloseTo((CUTOUT_CROP.w * 4096) / (CUTOUT_CROP.h * 3072), 2);
+    const preload = page.locator('link[rel="preload"][as="image"][imagesrcset*="entrance-night-cutout"]');
+    await expect(preload).toHaveAttribute("imagesrcset", /entrance-night-cutout-720\.webp 720w/);
+    await expect(preload).toHaveAttribute("fetchpriority", "high");
+  });
+});
+
+test.describe("Hero → header morph — rich motion", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("the name travels into the header's centre and becomes its logotype, and back", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(".intro")).toHaveAttribute("data-state", "done", { timeout: 5_000 });
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "rich");
+    const header = page.locator(".header-shell");
+    const logotype = page.locator(".header-logotype");
+    const name = page.locator(".home-hero-name");
+    // At the top: the slot waits; the hero's name is the logo.
+    await expect(logotype).toHaveCSS("opacity", "0");
+    await expect(name).toHaveCSS("opacity", "1");
+    await expect(header).not.toHaveAttribute("data-landed");
+
+    // Nearly there: the travelling name sits on the logotype's place.
+    await page.evaluate(() => window.scrollTo({ top: Math.round(innerHeight * 0.715), behavior: "instant" }));
+    await expect
+      .poll(async () => {
+        const flying = await rectOf(page, ".home-hero-name .wordmark-dipali");
+        const slot = await rectOf(page, ".header-logotype .wordmark-dipali");
+        return Math.max(
+          Math.abs(flying.left - slot.left),
+          Math.abs(flying.top - slot.top),
+          Math.abs(flying.width - slot.width),
+        );
+      })
+      .toBeLessThan(3);
+    const headerBox = await header.boundingBox();
+    const flying = await rectOf(page, ".home-hero-name .wordmark-dipali");
+    expect(flying.top).toBeGreaterThanOrEqual(headerBox!.y);
+    expect(flying.bottom).toBeLessThanOrEqual(headerBox!.y + headerBox!.height);
+
+    // Landed: the header's logotype takes over (still over the hero, in gold).
+    await page.evaluate(() => window.scrollTo({ top: Math.round(innerHeight * 0.76), behavior: "instant" }));
+    await expect(header).toHaveAttribute("data-landed", "");
+    await expect(logotype).toHaveCSS("opacity", "1");
+    await expect(name).toHaveCSS("opacity", "0");
+
+    // And back.
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await expect(header).not.toHaveAttribute("data-landed");
+    await expect(logotype).toHaveCSS("opacity", "0");
+    await expect(name).toHaveCSS("opacity", "1");
+  });
+
+  test("the letters spread and sink while the building rises (two planes)", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(".intro")).toHaveAttribute("data-state", "done", { timeout: 5_000 });
+    const letterY = () =>
+      page.locator(".home-hero-name .wordmark-letter").first().evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42);
+    const buildingY = () =>
+      page.locator(".home-hero-building").evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42);
+    expect(await letterY()).toBe(0);
+    await page.evaluate(() => window.scrollTo({ top: Math.round(innerHeight * 0.3), behavior: "instant" }));
+    await expect.poll(letterY).toBeGreaterThan(0);
+    await expect.poll(buildingY).toBeLessThan(0);
+  });
+
+  test("reduced motion: no morph — the header shows its logotype and the hero its name", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await expect(page.locator("html")).not.toHaveAttribute("data-motion", "rich");
+    await expect(page.locator(".header-logotype")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".home-hero-name")).toHaveCSS("opacity", "1");
+  });
+});
+
+test.describe("Gold thread", () => {
+  test("desktop rich motion: one gold line, drawn further as the page scrolls, ending in a flower", async ({
     page,
   }) => {
     await page.setViewportSize(DESKTOP);
-    await expectHero(page);
+    await page.goto("/");
+    const thread = page.locator("svg.thread");
+    await expect(thread).toHaveAttribute("data-ready", "");
+    await expect(thread).toBeVisible();
+    await expect(thread).toHaveAttribute("aria-hidden", "true");
+    const progress = () => thread.evaluate((el) => Number((el as SVGElement).style.getPropertyValue("--p") || 0));
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.3, behavior: "instant" }));
+    await expect.poll(progress).toBeGreaterThan(0);
+    const early = await progress();
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
+    await expect.poll(progress).toBeGreaterThan(early);
+    await expect.poll(progress).toBeGreaterThan(0.95);
+    // The small gold flower at its end opens.
+    const flower = thread.locator(".thread-flower");
+    await expect(flower.locator("ellipse")).toHaveCount(5);
+    await expect
+      .poll(() => flower.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a))
+      .toBeGreaterThan(0.5);
   });
 
-  test("phone: the same photograph, at a phone-sized width, and no video", async ({ page }) => {
+  test("phones: no thread, short static gold rules between sections instead", async ({ page }) => {
     await page.setViewportSize(PHONE);
-    const { image, videoRequests } = await expectHero(page);
-    expect(Number(/-(\d+)\.webp$/.exec(image.src)?.[1])).toBeLessThanOrEqual(720);
-    // CLAUDE.md §K: no autoplay video on phones — not even a download.
-    await page.waitForTimeout(4_500);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    expect(videoRequests).toEqual([]);
-  });
-});
-
-test.describe("Hero video", () => {
-  test.use({ viewport: DESKTOP });
-
-  test("plays muted and inline inside the arch, after the page has loaded", async ({ page }) => {
-    const requests = trackVideo(page);
-    let loadedAt = 0;
-    page.on("load", () => (loadedAt = Date.now()));
     await page.goto("/");
-    const video = page.locator(".entrance-arch-window video");
-    await expect(video).toHaveAttribute("data-playback", "playing", { timeout: 10_000 });
-    expect(requests).toEqual([CLIP]);
-    expect(loadedAt).toBeGreaterThan(0);
-    const state = await video.evaluate((v: HTMLVideoElement) => ({
-      muted: v.muted,
-      inline: v.playsInline,
-      loop: v.loop,
-      paused: v.paused,
-      hidden: v.getAttribute("aria-hidden"),
-    }));
-    expect(state).toEqual({ muted: true, inline: true, loop: true, paused: false, hidden: "true" });
-    // The photograph — its poster — is still there underneath.
-    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
-  });
-
-  test("the pause control stops and restarts it (WCAG 2.2.2)", async ({ page }) => {
-    await page.goto("/");
-    const video = page.locator(".entrance-arch-window video");
-    await expect(video).toHaveAttribute("data-playback", "playing", { timeout: 10_000 });
-    const pause = page.getByRole("button", { name: "Pause the hotel video" });
-    await pause.click();
-    await expect(page.getByRole("button", { name: "Play the hotel video" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
-    await page.getByRole("button", { name: "Play the hotel video" }).click();
-    await expect(video).toHaveAttribute("data-playback", "playing");
-  });
-
-  test("if autoplay is refused, the photograph stays and nothing breaks", async ({ page }) => {
-    await page.addInitScript(() => {
-      HTMLMediaElement.prototype.play = () => Promise.reject(new DOMException("blocked", "NotAllowedError"));
-    });
-    const errors: string[] = [];
-    page.on("pageerror", (e) => errors.push(String(e)));
-    await page.goto("/");
-    await page.waitForTimeout(5_000);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
-    expect(errors).toEqual([]);
-  });
-
-  test("if the video cannot load, the photograph stays", async ({ page }) => {
-    await page.route("**/video/**", (route) => route.abort());
-    await page.goto("/");
-    await page.waitForTimeout(5_000);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    await expect(page.locator(".entrance-arch-window img")).toBeVisible();
-  });
-});
-
-test.describe("Hero video — reduced motion", () => {
-  test.use({ viewport: DESKTOP, reducedMotion: "reduce" });
-
-  test("never plays (or downloads) the video", async ({ page }) => {
-    const requests = trackVideo(page);
-    await page.goto("/");
-    await page.waitForTimeout(4_500);
-    await expect(page.locator(".entrance-video")).toHaveCount(0);
-    expect(requests).toEqual([]);
+    await expect(page.locator("svg.thread")).toHaveCount(0);
+    const stops = page.locator(".thread-stop");
+    expect(await stops.count()).toBeGreaterThanOrEqual(3);
+    const box = await stops.first().boundingBox();
+    expect(box!.height).toBeGreaterThan(20);
+    await expect(stops.first()).toBeVisible();
   });
 });
 
@@ -162,7 +280,7 @@ test.describe("Layered sections — rich motion (desktop)", () => {
   }) => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-motion", "rich");
-    const hero = page.locator(".entrance");
+    const hero = page.locator(".home-hero");
     await expect(hero).toHaveCSS("position", "sticky");
     // Half a viewport in: the hero has not moved, and it is half covered.
     await page.evaluate(() => window.scrollTo({ top: innerHeight / 2, behavior: "instant" }));
@@ -193,7 +311,7 @@ test.describe("Layered sections — rich motion (desktop)", () => {
     await page.goto("/");
     await page.evaluate(() => window.scrollTo({ top: innerHeight * 0.8, behavior: "instant" }));
     await page.waitForTimeout(300);
-    await page.locator(".entrance-actions").getByRole("link", { name: "Explore the Experience" }).focus();
+    await page.locator(".home-hero-actions").getByRole("link", { name: "Plan a Wedding" }).focus();
     await expect
       .poll(() =>
         page.evaluate(() => {
@@ -211,37 +329,66 @@ test.describe("Layered sections — reduced motion", () => {
 
   test("sections simply stack: nothing holds and nothing recedes", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator(".entrance")).not.toHaveCSS("position", "sticky");
+    await expect(page.locator(".home-hero")).not.toHaveCSS("position", "sticky");
     await page.evaluate(() => window.scrollTo({ top: innerHeight / 2, behavior: "instant" }));
     await page.waitForTimeout(300);
-    expect(await page.locator(".entrance").evaluate((el) => el.style.getPropertyValue("--cover"))).toBe("");
+    expect(await page.locator(".home-hero").evaluate((el) => el.style.getPropertyValue("--cover"))).toBe("");
     expect(
-      await page.locator(".entrance").evaluate((el) => Math.round(el.getBoundingClientRect().top)),
+      await page.locator(".home-hero").evaluate((el) => Math.round(el.getBoundingClientRect().top)),
     ).toBeLessThan(0);
   });
 });
 
-test.describe("Opening loader", () => {
+test.describe("Opening — Midnight Bloom", () => {
   test.use({ viewport: DESKTOP });
 
-  test("plays on a full page load without blocking the pointer, then leaves", async ({
+  test("veins, a blooming dahlia and the logo, the name in a line — then it lands and leaves", async ({
     page,
   }) => {
     await page.goto("/");
     const intro = page.locator(".intro");
     await expect(intro).toHaveCount(1);
     await expect(intro).toHaveCSS("pointer-events", "none");
-    await expect(intro).toHaveAttribute("data-state", "done", { timeout: 4_000 });
+    await expect(intro).toHaveAttribute("data-theme", "deep");
+    // Veins from the corners (in the frame that fits the screen).
+    const veins = intro.locator(".intro-veins-landscape .intro-vein");
+    expect(await veins.count()).toBeGreaterThanOrEqual(8);
+    await expect(intro.locator(".intro-veins-landscape")).toBeVisible();
+    await expect(intro.locator(".intro-veins-portrait")).toBeHidden();
+    // The dahlia: three rings of petals around the logo on its medallion.
+    await expect(intro.locator(".intro-ring")).toHaveCount(3);
+    expect(await intro.locator(".intro-petal").count()).toBe(36);
+    await expect(intro.locator(".intro-medallion img")).toHaveAttribute("alt", "");
+    // The name's letters, rising into one line.
+    await expect(intro.locator(".intro-letter")).toHaveCount(11);
+
+    await expect(intro).toHaveAttribute("data-state", "done", { timeout: 5_000 });
     await expect(intro).toBeHidden();
-    // The hero beneath is complete.
-    await expect(page.locator(".entrance-actions .btn-secondary")).toHaveCSS("opacity", "1");
+    // The name has landed in the hero, and the hero beneath is complete.
+    await expect(page.locator(".home-hero-name")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".home-hero-actions .btn-secondary")).toHaveCSS("opacity", "1");
   });
 
-  test("a key press during the opening ends it early", async ({ page }) => {
+  test("it finishes within 2.2 s of the page starting", async ({ page }) => {
     await page.goto("/");
-    // Input skips only once the page has hydrated (the loader is "ready").
+    const doneAt = await page.evaluate(
+      () =>
+        new Promise<number>((resolve) => {
+          const intro = document.querySelector<HTMLElement>(".intro")!;
+          const check = () => (intro.dataset.state === "done" ? resolve(performance.now()) : requestAnimationFrame(check));
+          check();
+        }),
+    );
+    // Generous for parallel test load; the timeline itself ends at ~2.1 s.
+    expect(doneAt).toBeLessThan(3_000);
+    expect(doneAt).toBeGreaterThan(EXIT_AT - 1);
+  });
+
+  test("a key press during the opening skips to the end", async ({ page }) => {
+    await page.goto("/");
+    // Input skips only once the page has hydrated (the opening is "ready").
     // Under heavy parallel load hydration can come after the natural exit, and
-    // then there is nothing left to skip — but the loader must still leave.
+    // then there is nothing left to skip — but it must still leave.
     const ready = await page
       .waitForFunction(() => document.querySelector<HTMLElement>(".intro")?.dataset.state === "ready", null, {
         polling: "raf",
@@ -255,7 +402,6 @@ test.describe("Opening loader", () => {
       await expect(page.locator(".intro")).toHaveAttribute("data-state", /leave|done/);
       test.skip(true, "hydrated after the natural exit: nothing left to skip");
     }
-    // Any later and it would be leaving on its own anyway.
     const now = await page.evaluate(() => performance.now());
     test.skip(now > EXIT_AT - 250, "hydrated too close to the natural exit to observe a skip");
 
@@ -263,6 +409,34 @@ test.describe("Opening loader", () => {
     await expect(page.locator(".intro")).toHaveAttribute("data-state", /leave|done/, {
       timeout: 200,
     });
+    await expect(page.locator(".intro")).toHaveAttribute("data-state", "done", { timeout: 1_000 });
+    await expect(page.locator(".home-hero-name")).toHaveCSS("opacity", "1");
+  });
+
+  test("once per session: a second full load of the page skips it", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(".intro")).toHaveAttribute("data-state", /ready|leave|done/);
+    expect(await page.evaluate((key) => sessionStorage.getItem(key), INTRO_SEEN_KEY)).toBe("1");
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-intro", "off");
+    await expect(page.locator(".intro")).toBeHidden();
+    await expect(page.locator(".home-hero-name")).toHaveCSS("opacity", "1");
+  });
+
+  test("with storage unavailable it still plays, and nothing breaks", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (err) => errors.push(err.message));
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "sessionStorage", {
+        get() {
+          throw new DOMException("blocked", "SecurityError");
+        },
+      });
+    });
+    await page.goto("/");
+    await expect(page.locator(".intro")).toHaveAttribute("data-state", "done", { timeout: 5_000 });
+    await expect(page.locator(".home-hero-name")).toHaveCSS("opacity", "1");
+    expect(errors).toEqual([]);
   });
 
   test("a slow connection skips it, so it never adds to a slow load", async ({ page, context }) => {
@@ -283,11 +457,18 @@ test.describe("Opening loader", () => {
     ).toBe("0s");
   });
 
+  test("reduced motion: never shown", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await expect(page.locator(".intro")).toBeHidden();
+    await expect(page.locator(".home-hero-name")).toHaveCSS("opacity", "1");
+  });
+
   test("client-side navigation back home does not replay it", async ({ page }) => {
     await page.goto("/rooms/");
-    await page.locator(".header-keystone").getByRole("link", { name: /home/ }).click();
+    await page.locator("header").getByRole("link", { name: /home/ }).click();
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.locator("#home-hero")).toBeVisible();
+    await expect(page.locator(".home-hero-name")).toBeVisible();
     await expect(page.locator(".intro")).toHaveCount(0);
     // …and the hero's entrance does not wait for it.
     expect(
@@ -296,13 +477,14 @@ test.describe("Opening loader", () => {
   });
 });
 
-test.describe("Opening loader — no JavaScript", () => {
+test.describe("Opening — no JavaScript", () => {
   test.use({ viewport: DESKTOP, javaScriptEnabled: false });
 
   test("the CSS-only opening still leaves and the hero is complete", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".intro")).toBeHidden({ timeout: 4_000 });
-    await expect(page.locator(".entrance-actions .btn-secondary")).toHaveCSS("opacity", "1", {
+    await expect(page.locator(".home-hero-name")).toHaveCSS("opacity", "1", { timeout: 4_000 });
+    await expect(page.locator(".home-hero-actions .btn-secondary")).toHaveCSS("opacity", "1", {
       timeout: 4_000,
     });
   });
@@ -432,7 +614,7 @@ test.describe("Home scenes — reduced motion", () => {
     // No opening loader; the headline, subline and calls to action are all
     // there at once.
     await expect(page.locator(".intro")).toBeHidden();
-    for (const selector of ["#home-hero", ".entrance-line", ".entrance-subline", ".entrance-actions"]) {
+    for (const selector of [".home-hero-name", ".home-hero-line", ".home-hero-actions", ".home-hero-building"]) {
       await expect(page.locator(selector).first()).toBeVisible();
       await expect(page.locator(selector).first()).toHaveCSS("opacity", "1");
     }
@@ -454,7 +636,7 @@ test.describe("Home scenes — reduced motion", () => {
   test("passes axe-core with no serious or critical violations", async ({ page }) => {
     await page.goto("/");
     const results = await new AxeBuilder({ page })
-      .exclude(".fixed.bottom-0.z-30") // StickyCtaBar — layout-level, outside landmarks
+      .exclude(".sticky-bar") // the phone bar — layout-level, outside landmarks
       .analyze();
     const serious = results.violations.filter(
       (v) => v.impact === "serious" || v.impact === "critical",

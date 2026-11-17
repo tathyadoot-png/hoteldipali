@@ -31,8 +31,25 @@
     ],
     "focus": "50% 45%",
     "status": "public-unverified",
-    "source": "Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
+    "source": "Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
     "note": "cropped below the rooftop sign; confirm usage rights and caption with the hotel"
+  },
+  "homeHeroCutout": {
+    "id": "home-hero-entrance-cutout",
+    "src": "/images/hotel/entrance-night-cutout-1440.webp",
+    "alt": "Hotel Dipali's lit entrance tower and porch at night, above a garden of yellow cannas",
+    "shot": "Night, frontal: the entrance tower, porch and garden lifted out of the sky (below the rooftop signage), so the name can stand behind the building",
+    "aspect": "4:3",
+    "width": 1440,
+    "height": 1101,
+    "widths": [
+      720,
+      1080,
+      1440
+    ],
+    "status": "public-unverified",
+    "source": "Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011702_0042_D.JPG), received 2026-10-24",
+    "note": "cut out by pnpm make:mask (a hand-traced mask; nothing retouched); confirm usage rights and caption with the hotel"
   },
   "homeHeroVideo": {
     "id": "home-hero-entrance-night-video",
@@ -42,7 +59,7 @@
     "height": 740,
     "duration": 7,
     "status": "sample",
-    "note": "AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from public/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch"
+    "note": "AI-generated (Google Veo watermark in the source) animation of DJI_20260909011702_0042_D.JPG; made from media-source/video/1.mp4 by pnpm make:video (arch crop, ends before the source's closing dissolve). Replace with original footage before launch"
   },
   "homeExperience": {
     "id": "home-experience-reception",
@@ -59,7 +76,7 @@
       1200
     ],
     "status": "public-unverified",
-    "source": "Owner-supplied hotel photograph (public/hotel/DSC_1632.JPG), received 2026-10",
+    "source": "Owner-supplied hotel photograph (media-source/hotel/DSC_1632.JPG), received 2026-10",
     "note": "portrait crop of the gallery's reception photo; confirm usage rights and caption with the hotel"
   },
   "homeReveal": {
@@ -89,7 +106,7 @@
       "height": 1792
     },
     "status": "public-unverified",
-    "source": "Owner-supplied hotel photograph (public/images/hotel/DJI_20260909011556_0038_D.JPG), received 2026-10-24",
+    "source": "Owner-supplied hotel photograph (media-source/images/hotel/DJI_20260909011556_0038_D.JPG), received 2026-10-24",
     "note": "cropped below the rooftop \"DIPALI RESIDENCY\" sign; the tower on the left still carries a \"HOTEL DEEPALI\" sign — confirm usage rights, caption and that signage with the hotel"
   },
   "address": {
@@ -280,6 +297,10 @@
       {
         "label": "Gallery",
         "href": "/#gallery"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact/"
       }
     ],
     "footer": [

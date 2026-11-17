@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { Picture } from "@/components/media/Picture";
 import { ScrollScene } from "@/components/motion/ScrollScene";
 import type { Image } from "@/content";
@@ -22,7 +22,7 @@ export function PicturesAssemble({ images }: { images: Image[] }) {
         {images.map((image, i) => (
           <li key={image.id} className="pictures-item" style={{ "--i": i } as CSSProperties}>
             <ScrollReveal variant="image" delay={(i % 3) * 70} className="h-full">
-              <figure className="pictures-figure img-hover">
+              <figure className="pictures-figure img-hover" data-cursor="view">
                 <Picture
                   image={image}
                   fill

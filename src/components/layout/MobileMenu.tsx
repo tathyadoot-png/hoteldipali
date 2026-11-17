@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
-import { Logo } from "@/components/brand/Logo";
-import { MedallionRing } from "@/components/brand/Ornaments";
+import { BrandLink } from "@/components/brand/Logo";
 import { BookStayLink } from "@/components/links/BookStayLink";
 import { CallLink } from "@/components/links/CallLink";
+import { MenuPetals } from "@/components/layout/MenuPetals";
 import { WhatsAppLink } from "@/components/links/WhatsAppLink";
 import { useMobileMenu } from "@/components/providers/MobileMenuProvider";
 import { useSiteData } from "@/components/providers/SiteDataProvider";
+import { primaryNav } from "@/lib/routes";
 import { pauseSmoothScroll } from "@/lib/smooth-scroll";
 
 function CloseIcon() {
@@ -21,7 +22,7 @@ function CloseIcon() {
       height="22"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.6"
       strokeLinecap="round"
       aria-hidden="true"
     >
@@ -30,6 +31,16 @@ function CloseIcon() {
   );
 }
 
+const NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+
+/**
+ * The menu below xl: a full-screen plum night (the deep variant). As it
+ * opens, plum petals unfold from the centre behind the links (CSS, transform
+ * and opacity); the links are set large in Cormorant with roman numerals;
+ * Book a Stay, Call and WhatsApp wait at the foot. A native modal <dialog>:
+ * focus is trapped, Escape closes it, focus returns to the Menu button, and
+ * the page behind stops scrolling.
+ */
 export function MobileMenu({ bookingUrl }: { bookingUrl: string | null }) {
   const { site } = useSiteData();
   const pathname = usePathname();
@@ -38,7 +49,8 @@ export function MobileMenu({ bookingUrl }: { bookingUrl: string | null }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openRef = useRef(open);
 
-  // Open/close the native dialog in sync with the `open` prop.
+  // Open/close the native dialog in sync with the `open` prop (the petals
+  // unfold from @starting-style as it opens).
   useEffect(() => {
     openRef.current = open;
     const dialog = dialogRef.current;
@@ -83,23 +95,22 @@ export function MobileMenu({ bookingUrl }: { bookingUrl: string | null }) {
     };
   }, [open]);
 
-  // The hall behind the gates is Emerald (the royal identity); data-theme needs
-  // its own text-ink (see CLAUDE.md §E) so colour re-resolves inside it.
+  const links = primaryNav(site.navigation.main);
+
+  // The deep scope needs its own text-ink (CLAUDE.md §E) so colour re-resolves.
   return (
     <dialog
       ref={dialogRef}
       id="mobile-menu"
       aria-label="Site menu"
-      data-theme="emerald"
+      data-theme="deep"
       data-lenis-prevent=""
-      className="menu-dialog m-0 h-dvh max-h-none w-screen max-w-none bg-surface p-0 text-ink"
+      className="menu-dialog m-0 h-dvh max-h-none w-screen max-w-none p-0 text-ink"
     >
-      {/* Two gate leaves that part as the menu opens and close behind you. */}
-      <div aria-hidden="true" className="menu-gate menu-gate-l" />
-      <div aria-hidden="true" className="menu-gate menu-gate-r" />
+      <MenuPetals />
 
-      <div className="menu-hall container-site flex h-full flex-col py-4">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+      <div className="menu-body container-site flex h-full flex-col overflow-y-auto pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+        <div className="menu-top">
           <button
             type="button"
             onClick={onClose}
@@ -111,29 +122,30 @@ export function MobileMenu({ bookingUrl }: { bookingUrl: string | null }) {
               Close
             </span>
           </button>
-          <div className="menu-medallion">
-            <MedallionRing className="header-ring" />
-            <Logo variant="reverse" imgClassName="header-emblem" sizes="3rem" />
-          </div>
+          <BrandLink sizes="2.875rem" />
         </div>
 
-        <nav aria-label="Mobile" className="menu-arch mt-6 flex flex-1 flex-col overflow-y-auto">
-          {site.navigation.main.map((link) => (
+        <nav aria-label="Mobile" className="menu-nav mt-6 flex-1">
+          {links.map((link, index) => (
             <Link
               key={link.href}
               href={link.href}
               prefetch={false}
               aria-current={pathname === link.href ? "page" : undefined}
               className="menu-link"
+              style={{ "--i": index } as CSSProperties}
             >
-              {link.label}
+              <span aria-hidden="true" className="menu-num">
+                {NUMERALS[index] ?? index + 1}
+              </span>
+              <span className="menu-label">{link.label}</span>
             </Link>
           ))}
         </nav>
 
-        <div className="menu-foot flex flex-col gap-4 pt-6 pb-[env(safe-area-inset-bottom)]">
-          <BookStayLink bookingUrl={bookingUrl} className="btn-primary btn-cta w-full" />
-          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+        <div className="menu-foot pt-8">
+          <BookStayLink bookingUrl={bookingUrl} className="btn-primary w-full" />
+          <div className="menu-lines">
             <CallLink className="link-royal" />
             <WhatsAppLink context="general" className="link-royal">
               WhatsApp us

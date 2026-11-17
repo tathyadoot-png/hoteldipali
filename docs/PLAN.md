@@ -1,7 +1,8 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-10-27
-Current step: 11 — Pool & Gym, Gallery + Lightbox
+Last updated: 2026-11-13
+Current step: R2 — Redesign of the home page's other sections (Phase R, branch
+`theme/plum`)
 
 ## Status legend
 
@@ -36,6 +37,46 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 - [ ] 16. Motion / "wow" polish pass
 - [ ] 17. QA: accessibility, performance, mobile
 - [ ] 18. Cloudflare Pages deployment + launch checklist
+
+### Phase P — Plum re-theme (2026-11, branch `theme/plum`)
+
+From `docs/audit-2026-11-plum.md` §I — one step per prompt, a commit per step. Steps P-2,
+P-4, P-5 and P-6 carry Phase 1A's remaining steps (noted in brackets).
+
+- [x] P-1a. Role-based theme variants (peacock → `dark`, emerald → `deep`) with no colour
+      change; pnpm only (`packageManager`, one lockfile); source media out of `public/`
+      into `media-source/`; unused components and placeholders removed (owner-approved)
+- [x] P-1b. Palette swap — done as part of R1 (2026-11-04): plum values, new tokens,
+      danger, surface-foot, token-derived shadows, generated textures, placeholders and
+      favicon, gate pairs, reference-image check
+- The remaining P steps continue under Phase R (below): P-2 → R3, P-3 → R1's hero depth
+  (the Grand Reveal keeps its CSS portal), P-4 → R2/R4, P-5 and P-6 unchanged.
+- [ ] P-2. Remaining pages [steps 11, 12 (About, FAQ), 13 (wedding LP, 404)]
+- [ ] P-3. 3D signature: depth-parallax façade in the Grand Reveal — only after the
+      CLAUDE.md §K WebGL decision (audit §G)
+- [ ] P-4. Scroll choreography [step 16]; fix the near-budget scenes
+- [ ] P-5. Legal pages, SEO, analytics [steps 13-legal, 14, 15]
+- [ ] P-6. QA and deploy [steps 17, 18]
+
+### Phase R — Redesign in plum & gold: "Midnight Bloom" (2026-11, branch `theme/plum`)
+
+The owner's direction: start the visual design fresh in plum & gold; keep the engine
+(content, loaders, routes, links, booking, analytics, the enquiry logic, the image
+pipeline, Lenis and the scroll hooks). One step per prompt, a commit per step.
+
+- [x] R1. Design system (palette, gold rules, typography, textures), motion kit, shell
+      (opening loader, header, menu, phone bar, footer), the home hero, /styleguide/
+- [x] R1.1. "Midnight Bloom": every lamp / flame motif removed; a new opening (veins,
+      a drawn dahlia, the name flying into the hero); the giant-wordmark hero with the
+      lit entrance cut out in front of the letters, morphing into the header's logotype;
+      the header rebuilt (split nav, smart hide); menu petals; footer vine; the gold
+      thread's flower; the cursor follower; decorative flowers (`content/decor.json`);
+      smoother scrolling (Lenis lerp 0.09); pnpm guard, nav in content
+- [ ] R2. The home page's other sections, redesigned in the new system
+- [ ] R3. Inner pages (rooms, weddings, events, dining, contact) and the pages still to
+      build [steps 11, 12 (About, FAQ), 13]
+- [ ] R4. Polish and QA of the redesign: scroll choreography across pages, real devices,
+      Safari / Firefox, performance budgets
 
 ### Phase 1B — More pages
 
@@ -143,6 +184,34 @@ Current step: 11 — Pool & Gym, Gallery + Lightbox
 | 2026-10-27 | Shared `ContactLines` ("register" on the contact page, "list" in the home page's enquiry close, replacing its call / WhatsApp pair and location line): every usable line, WhatsApp on the line that takes it, the location with Get directions (new `DirectionsLink`, `directions_click`). Links are named "Call Reservations, +91 …". | Brief: the home enquiry and the contact page share components, each keeping its own copy. |
 | 2026-10-27 | `content-visibility: auto` with a block-size placeholder only on `.finale` and `.enquiry`; the footer emblem is `lazy` (new `Logo` prop — no React image preload). | Measured on a throttled phone: the footer's and tablet's Cormorant text fetched both serif files (46 KB) at load on pages that never used them — /rooms/ LCP 2.89 → 3.09 s. With it, 2.83 → 2.86 s (within run-to-run noise), +8 KB. An inline-size placeholder widened the page at 360 px (caught by the overflow tests). |
 | 2026-10-27 | Contrast gate: Emerald-only pairs for the footer's charcoal foot — ink / accent-ink 12.24, ink-muted / accent-ink 7.76, accent / accent-ink 5.95. Stone that carries text is veiled at 75% Deep Emerald: on the texture's brightest pixel (#2a5c50) gold stays ≥ 4.60:1 and sage ≥ 6.01:1. | Every text/background pair is gated (CLAUDE.md §E). |
+| 2026-11-03 | Audit `docs/audit-2026-11-plum.md`: the owner's new "Royal Plum & Gold" palette is evaluated (not applied); work continues on branch `theme/plum` in the phases of its §I (Phase P above). | Owner's new palette; one phase per prompt, each its own rollback point. |
+| 2026-11-03 | The traced logo SVG that appeared in `public/svg/` is kept outside the deploy at `brand-source/traced/hotel-dipali-logo-traced.svg`. | It is a pixel trace of `logo-primary.png` (619 straight segments on integer coordinates, no curves), not the client's master vector — not a deliverable. |
+| 2026-11-04 | **Theme variants are role-based:** `[data-theme="peacock"]` → `"dark"`, `"emerald"` → `"deep"`; light stays the default (no attribute). The stone texture file is `texture-stone-deep-1024.webp` (renamed, same bytes). The styleguide toggle reads Light / Dark / Deep / Side-by-side and gains a Deep pane. No colour value changed. | Owner: future palette changes edit token values only, never rename code (CLAUDE.md §E). Proof: contrast gate output identical apart from variant labels (47 pairs); 16 full-page screenshots (8 pages × 360/1280, reduced motion) pixel-identical before/after; computed colours of 3,326 elements in rich motion at 1280 identical. |
+| 2026-11-04 | CLAUDE.md §E: "do not change the palette" replaced by "The palette lives only in theme.css. Variants are role-based…"; gradient rule added: token-built only, for scrims, veils, depth and gold sheen on ornaments — never multi-hue decorative gradients on text, buttons or large surfaces. `docs/brief.md` §14.6/§14.7 marked superseded (text kept). | Owner's wording. The audit (§B) found 38 gradients, all token-built and within these uses. |
+| 2026-11-04 | **Source media out of the deploy:** `public/hotel/` (27 originals), the three night originals from `public/images/hotel/`, `public/video/1.mp4` and `public/palettes/` moved to `media-source/` with `git mv` (42 files, 488 MB; still tracked, no history rewrite). `make:photos` / `make:video` read from there (outputs still in `public/`); content `source` provenance paths updated to match. | Export 515 MB / 359 files → 28 MB / 288 files; largest file 24.6 MiB → 2.3 MB (`brand/lawn.png`). Regenerated: 145 photo/logo/texture WebPs byte-identical; the clip re-encodes visually identical (167 frames, mean difference 1.44/255) — the committed clip was kept. |
+| 2026-11-04 | **pnpm only:** `package-lock.json` deleted; `"packageManager": "pnpm@12.8.1"` (the installed version) and `engines.node` `^24.19.0` (`.nvmrc`'s version, same major). pnpm 12 records the package manager in the lockfile, so `pnpm-lock.yaml` gained a 158-line environment section (pnpm 12.8.1 and its platform binaries); the dependency section is unchanged. `pnpm install --frozen-lockfile` passes. | Two lockfiles let a CI pick npm, which once resolved a different `playwright-core` and broke typecheck (2026-10-26). |
+| 2026-11-04 | Deleted with the owner's approval: `CustomCursor.tsx` and its `html[data-cursor="on"]` rules, `WorldWithin.tsx`, `DayJourney.tsx`, and 28 placeholder SVGs whose slots show real photographs. `make:placeholders` now writes placeholders only for image entries still under `/sample/` (it wrote one per entry, which would have restored them); `credits.json` lists the 25 in use. `public/brand/lawn.png` (unreferenced, 2.3 MB) is kept by the owner's choice. | None was imported or referenced; the cursor contradicted the 2026-10-22 "no custom cursor" decision. |
+| 2026-11-04 | **Phase R — "A Thousand Lamps" (R1).** The owner restarts the visual design in plum & gold, keeping the engine. Dipali means a row of lamps: night is plum velvet, light is gold lamplight, day is ivory and lavender. The lamp (a small flame over a glow) is the one recurring mark. | Owner's brief; supersedes the emerald/peacock UI decisions above. One signature idea per section. |
+| 2026-11-04 | **Palette, sampled from `docs/reference/palette-plum.png`.** Brand plum `#3E0F4A` → **`#480950`** (reference letters `#4F0356`, buttons `#3C0141`: hue 295°, saturation 93–97% — the proposal's 66% read visibly duller; moved halfway, lightness kept). Lavender `#DCC7E2` → **`#DFC7E2`** (reference `#E1CBE2`, 297°; the proposal sat 10° bluer). Ivory `#FAF6F4` (reference `#F6F1EF`) and ink `#1C1220` (reference `#110215`, darker but too saturated for body text) kept; the golds kept (the reference's 1–2 px rules sample as blends with the ivory). New tokens `gold-text` / `gold-text-tint` (`#6D5222` on lavender), `lavender`, `danger` (`#A3343A` light, `#F0A3A8` on plum), `surface-foot` (deep `#0F0515`), `logo-gold` (`#ECAE33`, the logo's measured median — gate reference only). The gate now checks 77 pairs (all pass) and that `danger` differs in hue from headings and links (≥ 30°). | Owner's palette, adjusted minimally where it drifted from the reference. |
+| 2026-11-04 | **Fonts: Cormorant Garamond (display), Manrope (UI and body), Great Vibes (one word per page).** `--font-display` / `--font-body` now point at them; Instrument Serif and Figtree are retired (63 KB of font files deleted). Cormorant is preloaded (the hero's name). | Owner's typography: three families. |
+| 2026-11-04 | **Textures generated in CSS.** `--texture-velvet` (dark / deep) and `--texture-paper` (light): neutral SVG noise under 1 KB each, tiled, laid over the surface colour so they follow the palette. The palette-derived WebPs and their `make:photos` jobs are gone; `--texture-stone` now points at the velvet. A slow "mottle" layer was tried and removed: repeated with the 240 px tile it read as vertical banding. | No rights question; follows any future palette. |
+| 2026-11-04 | **Motion kit** (`src/lib/motion/`, `src/components/motion/`): `ScrollReveal` (moved here) gains `mask-line` (+ `RevealLines`), `clip-arch` and `foil`; `ArchWindow`, `GoldThread` + `ThreadStop`, `Tilt3D`, `.lamplight`, `DepthPhoto`. `useScrollProgress` accepts SVG elements. **No GSAP** (nothing needed it). | Brief: reuse the engine; native first. |
+| 2026-11-04 | **WebGL for the hero's depth only:** raw WebGL (no library), one quad and one fragment shader, 1.6 KB gzip, lazy-loaded after `load`, desktop rich motion only; the pointer shifts near and far planes by ≤ 8 px around the focal plane (the porch); it draws only while the offset eases. Its depth map is hand-authored per photograph (`pnpm make:depth`: SVG planes over the photo, blurred; 2.4 KB WebP) — no model, no new tool. Fallback: the plain photograph (no WebGL, a failure, a lost context, phones, reduced motion). CLAUDE.md §K updated. | Brief: WebGL for the hero depth only, ≤ 25 KB, lazy; no Three.js. |
+| 2026-11-04 | **Shell.** Loader "First lamp" (≤ 1.6 s: 17 lamps trace an arch, the logo appears on plum, the arch flies onto the hero's window; exit/skip engine unchanged). Header light: transparent over the hero, then ivory with a gold hairline; the logo always on its plum medallion (`BrandLink`); 7 links (Contact added in code via `primaryNav()` — content unchanged — filtered by `isBuiltRoute`); gold underline drawn from the centre on hover, a gold flame under the current page; below xl the medallion is exactly centred (the old 6 px offset is gone with the old layout). Menu: full-screen plum, numbered Cormorant links, a row of lamps lit as it opens. Phone bar: plum with gold text. Footer: plum velvet, 13 lamps (7 on phones) lighting in sequence, invitation, four columns, the legal line on `surface-foot`. | Owner's brief. |
+| 2026-11-04 | **Home hero.** Light: "Welcome to", HOTEL / DIPALI in Cormorant (DIPALI in plum with one pass of gold foil), `site.tagline`, Book a Stay + Plan a Wedding; the lit entrance (`site.homeHero`) in an `ArchWindow` with a lavender halo and a gold double frame; "A stay to remember" along the left edge from 1280 px. Rich motion: depth from the pointer, and as The Dipali Experience covers the hero the arch opens toward a full frame while the copy rises away. The hero video is not shown for now (clip and content entry kept, `sample`); `EntranceHero`, `HeroDepth` and `HeroVideo` were removed. | Owner's brief. |
+| 2026-11-04 | **No diya, lamp, flame or oil-lamp imagery anywhere** (owner: not religious — simply not wanted). R1's loader lamps, menu lamp row, footer lamps, the nav's flame, the buttons' flame dot, the gold thread's flame, `.lamp`, `--flame` and "A Thousand Lamps" are gone; `.lamplight` → `.glow`. A test greps the built HTML/CSS and the source. | Owner's decision. |
+| 2026-11-04 | **Concept "Midnight Bloom"**: a plum night, gold veins, flowers that bloom. The recurring mark is the small diamond from the logo (drawn as an SVG mask, `--diamond`): under the current page in the header, after it in the menu, at the start of a button on hover. The gold thread ends in a small gold flower; the footer's top edge grows a gold vine from a central flower (each segment < 400 ms, ~1.3 s in all); the menu's plum petals unfold from the centre as it opens. | Owner's brief. |
+| 2026-11-04 | **Opening "Midnight Bloom"** (≤ 2.2 s, once per session): gold veins grow from the four corners (in a landscape or a portrait frame, never stretched); a dahlia blooms where they meet; the logo surfaces on its medallion at its heart; HOTEL DIPALI rises into a line; the two words fly onto the hero's (FLIP — placed on the hero's rectangles at the hero's size, inverted, released; transform only) while the veins draw back. **The dahlia is drawn (three rings of SVG petals), not the photograph:** no download in the first second (the cut-out keeps the bandwidth), crisp at every size, each ring can open on its own, and the opening has no rights question. Once per session: `sessionStorage`, every access guarded; the boot script turns it off before first paint when already seen. | Owner's brief; the brief let me choose asset or SVG petals. |
+| 2026-11-04 | **Hero: HOTEL above DIPALI, not HOTEL inside the D's counter.** DIPALI spans the width in engraved gold (one gold family top to bottom, a hairline of shade, a soft glow); HOTEL sits above in tracked Manrope. Above wins because it stays legible at every size (in the D's counter HOTEL would be ~12 px on a 360 px phone), it survives the morph into the header as a stacked logotype (HOTEL grows from 0.12 to 0.26 of DIPALI's size on the way, so it reads at 10 px in the bar), and it doesn't depend on Cormorant's counter shape (a fallback font during loading would misplace it). | Brief: choose and justify. |
+| 2026-11-04 | **The cut-out** (`pnpm make:mask`, `src/lib/hero-cutout.ts`): the entrance tower (a hand-traced polygon — the architecture is straight lines), its porch and the garden from the night photograph, the garden fading out sideways and at its foot; the crop starts below the rooftop "DIPALI RESIDENCY" sign (not even in the file) and the neighbour's "GAME ZONE" sign lies outside the opaque areas (a test checks every recorded sign). WebP with alpha: 720 w 54.7 KB (phones), 1080 w 94.2 KB, 1440 w 119.2 KB. A new content entry `site.homeHeroCutout` (public-unverified, the original as source). Nothing retouched. The tower sign "HOTEL DEEPALI" is not in this photograph. | Brief: no signage in frame; ≤ 120 KB at 1440 w. |
+| 2026-11-04 | **WebGL depth removed** (`DepthPhoto`, `src/lib/motion/depth-gl.ts`, `make:depth` and its 2.4 KB map deleted). The cut-out standing in front of the letters and the two planes moving apart with scroll give the depth the shader faked; on a transparent cut-out the ±8 px pointer shift would also have needed alpha handling and a second full-hero canvas. Saves the 1.6 KB lazy chunk, a GPU context and a 2.4 KB request. | Brief: keep it only if it still adds something. |
+| 2026-11-04 | **Hero → header morph** (rich motion, `HeroMorph`): over the first viewport (`--h`, one write per frame on the hero) the letters spread and sink while the building rises faster; the name then shrinks toward its top centre (done at 0.6) and slides into the header's centre slot (done at 0.72), where — still over the hero, in gold — the header's logotype takes over at the same size and place (`data-landed`; ≤ 1 px apart at 1280 / 1440 / 1920), before the next section's arch can reach it. The travel's end is measured on resize and font load only. Phones / reduced motion / no JS: the logotype from the start. | Owner's brief. |
+| 2026-11-04 | **Header rebuilt:** a thin bar (4 rem); from xl three links · the logotype at the exact centre · four links and Book a Stay (one Primary nav, `display: contents`); below xl Menu · logotype · Book. Transparent over the home hero in the deep scope (gold logotype), solid ivory elsewhere (plum logotype — type, never the gold logo on ivory). Smart hide: down past 1.5 viewports it slides up; any scroll up brings it back; never while it holds focus or the menu is open. "Contact" moved into `content/site.json`. | Owner's brief. |
+| 2026-11-04 | **Cursor follower** (`CursorFollower`), superseding the 2026-10-22 "no custom cursor" decision: hover + fine pointer, no reduced motion; a 28 px gold ring (lerp 0.18) and a 6 px plum dot; 56 px with a gold tint over links and buttons, "View" over `data-cursor="view"` (the home gallery and room photographs), "Drag" over `data-cursor="drag"` (no rail exists yet — shown in the styleguide), hidden over text fields and when the pointer leaves; the system cursor always stays. | Owner's brief. |
+| 2026-11-04 | **Decoration:** the owner's flower downloads moved to `media-source/decor/flowers/` (committed as received). Used: the dahlia cut-out ("1.png", split at its heart into left and right halves — never one half mirrored), the dark orchid pattern and its "-Photoroom" cut-out (made seamless by a 32 px wrap cross-fade — the originals' edges differ 2.5× more than neighbouring pixels), and three chrysanthemum studies. Graded pixel by pixel to plum and gold (greens → antique gold, navy → plum). Not used: the teal mandala, and the duplicates — "download (8)" is the same dahlia as "1.png" on its dark ground (png = jfif, pixel-identical), "download (9)" a pixel-identical png/jfif pair, the dark orchid's "(1).png" / "(1).jfif" / ".jfif" identical. "1.png" is a transparent cut-out, not white-ground: it needs no multiply; the ivory-ground bud is whitened so `multiply` turns its ground into the exact ivory. All `sample` with note "downloaded image — usage rights unconfirmed". On the site in R1.1: the footer's dahlia half; the rest in the styleguide for R2. | Owner's brief and rules. |
+| 2026-11-04 | **Smoother scroll:** measured first (production build; 1440×900 and 1920×1080; wheel notches 100 px / 90 ms and trackpad-like 6–18 px / 16 ms; the whole home page down and back; a traced pass for attribution). Before: p95 16.7 ms in all four runs (1440 wheel / trackpad, 1920 wheel / trackpad); frames > 33 ms 3 / 0 / 0 / 0, max 66.7 ms (as the enquiry tablet arrived, and once in the gallery). After R1.1 at the old lerp: p95 16.7–16.8 ms; frames > 33 ms 1 / 2 / 0 / 1, max 50 ms. Long frames: the recurring one (50–73 ms, before and after; no script, ≤ 6 ms of rendering) came from the enquiry tablet's `content-visibility: auto` laying its whole subtree out in the frame it arrived — A/B 3 of 7 runs with it, 0 of 7 without — so from 1024 px (where the serif is preloaded anyway) it renders with the page; one 50 ms frame still showed once in the final pass (a compositor stall). No layout reads in scroll handlers, no animated filters (the letters' glow is rasterised once in their layers); nothing else to fix. Main-thread time per traced pass: scripts 2.98 → 3.29–3.93 s, style 2.48 → 2.62–3.17 s, paint 1.39 → 1.24–1.49 s (~2,200 frames): +0.2–0.4 ms per frame from the hero's `--h` and the header's direction listener. Then Lenis lerp 0.10 → **0.09**: a 100 px notch — 50 % 137 → 156 ms, 90 % 402 → 442 ms, within 1 px of rest 725 → 806 ms (0.08: 897 ms, too close to 0.9 s), the last pixel ~1 s; reversal 19–34 ms. Final frames: p95 16.7–16.8 ms, > 33 ms 2 / 0 / 0 / 0. Anchors, keyboard and native touch unchanged (`syncTouch` off; smooth-scroll.spec passes). | Brief: fix causes before tuning; stop < 0.9 s, reversal < 50 ms. |
+| 2026-11-04 | **pnpm guard:** `preinstall` runs `npx only-allow pnpm`; README and CLAUDE.md say pnpm only; `docs/reference/` keeps only `palette-plum.png`. | Owner's housekeeping. |
+| 2026-11-04 | **Tests.** The 20 inherited failures (the lost 27-Oct form/footer UI) and the tests of the replaced UI are deleted; new: `palette.spec` (tokens, gate pairs, no green/teal/yellow gold), `hero-depth.spec` (SwiftShader WebGL: depth on desktop rich motion, fallback, none on phones / reduced motion), the shell spec rewritten (header, menu, phone bar, footer lamps, axe on /, /styleguide/, /contact/, overflow 360–1920), the hero, loader and gold thread in `entrance.spec`. | Brief: test what is built; keep behaviour, accessibility, overflow and link tests. |
 
 ## Brand assets
 
@@ -177,10 +246,9 @@ See CLAUDE.md section M:
 - **Still needed:** Executive Suite, Family Suite, Celebration Hall, Main Lawn,
   Poolside Lawn, gym, bakery, sweets and Poolside Restaurant photos (landscape,
   ≥2400 px wide); a daytime exterior/entrance photo without signage issues.
-- **Deploy:** `public/hotel/` originals (447 MB, files up to 26 MB) are copied into the
-  static export; Cloudflare Pages rejects files over 25 MB. Move the originals out of
-  `public/` (e.g. to a `photos/` source folder and point `make:photos` at it) before
-  deploying — not done, as the brief said not to move them.
+- ~~**Deploy:** `public/hotel/` originals (447 MB, files up to 26 MB) are copied into the
+  static export~~ — resolved 2026-11-04: originals live in `media-source/` (export 28 MB,
+  largest file 2.3 MB).
 
 - Official single address and pincode (platforms conflict — see docs/public-data.md).
 - Room count and categories.
@@ -197,12 +265,12 @@ See CLAUDE.md section M:
   - The brief called the hero photo "Hotel Dipali Residency", and DJI_…0042/0038 show
     "DIPALI RESIDENCY" / "HOTEL DEEPALI" signage. Is Dipali Residency the same property
     and brand? The hero crops the sign out until this is confirmed (CLAUDE.md §G).
-  - Usage rights for `public/palettes/` (they look like downloaded reference images,
-    ~736 px): may their textures ship on the site? Two are used as graded textures.
-  - The three night originals were placed in `public/images/hotel/` (8 MB each) — that
-    folder is deployed. Move them next to the other originals (`public/hotel/`, or a
-    non-public source folder) before deploying; not done (originals are never moved by
-    code without sign-off).
+  - Usage rights for the palette images (now `media-source/palettes/`; they look like
+    downloaded reference images, ~736 px): may their textures ship on the site? Two are
+    used as graded textures. (P-1b proposes our own generated texture, which removes
+    the question.)
+  - ~~The three night originals were placed in `public/images/hotel/` (8 MB each)~~ —
+    resolved 2026-11-04: moved to `media-source/images/hotel/` with the owner's sign-off.
   - Navigation: "About" has no page; "Experiences" (/#unwind) and "Gallery" (/#gallery)
     are provisional anchors until the Pool & Gym and Gallery pages exist. ~~The footer
     still links to /pool-and-gym/, /gallery/ and /contact/~~ — resolved 2026-10-27: the
@@ -217,9 +285,8 @@ See CLAUDE.md section M:
   caption "The reception atrium · Sagar" and `11.jfif` (now unused) can be removed.
 - **Hero video (2026-10-26):** it is AI-generated (Veo) and marked `sample`; launch is
   blocked until original footage (a slow night push-in to the porch, ≥1080 px tall, no
-  signage in view) replaces it. The 12.9 MB source `public/video/1.mp4` is copied into
-  the export — move it out of `public/` before deploying (not done: the brief says not
-  to alter it).
+  signage in view) replaces it. ~~The 12.9 MB source `public/video/1.mp4` is copied into
+  the export~~ — resolved 2026-11-04: it is `media-source/video/1.mp4` (unaltered).
 - **Buttons (2026-10-26):** the shared `.btn-primary` is now gold on every page (it was
   clay on ivory pages) — confirm this is wanted site-wide.
 - **The four experiences (2026-10-27):** the nav's "Experiences" links to the Pool & Gym
@@ -237,10 +304,86 @@ See CLAUDE.md section M:
   "Through the day / Something to take home / By the water / Evening"). The home page no
   longer shows the pool's portrait crop (`leisure.pool.images[1]`) or the photographs the
   retired sections led with; they stay in the content, inner pages are unchanged.
-- **Unused components (2026-10-27):** `src/components/home/WorldWithin.tsx` and
-  `DayJourney.tsx` are imported nowhere since this pass — delete them once the owner
-  agrees (not deleted: deletions are confirmed first). `ScrollSection` stays (motion
-  architecture, CLAUDE.md §K).
+- ~~**Unused components (2026-10-27):** `WorldWithin.tsx` and `DayJourney.tsx`~~ —
+  deleted 2026-11-04 with the owner's approval (with `CustomCursor.tsx`). `ScrollSection`
+  stays (motion architecture, CLAUDE.md §K).
+- **Plum re-theme (audit 2026-11-03, `docs/audit-2026-11-plum.md`):**
+  - ~~Two lockfiles~~ — resolved 2026-11-04 (pnpm only, `packageManager` set).
+  - ~~Deploy weight (515 MB export)~~ — resolved 2026-11-04 (28 MB). Still in `public/`
+    though no page requests them: `brand/lawn.png` (2.3 MB, kept by the owner) and
+    `brand/logo-primary.png` (494 KB, the emblem's source) — move the latter to
+    `media-source/brand/`?
+  - `media-source/` (488 MB) is still tracked in git (repo 499.65 MiB,
+    `git count-objects -vH`, 2026-11-04): consider Git LFS or external storage
+    (history rewriting only with the owner's approval).
+  - **Stone texture drift (found 2026-11-04):** the served `texture-stone-deep-1024.webp`
+    (kept byte-identical) cannot be reproduced from `media-source/palettes/`:
+    `make:photos -- stone` from today's `3.png` (replaced in `5586dd5`) gives a much
+    brighter stone (mean RGB 5/66/52 vs 9/34/30); `--3.png` (the earlier `3.png`) comes
+    close (mean difference ≈ 2/255) but not exact. Moot if P-1b generates its own
+    texture; otherwise decide which source is canonical.
+  - Textures: both are teal (hue 170–181°) and do not regrade cleanly to plum —
+    recommended: our own generated stone, botanical panel dropped or redrawn as SVG.
+  - Token issues for P-1b: light `accent` = `brand` (error text loses its colour → a
+    `danger` token, e.g. #8E1B2E); `deep` accent-ink = surface (the footer foot and the
+    Grand Reveal lose their tonal step → a plum-charcoal, e.g. #2A2230); gold text on
+    lavender fails (3.75:1 → #6D5222, or never on lavender); new tokens get role names
+    (not `gold-text` / `lavender`).
+  - `/rooms/` phone LCP 2.86 s (over the 2.5 s budget, 2026-10-27) — for P-4/P-6.
+  - The traced logo is not a master vector: a 3D medallion or a crisp large mark needs
+    the client's artwork (AI/EPS/PDF/SVG with curves).
+  - The plum reference image is now at `docs/reference/palette-plum.png` (untracked, as
+    is a WhatsApp image beside it) — sample it in P-1b (audit §E was blocked).
+  - P-3 needs the owner's decision on CLAUDE.md §K ("No WebGL/Three.js") — wording
+    proposed in the audit, §G.
+- ~~**20 e2e failures inherited from `3f30fac` (found 2026-11-04):**~~ — resolved 2026-11-04 (R1): the owner had the tests of the lost UI deleted. that commit added the
+  tests for the enquiry choice chips (radios), the date / guests fields and the footer's
+  lamps, but not the code — at HEAD there is no `Lamp` component, no `.lamp` CSS and no
+  radio inputs in `EnquiryForm`. 10 tests × 2 projects fail identically on untouched
+  HEAD and on this branch: contact (form choices), enquiry-form (labels; keyboard
+  choice), events and weddings (enquiry types), shell (keystone centred within 2 px —
+  6 px off; the finale's sequence, reduced motion, phones, no-JS). Is the rest of the
+  2026-10-27 work uncommitted on the office machine? Decide: commit it, or bring the
+- **Midnight Bloom R1.1 (2026-11-04):**
+  - **Flower image rights:** the seven decoration images (`content/decor.json`) are
+    downloads with no known licence — confirm the rights, or replace them with licensed
+    or commissioned images; `pnpm release` is blocked until then.
+  - **Real night footage** for the hero (still not shown; the cut-out is a still).
+  - **Vector logo** (unchanged): the master artwork is still needed.
+  - **Display copy to approve:** the tagline (`site.tagline`, sample), "We look forward
+    to welcoming you", "Book a stay, or tell us what you are planning."
+  - **The hero's mask** is hand-traced on the 4096 px original: confirm the cut-out
+    reads right to the hotel (the garden fades into the night at the sides and foot).
+  - **"View" over photographs:** the gallery and room photographs show the cursor's
+    "View", but none opens a lightbox yet — attach "View" only to images that open once
+    the gallery (step 11) exists, or confirm it as a look cue.
+  - **1024–1279 px** (tablets landscape, small laptops): the hero keeps the centred stack
+    under a smaller building; the flanking layout starts at 1280.
+- **Redesign R1 (2026-11-04):**
+  - **Vector logo:** the client's master artwork (AI/EPS/PDF/SVG with curves) is still
+    needed — the traced SVG in `brand-source/traced/` is a pixel trace; a crisp large
+    mark or a favicon from the real emblem needs it. The favicon is a plum disc with a
+    gold "D" placeholder.
+  - **Real night footage** for the hero (the AI clip stays `sample` and is not shown).
+  - **Photo rights and captions** for every placed photograph (unchanged).
+  - ~~**Contact in the main nav**~~ — resolved 2026-11-04 (R1.1): it is in
+    `site.navigation.main`; `primaryNav()` only filters to built routes.
+  - **Display copy to approve:** "Welcome to", "A stay to remember", "We look forward to
+    welcoming you", "Book a stay, or tell us what you are planning."; the hero's line is
+    `site.tagline` (still `sample`).
+  - **Phone LCP and the sections below the hero (for R2):** the hero photograph shares a
+    slow link with the next section's Great Vibes font (42 KB) and its reception photo
+    (102 KB, started by Chrome's lazy-load distance at ~1.4 s). R1 met 1.74 s by capping
+    the phone photo at the 720 w file; R2 should keep below-the-fold weight off the first
+    seconds. Measured over local HTTP/1.1 (`serve`); Cloudflare's HTTP/2 prioritisation
+    should only help.
+  - **`npm install` ran in this checkout on 2026-11-04 (12:46),** outside these sessions:
+    it recreated `package-lock.json` and an npm-layout `node_modules` (playwright-core
+    1.64.1), which broke typecheck. Restored from `pnpm-lock.yaml`; the npm lockfile was
+    moved aside, not committed. Use `pnpm` only (`packageManager` is set).
+  - Checked in Chromium only (headless, SwiftShader / hardware ANGLE). Safari, Firefox and
+    real phones are still to check (R4), including WebGL depth on Safari.
+  tests in line with the code.
 - ~~**No JavaScript:** the header keeps its transparent overlay state~~ — resolved
   2026-10-27: without JS it no longer floats over the content (decision row).
 - **Console (pre-existing, header):** from 768px Chromium warns that the preloaded
@@ -968,3 +1111,97 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     1.18 s, LCP 2.01 s, CLS 0, 398 KB. Wheel-scrolling to the end of /, /contact/ and
     /rooms/: CLS 0, 0 and 0.0004. Not measured: frame timing of the footer's scroll-linked
     depth, Safari, Firefox, real devices.
+- 2026-11-04: **Phase P, step P-1a** — role-based theme names and housekeeping (branch
+  `theme/plum`; no colour, font, layout or motion change). Audit committed first
+  (`e9c3fd0`) and the traced logo moved out of `public/` (`a520662`).
+  - **Variants:** `[data-theme]` `peacock` → `dark`, `emerald` → `deep` in theme.css,
+    pages, components, the contrast gate (`Variant`, parser, pair labels), tests,
+    comments, CLAUDE.md; `emerald-stone-1024.webp` → `texture-stone-deep-1024.webp`
+    (same bytes; `EntranceHero`'s preload and `make:photos` slug follow). Styleguide
+    toggle Light / Dark / Deep / Side-by-side with a new Deep pane (three columns from
+    1536 px). `git grep -niE "peacock|emerald" -- src tests scripts` returns nothing.
+  - **Proof of no visual change:** contrast gate output identical apart from variant
+    labels (47 pairs, same ratios); 16 full-page screenshots (/, /rooms/, a room,
+    /weddings/, /events/, /dining/, /contact/, /thank-you/ × 360 and 1280, reduced
+    motion) pixel-identical against the build of HEAD; computed colours of all 3,326
+    elements of those pages in rich motion at 1280 identical.
+  - **pnpm:** `package-lock.json` deleted; `packageManager` pnpm@12.8.1; `engines.node`
+    `^24.19.0`; `pnpm-lock.yaml` + pnpm's 158-line environment section;
+    `pnpm install --frozen-lockfile` passes. `node_modules.npm-backup/` does not exist on
+    this machine; it is ignored in `.gitignore`, `tsconfig.json`, ESLint and (new)
+    `.prettierignore`.
+  - **Media:** `media-source/` (42 files, 488 MB, tracked via `git mv`); scripts and
+    content provenance paths updated; `docs/data-needed.md` regenerated (paths only).
+    Re-running `make:photos`: 145 outputs byte-identical; the stone texture cannot be
+    reproduced from the repo (open question; the served file is kept). `make:video`: a
+    visually identical re-encode (167 frames, mean difference 1.44/255, worst 4.5 in the
+    closing dissolve); the committed clip is kept. Export **515 MB / 359 files → 28 MB /
+    288 files**; largest file `brand/lawn.png` 2.3 MB; none over 10 MB.
+  - **Removed (owner-approved):** `CustomCursor.tsx` + its CSS, `WorldWithin.tsx`,
+    `DayJourney.tsx`, 28 stale placeholder SVGs; `make:placeholders` writes only
+    placeholders still in use (25) and `credits.json` matches them.
+  - **Docs:** CLAUDE.md §B (`media-source/`, `brand-source/`), §E (role-based palette
+    rule, gradient rule, variant names); `docs/brief.md` §14.6/§14.7 marked superseded;
+    Phase P added here with P-1a ticked; audit findings recorded as decisions and open
+    questions.
+  - **Checks:** lint, typecheck, contrast gate and build pass. `pnpm test:e2e`: **434 of
+    454 pass; 20 fail** — the same 20 fail on untouched HEAD (run in a separate worktree:
+    146 passed, 20 failed across the five affected spec files), inherited from `3f30fac`
+    (open question). The new styleguide toggle test passes on both projects. A first
+    e2e attempt reused a stray preview server without the test form endpoint and was
+    discarded.
+- 2026-11-04: **Phase R, step R1** — "A Thousand Lamps": plum & gold design system,
+  motion kit, shell and the home hero (branch `theme/plum`). See the decision rows of
+  2026-11-04.
+  - **Built:** tokens (light / dark / deep; `gold-text`, `gold-text-tint`, `lavender`,
+    `danger`, `surface-foot`, `logo-gold`), the gate (77 pairs + hue checks), CSS-generated
+    velvet and paper textures, the button family and eyebrow, fonts down to three
+    families; the motion kit (`ScrollReveal` + `mask-line` / `clip-arch` / `foil`,
+    `ArchWindow`, `GoldThread` / `ThreadStop`, `Tilt3D`, `.lamplight`, `DepthPhoto` +
+    `src/lib/motion/depth-gl.ts`, `src/lib/motion/thread.ts`; `src/lib/motion.ts` moved to
+    `src/lib/motion/index.ts`); `IntroLoader`, `Header` / `NavDesktop`, `MobileMenu`,
+    `StickyCtaBar`, `Footer` / `FooterStage`, `BrandLink`, `primaryNav()`; `HomeHero` +
+    `pnpm make:depth` (`scripts/make-depth.ts`); /styleguide/ rebuilt (the system, gold,
+    type, textures, motion demos; Light / Dark / Deep previews with contrast, buttons,
+    chips, fields incl. the danger state). Placeholders and favicon recoloured; palette
+    textures and their `make:photos` jobs removed; `lawn.png` → `media-source/brand/`.
+  - **Removed:** `EntranceHero`, `HeroDepth`, `HeroVideo` (the clip file and
+    `site.homeHeroVideo` stay), `ArchFrame`, `Sprig`, Instrument Serif and Figtree, the
+    old header / menu / loader / hero / footer CSS (theme.css 5,814 → 5,276 lines).
+  - **Measured (Chromium, production build, local `serve`):** phone (390×844, 4× CPU,
+    150 ms RTT, 1.6 Mbps; median of 3) LCP **1.74 s** (1.74 / 1.74 / 1.78; the hero photo),
+    FCP 1.47 s, CLS 0, 528 KB. Before the phone `sizes` cap the photo was the 960 w file
+    and LCP 2.73 s — bandwidth, not script (image done at 2.70 s, no long task before
+    LCP). Desktop (1440×900, GTX 1660 SUPER via ANGLE D3D11, WebGL depth on, wheel
+    through the hero and back, 2 passes): p95 16.7 ms, 0 frames over 33 ms (max 33.3 /
+    16.8 ms). JS: home 190.9 KB gzip (191.2 KB at `3f30fac`, audit) + the lazy WebGL
+    chunk 1.6 KB gzip (not in the initial HTML); CSS 20.9 KB gzip (was 22.8); no new
+    dependency. Not measured: Safari, Firefox, real devices.
+  - **Tests:** **472 pass** (`pnpm test:e2e`); lint, typecheck, contrast gate and build
+    clean. Deleted: the 20 inherited failures and the tests of the replaced UI (hero
+    video, keystone, gate menu, finale). New or rewritten: `palette.spec`,
+    `hero-depth.spec`, `shell.spec`, the hero / loader / gold thread tests in
+    `entrance.spec`, the hero tests in `home.spec`, the styleguide toggle test.
+  - **Environment:** an `npm install` (not run from these sessions) had re-laid
+    `node_modules` in npm's layout at 12:46 and recreated `package-lock.json`, which broke
+    typecheck (playwright-core 1.64.1); restored with `pnpm install --frozen-lockfile`, the
+    npm lockfile moved aside.
+- 2026-11-13: **Phase R, step R1.1** — "Midnight Bloom" (branch `theme/plum`). See the
+  decision rows of 2026-11-04.
+  - **Housekeeping (own commit):** Contact in `site.json`, `preinstall` pnpm guard,
+    `docs/reference/` down to `palette-plum.png`.
+  - **Built:** `Wordmark`; `HomeHero` (deep, giant wordmark, cut-out, flanking foot from
+    xl) + `HeroMorph`; `IntroLoader` rewritten (veins, SVG dahlia, FLIP flight, once per
+    session); `Header` / `NavDesktop` rebuilt (split nav, logotype, diamond, smart
+    hide); `MenuPetals`; `FooterVine` + `src/lib/motion/vine.ts`; the thread's flower;
+    `CursorFollower`; `DecorFlower` + `content/decor.json` (schema, loaders
+    `getDecor()` / `getDecorItem()`, audit); `scripts/make-mask.ts` + `src/lib/hero-cutout.ts`;
+    `make:photos` decor jobs (per-pixel grade, seamless tiles, whitening); `useScrollProgress`
+    mode `"leave"`; `Picture` `transparent`; gate pairs for the menu's petals; the
+    styleguide's wordmark, diamond, vine, petals, cursor and decoration demos.
+  - **Removed:** `DepthPhoto`, `depth-gl.ts`, `make-depth.ts`, the depth map,
+    `hero-depth.spec`, every lamp / flame rule and element.
+  - **Assets:** cut-out 720 / 1080 / 1440 w = 54.7 / 94.2 / 119.2 KB;
+    decor dahlia halves 42.5 / 48.5 kB; orchid tiles dark 32.2 + 82.5 kB, light 44.4 + 114.3 kB (≤ 120 kB); chrysanthemums 8.0–85.7 kB.
+  - **Measured:** phone (390×844, 4× CPU, 150 ms RTT, 1.6 Mbps; median of 3) LCP **1.52 s** (R1 1.74 s; the cut-out), FCP 1.40 s, CLS 0, 504 KB (R1 528 KB). The morph: 0 long frames in 4 dedicated runs; the travelling name lands within 1 px of the logotype at 1280 / 1440 / 1920. Weight (same method, R1 built from `bc3984d`): home JS 191.5 → 194.0 kB gzip (R1's lazy 1.6 kB WebGL chunk gone), CSS 21.1 → 22.5 kB, HTML home 23.3 → 28.8 kB and /rooms/ 13.6 → 18.6 kB (the vine and the menu's petals are in every page's markup and its server-component payload; shapes reused with `<use>`). Scroll: see the decision row. Chromium only.
+  - **Tests:** **512 pass** (`pnpm test:e2e`); lint, typecheck, contrast gate and build clean. New: `midnight-bloom.spec` (no lamp / flame / diya in the built HTML and CSS or the source; the cursor follower — present on a fine pointer, absent on touch and under reduced motion, never `cursor: none`, grows / View / Drag / text / press / leave, no hit area; decoration — `sample` status, size limits, halves not mirrored, pattern-under-text contrast on the tile's own pixels). Rewritten: `shell.spec` (split nav, centred logotype, the diamond, smart hide with focus and the menu, petals, the vine's sequence / focus / reduced motion / no JS, the footer's flower never behind text) and `entrance.spec` (the hero at 1280 / 1920 / 360, the signage constants, the preload, the morph's landing, the two planes, reduced motion; the opening — veins, dahlia, letters, done by ~2.1 s, skip, once per session, storage blocked, slow connection, reduced motion, client navigation, no JS; the thread's flower); `home.spec`'s hero theme. Deleted: `hero-depth.spec`.

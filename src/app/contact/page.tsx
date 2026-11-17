@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ContactLines } from "@/components/contact/ContactLines";
 import { Breadcrumbs } from "@/components/content/Breadcrumbs";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { getSite } from "@/content";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Contact: the front desk. On emerald stone, the hotel's lines are set large
+ * Contact: the front desk. On deep stone, the hotel's lines are set large
  * on gold rules — the numbers are the page's typography — beside the title;
  * then, on ivory, the enquiry form on its stone tablet. The footer finale
  * closes the page. Every line comes from content (sample placeholder numbers
@@ -28,7 +28,7 @@ export default async function ContactPage() {
   return (
     <>
       <section
-        data-theme="emerald"
+        data-theme="deep"
         aria-labelledby="contact-title"
         className="contact-hero bg-surface text-ink"
       >
