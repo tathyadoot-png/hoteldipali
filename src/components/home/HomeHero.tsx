@@ -50,7 +50,12 @@ export function HomeHero({ cutout, name, city, line, bookingUrl }: HomeHeroProps
   });
 
   return (
-    <section aria-labelledby="home-hero" data-theme="deep" className="home-hero text-ink">
+    <section
+      aria-labelledby="home-hero"
+      data-theme="deep"
+      data-header-hero=""
+      className="home-hero text-ink"
+    >
       {/* The name is shown by the wordmark; the heading says it once. */}
       <h1 id="home-hero" className="visually-hidden">
         {name}, {city}

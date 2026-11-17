@@ -1,6 +1,9 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { contrastRatio } from "../src/lib/contrast";
+import { BUILT_PAGES } from "../src/lib/routes";
+
 // The shell (R1.1 "Midnight Bloom", 2026-11-04): a thin header with the
 // hotel's name at its centre — transparent (deep) over the home hero, solid
 // ivory elsewhere — that hides on the way down and returns on the way up; a
@@ -18,6 +21,61 @@ async function expectLinksResolve(page: Page, hrefs: string[]) {
     expect(response?.status(), href).toBe(200);
     if (hash) await expect(page.locator(`#${hash}`), href).toBeAttached();
   }
+}
+
+type Rgb = { r: number; g: number; b: number; a: number };
+
+/** `rgb()` / `rgba()` from getComputedStyle. */
+function parseCssColor(value: string): Rgb | null {
+  const match = value.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+  if (!match) return null;
+  return {
+    r: Number(match[1]),
+    g: Number(match[2]),
+    b: Number(match[3]),
+    a: match[4] === undefined ? 1 : Number(match[4]),
+  };
+}
+
+function composite(front: Rgb, back: Rgb): Rgb {
+  const a = front.a + back.a * (1 - front.a);
+  if (a === 0) return { r: 0, g: 0, b: 0, a: 0 };
+  return {
+    r: Math.round((front.r * front.a + back.r * back.a * (1 - front.a)) / a),
+    g: Math.round((front.g * front.a + back.g * back.a * (1 - front.a)) / a),
+    b: Math.round((front.b * front.a + back.b * back.a * (1 - front.a)) / a),
+    a,
+  };
+}
+
+function toHex({ r, g, b }: Rgb): string {
+  return `#${[r, g, b].map((channel) => channel.toString(16).padStart(2, "0")).join("")}`;
+}
+
+/**
+ * Contrast of a nav label against the colour actually behind the glyphs
+ * (the header bar, composited over the page), not a token we assume is there.
+ */
+async function navLabelContrast(page: Page): Promise<number> {
+  const colors = await page.evaluate(() => {
+    const link = document.querySelector<HTMLElement>(".header-link");
+    if (!link) throw new Error("no nav label");
+    const nodes: Element[] = [];
+    for (let node: Element | null = link; node; node = node.parentElement) nodes.push(node);
+    return {
+      foreground: getComputedStyle(link).color,
+      backgrounds: nodes.reverse().map((node) => getComputedStyle(node).backgroundColor),
+    };
+  });
+
+  let background: Rgb = { r: 255, g: 255, b: 255, a: 1 };
+  for (const layer of colors.backgrounds) {
+    const parsed = parseCssColor(layer);
+    if (parsed && parsed.a > 0) background = composite(parsed, background);
+  }
+  const foreground = parseCssColor(colors.foreground);
+  if (!foreground) throw new Error(`unparsed nav colour ${colors.foreground}`);
+  return contrastRatio(toHex(foreground), toHex(background));
 }
 
 /** Scrolls by `dy` in steps, so the header sees a direction. */
@@ -48,14 +106,19 @@ test.describe("Header — desktop (1280px)", () => {
     await expect(header).toHaveAttribute("data-state", "overlay");
     await expect(header).toHaveAttribute("data-theme", "deep");
     await expect(header).toHaveClass(/text-ink/);
-    expect(await header.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+    expect(await header.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(
+      "rgba(0, 0, 0, 0)",
+    );
 
     // One-frame jump well past the hero (anchor link, End key, fling): solid,
     // light, with its gold hairline.
     await page.evaluate(() => {
       const next = document.querySelector<HTMLElement>("[data-header-solid-from]");
       if (!next) throw new Error("missing [data-header-solid-from]");
-      window.scrollTo({ top: next.getBoundingClientRect().top + window.scrollY + 600, behavior: "instant" });
+      window.scrollTo({
+        top: next.getBoundingClientRect().top + window.scrollY + 600,
+        behavior: "instant",
+      });
     });
     await expect(header).toHaveAttribute("data-state", "solid");
     await expect(header).not.toHaveAttribute("data-theme", /.+/);
@@ -73,12 +136,32 @@ test.describe("Header — desktop (1280px)", () => {
     await expect(page.locator("header")).toHaveAttribute("data-state", "solid");
   });
 
+  test("nav labels on a page without a hero meet 4.5:1 against the bar behind them", async ({
+    page,
+  }) => {
+    const routes = [...BUILT_PAGES.filter((route) => route !== "/"), "/404-test-route/"];
+    for (const route of routes) {
+      await page.goto(route);
+      const header = page.locator("header");
+      await expect(header, route).toHaveAttribute("data-state", "solid");
+      await expect(header, route).not.toHaveAttribute("data-theme", /.+/);
+      expect(await header.evaluate((el) => getComputedStyle(el).backgroundColor), route).not.toBe(
+        "rgba(0, 0, 0, 0)",
+      );
+      expect(await navLabelContrast(page), route).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
   test("three links, the logotype at the exact centre, then four links and Book a Stay — each to a page that exists", async ({
     page,
   }) => {
     await page.goto("/rooms/");
     const nav = page.getByRole("navigation", { name: "Primary" });
-    await expect(nav.locator(".header-links-start").getByRole("link")).toHaveText(["Stay", "Weddings", "Events"]);
+    await expect(nav.locator(".header-links-start").getByRole("link")).toHaveText([
+      "Stay",
+      "Weddings",
+      "Events",
+    ]);
     await expect(nav.locator(".header-links-end").getByRole("link")).toHaveText([
       "Dining",
       "Experiences",
@@ -157,10 +240,14 @@ test.describe("Header — desktop (1280px)", () => {
     await page.goto("/");
     const letter = page.locator(".header-logotype .wordmark-letter").first();
     // Gold, lit like an engraving: the letters are filled with a gold gradient.
-    expect(await letter.evaluate((el) => getComputedStyle(el).backgroundImage)).toContain("linear-gradient");
+    expect(await letter.evaluate((el) => getComputedStyle(el).backgroundImage)).toContain(
+      "linear-gradient",
+    );
   });
 
-  test("Book a Stay is the plum plaque, and asks for availability on WhatsApp", async ({ page }) => {
+  test("Book a Stay is the plum plaque, and asks for availability on WhatsApp", async ({
+    page,
+  }) => {
     await page.goto("/rooms/");
     const book = page.locator("header").getByRole("link", { name: /^Book a Stay/ });
     await expect(book).toHaveCSS("background-color", BRAND_PLUM);
@@ -168,7 +255,9 @@ test.describe("Header — desktop (1280px)", () => {
     await expect(book).toHaveAccessibleName(/check availability on WhatsApp/);
   });
 
-  test("it hides on the way down past the first screen and returns on the way up", async ({ page }) => {
+  test("it hides on the way down past the first screen and returns on the way up", async ({
+    page,
+  }) => {
     await page.goto("/rooms/");
     const header = page.locator("header");
     await scrollBy(page, 300);
@@ -180,7 +269,9 @@ test.describe("Header — desktop (1280px)", () => {
       .toBeLessThan(-40);
     await scrollBy(page, -120);
     await expect(header).not.toHaveAttribute("data-hidden");
-    await expect.poll(() => header.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42)).toBe(0);
+    await expect
+      .poll(() => header.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42))
+      .toBe(0);
   });
 
   test("it never hides while it holds keyboard focus", async ({ page }) => {
@@ -200,7 +291,9 @@ test.describe("Header — desktop (1280px)", () => {
 test.describe("Header and menu — phone (360px)", () => {
   test.use({ viewport: { width: 360, height: 780 } });
 
-  test("Menu · the logotype, exactly centred · Book — the logotype there from the start", async ({ page }) => {
+  test("Menu · the logotype, exactly centred · Book — the logotype there from the start", async ({
+    page,
+  }) => {
     for (const route of ["/", "/rooms/"]) {
       await page.goto(route);
       const logotype = page.locator(".header-logotype");
@@ -222,11 +315,14 @@ test.describe("Header and menu — phone (360px)", () => {
     await expect(bar).toHaveClass(/text-ink/);
     await expect(bar.getByRole("link")).toHaveCount(3);
     await expect(bar.getByRole("link", { name: "Call" })).toHaveAttribute("href", /^tel:\+91/);
-    await expect(bar.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", /^https:\/\/wa\.me\//);
+    await expect(bar.getByRole("link", { name: "WhatsApp" })).toHaveAttribute(
+      "href",
+      /^https:\/\/wa\.me\//,
+    );
     await expect(bar.getByRole("link", { name: "Enquire" })).toHaveAttribute("href", "#enquire");
-    for (const box of await bar.getByRole("link").evaluateAll((els) =>
-      els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect),
-    )) {
+    for (const box of await bar
+      .getByRole("link")
+      .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect))) {
       expect(box.height).toBeGreaterThanOrEqual(44);
     }
     const rect = await bar.boundingBox();
@@ -275,7 +371,12 @@ test.describe("Header and menu — phone (360px)", () => {
       .poll(() =>
         petals
           .locator(".menu-petal")
-          .evaluateAll((els) => els.every((el) => getComputedStyle(el).opacity === "1" && getComputedStyle(el).transform === "none")),
+          .evaluateAll((els) =>
+            els.every(
+              (el) =>
+                getComputedStyle(el).opacity === "1" && getComputedStyle(el).transform === "none",
+            ),
+          ),
       )
       .toBe(true);
     const z = await dialog.evaluate((el) => ({
@@ -332,13 +433,17 @@ test.describe("Links", () => {
 
 test.describe("Footer", () => {
   const scrollToEnd = (page: Page) =>
-    page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+    page.evaluate(() =>
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }),
+    );
   /** Each stem segment's dash offset (1 = not grown, 0 = grown). */
   const stems = (page: Page) =>
     page
       .getByRole("contentinfo")
       .locator(".vine-stem")
-      .evaluateAll((els) => els.map((el) => Number.parseFloat(getComputedStyle(el).strokeDashoffset)));
+      .evaluateAll((els) =>
+        els.map((el) => Number.parseFloat(getComputedStyle(el).strokeDashoffset)),
+      );
   const leavesOpen = (page: Page) =>
     page
       .getByRole("contentinfo")
@@ -378,7 +483,10 @@ test.describe("Footer", () => {
     await expect(footer).not.toContainText("00000");
     await expect(footer.getByRole("link", { name: "Facebook" })).toHaveCount(0);
     await expect(footer.getByRole("link", { name: "Privacy Policy" })).toHaveCount(0);
-    await expect(footer.getByRole("link", { name: "Send an enquiry" })).toHaveAttribute("href", "#enquire");
+    await expect(footer.getByRole("link", { name: "Send an enquiry" })).toHaveAttribute(
+      "href",
+      "#enquire",
+    );
   });
 
   test("every footer link leads to a page (and anchor) that exists", async ({ page }) => {
@@ -391,7 +499,9 @@ test.describe("Footer", () => {
     await expectLinksResolve(page, hrefs);
   });
 
-  test("its vine waits until it arrives, then grows out from the flower, segment by segment", async ({ page }) => {
+  test("its vine waits until it arrives, then grows out from the flower, segment by segment", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/rooms/");
     const footer = page.getByRole("contentinfo");
@@ -415,7 +525,8 @@ test.describe("Footer", () => {
     expect(timing).toHaveLength(8);
     for (const { duration } of timing) expect(duration).toBeLessThan(400);
     for (const side of [timing.slice(0, 4), timing.slice(4)]) {
-      for (let i = 1; i < side.length; i += 1) expect(side[i]!.delay).toBeGreaterThan(side[i - 1]!.delay);
+      for (let i = 1; i < side.length; i += 1)
+        expect(side[i]!.delay).toBeGreaterThan(side[i - 1]!.delay);
     }
     expect(Math.max(...timing.map((t) => t.delay + t.duration))).toBeLessThanOrEqual(1500);
   });
@@ -426,7 +537,9 @@ test.describe("Footer", () => {
     const footer = page.getByRole("contentinfo");
     await footer.getByRole("link", { name: /^Book a Stay/ }).focus();
     await expect(footer).toHaveAttribute("data-revealed", "instant");
-    await expect.poll(async () => (await stems(page)).every((o) => o === 0), { timeout: 600 }).toBe(true);
+    await expect
+      .poll(async () => (await stems(page)).every((o) => o === 0), { timeout: 600 })
+      .toBe(true);
   });
 
   test("reduced motion: grown from the start", async ({ page }) => {
@@ -456,9 +569,16 @@ test.describe("Footer", () => {
     // No text box overlaps it.
     const overlaps = await footer.evaluate((el) => {
       const flowerBox = el.querySelector("img.decor")!.getBoundingClientRect();
-      const texts = [...el.querySelectorAll("h2, h3, p, a, li")].map((t) => t.getBoundingClientRect());
+      const texts = [...el.querySelectorAll("h2, h3, p, a, li")].map((t) =>
+        t.getBoundingClientRect(),
+      );
       return texts.filter(
-        (r) => r.width > 0 && r.left < flowerBox.right && flowerBox.left < r.right && r.top < flowerBox.bottom && flowerBox.top < r.bottom,
+        (r) =>
+          r.width > 0 &&
+          r.left < flowerBox.right &&
+          flowerBox.left < r.right &&
+          r.top < flowerBox.bottom &&
+          flowerBox.top < r.bottom,
       ).length;
     });
     expect(overlaps).toBe(0);
@@ -497,9 +617,9 @@ test.describe("Footer", () => {
     await scrollToEnd(page);
     const footer = page.getByRole("contentinfo");
     await expect(footer.locator(".footer-vine svg")).toBeVisible();
-    for (const row of await footer.locator(".footer-line").evaluateAll((links) =>
-      links.map((a) => a.getBoundingClientRect().toJSON() as DOMRect),
-    )) {
+    for (const row of await footer
+      .locator(".footer-line")
+      .evaluateAll((links) => links.map((a) => a.getBoundingClientRect().toJSON() as DOMRect))) {
       expect(row.height).toBeGreaterThanOrEqual(44);
     }
     const legal = await footer.getByText("Also searched as Hotel Deepali").boundingBox();
@@ -515,7 +635,9 @@ test.describe("Footer without JavaScript", () => {
     await page.goto("/rooms/");
     const offsets = await page
       .locator("footer .vine-stem")
-      .evaluateAll((els) => els.map((el) => Number.parseFloat(getComputedStyle(el).strokeDashoffset)));
+      .evaluateAll((els) =>
+        els.map((el) => Number.parseFloat(getComputedStyle(el).strokeDashoffset)),
+      );
     expect(offsets.length).toBeGreaterThan(0);
     expect(offsets.every((o) => o === 0)).toBe(true);
   });

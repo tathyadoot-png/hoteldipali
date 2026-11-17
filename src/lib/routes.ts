@@ -2,11 +2,7 @@
 export const overlayHeaderRoutes: string[] = ["/"];
 
 /** Routes where the mobile StickyCtaBar is hidden entirely. */
-export const stickyCtaHiddenRoutes: string[] = [
-  "/thank-you/",
-  "/styleguide/",
-  "/dev/content/",
-];
+export const stickyCtaHiddenRoutes: string[] = ["/thank-you/", "/styleguide/", "/dev/content/"];
 
 /** Per-route label for the StickyCtaBar's third (primary) button. */
 const STICKY_CTA_LABELS: Record<string, string> = {
@@ -51,7 +47,14 @@ export function enquireHref(pathname: string): string {
  * here, so a planned page never shows as a dead link. Add each route as its
  * page is built.
  */
-const BUILT_PAGES: string[] = ["/", "/rooms/", "/weddings/", "/events/", "/dining/", "/contact/"];
+export const BUILT_PAGES: readonly string[] = [
+  "/",
+  "/rooms/",
+  "/weddings/",
+  "/events/",
+  "/dining/",
+  "/contact/",
+];
 const BUILT_ROUTE_PATTERNS: RegExp[] = [/^\/rooms\/[^/]+\/$/];
 
 /** Whether a site-relative href leads to a page in this build (anchors included). */

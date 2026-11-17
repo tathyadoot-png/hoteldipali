@@ -40,12 +40,14 @@ const DIRECTION_SLOP = 6;
 
 /**
  * The header: a thin bar with the hotel's name at its centre. Transparent —
- * the deep scope, the name in gold — over the home hero, where the hero's own
- * giant name travels into the centre slot as the page scrolls (rich motion,
- * HomeHero → HeroMorph sets data-landed); solid ivory with a gold hairline
- * everywhere else, the name in plum. Below xl: Menu · logotype · Book. From
- * xl: three links · logotype · the other links and Book a Stay; the current
- * page carries the logo's small diamond.
+ * the deep scope, the name in gold — only on an overlayHeaderRoutes path
+ * while that page's hero ([data-header-hero]) is in view, where the hero's
+ * own giant name travels into the centre slot as the page scrolls (rich
+ * motion, HomeHero → HeroMorph sets data-landed). Solid ivory with a gold
+ * hairline everywhere else, including not-found and any page with no hero,
+ * the name in plum. Below xl: Menu · logotype · Book. From xl: three links ·
+ * logotype · the other links and Book a Stay; the current page carries the
+ * logo's small diamond.
  *
  * It hides while the page scrolls down past the first screen and comes back
  * on any scroll up (transform only) — never while it holds keyboard focus or
@@ -60,6 +62,17 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
   const menuOpenRef = useRef(menuOpen);
 
   useEffect(() => {
+    // Overlay is only for a page that actually rendered its hero. A not-found
+    // response (including one served for "/") has no [data-header-hero], so
+    // the bar stays the solid ivory one. Reported from the observer, same as
+    // the scroll signal below — not during this effect's own turn.
+    const hero = document.querySelector("[data-header-hero]");
+    if (!hero) {
+      const observer = new IntersectionObserver(() => setScrolled(true));
+      observer.observe(document.documentElement);
+      return () => observer.disconnect();
+    }
+
     // A page can name the element whose arrival should end the overlay — the
     // home page uses the section that rises over its hero.
     const solidFrom = document.querySelector<HTMLElement>("[data-header-solid-from]");
@@ -163,7 +176,12 @@ export function Header({ bookingUrl }: { bookingUrl: string | null }) {
 
         <NavDesktop links={primaryNav(site.navigation.main)} pathname={pathname} />
 
-        <Link href="/" prefetch={false} aria-label={`${site.name} — home`} className="header-logotype">
+        <Link
+          href="/"
+          prefetch={false}
+          aria-label={`${site.name} — home`}
+          className="header-logotype"
+        >
           <Wordmark name={site.name} />
         </Link>
 
