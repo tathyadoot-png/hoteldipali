@@ -1,8 +1,8 @@
 # Hotel Dipali Website — Project Plan
 
-Last updated: 2026-11-13
-Current step: R2 — Redesign of the home page's other sections (Phase R, branch
-`theme/plum`)
+Last updated: 2026-11-17
+Current step: R2 — Redesign of the home page's other sections (Phase R). R1 and
+R1.1 are on `main`.
 
 ## Status legend
 
@@ -1205,3 +1205,6 @@ The layouts are built so originals drop in by replacing files — no redesign ne
     decor dahlia halves 42.5 / 48.5 kB; orchid tiles dark 32.2 + 82.5 kB, light 44.4 + 114.3 kB (≤ 120 kB); chrysanthemums 8.0–85.7 kB.
   - **Measured:** phone (390×844, 4× CPU, 150 ms RTT, 1.6 Mbps; median of 3) LCP **1.52 s** (R1 1.74 s; the cut-out), FCP 1.40 s, CLS 0, 504 KB (R1 528 KB). The morph: 0 long frames in 4 dedicated runs; the travelling name lands within 1 px of the logotype at 1280 / 1440 / 1920. Weight (same method, R1 built from `bc3984d`): home JS 191.5 → 194.0 kB gzip (R1's lazy 1.6 kB WebGL chunk gone), CSS 21.1 → 22.5 kB, HTML home 23.3 → 28.8 kB and /rooms/ 13.6 → 18.6 kB (the vine and the menu's petals are in every page's markup and its server-component payload; shapes reused with `<use>`). Scroll: see the decision row. Chromium only.
   - **Tests:** **512 pass** (`pnpm test:e2e`); lint, typecheck, contrast gate and build clean. New: `midnight-bloom.spec` (no lamp / flame / diya in the built HTML and CSS or the source; the cursor follower — present on a fine pointer, absent on touch and under reduced motion, never `cursor: none`, grows / View / Drag / text / press / leave, no hit area; decoration — `sample` status, size limits, halves not mirrored, pattern-under-text contrast on the tile's own pixels). Rewritten: `shell.spec` (split nav, centred logotype, the diamond, smart hide with focus and the menu, petals, the vine's sequence / focus / reduced motion / no JS, the footer's flower never behind text) and `entrance.spec` (the hero at 1280 / 1920 / 360, the signage constants, the preload, the morph's landing, the two planes, reduced motion; the opening — veins, dahlia, letters, done by ~2.1 s, skip, once per session, storage blocked, slow connection, reduced motion, client navigation, no JS; the thread's flower); `home.spec`'s hero theme. Deleted: `hero-depth.spec`.
+- 2026-11-17: **Merged `theme/plum` into `main`** (`e7d3e13`, "merge: plum & gold redesign (R1, R1.1)"). No conflicts — `main` was an ancestor of `theme/plum`. Tag `pre-plum-merge` is `3f30fac` (main just before the merge) and is on origin. No `recover/oct-27` branch. No deploy wiring (`wrangler.toml`, `.wrangler`, `vercel.json`, `.vercel`, `.github/workflows`), so `main` was pushed. Rollback, not run: `git reset --hard pre-plum-merge` moves local `main` back to `3f30fac`; that discards the merge commit locally and needs a force push to match origin, which these steps do not do.
+  - **Gate on `theme/plum` before the merge** (same tree as `main` after it): lint, typecheck, `check:contrast`, build, and `pnpm test:e2e` — **516 passed**.
+  - **Gate on `main` after the merge:** lint, typecheck, contrast and build clean. `pnpm preview` on port 4173: `/` returned **200** (title "Hotel Dipali, Sagar"). Full e2e under parallel load, twice: **515 passed** and one timing flake each time (the opening skip still on `data-state="leave"` at 1 s; then footer focus within 600 ms). Those two tests passed together when re-run (2 passed).
